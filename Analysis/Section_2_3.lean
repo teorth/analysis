@@ -29,7 +29,19 @@ theorem Nat.zero_mul (m: Nat) : 0 * m = 0 := recurse_zero (fun _ prod ↦ prod+m
 /-- Definition 2.3.1 (Multiplication of natural numbers) -/
 theorem Nat.succ_mul (n m: Nat) : (n++) * m = n * m + m := recurse_succ (fun _ prod ↦ prod+m) _ _
 
-theorem Nat.one_mul' (m: Nat) : 1 * m = 0 + m := by
+theorem mul_zero (m: Nat) : m * 0 = 0 := by
+  revert m; apply induction
+  rw [zero_mul]
+  intro n IH
+  rw [succ_mul, IH, zero_add]
+
+theorem mul_succ (n m: Nat) : n * m++ = n * m + n := by
+  revert n; apply induction
+  rw [zero_mul, zero_mul, add_zero]
+  intro n IH
+  rw [succ_mul, succ_mul, IH, add_assoc, add_assoc, add_succ, add_succ m, add_comm n]
+
+theorem one_mul' (m: Nat) : 1 * m = 0 + m := by
   rw [←zero_succ, succ_mul, zero_mul]
 
 theorem Nat.one_mul (m: Nat) : 1 * m = m := by
@@ -39,8 +51,11 @@ theorem Nat.two_mul (m: Nat) : 2 * m = 0 + m + m := by
   rw [←one_succ, succ_mul, one_mul']
 
 /-- Lemma 2.3.2 (Multiplication is commutative) / Exercise 2.3.1 -/
-lemma Nat.mul_comm (n m: Nat) : n * m = m * n := by
-  sorry
+lemma mul_comm (n m: Nat) : n * m = m * n := by
+  revert m; apply induction
+  rw [zero_mul, mul_zero]
+  intro m IH
+  rw [succ_mul, mul_succ, IH]
 
 theorem Nat.mul_one (m: Nat) : m * 1 = m := by
   rw [mul_comm, one_mul]
