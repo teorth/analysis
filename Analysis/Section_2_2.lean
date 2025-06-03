@@ -77,7 +77,6 @@ theorem Nat.add_comm (n m:Nat) : n + m = m + n := by
   rw [succ_add]
   rw [add_succ, ih]
 
-theorem add_assoc (a b c:Nat) : (a + b) + c = a + (b + c) := by
 /- Proposition 2.2.5 (Addition is associative) / Exercise 2.2.1-/
 theorem Nat.add_assoc (a b c:Nat) : (a + b) + c = a + (b + c) := by
   revert a; apply induction
@@ -140,7 +139,7 @@ theorem Nat.add_eq_zero (a b:Nat) (hab: a + b = 0) : a = 0 ∧ b = 0 := by
   contradiction
 
 /-- Lemma 2.2.10 (unique predecessor) / Exercise 2.2.2 -/
-lemma uniq_succ_eq (a:Nat) (ha: a.isPos) : ∃! b, b++ = a := by
+lemma Nat.uniq_succ_eq (a:Nat) (ha: a.isPos) : ∃! b, b++ = a := by
   revert a; apply induction
 
   . intro h
@@ -239,7 +238,7 @@ theorem Nat.ge_antisymm {a b:Nat} (hab: a ≥ b) (hba: b ≥ a) : a = b := by
   exact hd
 
 /-- (d) (Addition preserves order)  -/
-theorem add_ge_add_right (a b c:Nat) : a ≥ b ↔ a + c ≥ b + c := by
+theorem Nat.add_ge_add_right (a b c:Nat) : a ≥ b ↔ a + c ≥ b + c := by
   constructor
   intro h
   rcases h with ⟨d, hd⟩
@@ -266,7 +265,7 @@ theorem Nat.add_le_add_right (a b c:Nat) : a ≤ b ↔ a + c ≤ b + c := add_ge
 theorem Nat.add_le_add_left (a b c:Nat) : a ≤ b ↔ c + a ≤ c + b := add_ge_add_left _ _ _
 
 /-- (e) a < b iff a++ ≤ b. -/
-theorem lt_iff_succ_le (a b:Nat) : a < b ↔ a++ ≤ b := by
+theorem Nat.lt_iff_succ_le (a b:Nat) : a < b ↔ a++ ≤ b := by
   constructor
   intro h
   rcases h with ⟨⟨d, h1⟩, h2⟩
@@ -306,7 +305,7 @@ theorem lt_iff_succ_le (a b:Nat) : a < b ↔ a++ ≤ b := by
   exact self_ne_succ a this
 
 /-- (f) a < b if and only if b = a + d for positive d. -/
-theorem lt_iff_add_pos (a b:Nat) : a < b ↔ ∃ d:Nat, d.isPos ∧ b = a + d := by
+theorem Nat.lt_iff_add_pos (a b:Nat) : a < b ↔ ∃ d:Nat, d.isPos ∧ b = a + d := by
   constructor
   intro h
   rcases h with ⟨⟨d, h1⟩, h2⟩
@@ -394,7 +393,7 @@ instance Nat.isOrderedAddMonoid : IsOrderedAddMonoid Nat where
 
 /-- Proposition 2.2.14 (Strong principle of induction) / Exercise 2.2.5
 -/
-theorem strong_induction {m₀:Nat} {P: Nat → Prop} (hind: ∀ m, m ≥ m₀ → (∀ m', m₀ ≤ m' ∧ m' < m → P m') → P m) : ∀ m, m ≥ m₀ → P m := by
+theorem Nat.strong_induction {m₀:Nat} {P: Nat → Prop} (hind: ∀ m, m ≥ m₀ → (∀ m', m₀ ≤ m' ∧ m' < m → P m') → P m) : ∀ m, m ≥ m₀ → P m := by
   have Q (n : Nat): ∀ m : Nat, m₀ ≤ m → m ≤ n → P m := by
     apply induction
     intro h1 h2
