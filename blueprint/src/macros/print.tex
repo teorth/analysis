@@ -1,0 +1,29 @@
+% In this file you should put macros to be used only by
+% the printed version. Of course they should have a corresponding
+% version in macros/web.tex.
+% Typically the printed version could have more fancy decorations.
+% This should be a very short file.
+%
+% This file starts with dummy macros that ensure the pdf
+% compiler will ignore macros provided by plasTeX that make
+% sense only for the web version, such as dependency graph
+% macros.
+
+
+% Dummy macros that make sense only for web version.
+\newcommand{\lean}[1]{}
+\newcommand{\discussion}[1]{}
+\newcommand{\leanok}{}
+\newcommand{\mathlibok}{}
+\newcommand{\notready}{}
+% Make sure that arguments of \uses and \proves are real labels, by using invisible refs:
+% latex prints a warning if the label is not defined, but nothing is shown in the pdf file.
+% It uses LaTeX3 programming, this is why we use the expl3 package.
+\ExplSyntaxOn
+\NewDocumentCommand{\uses}{m}
+ {\clist_map_inline:nn{#1}{\vphantom{\ref{##1}}}%
+  \ignorespaces}
+\NewDocumentCommand{\proves}{m}
+ {\clist_map_inline:nn{#1}{\vphantom{\ref{##1}}}%
+  \ignorespaces}
+\ExplSyntaxOff

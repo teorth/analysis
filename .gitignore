@@ -2,7 +2,6 @@
 # Compiled files and directories
 .lake/
 build/
-_site/
 
 # IDE files
 .vscode/

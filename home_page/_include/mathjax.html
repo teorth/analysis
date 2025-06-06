@@ -1,0 +1,17 @@
+<!-- Check if the current page requires MathJax support -->
+{% if page.usemathjax %}
+  <!-- MathJax configuration script -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      TeX: {
+        equationNumbers: {
+          autoNumber: "AMS"  <!-- Automatically number equations using AMS style -->
+        }
+      }
+    });
+  </script>
+  <!-- Load MathJax library asynchronously from the CDN -->
+  <script type="text/javascript" async
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+{% endif %}

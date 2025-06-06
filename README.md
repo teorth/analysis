@@ -14,18 +14,18 @@ In order to align the formalization with Mathlib conventions, a small number of 
 
 Currently formalized sections:
 
-- [Section 2.1: The Peano axioms](https://teorth.github.io/analysis/sec21/)
-- [Section 2.2: Addition](https://teorth.github.io/analysis/sec22/)
-- [Section 2.3: Multiplication](https://teorth.github.io/analysis/sec23/)
-- [Chapter 2 epilogue: Isomorphism with the Mathlib natural numbers](https://teorth.github.io/analysis/sec2e/)
-- [Section 3.1: Set theory fundamentals](https://teorth.github.io/analysis/sec31/)
-- [Section 4.1: The integers](https://teorth.github.io/analysis/sec41/)
-- [Section 4.2: The rationals](https://teorth.github.io/analysis/sec42/)
-- [Section 4.3: Absolute value and exponentiation](https://teorth.github.io/analysis/sec43/)
-- [Section 5.1: Cauchy sequences of rationals](https://teorth.github.io/analysis/sec51/)
-- [Section 5.2: Equivalent Cauchy sequences](https://teorth.github.io/analysis/sec52/)
-- [Section 5.3: Construction of the real numbers](https://teorth.github.io/analysis/sec53/)
-- [Section 5.4: Ordering the reals](https://teorth.github.io/analysis/sec54/)
+- [Section 2.1: The Peano axioms](https://teorth.github.io/analysis/docs/Analysis/Section_2_1.html)
+- [Section 2.2: Addition](https://teorth.github.io/analysis/docs/Analysis/Section_2_2.html)
+- [Section 2.3: Multiplication](https://teorth.github.io/analysis/docs/Analysis/Section_2_3.html)
+- [Chapter 2 epilogue: Isomorphism with the Mathlib natural numbers](https://teorth.github.io/analysis/docs/Analysis/Section_2_epilogue.html)
+- [Section 3.1: Set theory fundamentals](https://teorth.github.io/analysis/docs/Analysis/Section_3_1.html)
+- [Section 4.1: The integers](https://teorth.github.io/analysis/docs/Analysis/Section_4_1.html)
+- [Section 4.2: The rationals](https://teorth.github.io/analysis/docs/Analysis/Section_4_2.html)
+- [Section 4.3: Absolute value and exponentiation](https://teorth.github.io/analysis/docs/Analysis/Section_4_3.html)
+- [Section 5.1: Cauchy sequences of rationals](https://teorth.github.io/analysis/docs/Analysis/Section_5_1.html)
+- [Section 5.2: Equivalent Cauchy sequences](https://teorth.github.io/analysis/docs/Analysis/Section_5_2.html)
+- [Section 5.3: Construction of the real numbers](https://teorth.github.io/analysis/docs/Analysis/Section_5_3.html)
+- [Section 5.4: Ordering the reals](https://teorth.github.io/analysis/docs/Analysis/Section_5_4.html)
 
 
 Other resources:
@@ -34,7 +34,6 @@ Other resources:
   - [Springer edition](https://link.springer.com/book/10.1007/978-981-19-7261-4)
 - [Blog post announcing this project](https://terrytao.wordpress.com/2025/05/31/a-lean-companion-to-analysis-i/), Terence Tao, May 31 2025.
 - [Lean Zulip discussion about this project](https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/Lean.20companion.20to.20.22Analysis.20I.22.20-.20discussion/with/521458888)
-- [Notes for contributors](./CONTRIBUTING.md)
 
 General Lean resources:
 - [The Lean community](https://leanprover-community.github.io/)
