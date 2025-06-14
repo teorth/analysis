@@ -7,5 +7,6 @@ I would be interested in having volunteers “playtest” the companion to see i
 
 1. Add the relevant file to `analysis/Analysis`
 2. Copy a line of the `sections` definition in `book/lakefile.lean`, adapt it to the new section.
-3. Adapt the line in the README
-4. Add a line in `book/AnalysisBook/Home.lean`
+3. Add a line to the `demoSite` definition in `book/AnalysisBook.lean` for the new section.
+4. Adapt the line in the README
+5. Add a line in `book/AnalysisBook/Home.lean`

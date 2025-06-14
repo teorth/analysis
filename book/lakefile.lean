@@ -19,7 +19,7 @@ def analysisRoot : System.FilePath := "../analysis"
 /--
 A mapping from module names in the Lean code to the titles to be used for their sections.
 
-A module is generated for each, containing the literate page. It's name is the module name from
+A module is generated for each, containing the literate page. Its name is the module name from
 `analysis` with `Book` prepended, so `Analysis.Section_2_1`'s literate page can be found by
 importing `Book.Analysis.Section_2_1`. The page itself is named identically to its module.
 -/
