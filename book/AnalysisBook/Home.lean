@@ -52,3 +52,4 @@ Currently formalized sections:
 - [Section 9.2: The algebra of real-valued functions](./sec92/)
 - [Section 9.3: Limiting values of functions](./sec93/)
 - [Section 9.4: Continuous functions](./sec94/)
+- [Section 9.5: Limits from the left and right](./sec95/)

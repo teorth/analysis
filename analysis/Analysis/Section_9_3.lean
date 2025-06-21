@@ -91,12 +91,12 @@ example: Convergesto (Set.Icc 1 3) (fun x ↦ x^2) 4 2 := by
 
 /-- Proposition 9.3.9 / Exercise 9.3.1 -/
 theorem Convergesto.iff_conv {E:Set ℝ} (f: ℝ → ℝ) (L:ℝ) {x₀:ℝ} (h: AdherentPt x₀ E) :
-  Convergesto X f L x₀ ↔ ∀ a:ℕ → ℝ, (∀ n:ℕ, a n ∈ E) →
+  Convergesto E f L x₀ ↔ ∀ a:ℕ → ℝ, (∀ n:ℕ, a n ∈ E) →
   Filter.Tendsto a Filter.atTop (nhds x₀) →
   Filter.Tendsto (fun n ↦ f (a n)) Filter.atTop (nhds L) := by
   sorry
 
-theorem Convergesto.comp {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) (hf: Convergesto X f L x₀) {a:ℕ → ℝ} (ha: ∀ n:ℕ, a n ∈ E) (hconv: Filter.Tendsto a Filter.atTop (nhds x₀)) :
+theorem Convergesto.comp {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) (hf: Convergesto E f L x₀) {a:ℕ → ℝ} (ha: ∀ n:ℕ, a n ∈ E) (hconv: Filter.Tendsto a Filter.atTop (nhds x₀)) :
   Filter.Tendsto (fun n ↦ f (a n)) Filter.atTop (nhds L) := by
   rw [iff_conv f L h] at hf
   exact hf a ha hconv

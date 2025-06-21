@@ -60,7 +60,8 @@ def sections := #[
   (`Analysis.Section_9_1, "Subsets of the real line"),
   (`Analysis.Section_9_2, "The algebra of real-valued functions"),
   (`Analysis.Section_9_3, "Limiting values of functions"),
-  (`Analysis.Section_9_4, "Continuous functions")
+  (`Analysis.Section_9_4, "Continuous functions"),
+  (`Analysis.Section_9_5, "Limits from the left and right"),
 ]
 
 /--
