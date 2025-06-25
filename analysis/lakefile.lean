@@ -29,7 +29,7 @@ lean_exe "literate-extract" where
 
 meta if get_config? env = some "dev" then
 require «doc-gen4» from git
-  "https://github.com/leanprover/doc-gen4" @ "v4.20.0"
+  "https://github.com/leanprover/doc-gen4" @ "main"
 
 
 module_facet literate mod : System.FilePath := do
