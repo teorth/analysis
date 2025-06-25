@@ -39,6 +39,7 @@ def sections := #[
   (`Analysis.Section_4_1, "The integers"),
   (`Analysis.Section_4_2, "The rationals"),
   (`Analysis.Section_4_3, "Absolute value and exponentiation"),
+  (`Analysis.Section_4_4, "Gaps in the rational numbers"),
   (`Analysis.Section_5_1, "Cauchy sequences"),
   (`Analysis.Section_5_2, "Equivalent Cauchy sequences"),
   (`Analysis.Section_5_3, "The construction of the real numbers"),

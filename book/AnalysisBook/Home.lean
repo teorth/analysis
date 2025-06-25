@@ -30,6 +30,7 @@ Currently formalized sections:
 - [Section 4.1: The integers](./sec41/)
 - [Section 4.2: The rationals](./sec42/)
 - [Section 4.3: Absolute value and exponentiation](./sec43/)
+- [Section 4.4: Gaps in the rational numbers](./sec44/)
 - [Section 5.1: Cauchy sequences of rationals](./sec51)
 - [Section 5.2: Equivalent Cauchy sequences](./sec52/)
 - [Section 5.3: Construction of the real numbers](./sec53/)

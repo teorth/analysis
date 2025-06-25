@@ -44,10 +44,10 @@ theorem Rat.exists_between_rat {x y:ℚ} (h: x < y) : ∃ z:ℚ, x < z ∧ z < y
   all_goals ring
 
 /-- Exercise 4.4.2 -/
-theorem Nat.no_infinite_descent : ¬ ∃ a:ℕ → ℕ, ∀ n, a n < a (n+1) := by
+theorem Nat.no_infinite_descent : ¬ ∃ a:ℕ → ℕ, ∀ n, a (n+1) < a n := by
   sorry
 
-def Int.infinite_descent : Decidable (∃ a:ℕ → ℤ, ∀ n, a n < a (n+1)) := by
+def Int.infinite_descent : Decidable (∃ a:ℕ → ℤ, ∀ n, a (n+1) < a n) := by
   -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
   sorry
 
@@ -57,6 +57,10 @@ def Int.infinite_descent : Decidable (∃ a:ℕ → ℤ, ∀ n, a n < a (n+1)) :
 theorem Nat.even_or_odd'' (n:ℕ) : Even n ∨ Odd n := by
   sorry
 
+theorem Nat.not_even_and_odd (n:ℕ) : ¬ (Even n ∧ Odd n) := by
+  sorry
+
+#check Nat.rec
 /-- Proposition 4.4.4 / Exercise 4.4.3  -/
 theorem Rat.not_exist_sqrt_two : ¬ ∃ x:ℚ, x^2 = 2 := by
   -- This proof is written to follow the structure of the original text.
@@ -84,14 +88,70 @@ theorem Rat.not_exist_sqrt_two : ¬ ∃ x:ℚ, x^2 = 2 := by
     obtain ⟨ p, q, hp, hq, hpq ⟩ := hrep
     use p
     refine ⟨ hp, q, hq, hpq ⟩
-  have hiter (p:ℕ) : P p → ∃ q, q < p ∧ P q := by
+  have hiter (p:ℕ) (hPp: P p) : ∃ q, q < p ∧ P q := by
     rcases p.even_or_odd'' with hp | hp
-    . sorry
-    sorry
-  sorry
+    . rw [even_iff_exists_two_mul] at hp
+      obtain ⟨ k, rfl ⟩ := hp
+      obtain ⟨ q, hpos, hq ⟩ := hPp.2
+      have : q^2 = 2 * k^2 := by linarith
+      use q
+      constructor
+      . sorry
+      refine ⟨ hpos, k, ?_, this ⟩
+      . linarith [hPp.1]
+    have h1 : Odd (p^2) := by
+      sorry
+    have h2 : Even (p^2) := by
+      obtain ⟨ q, hpos, hq ⟩ := hPp.2
+      rw [even_iff_exists_two_mul]
+      use q^2
+    have h3 := Nat.not_even_and_odd (p^2)
+    tauto
+  classical
+  set f : ℕ → ℕ := fun p ↦ if hPp: P p then (hiter p hPp).choose else 0
+  have hf (p:ℕ) (hPp: P p) : f p < p := by
+    simp [f, hPp]
+    exact (hiter p hPp).choose_spec.1
+  have hf2 (p:ℕ) (pPp: P p) : P (f p) := by
+    simp [f, pPp]
+    exact (hiter p pPp).choose_spec.2
+  obtain ⟨ p, hP ⟩ := hP
+  set a : ℕ → ℕ := Nat.rec p (fun n p ↦ f p)
+  have ha (n:ℕ) : P (a n) := by
+    induction n with
+    | zero => exact hP
+    | succ n ih => exact hf2 _ ih
+  have hlt (n:ℕ) : a (n+1) < a n := by
+    have : a (n+1) = f (a n) := Nat.rec_add_one p (fun n p ↦ f p) n
+    rw [this]
+    exact hf _ (ha n)
+  exact Nat.no_infinite_descent ⟨ a, hlt ⟩
 
 
+/-- Proposition 4.4.5 -/
+theorem Rat.exist_approx_sqrt_two {ε:ℚ} (hε:ε>0) : ∃ x ≥ (0:ℚ), x^2 < 2 ∧ 2 < (x+ε)^2 := by
+  -- This proof is written to follow the structure of the original text.
+  by_contra! h
+  have (n:ℕ): (n*ε)^2 < 2 := by
+    induction' n with n hn
+    . simp
+    specialize h (n*ε) (by sorry) hn
+    simp [add_mul]
+    apply lt_of_le_of_ne h
+    have := not_exist_sqrt_two
+    simp at this ⊢
+    exact this _
+  obtain ⟨ n, hn ⟩ := Nat.exists_gt (2/ε)
+  rw [gt_iff_lt, div_lt_iff₀' (by positivity), mul_comm,
+      ←sq_lt_sq₀ (by norm_num) (by positivity)] at hn
+  specialize this n
+  linarith
+
+/-- Example 4.4.6 -/
+example :
+  let ε:ℚ := 1/1000
+  let x:ℚ := 1414/1000
+  x^2 < 2 ∧ 2 < (x+ε)^2 := by
+  norm_num
 
 
-
-end Chapter4
