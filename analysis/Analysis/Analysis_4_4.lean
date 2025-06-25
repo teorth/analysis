@@ -17,6 +17,7 @@ Many of the results here can be established more quickly by relying more heavily
 API; one can set oneself the exercise of doing so.
 -/
 
+ 
 /-- Proposition 4.4.1 (Interspersing of integers by rationals) / Exercise 4.4.1 -/
 
 theorem Rat.between_int (x:ℚ) : ∃! n:ℤ, n ≤ x ∧ x < n+1 := by
@@ -153,5 +154,3 @@ example :
   let x:ℚ := 1414/1000
   x^2 < 2 ∧ 2 < (x+ε)^2 := by
   norm_num
-
-
