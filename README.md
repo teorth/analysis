@@ -1,3 +1,15 @@
+# About This Fork
+
+This is my fork of [Tao's formalization of Analysis I](https://github.com/teorth/analysis), filling in the `sorry`s with solutions.
+
+I intend to work through these at my own pace and probably won't take contributions.
+
+The `main` branch will be in sync with upstream while the default `solutions` branch is where I'll push the solutions. You are welcome to use my solutions if you'd like.
+
+The original README, as written by Tao, is left intact below.
+
+---
+
 # Lean formalization of _Analysis I_
 
 The files in this directory contain a formalization of my text [_Analysis I_](https://terrytao.wordpress.com/books/analysis-i/) into [Lean](https://lean-lang.org/). The formalization is intended to be as faithful a paraphrasing as possible to the original text, while also showcasing Lean's features and syntax.  In particular, the formalization is _not_ optimized for efficiency, and in some cases may deviate from idiomatic Lean usage.
