@@ -122,11 +122,11 @@ lemma Sequence.equiv_example :
 
 
 /-- Exercise 5.2.1 -/
-theorem Sequence.equiv_of_cauchy {a b: ℕ → ℚ} (hab: Sequence.equiv a b) :
+theorem Sequence.cauchy_of_equiv {a b: ℕ → ℚ} (hab: Sequence.equiv a b) :
     (a:Sequence).isCauchy ↔ (b:Sequence).isCauchy := by sorry
 
 /-- Exercise 5.2.2 -/
-theorem Sequence.close_of_bounded {ε:ℚ} {a b: ℕ → ℚ} (hab: ε.eventually_close a b) :
+theorem Sequence.bounded_of_close {ε:ℚ} {a b: ℕ → ℚ} (hab: ε.eventually_close a b) :
     (a:Sequence).isBounded ↔ (b:Sequence).isBounded := by sorry
 
 end Chapter5
