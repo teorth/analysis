@@ -26,8 +26,8 @@ namespace Chapter6
 
 /-- Lemma 6.7.1 (Continuity of exponentiation) -/
 lemma ratPow_continuous {x α:ℝ} (hx: x > 0) {q: ℕ → ℚ}
- (hq: ((fun n ↦ (q n:ℝ)):Sequence).tendsTo α) :
- ((fun n ↦ x^(q n:ℝ)):Sequence).convergent := by
+ (hq: ((fun n ↦ (q n:ℝ)):Sequence).TendsTo α) :
+ ((fun n ↦ x^(q n:ℝ)):Sequence).Convergent := by
   -- This proof is rearranged slightly from the original text.
   obtain ⟨ M, hM, hbound ⟩ := Sequence.bounded_of_convergent ⟨ α, hq ⟩
   rcases lt_trichotomy x 1 with h | h | h
@@ -40,7 +40,7 @@ lemma ratPow_continuous {x α:ℝ} (hx: x > 0) {q: ℕ → ℚ}
   obtain ⟨ K, hK, hclose ⟩ := this
   replace hq := Sequence.Cauchy_of_convergent ⟨ α, hq ⟩ (1/(K+1:ℝ)) (by positivity)
   obtain ⟨ N, hN, hq ⟩ := hq
-  simp [Real.close_seq, Real.dist_eq] at hclose hK hN
+  simp [Real.CloseSeq, Real.dist_eq] at hclose hK hN
   lift N to ℕ using hN
   lift K to ℕ using hK
   specialize hclose K (by simp) (by simp)
@@ -49,7 +49,7 @@ lemma ratPow_continuous {x α:ℝ} (hx: x > 0) {q: ℕ → ℚ}
   intro n hn m hm
   simp at hn hm
   specialize hq n (by simp [hn]) m (by simp [hm])
-  simp [Real.close, hn, hm, Real.dist_eq] at hq ⊢
+  simp [Real.Close, hn, hm, Real.dist_eq] at hq ⊢
   have : 0 ≤ (N:ℤ) := by simp
   lift n to ℕ using (by linarith)
   lift m to ℕ using (by linarith)
@@ -94,12 +94,12 @@ lemma ratPow_continuous {x α:ℝ} (hx: x > 0) {q: ℕ → ℚ}
 
 
 lemma ratPow_lim_uniq {x α:ℝ} (hx: x > 0) {q q': ℕ → ℚ}
- (hq: ((fun n ↦ (q n:ℝ)):Sequence).tendsTo α)
- (hq': ((fun n ↦ (q' n:ℝ)):Sequence).tendsTo α) :
+ (hq: ((fun n ↦ (q n:ℝ)):Sequence).TendsTo α)
+ (hq': ((fun n ↦ (q' n:ℝ)):Sequence).TendsTo α) :
  lim ((fun n ↦ x^(q n:ℝ)):Sequence) = lim ((fun n ↦ x^(q' n:ℝ)):Sequence) := by
  -- This proof is written to follow the structure of the original text.
   set r := q - q'
-  suffices : (fun n ↦ x^(r n:ℝ):Sequence).tendsTo 1
+  suffices : (fun n ↦ x^(r n:ℝ):Sequence).TendsTo 1
   . rw [←mul_one (lim ((fun n ↦ x^(q' n:ℝ)):Sequence))]
     rw [Sequence.lim_eq] at this
     convert (Sequence.lim_mul (b := (fun n ↦ x^(r n:ℝ):Sequence)) (ratPow_continuous hx hq') this.1).2
@@ -128,7 +128,7 @@ lemma ratPow_lim_uniq {x α:ℝ} (hx: x > 0) {q q': ℕ → ℚ}
   specialize h4 K (by simp [K, hK1, hK2])
   simp [hn, Real.dist_eq, abs_le', K, hK1, hK2] at h3 h4 ⊢
   specialize hr n (by simp [hn])
-  simp [Real.close, hn, abs_le'] at hr
+  simp [Real.Close, hn, abs_le'] at hr
   rcases lt_trichotomy x 1 with h | h | h
   . sorry
   . simp [h]; linarith
@@ -141,7 +141,7 @@ lemma ratPow_lim_uniq {x α:ℝ} (hx: x > 0) {q q': ℕ → ℚ}
     simp [r, hK_coe]; linarith
   exact ⟨ by linarith, by linarith ⟩
 
-theorem Real.eq_lim_of_rat (α:ℝ) : ∃ q: ℕ → ℚ, ((fun n ↦ (q n:ℝ)):Sequence).tendsTo α := by
+theorem Real.eq_lim_of_rat (α:ℝ) : ∃ q: ℕ → ℚ, ((fun n ↦ (q n:ℝ)):Sequence).TendsTo α := by
   obtain ⟨ q, hcauchy, hLIM ⟩ := Chapter5.Real.eq_lim (Chapter5.Real.equivR.symm α)
   use q
   replace hcauchy := Sequence.lim_eq_LIM hcauchy
@@ -153,14 +153,14 @@ theorem Real.eq_lim_of_rat (α:ℝ) : ∃ q: ℕ → ℚ, ((fun n ↦ (q n:ℝ))
 noncomputable abbrev Real.rpow (x:ℝ) (α:ℝ) :ℝ := lim ((fun n ↦ x^((eq_lim_of_rat α).choose n:ℝ)):Sequence)
 
 lemma Real.rpow_eq_lim_ratPow {x α:ℝ} (hx: x > 0) {q: ℕ → ℚ}
- (hq: ((fun n ↦ (q n:ℝ)):Sequence).tendsTo α) :
+ (hq: ((fun n ↦ (q n:ℝ)):Sequence).TendsTo α) :
  rpow x α = lim ((fun n ↦ x^(q n:ℝ)):Sequence) := by
    apply ratPow_lim_uniq hx _ hq
    exact (eq_lim_of_rat α).choose_spec
 
 lemma Real.ratPow_tendsto_rpow {x α:ℝ} (hx: x > 0) {q: ℕ → ℚ}
- (hq: ((fun n ↦ (q n:ℝ)):Sequence).tendsTo α) :
- ((fun n ↦ x^(q n:ℝ)):Sequence).tendsTo (rpow x α) := by
+ (hq: ((fun n ↦ (q n:ℝ)):Sequence).TendsTo α) :
+ ((fun n ↦ x^(q n:ℝ)):Sequence).TendsTo (rpow x α) := by
   rw [Sequence.lim_eq]
   exact ⟨ ratPow_continuous hx hq, (Real.rpow_eq_lim_ratPow hx hq).symm ⟩
 
@@ -180,7 +180,7 @@ theorem Real.ratPow_add {x:ℝ} (hx: x > 0) (q r:ℝ) : rpow x (q+r) = rpow x q 
   obtain ⟨ r', hr' ⟩ := eq_lim_of_rat r
   have hq'r' := Sequence.tendsTo_add hq' hr'
   rw [Sequence.add_coe] at hq'r'
-  convert_to ((fun n ↦ ((q' n + r' n:ℚ):ℝ)):Sequence).tendsTo (q + r) at hq'r'
+  convert_to ((fun n ↦ ((q' n + r' n:ℚ):ℝ)):Sequence).TendsTo (q + r) at hq'r'
   . rcongr _ n; simp
   have h1 := ratPow_continuous hx hq'
   have h2 := ratPow_continuous hx hr'

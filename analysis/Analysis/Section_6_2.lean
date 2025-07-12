@@ -30,12 +30,12 @@ theorem EReal.real_neq_neg_infty (x:ℝ) : (x:EReal) ≠ ⊥ := coe_ne_bot _
 
 theorem EReal.infty_neq_neg_infty : (⊤:EReal) ≠ (⊥:EReal) :=  add_top_iff_ne_bot.mp rfl
 
-abbrev EReal.isFinite (x:EReal) : Prop := ∃ (y:Real), y = x
+abbrev EReal.IsFinite (x:EReal) : Prop := ∃ (y:Real), y = x
 
-abbrev EReal.isInfinite (x:EReal) : Prop := x = ⊤ ∨ x = ⊥
+abbrev EReal.IsInfinite (x:EReal) : Prop := x = ⊤ ∨ x = ⊥
 
-theorem EReal.infinite_iff_not_finite (x:EReal): x.isInfinite ↔ ¬ x.isFinite := by
-  unfold isFinite isInfinite
+theorem EReal.infinite_iff_not_finite (x:EReal): x.IsInfinite ↔ ¬ x.IsFinite := by
+  unfold IsFinite IsInfinite
   rcases EReal.def x with h | h | h
   all_goals simp [h]
   obtain ⟨ y, rfl ⟩ := h

@@ -100,11 +100,11 @@ end Chapter5
 /--
 A slight generalization of 5.1.3 - definition of ε-steadiness for a sequence with an arbitrary starting point n₀
 -/
-abbrev Rat.steady (ε: ℚ) (a: Chapter5.Sequence) : Prop :=
-  ∀ n ≥ a.n₀, ∀ m ≥ a.n₀, ε.close (a n) (a m)
+abbrev Rat.Steady (ε: ℚ) (a: Chapter5.Sequence) : Prop :=
+  ∀ n ≥ a.n₀, ∀ m ≥ a.n₀, ε.Close (a n) (a m)
 
 lemma Rat.steady_def (ε: ℚ) (a: Chapter5.Sequence) :
-  ε.steady a ↔ ∀ n ≥ a.n₀, ∀ m ≥ a.n₀, ε.close (a n) (a m) := by rfl
+  ε.Steady a ↔ ∀ n ≥ a.n₀, ∀ m ≥ a.n₀, ε.Close (a n) (a m) := by rfl
 
 namespace Chapter5
 
@@ -112,7 +112,7 @@ namespace Chapter5
 5.1.3 - definition of ε-steadiness for a sequence starting at 0
 -/
 lemma Rat.isSteady_of_coe (ε : ℚ) (a:ℕ → ℚ) :
-    ε.steady a ↔ ∀ n m : ℕ, ε.close (a n) (a m) := by
+    ε.Steady a ↔ ∀ n m : ℕ, ε.Close (a n) (a m) := by
   constructor
   · intro h n m
     specialize h n (by simp) m (by simp)
@@ -126,38 +126,38 @@ lemma Rat.isSteady_of_coe (ε : ℚ) (a:ℕ → ℚ) :
 Not in textbook: the sequence 2, 2 ... is 1-steady
 Intended as a demonstration of `Rat.isSteady_of_coe`
 -/
-example : (1:ℚ).steady ((fun _:ℕ ↦ (3:ℚ)):Sequence) := by
-  simp [Rat.isSteady_of_coe, Rat.close]
+example : (1:ℚ).Steady ((fun _:ℕ ↦ (3:ℚ)):Sequence) := by
+  simp [Rat.isSteady_of_coe, Rat.Close]
 
 /--
 Compare: if you need to work with `Rat.steady` on the coercion directly, there will be side conditions `hn : n ≥ 0` and `hm : m ≥ 0` that you will need to deal with.
 -/
-example : (1:ℚ).steady ( (fun _:ℕ ↦ (3:ℚ)):Sequence) := by
-  unfold Rat.steady Rat.close
+example : (1:ℚ).Steady ( (fun _:ℕ ↦ (3:ℚ)):Sequence) := by
+  unfold Rat.Steady Rat.Close
   intro n hn m hm
   simp_all [Sequence.n0_coe, Sequence.eval_coe_at_int]
 
 /-- Example 5.1.5 -/
-example : (1:ℚ).steady ((fun n:ℕ ↦ if Even n then (1:ℚ) else (0:ℚ)):Sequence) := by sorry
+example : (1:ℚ).Steady ((fun n:ℕ ↦ if Even n then (1:ℚ) else (0:ℚ)):Sequence) := by sorry
 
 /-- Example 5.1.5 -/
-example : ¬ (0.5:ℚ).steady ((fun n:ℕ ↦ if Even n then (1:ℚ) else (0:ℚ)):Sequence) := by sorry
+example : ¬ (0.5:ℚ).Steady ((fun n:ℕ ↦ if Even n then (1:ℚ) else (0:ℚ)):Sequence) := by sorry
 
 /-- Example 5.1.5 -/
-example : (0.1:ℚ).steady ((fun n:ℕ ↦ (10:ℚ) ^ (-(n:ℤ)-1) ):Sequence) := by sorry
+example : (0.1:ℚ).Steady ((fun n:ℕ ↦ (10:ℚ) ^ (-(n:ℤ)-1) ):Sequence) := by sorry
 
 /-- Example 5.1.5 -/
-example : ¬(0.01:ℚ).steady ((fun n:ℕ ↦ (10:ℚ) ^ (-(n:ℤ)-1) ):Sequence) := by sorry
+example : ¬(0.01:ℚ).Steady ((fun n:ℕ ↦ (10:ℚ) ^ (-(n:ℤ)-1) ):Sequence) := by sorry
 
 /-- Example 5.1.5 -/
-example (ε:ℚ) : ¬ ε.steady ((fun n:ℕ ↦ (2 ^ (n+1):ℚ) ):Sequence) := by sorry
+example (ε:ℚ) : ¬ ε.Steady ((fun n:ℕ ↦ (2 ^ (n+1):ℚ) ):Sequence) := by sorry
 
 /-- Example 5.1.5 -/
-example (ε:ℚ) (hε: ε>0) : ε.steady ((fun _:ℕ ↦ (2:ℚ) ):Sequence) := by sorry
+example (ε:ℚ) (hε: ε>0) : ε.Steady ((fun _:ℕ ↦ (2:ℚ) ):Sequence) := by sorry
 
-example : (10:ℚ).steady ((fun n:ℕ ↦ if n = 0 then (10:ℚ) else (0:ℚ)):Sequence) := by sorry
+example : (10:ℚ).Steady ((fun n:ℕ ↦ if n = 0 then (10:ℚ) else (0:ℚ)):Sequence) := by sorry
 
-example (ε:ℚ) (hε:ε<10):  ¬ ε.steady ((fun n:ℕ ↦ if n = 0 then (10:ℚ) else (0:ℚ)):Sequence) := by
+example (ε:ℚ) (hε:ε<10):  ¬ ε.Steady ((fun n:ℕ ↦ if n = 0 then (10:ℚ) else (0:ℚ)):Sequence) := by
   sorry
 
 variable (n₁ n₀ : ℤ)
@@ -179,18 +179,18 @@ end Chapter5
 
 /-- Definition 5.1.6 (Eventually ε-steady) -/
 abbrev Rat.eventuallySteady (ε: ℚ) (a: Chapter5.Sequence) : Prop :=
-  ∃ N ≥ a.n₀, ε.steady (a.from N)
+  ∃ N ≥ a.n₀, ε.Steady (a.from N)
 
 lemma Rat.eventuallySteady_def (ε: ℚ) (a: Chapter5.Sequence) :
-  ε.eventuallySteady a ↔ ∃ N ≥ a.n₀, ε.steady (a.from N) := by rfl
+  ε.eventuallySteady a ↔ ∃ N ≥ a.n₀, ε.Steady (a.from N) := by rfl
 
 namespace Chapter5
 
 
 /-- Example 5.1.7 -/
-lemma Sequence.ex_5_1_7_a : ¬ (0.1:ℚ).steady ((fun n:ℕ ↦ (n+1:ℚ)⁻¹ ):Sequence) := by sorry
+lemma Sequence.ex_5_1_7_a : ¬ (0.1:ℚ).Steady ((fun n:ℕ ↦ (n+1:ℚ)⁻¹ ):Sequence) := by sorry
 
-lemma Sequence.ex_5_1_7_b : (0.1:ℚ).steady (((fun n:ℕ ↦ (n+1:ℚ)⁻¹ ):Sequence).from 10) := by
+lemma Sequence.ex_5_1_7_b : (0.1:ℚ).Steady (((fun n:ℕ ↦ (n+1:ℚ)⁻¹ ):Sequence).from 10) := by
   sorry
 
 lemma Sequence.ex_5_1_7_c : (0.1:ℚ).eventuallySteady ((fun n:ℕ ↦ (n+1:ℚ)⁻¹ ):Sequence) := by
@@ -218,12 +218,12 @@ noncomputable def Sequence.sqrt_two : Sequence :=
 /--
   Example 5.1.10. (This requires extensive familiarity with Mathlib's API for the real numbers.)
 -/
-theorem Sequence.ex_5_1_10_a : (1:ℚ).steady sqrt_two := by sorry
+theorem Sequence.ex_5_1_10_a : (1:ℚ).Steady sqrt_two := by sorry
 
 /--
   Example 5.1.10. (This requires extensive familiarity with Mathlib's API for the real numbers.)
 -/
-theorem Sequence.ex_5_1_10_b : (0.1:ℚ).steady (sqrt_two.from 1) := by sorry
+theorem Sequence.ex_5_1_10_b : (0.1:ℚ).Steady (sqrt_two.from 1) := by sorry
 
 theorem Sequence.ex_5_1_10_c : (0.1:ℚ).eventuallySteady sqrt_two := by sorry
 

@@ -18,7 +18,7 @@ Main constructions and results of this section:
 
 namespace Chapter6
 
-theorem Sequence.lim_of_const (c:ℝ) :  ((fun (n:ℕ) ↦ c):Sequence).tendsTo c := by sorry
+theorem Sequence.lim_of_const (c:ℝ) :  ((fun (n:ℕ) ↦ c):Sequence).TendsTo c := by sorry
 
 instance Sequence.inst_pow: Pow Sequence ℕ where
   pow a k := {
@@ -50,15 +50,15 @@ lemma Sequence.pow_succ (a:Sequence) (k:ℕ) : a^(k+1) = a^k * a := by
 
 /-- Corollary 6.5.1 -/
 theorem Sequence.lim_of_power_decay {k:ℕ} :
-    ((fun (n:ℕ) ↦ 1/((n:ℝ)+1)^(1/(k+1:ℝ))):Sequence).tendsTo 0 := by
+    ((fun (n:ℕ) ↦ 1/((n:ℝ)+1)^(1/(k+1:ℝ))):Sequence).TendsTo 0 := by
   -- This proof is written to follow the structure of the original text.
   set a := ((fun (n:ℕ) ↦ 1/((n:ℝ)+1)^(1/(k+1:ℝ))):Sequence)
-  have ha : a.bddBelow := by
+  have ha : a.BddBelow := by
     use 0
     intro n hn
     simp [a]
     positivity
-  have ha' : a.isAntitone := by
+  have ha' : a.IsAntitone := by
     intro n hn
     simp [a] at hn ⊢
     have hn' : 0 ≤ n+1 := by linarith
@@ -67,7 +67,7 @@ theorem Sequence.lim_of_power_decay {k:ℕ} :
         Real.rpow_le_rpow_iff  (by positivity) (by positivity) (by positivity)]
     simp [hn]
   replace ha' := convergent_of_antitone ha ha'
-  have hpow (n:ℕ): (a^(n+1)).convergent ∧ lim (a^(n+1)) = (lim a)^(n+1) := by
+  have hpow (n:ℕ): (a^(n+1)).Convergent ∧ lim (a^(n+1)) = (lim a)^(n+1) := by
     induction' n with n ih
     . simp only [zero_add, pow_one, _root_.pow_one, ha', true_and]
     rw [pow_succ]
@@ -87,31 +87,31 @@ theorem Sequence.lim_of_power_decay {k:ℕ} :
   simp only [lim_eq, ha', true_and, pow_eq_zero hlim]
 
 /-- Lemma 6.5.2 / Exercise 6.5.2 -/
-theorem Sequence.lim_of_geometric {x:ℝ} (hx: |x| < 1) : ((fun (n:ℕ) ↦ x^n):Sequence).tendsTo 0 := by
+theorem Sequence.lim_of_geometric {x:ℝ} (hx: |x| < 1) : ((fun (n:ℕ) ↦ x^n):Sequence).TendsTo 0 := by
   sorry
 
 /-- Lemma 6.5.2 / Exercise 6.5.2 -/
-theorem Sequence.lim_of_geometric' {x:ℝ} (hx: x = 1) : ((fun (n:ℕ) ↦ x^n):Sequence).tendsTo 1 := by
+theorem Sequence.lim_of_geometric' {x:ℝ} (hx: x = 1) : ((fun (n:ℕ) ↦ x^n):Sequence).TendsTo 1 := by
   sorry
 
 /-- Lemma 6.5.2 / Exercise 6.5.2 -/
 theorem Sequence.lim_of_geometric'' {x:ℝ} (hx: x = -1 ∨ |x| > 1) :
-    ((fun (n:ℕ) ↦ x^n):Sequence).divergent := by
+    ((fun (n:ℕ) ↦ x^n):Sequence).Divergent := by
   sorry
 
 /-- Lemma 6.5.3 / Exercise 6.5.3 -/
 theorem Sequence.lim_of_roots {x:ℝ} (hx: x > 0) :
-    ((fun (n:ℕ) ↦ x^(1/(n+1:ℝ))):Sequence).tendsTo 1 := by
+    ((fun (n:ℕ) ↦ x^(1/(n+1:ℝ))):Sequence).TendsTo 1 := by
   sorry
 
 /-- Exercise 6.5.1 -/
 theorem Sequence.lim_of_rat_power_decay {q:ℚ} (hq: q > 0) :
-    (fun (n:ℕ) ↦ 1/((n+1:ℝ)^(q:ℝ)):Sequence).tendsTo 0 := by
+    (fun (n:ℕ) ↦ 1/((n+1:ℝ)^(q:ℝ)):Sequence).TendsTo 0 := by
   sorry
 
 /-- Exercise 6.5.1 -/
 theorem Sequence.lim_of_rat_power_growth {q:ℚ} (hq: q > 0) :
-    (fun (n:ℕ) ↦ ((n+1:ℝ)^(q:ℝ)):Sequence).divergent := by
+    (fun (n:ℕ) ↦ ((n+1:ℝ)^(q:ℝ)):Sequence).Divergent := by
   sorry
 
 

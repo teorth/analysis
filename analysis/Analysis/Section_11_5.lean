@@ -39,7 +39,7 @@ theorem integ_of_uniform_cts {I: BoundedInterval} {f:ℝ → ℝ} (hf: UniformCo
     rw [UniformContinuousOn.iff] at hf
     specialize hf ε hε
     obtain ⟨ δ, hδ, hf ⟩ := hf
-    simp [Real.close, Real.dist_eq] at hf
+    simp [Real.Close, Real.dist_eq] at hf
     obtain ⟨ N, hN ⟩ :=exists_nat_gt ((b-a)/δ)
     have hNpos : 0 < N := by
       have : 0 < (b-a)/δ := by positivity

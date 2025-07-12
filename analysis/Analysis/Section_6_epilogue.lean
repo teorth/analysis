@@ -41,7 +41,7 @@ theorem Chapter6.Sequence.Cauchy_iff_CauchySeq (a: ℕ → ℝ) :
 
 /-- Identification with `Filter.Tendsto` -/
 theorem Chapter6.Sequence.tendsto_iff_Tendsto (a: ℕ → ℝ) (L:ℝ) :
-    (a:Sequence).tendsTo L ↔ Filter.Tendsto a Filter.atTop (nhds L) := by
+    (a:Sequence).TendsTo L ↔ Filter.Tendsto a Filter.atTop (nhds L) := by
   rw [Metric.tendsto_atTop, tendsTo_iff]
   constructor
   . intro h ε hε
@@ -64,7 +64,7 @@ theorem Chapter6.Sequence.tendsto_iff_Tendsto (a: ℕ → ℝ) (L:ℝ) :
   simp [hpos, ←Real.dist_eq]
   exact le_of_lt hN
 
-theorem Chapter6.Sequence.tendsto_iff_Tendsto' (a: Sequence) (L:ℝ) : a.tendsTo L ↔ Filter.Tendsto a.seq Filter.atTop (nhds L) := by
+theorem Chapter6.Sequence.tendsto_iff_Tendsto' (a: Sequence) (L:ℝ) : a.TendsTo L ↔ Filter.Tendsto a.seq Filter.atTop (nhds L) := by
   rw [Metric.tendsto_atTop, tendsTo_iff]
   constructor
   . intro h ε hε
@@ -86,10 +86,10 @@ theorem Chapter6.Sequence.tendsto_iff_Tendsto' (a: Sequence) (L:ℝ) : a.tendsTo
   exact le_of_lt hN
 
 theorem Chapter6.Sequence.converges_iff_Tendsto (a: ℕ → ℝ) :
-    (a:Sequence).convergent ↔ ∃ L, Filter.Tendsto a Filter.atTop (nhds L) := by
+    (a:Sequence).Convergent ↔ ∃ L, Filter.Tendsto a Filter.atTop (nhds L) := by
   simp_rw [←tendsto_iff_Tendsto]
 
-theorem Chapter6.Sequence.converges_iff_Tendsto' (a: Sequence) : a.convergent ↔ ∃ L, Filter.Tendsto a.seq Filter.atTop (nhds L) := by
+theorem Chapter6.Sequence.converges_iff_Tendsto' (a: Sequence) : a.Convergent ↔ ∃ L, Filter.Tendsto a.seq Filter.atTop (nhds L) := by
   simp_rw [←tendsto_iff_Tendsto']
 
 /-- A technicality: `CauSeq.IsComplete ℝ` was established for `_root_.abs` but not for `norm`. -/
@@ -108,7 +108,7 @@ theorem Chapter6.Sequence.lim_eq_CauSeq_lim (a:ℕ → ℝ) (ha: (a:Sequence).Is
 
 /-- Identification with `Bornology.IsBounded` -/
 theorem Chapter6.Sequence.isBounded_iff_isBounded_range (a:ℕ → ℝ):
-    (a:Sequence).isBounded ↔ Bornology.IsBounded (Set.range a) := by
+    (a:Sequence).IsBounded ↔ Bornology.IsBounded (Set.range a) := by
   simp [isBounded_def, BoundedBy_def, Metric.isBounded_iff]
   constructor
   . intro h
@@ -145,18 +145,18 @@ theorem Chapter6.Sequence.inf_eq_sInf (a:ℕ → ℝ):
     (a:Sequence).inf = sInf (Set.range (fun n ↦ (a n:EReal))) := by sorry
 
 theorem Chapter6.Sequence.bddAbove_iff (a:ℕ → ℝ):
-    (a:Sequence).bddAbove ↔ BddAbove (Set.range a) := by sorry
+    (a:Sequence).BddAbove ↔ _root_.BddAbove (Set.range a) := by sorry
 
 theorem Chapter6.Sequence.bddBelow_iff (a:ℕ → ℝ):
-    (a:Sequence).bddBelow ↔ BddBelow (Set.range a) := by sorry
+    (a:Sequence).BddBelow ↔ _root_.BddBelow (Set.range a) := by sorry
 
-theorem Chapter6.Sequence.Monotone_iff (a:ℕ → ℝ): (a:Sequence).isMonotone ↔ Monotone a := by sorry
+theorem Chapter6.Sequence.Monotone_iff (a:ℕ → ℝ): (a:Sequence).IsMonotone ↔ Monotone a := by sorry
 
-theorem Chapter6.Sequence.Antitone_iff (a:ℕ → ℝ): (a:Sequence).isAntitone ↔ Antitone a := by sorry
+theorem Chapter6.Sequence.Antitone_iff (a:ℕ → ℝ): (a:Sequence).IsAntitone ↔ Antitone a := by sorry
 
 /-- Identification with `MapClusterPt` -/
 theorem Chapter6.Sequence.limit_point_iff (a:ℕ → ℝ) (L:ℝ) :
-    (a:Sequence).limit_point L ↔ MapClusterPt L Filter.atTop a := by
+    (a:Sequence).LimitPoint L ↔ MapClusterPt L Filter.atTop a := by
   simp_rw [limit_point_def, mapClusterPt_iff_frequently,
            Filter.frequently_atTop, Metric.mem_nhds_iff]
   constructor

@@ -23,13 +23,13 @@ Main constructions and results of this section:
 /- Definition 6.1.1 (Distance).  Here we use the Mathlib distance. -/
 #check Real.dist_eq
 
-abbrev Real.close (ε x y : ℝ) : Prop := dist x y ≤ ε
+abbrev Real.Close (ε x y : ℝ) : Prop := dist x y ≤ ε
 
 /--
   Definition 6.1.2 (ε-close). This is similar to the previous notion of ε-closeness, but where
   all quantities are real instead of rational.
 -/
-theorem Real.close_def (ε x y : ℝ) : ε.close x y ↔ dist x y ≤ ε := by rfl
+theorem Real.close_def (ε x y : ℝ) : ε.Close x y ↔ dist x y ≤ ε := by rfl
 
 namespace Chapter6
 
@@ -92,36 +92,36 @@ lemma Sequence.from_eval (a:Sequence) {m₁ n:ℤ} (hn: n ≥ m₁) :
 end Chapter6
 
 /-- Definition 6.1.3 (ε-steady) -/
-abbrev Real.steady (ε: ℝ) (a: Chapter6.Sequence) : Prop :=
-  ∀ n ≥ a.m, ∀ m ≥ a.m, ε.close (a n) (a m)
+abbrev Real.Steady (ε: ℝ) (a: Chapter6.Sequence) : Prop :=
+  ∀ n ≥ a.m, ∀ m ≥ a.m, ε.Close (a n) (a m)
 
 /-- Definition 6.1.3 (ε-steady) -/
 lemma Real.steady_def (ε: ℝ) (a: Chapter6.Sequence) :
-  ε.steady a ↔ ∀ n ≥ a.m, ∀ m ≥ a.m, ε.close (a n) (a m) := by rfl
+  ε.Steady a ↔ ∀ n ≥ a.m, ∀ m ≥ a.m, ε.Close (a n) (a m) := by rfl
 
 /-- Definition 6.1.3 (Eventually ε-steady) -/
-abbrev Real.eventuallySteady (ε: ℝ) (a: Chapter6.Sequence) : Prop :=
-  ∃ N ≥ a.m, ε.steady (a.from N)
+abbrev Real.EventuallySteady (ε: ℝ) (a: Chapter6.Sequence) : Prop :=
+  ∃ N ≥ a.m, ε.Steady (a.from N)
 
 /-- Definition 6.1.3 (Eventually ε-steady) -/
 lemma Real.eventuallySteady_def (ε: ℝ) (a: Chapter6.Sequence) :
-  ε.eventuallySteady a ↔ ∃ N, (N ≥ a.m) ∧ ε.steady (a.from N) := by rfl
+  ε.EventuallySteady a ↔ ∃ N, (N ≥ a.m) ∧ ε.Steady (a.from N) := by rfl
 
-theorem Real.steady_mono {a: Chapter6.Sequence} {ε₁ ε₂: ℝ} (hε: ε₁ ≤ ε₂) (hsteady: ε₁.steady a) :
-    ε₂.steady a := by sorry
+theorem Real.steady_mono {a: Chapter6.Sequence} {ε₁ ε₂: ℝ} (hε: ε₁ ≤ ε₂) (hsteady: ε₁.Steady a) :
+    ε₂.Steady a := by sorry
 
 theorem Real.eventuallySteady_mono {a: Chapter6.Sequence} {ε₁ ε₂: ℝ} (hε: ε₁ ≤ ε₂)
-  (hsteady: ε₁.eventuallySteady a) :
-    ε₂.eventuallySteady a := by sorry
+  (hsteady: ε₁.EventuallySteady a) :
+    ε₂.EventuallySteady a := by sorry
 
 namespace Chapter6
 
 /-- Definition 6.1.3 (Cauchy sequence) -/
-abbrev Sequence.IsCauchy (a:Sequence) : Prop := ∀ ε > (0:ℝ), ε.eventuallySteady a
+abbrev Sequence.IsCauchy (a:Sequence) : Prop := ∀ ε > (0:ℝ), ε.EventuallySteady a
 
 /-- Definition 6.1.3 (Cauchy sequence) -/
 lemma Sequence.isCauchy_def (a:Sequence) :
-  a.IsCauchy ↔ ∀ ε > (0:ℝ), ε.eventuallySteady a := by rfl
+  a.IsCauchy ↔ ∀ ε > (0:ℝ), ε.EventuallySteady a := by rfl
 
 lemma Sequence.isCauchy_of_coe (a:ℕ → ℝ) :
     (a:Sequence).IsCauchy ↔ ∀ ε > 0, ∃ N, ∀ j ≥ N, ∀ k ≥ N, dist (a j) (a k) ≤ ε := by sorry
@@ -148,10 +148,10 @@ instance Chapter5.Sequence.inst_coe_sequence : Coe Chapter5.Sequence Sequence  w
 theorem Chapter5.coe_sequence_eval (a: Chapter5.Sequence) (n:ℤ) : (a:Sequence) n = (a n:ℝ) := rfl
 
 theorem Sequence.is_steady_of_rat (ε:ℚ) (a: Chapter5.Sequence) :
-    ε.steady a ↔ (ε:ℝ).steady (a:Sequence) := by sorry
+    ε.Steady a ↔ (ε:ℝ).Steady (a:Sequence) := by sorry
 
 theorem Sequence.is_eventuallySteady_of_rat (ε:ℚ) (a: Chapter5.Sequence) :
-    ε.eventuallySteady a ↔ (ε:ℝ).eventuallySteady (a:Sequence) := by sorry
+    ε.eventuallySteady a ↔ (ε:ℝ).EventuallySteady (a:Sequence) := by sorry
 
 /-- Proposition 6.1.4 -/
 theorem Sequence.isCauchy_of_rat (a: Chapter5.Sequence) : a.IsCauchy ↔ (a:Sequence).IsCauchy := by
@@ -177,23 +177,23 @@ theorem Sequence.isCauchy_of_rat (a: Chapter5.Sequence) : a.IsCauchy ↔ (a:Sequ
 end Chapter6
 
 /-- Definition 6.1.5 -/
-abbrev Real.close_seq (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) : Prop := ∀ n ≥ a.m, ε.close (a n) L
+abbrev Real.CloseSeq (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) : Prop := ∀ n ≥ a.m, ε.Close (a n) L
 
 /-- Definition 6.1.5 -/
 theorem Real.close_seq_def (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) :
-  ε.close_seq a L ↔ ∀ n ≥ a.m, dist (a n) L ≤ ε := by rfl
+  ε.CloseSeq a L ↔ ∀ n ≥ a.m, dist (a n) L ≤ ε := by rfl
 
 /-- Definition 6.1.5 -/
 abbrev Real.eventually_close (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) : Prop :=
-  ∃ N ≥ a.m, ε.close_seq (a.from N) L
+  ∃ N ≥ a.m, ε.CloseSeq (a.from N) L
 
 /-- Definition 6.1.5 -/
 theorem Real.eventually_close_def (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) :
-  ε.eventually_close a L ↔ ∃ N, (N ≥ a.m) ∧ ε.close_seq (a.from N) L := by rfl
+  ε.eventually_close a L ↔ ∃ N, (N ≥ a.m) ∧ ε.CloseSeq (a.from N) L := by rfl
 
 theorem Real.close_seq_mono {a: Chapter6.Sequence} {ε₁ ε₂ L: ℝ} (hε: ε₁ ≤ ε₂)
-  (hclose: ε₁.close_seq a L) :
-    ε₂.close_seq a L := by sorry
+  (hclose: ε₁.CloseSeq a L) :
+    ε₂.CloseSeq a L := by sorry
 
 theorem Real.eventually_close_mono {a: Chapter6.Sequence} {ε₁ ε₂ L: ℝ} (hε: ε₁ ≤ ε₂)
   (hclose: ε₁.eventually_close a L) :
@@ -201,33 +201,33 @@ theorem Real.eventually_close_mono {a: Chapter6.Sequence} {ε₁ ε₂ L: ℝ} (
 
 namespace Chapter6
 
-abbrev Sequence.tendsTo (a:Sequence) (L:ℝ) : Prop :=
+abbrev Sequence.TendsTo (a:Sequence) (L:ℝ) : Prop :=
   ∀ ε > (0:ℝ), ε.eventually_close a L
 
 theorem Sequence.tendsTo_def (a:Sequence) (L:ℝ) :
-  a.tendsTo L ↔ ∀ ε > (0:ℝ), ε.eventually_close a L := by rfl
+  a.TendsTo L ↔ ∀ ε > (0:ℝ), ε.eventually_close a L := by rfl
 
 /-- Exercise 6.1.2 -/
 theorem Sequence.tendsTo_iff (a:Sequence) (L:ℝ) :
-  a.tendsTo L ↔ ∀ ε > 0, ∃ N, ∀ n ≥ N, |a n - L| ≤ ε := by sorry
+  a.TendsTo L ↔ ∀ ε > 0, ∃ N, ∀ n ≥ N, |a n - L| ≤ ε := by sorry
 
 noncomputable abbrev seq_6_1_6 : Sequence := (fun (n:ℕ) ↦ 1-(10:ℝ)^(-(n:ℤ)-1):Sequence)
 
 /-- Examples 6.1.6 -/
-example : (0.1:ℝ).close_seq seq_6_1_6 1 := by sorry
+example : (0.1:ℝ).CloseSeq seq_6_1_6 1 := by sorry
 
 /-- Examples 6.1.6 -/
-example : ¬ (0.01:ℝ).close_seq seq_6_1_6 1 := by sorry
+example : ¬ (0.01:ℝ).CloseSeq seq_6_1_6 1 := by sorry
 
 /-- Examples 6.1.6 -/
 example : (0.01:ℝ).eventually_close seq_6_1_6 1 := by sorry
 
 /-- Examples 6.1.6 -/
-example : seq_6_1_6.tendsTo 1 := by sorry
+example : seq_6_1_6.TendsTo 1 := by sorry
 
 /-- Proposition 6.1.7 (Uniqueness of limits) -/
 theorem Sequence.tendsTo_unique (a:Sequence) {L L':ℝ} (h:L ≠ L') :
-    ¬ (a.tendsTo L ∧ a.tendsTo L') := by
+    ¬ (a.TendsTo L ∧ a.TendsTo L') := by
   -- This proof is written to follow the structure of the original text.
   by_contra this
   obtain ⟨ hL, hL' ⟩ := this
@@ -255,36 +255,36 @@ theorem Sequence.tendsTo_unique (a:Sequence) {L L':ℝ} (h:L ≠ L') :
   linarith
 
 /-- Definition 6.1.8 -/
-abbrev Sequence.convergent (a:Sequence) : Prop := ∃ L, a.tendsTo L
+abbrev Sequence.Convergent (a:Sequence) : Prop := ∃ L, a.TendsTo L
 
 /-- Definition 6.1.8 -/
-theorem Sequence.convergent_def (a:Sequence) : a.convergent ↔ ∃ L, a.tendsTo L := by rfl
+theorem Sequence.convergent_def (a:Sequence) : a.Convergent ↔ ∃ L, a.TendsTo L := by rfl
 
 /-- Definition 6.1.8 -/
-abbrev Sequence.divergent (a:Sequence) : Prop := ¬ a.convergent
+abbrev Sequence.Divergent (a:Sequence) : Prop := ¬ a.Convergent
 
 /-- Definition 6.1.8 -/
-theorem Sequence.divergent_def (a:Sequence) : a.divergent ↔ ¬ a.convergent := by rfl
+theorem Sequence.divergent_def (a:Sequence) : a.Divergent ↔ ¬ a.Convergent := by rfl
 
 open Classical in
 /--
   Definition 6.1.8.  We give the limit of a sequence the junk value of 0 if it is not convergent.
 -/
-noncomputable abbrev lim (a:Sequence) : ℝ := if h: a.convergent then h.choose else 0
+noncomputable abbrev lim (a:Sequence) : ℝ := if h: a.Convergent then h.choose else 0
 
 /-- Definition 6.1.8 -/
-theorem Sequence.lim_def {a:Sequence} (h: a.convergent) : a.tendsTo (lim a) := by
+theorem Sequence.lim_def {a:Sequence} (h: a.Convergent) : a.TendsTo (lim a) := by
   unfold lim
   simp [h]
   convert h.choose_spec
 
 /-- Definition 6.1.8-/
 theorem Sequence.lim_eq {a:Sequence} {L:ℝ} :
-a.tendsTo L ↔ a.convergent ∧ lim a = L := by
+a.TendsTo L ↔ a.Convergent ∧ lim a = L := by
   constructor
   . intro h
     by_contra! eq
-    have : a.convergent := by rw [convergent_def]; use L
+    have : a.Convergent := by rw [convergent_def]; use L
     replace eq := a.tendsTo_unique (eq this)
     replace this := lim_def this
     tauto
@@ -295,7 +295,7 @@ a.tendsTo L ↔ a.convergent ∧ lim a = L := by
 
 /-- Proposition 6.1.11 -/
 theorem Sequence.lim_harmonic :
-    ((fun (n:ℕ) ↦ (n+1:ℝ)⁻¹):Sequence).convergent ∧ lim ((fun (n:ℕ) ↦ (n+1:ℝ)⁻¹):Sequence) = 0 := by
+    ((fun (n:ℕ) ↦ (n+1:ℝ)⁻¹):Sequence).Convergent ∧ lim ((fun (n:ℕ) ↦ (n+1:ℝ)⁻¹):Sequence) = 0 := by
   -- This proof is written to follow the structure of the original text.
   rw [←lim_eq, tendsTo_iff]
   intro ε hε
@@ -323,21 +323,21 @@ theorem Sequence.lim_harmonic :
       assumption
 
 /-- Proposition 6.1.12 / Exercise 6.1.5 -/
-theorem Sequence.Cauchy_of_convergent {a:Sequence} (h:a.convergent) : a.IsCauchy := by
+theorem Sequence.Cauchy_of_convergent {a:Sequence} (h:a.Convergent) : a.IsCauchy := by
   sorry
 
 /-- Example 6.1.13 -/
-example : ¬ (0.1:ℝ).eventuallySteady ((fun n ↦ (-1:ℝ)^n):Sequence) := by sorry
+example : ¬ (0.1:ℝ).EventuallySteady ((fun n ↦ (-1:ℝ)^n):Sequence) := by sorry
 
 /-- Example 6.1.13 -/
 example : ¬ ((fun n ↦ (-1:ℝ)^n):Sequence).IsCauchy := by sorry
 
 /-- Example 6.1.13 -/
-example : ¬ ((fun n ↦ (-1:ℝ)^n):Sequence).convergent := by sorry
+example : ¬ ((fun n ↦ (-1:ℝ)^n):Sequence).Convergent := by sorry
 
 /-- Proposition 6.1.15 / Exercise 6.1.6 (Formal limits are genuine limits)-/
 theorem Sequence.lim_eq_LIM {a:ℕ → ℚ} (h: (a:Chapter5.Sequence).IsCauchy) :
-    ((a:Chapter5.Sequence):Sequence).tendsTo (Chapter5.Real.equivR (Chapter5.LIM a)) := by sorry
+    ((a:Chapter5.Sequence):Sequence).TendsTo (Chapter5.Real.equivR (Chapter5.LIM a)) := by sorry
 
 /-- Definition 6.1.16 -/
 abbrev Sequence.BoundedBy (a:Sequence) (M:ℝ) : Prop :=
@@ -348,24 +348,24 @@ lemma Sequence.BoundedBy_def (a:Sequence) (M:ℝ) :
   a.BoundedBy M ↔ ∀ n, |a n| ≤ M := by rfl
 
 /-- Definition 6.1.16 -/
-abbrev Sequence.isBounded (a:Sequence) : Prop := ∃ M ≥ 0, a.BoundedBy M
+abbrev Sequence.IsBounded (a:Sequence) : Prop := ∃ M ≥ 0, a.BoundedBy M
 
 /-- Definition 6.1.16 -/
 lemma Sequence.isBounded_def (a:Sequence) :
-  a.isBounded ↔ ∃ M ≥ 0, a.BoundedBy M := by rfl
+  a.IsBounded ↔ ∃ M ≥ 0, a.BoundedBy M := by rfl
 
-theorem Sequence.bounded_of_cauchy {a:Sequence} (h: a.IsCauchy) : a.isBounded := by
+theorem Sequence.bounded_of_cauchy {a:Sequence} (h: a.IsCauchy) : a.IsBounded := by
   sorry
 
 /-- Corollary 6.1.17 -/
-theorem Sequence.bounded_of_convergent {a:Sequence} (h: a.convergent) : a.isBounded := by
+theorem Sequence.bounded_of_convergent {a:Sequence} (h: a.Convergent) : a.IsBounded := by
   sorry
 
 /-- Example 6.1.18 -/
-example : ¬ ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).isBounded := by sorry
+example : ¬ ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).IsBounded := by sorry
 
 /-- Example 6.1.18 -/
-example : ¬ ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).convergent := by sorry
+example : ¬ ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).Convergent := by sorry
 
 instance Sequence.inst_add : Add Sequence where
   add a b := {
@@ -383,12 +383,12 @@ theorem Sequence.add_coe (a b: ℕ → ℝ) : (a:Sequence) + (b:Sequence) = (fun
 
 /-- Theorem 6.1.19(a) (limit laws).  The `tendsTo` version is more usable than the `lim` version
     in applications. -/
-theorem Sequence.tendsTo_add {a b:Sequence} {L M:ℝ} (ha: a.tendsTo L) (hb: b.tendsTo M) :
-  (a+b).tendsTo (L+M) := by
+theorem Sequence.tendsTo_add {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) :
+  (a+b).TendsTo (L+M) := by
   sorry
 
-theorem Sequence.lim_add {a b:Sequence} (ha: a.convergent) (hb: b.convergent) :
-  (a + b).convergent ∧ lim (a + b) = lim a + lim b := by
+theorem Sequence.lim_add {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) :
+  (a + b).Convergent ∧ lim (a + b) = lim a + lim b := by
   sorry
 
 instance Sequence.inst_mul : Mul Sequence where
@@ -407,12 +407,12 @@ theorem Sequence.mul_coe (a b: ℕ → ℝ) : (a:Sequence) * (b:Sequence) = (fun
 
 /-- Theorem 6.1.19(b) (limit laws).  The `tendsTo` version is more usable than the `lim` version
     in applications. -/
-theorem Sequence.tendsTo_mul {a b:Sequence} {L M:ℝ} (ha: a.tendsTo L) (hb: b.tendsTo M) :
-    (a * b).tendsTo (L * M) := by
+theorem Sequence.tendsTo_mul {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) :
+    (a * b).TendsTo (L * M) := by
   sorry
 
-theorem Sequence.lim_mul {a b:Sequence} (ha: a.convergent) (hb: b.convergent) :
-    (a * b).convergent ∧ lim (a * b) = lim a * lim b := by
+theorem Sequence.lim_mul {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) :
+    (a * b).Convergent ∧ lim (a * b) = lim a * lim b := by
   sorry
 
 
@@ -431,12 +431,12 @@ theorem Sequence.smul_coe (c:ℝ) (a:ℕ → ℝ) : (c • (a:Sequence)) = (fun 
 
 /-- Theorem 6.1.19(c) (limit laws).  The `tendsTo` version is more usable than the `lim` version
     in applications. -/
-theorem Sequence.tendsTo_smul (c:ℝ) {a:Sequence} {L:ℝ} (ha: a.tendsTo L) :
-    (c • a).tendsTo (c * L) := by
+theorem Sequence.tendsTo_smul (c:ℝ) {a:Sequence} {L:ℝ} (ha: a.TendsTo L) :
+    (c • a).TendsTo (c * L) := by
   sorry
 
-theorem Sequence.lim_smul (c:ℝ) {a:Sequence} (ha: a.convergent) :
-    (c • a).convergent ∧ lim (c • a) = c * lim a := by
+theorem Sequence.lim_smul (c:ℝ) {a:Sequence} (ha: a.Convergent) :
+    (c • a).Convergent ∧ lim (c • a) = c * lim a := by
   sorry
 
 instance Sequence.inst_sub : Sub Sequence where
@@ -455,12 +455,12 @@ theorem Sequence.sub_coe (a b: ℕ → ℝ) : (a:Sequence) - (b:Sequence) = (fun
 
 /-- Theorem 6.1.19(d) (limit laws).  The `tendsTo` version is more usable than the `lim` version
     in applications. -/
-theorem Sequence.tendsTo_sub {a b:Sequence} {L M:ℝ} (ha: a.tendsTo L) (hb: b.tendsTo M) :
-    (a - b).tendsTo (L - M) := by
+theorem Sequence.tendsTo_sub {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) :
+    (a - b).TendsTo (L - M) := by
   sorry
 
-theorem Sequence.lim_sub {a b:Sequence} (ha: a.convergent) (hb: b.convergent) :
-    (a - b).convergent ∧ lim (a - b) = lim a - lim b := by
+theorem Sequence.lim_sub {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) :
+    (a - b).Convergent ∧ lim (a - b) = lim a - lim b := by
   sorry
 
 noncomputable instance Sequence.inst_inv : Inv Sequence where
@@ -479,12 +479,12 @@ theorem Sequence.inv_coe (a: ℕ → ℝ) : (a:Sequence)⁻¹ = (fun n ↦ (a n)
 
 /-- Theorem 6.1.19(e) (limit laws).  The `tendsTo` version is more usable than the `lim` version
     in applications. -/
-theorem Sequence.tendsTo_inv {a:Sequence} {L:ℝ} (ha: a.tendsTo L) (hnon: L ≠ 0) :
-    (a⁻¹).tendsTo (L⁻¹) := by
+theorem Sequence.tendsTo_inv {a:Sequence} {L:ℝ} (ha: a.TendsTo L) (hnon: L ≠ 0) :
+    (a⁻¹).TendsTo (L⁻¹) := by
   sorry
 
-theorem Sequence.lim_inv {a:Sequence} (ha: a.convergent) (hnon: lim a ≠ 0) :
-  (a⁻¹).convergent ∧ lim (a⁻¹) = (lim a)⁻¹ := by
+theorem Sequence.lim_inv {a:Sequence} (ha: a.Convergent) (hnon: lim a ≠ 0) :
+  (a⁻¹).Convergent ∧ lim (a⁻¹) = (lim a)⁻¹ := by
   sorry
 
 noncomputable instance Sequence.inst_div : Div Sequence where
@@ -503,12 +503,12 @@ theorem Sequence.div_coe (a b: ℕ → ℝ) : (a:Sequence) / (b:Sequence) = (fun
 
 /-- Theorem 6.1.19(f) (limit laws).  The `tendsTo` version is more usable than the `lim` version
     in applications. -/
-theorem Sequence.tendsTo_div {a b:Sequence} {L M:ℝ} (ha: a.tendsTo L) (hb: b.tendsTo M) (hnon: M ≠ 0) :
-    (a / b).tendsTo (L / M) := by
+theorem Sequence.tendsTo_div {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) (hnon: M ≠ 0) :
+    (a / b).TendsTo (L / M) := by
   sorry
 
-theorem Sequence.lim_div {a b:Sequence} (ha: a.convergent) (hb: b.convergent) (hnon: lim b ≠ 0) :
-  (a / b).convergent ∧ lim (a / b) = lim a / lim b := by
+theorem Sequence.lim_div {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) (hnon: lim b ≠ 0) :
+  (a / b).Convergent ∧ lim (a / b) = lim a / lim b := by
   sorry
 
 instance Sequence.inst_max : Max Sequence where
@@ -527,12 +527,12 @@ theorem Sequence.max_coe (a b: ℕ → ℝ) : (a:Sequence) ⊔ (b:Sequence) = (f
 
 /-- Theorem 6.1.19(g) (limit laws).  The `tendsTo` version is more usable than the `lim` version
     in applications. -/
-theorem Sequence.tendsTo_max {a b:Sequence} {L M:ℝ} (ha: a.tendsTo L) (hb: b.tendsTo M) :
-    (max a b).tendsTo (max L M) := by
+theorem Sequence.tendsTo_max {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) :
+    (max a b).TendsTo (max L M) := by
   sorry
 
-theorem Sequence.lim_max {a b:Sequence} (ha: a.convergent) (hb: b.convergent) :
-    (max a b).convergent ∧ lim (max a b) = max (lim a) (lim b) := by
+theorem Sequence.lim_max {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) :
+    (max a b).Convergent ∧ lim (max a b) = max (lim a) (lim b) := by
   sorry
 
 instance Sequence.inst_min : Min Sequence where
@@ -550,12 +550,12 @@ theorem Sequence.min_coe (a b: ℕ → ℝ) : (a:Sequence) ⊓ (b:Sequence) = (f
   by_cases h:n ≥ 0 <;> simp [h, Min.min]
 
 /-- Theorem 6.1.19(h) (limit laws) -/
-theorem Sequence.tendsTo_min {a b:Sequence} {L M:ℝ} (ha: a.tendsTo L) (hb: b.tendsTo M) :
-    (min a b).tendsTo (min L M) := by
+theorem Sequence.tendsTo_min {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) :
+    (min a b).TendsTo (min L M) := by
   sorry
 
-theorem Sequence.lim_min {a b:Sequence} (ha: a.convergent) (hb: b.convergent) :
-    (min a b).convergent ∧ lim (min a b) = min (lim a) (lim b) := by
+theorem Sequence.lim_min {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) :
+    (min a b).Convergent ∧ lim (min a b) = min (lim a) (lim b) := by
   sorry
 
 /-- Exercise 6.1.1 -/
@@ -564,25 +564,25 @@ theorem Sequence.mono_if {a: ℕ → ℝ} (ha: ∀ n, a (n+1) > a n) {n m:ℕ} (
 
 /-- Exercise 6.1.3 -/
 theorem Sequence.tendsTo_of_from {a: Sequence} {c:ℝ} (m:ℤ) :
-    a.tendsTo c ↔ (a.from m).tendsTo c := by
+    a.TendsTo c ↔ (a.from m).TendsTo c := by
   sorry
 
 /-- Exercise 6.1.4 -/
 theorem Sequence.tendsTo_of_shift {a: Sequence} {c:ℝ} (k:ℕ) :
-    a.tendsTo c ↔ (Sequence.mk' a.m (fun n : {n // n ≥ a.m} ↦ a (n+k))).tendsTo c := by
+    a.TendsTo c ↔ (Sequence.mk' a.m (fun n : {n // n ≥ a.m} ↦ a (n+k))).TendsTo c := by
   sorry
 
 /-- Exercise 6.1.7 -/
 theorem Sequence.isBounded_of_rat (a: Chapter5.Sequence) :
-    a.isBounded ↔ (a:Sequence).isBounded := by
+    a.isBounded ↔ (a:Sequence).IsBounded := by
   sorry
 
 /-- Exercise 6.1.9 -/
 theorem Sequence.lim_div_fail :
-    ∃ a b, a.convergent
-    ∧ b.convergent
+    ∃ a b, a.Convergent
+    ∧ b.Convergent
     ∧ lim b = 0
-    ∧ ¬ ((a / b).convergent ∧ lim (a / b) = lim a / lim b) := by
+    ∧ ¬ ((a / b).Convergent ∧ lim (a / b) = lim a / lim b) := by
   sorry
 
 /-- Exercise 6.1.10 -/

@@ -70,8 +70,8 @@ example (x₀ x : ℝ) :
 
 /-- Definition 9.9.2.  Here we use the Mathlib term `UniformContinuousOn` -/
 theorem UniformContinuousOn.iff (f: ℝ → ℝ) (X:Set ℝ) : UniformContinuousOn f X  ↔
-  ∀ ε > (0:ℝ), ∃ δ > (0:ℝ), ∀ x₀ ∈ X, ∀ x ∈ X, δ.close x x₀ → ε.close (f x) (f x₀) := by
-  simp_rw [Metric.uniformContinuousOn_iff_le, Real.close]
+  ∀ ε > (0:ℝ), ∃ δ > (0:ℝ), ∀ x₀ ∈ X, ∀ x ∈ X, δ.Close x x₀ → ε.Close (f x) (f x₀) := by
+  simp_rw [Metric.uniformContinuousOn_iff_le, Real.Close]
   apply forall_congr'; intro ε
   apply imp_congr_right; intro hε
   apply exists_congr; intro δ
@@ -91,7 +91,7 @@ end Chapter9
 
 /-- Definition 9.9.5.  This is similar but not identical to `Real.close_seq` from Section 6.1. -/
 abbrev Real.close_seqs (ε:ℝ) (a b: Chapter6.Sequence) : Prop :=
-  (a.m = b.m) ∧ ∀ n ≥ a.m, ε.close (a n) (b n)
+  (a.m = b.m) ∧ ∀ n ≥ a.m, ε.Close (a n) (b n)
 
 abbrev Real.eventually_close_seqs (ε:ℝ) (a b: Chapter6.Sequence) : Prop :=
   ∃ N ≥ a.m, ε.close_seqs (a.from N) (b.from N)
@@ -193,7 +193,7 @@ theorem UniformContinuousOn.of_continuousOn {a b:ℝ} {f:ℝ → ℝ}
   simp only [ge_iff_le, Function.comp_apply, not_forall, Classical.not_imp, gt_iff_lt, not_exists,
   not_and, sup_le_iff, dite_eq_ite, and_imp, not_le, forall_const, exists_and_left] at h
   obtain ⟨ x, y, hx, hy, hequiv, ε, hε, h ⟩ := h
-  set E : Set ℕ := {n | ¬ ε.close (f (x n)) (f (y n)) }
+  set E : Set ℕ := {n | ¬ ε.Close (f (x n)) (f (y n)) }
   have hE : Infinite E := by
     rw [←not_finite_iff_infinite]
     by_contra! this
@@ -209,7 +209,7 @@ theorem UniformContinuousOn.of_continuousOn {a b:ℝ} {f:ℝ → ℝ}
   have hmem (j:ℕ) : n j ∈ E := Nat.nth_mem_of_infinite hE j
   have hsep (j:ℕ) : |f (x (n j)) - f (y (n j))| > ε := by
     specialize hmem j
-    simp [E, Real.close, Real.dist_eq] at hmem
+    simp [E, Real.Close, Real.dist_eq] at hmem
     exact hmem
   have hxmem (j:ℕ) : x (n j) ∈ Set.Icc a b := hx (n j)
   have hymem (j:ℕ) : y (n j) ∈ Set.Icc a b := hy (n j)

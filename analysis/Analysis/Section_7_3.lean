@@ -30,7 +30,7 @@ theorem Series.converges_of_nonneg_iff {s : Series} (h : s.nonneg) : s.converges
   constructor
   . intro hconv
     set S : Chapter6.Sequence := ⟨ s.m, s.partial, by intro n hn; simp [Series.partial, hn] ⟩
-    have : S.isBounded := by
+    have : S.IsBounded := by
       apply S.bounded_of_convergent
       rw [Chapter6.Sequence.converges_iff_Tendsto']
       convert hconv

@@ -44,17 +44,17 @@ theorem Sequence.subseq_trans {a b c:ℕ → ℝ} (hab: Sequence.subseq a b) (hb
 
 /-- Proposition 6.6.5 / Exercise 6.6.4 -/
 theorem Sequence.convergent_iff_subseq (a:ℕ → ℝ) (L:ℝ) :
-    (a:Sequence).tendsTo L ↔ ∀ b:ℕ → ℝ, Sequence.subseq a b → (b:Sequence).tendsTo L := by
+    (a:Sequence).TendsTo L ↔ ∀ b:ℕ → ℝ, Sequence.subseq a b → (b:Sequence).TendsTo L := by
   sorry
 
 /-- Proposition 6.6.6 / Exercise 6.6.5 -/
 theorem Sequence.limit_point_iff_subseq (a:ℕ → ℝ) (L:ℝ) :
-    (a:Sequence).limit_point L ↔ ∃ b:ℕ → ℝ, Sequence.subseq a b ∧ (b:Sequence).tendsTo L := by
+    (a:Sequence).LimitPoint L ↔ ∃ b:ℕ → ℝ, Sequence.subseq a b ∧ (b:Sequence).TendsTo L := by
   sorry
 
 /-- Theorem 6.6.8 (Bolzano-Weierstrass theorem) -/
-theorem Sequence.convergent_of_subseq_of_bounded {a:ℕ→ ℝ} (ha: (a:Sequence).isBounded) :
-    ∃ b:ℕ → ℝ, Sequence.subseq a b ∧ (b:Sequence).convergent := by
+theorem Sequence.convergent_of_subseq_of_bounded {a:ℕ→ ℝ} (ha: (a:Sequence).IsBounded) :
+    ∃ b:ℕ → ℝ, Sequence.subseq a b ∧ (b:Sequence).Convergent := by
   -- This proof is written to follow the structure of the original text.
   obtain ⟨ ⟨ L_plus, hL_plus ⟩, ⟨ L_minus, hL_minus ⟩ ⟩ := finite_limsup_liminf_of_bounded ha
   have := limit_point_of_limsup hL_plus
@@ -73,8 +73,8 @@ def Sequence.exist_subseq_of_subseq :
   Exercise 6.6.3.  You may find the API around Mathlib's `Nat.find` to be useful
   (and `open Classical` to avoid any decidability issues)
 -/
-theorem Sequence.subseq_of_unbounded {a:ℕ → ℝ} (ha: ¬ (a:Sequence).isBounded) :
-    ∃ b:ℕ → ℝ, Sequence.subseq a b ∧ (b:Sequence)⁻¹.tendsTo 0 := by
+theorem Sequence.subseq_of_unbounded {a:ℕ → ℝ} (ha: ¬ (a:Sequence).IsBounded) :
+    ∃ b:ℕ → ℝ, Sequence.subseq a b ∧ (b:Sequence)⁻¹.TendsTo 0 := by
   sorry
 
 
