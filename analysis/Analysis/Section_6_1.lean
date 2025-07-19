@@ -153,7 +153,30 @@ lemma Sequence.IsCauchy.coe (a:ℕ → ℝ) :
 
 lemma Sequence.IsCauchy.mk {n₀:ℤ} (a: {n // n ≥ n₀} → ℝ) :
     (mk' n₀ a).IsCauchy
-    ↔ ∀ ε > 0, ∃ N ≥ n₀, ∀ j ≥ N, ∀ k ≥ N, dist (mk' n₀ a j) (mk' n₀ a k) ≤ ε := by sorry
+    ↔ ∀ ε > 0, ∃ N ≥ n₀, ∀ j ≥ N, ∀ k ≥ N, dist (mk' n₀ a j) (mk' n₀ a k) ≤ ε := by
+  constructor
+  · intro h ε hε
+    obtain ⟨ N, hN, h' ⟩ := h ε hε
+    use N
+    dsimp at hN
+    constructor
+    · exact hN
+    intro j hj k hk
+    simp only [Real.Steady, show max n₀ N = N by omega] at h'
+    specialize h' j (by omega) k (by omega)
+    simp_all [show n₀ ≤ j by omega, hj, show n₀ ≤ k by omega]
+
+  intro h ε hε
+  obtain ⟨ N, hN, h' ⟩ := h ε hε
+  use max n₀ N
+  constructor
+  · simp
+  intro n hn m hm
+  simp at hn hm
+  simp [hn, hm]
+  specialize h' n (by omega) m (by omega)
+  simp [hn, hm] at h'
+  exact h'
 
 @[coe]
 abbrev Sequence.ofChapter5Sequence (a: Chapter5.Sequence) : Sequence :=

@@ -50,6 +50,9 @@ def Sequence.ofNatFun (a : ℕ → ℚ) : Sequence where
       intro n hn
       simp [hn]
 
+-- Notice how the delaborator prints this as `↑fun n ↦ ↑n ^ 2 : Sequence`.
+#check Sequence.ofNatFun (fun n ↦ n ^ 2)
+
 /--
 If `a : ℕ → ℚ` is used in a context where a `Sequence` is expected, automatically coerce `a` to `Sequence.ofNatFun a` (which will be pretty-printed as `↑a`)
 -/
@@ -130,9 +133,9 @@ example : (1:ℚ).Steady ((fun _:ℕ ↦ (3:ℚ)):Sequence) := by
   simp [Rat.Steady.coe, Rat.Close]
 
 /--
-Compare: if you need to work with `Rat.steady` on the coercion directly, there will be side conditions `hn : n ≥ 0` and `hm : m ≥ 0` that you will need to deal with.
+Compare: if you need to work with `Rat.Steady` on the coercion directly, there will be side conditions `hn : n ≥ 0` and `hm : m ≥ 0` that you will need to deal with.
 -/
-example : (1:ℚ).Steady ( (fun _:ℕ ↦ (3:ℚ)):Sequence) := by
+example : (1:ℚ).Steady ((fun _:ℕ ↦ (3:ℚ)):Sequence) := by
   unfold Rat.Steady Rat.Close
   intro n hn m hm
   simp_all [Sequence.n0_coe, Sequence.eval_coe_at_int]
@@ -153,6 +156,7 @@ example : (1:ℚ).Steady ((fun n:ℕ ↦ if Even n then (1:ℚ) else (0:ℚ)):Se
     unfold Rat.Close
     norm_num
   }
+
 /--
 Example 5.1.5
 
@@ -221,7 +225,6 @@ example : (10:ℚ).Steady ((fun n:ℕ ↦ if n = 0 then (10:ℚ) else (0:ℚ)):S
   unfold Rat.Close
   -- Split into 4 cases based on whether n and m are 0 or not
   obtain h | h := Decidable.em (n = 0) <;> obtain h' | h' := Decidable.em (m = 0) <;> simp [h, h']
-
 
 /--
 The sequence 10, 0, 0, ... is not ε-steady for any smaller value of ε.
@@ -355,7 +358,31 @@ lemma Sequence.IsCauchy.coe (a:ℕ → ℚ) :
 
 lemma Sequence.IsCauchy.mk {n₀:ℤ} (a: {n // n ≥ n₀} → ℚ) :
     (mk' n₀ a).IsCauchy ↔ ∀ ε > (0:ℚ), ∃ N ≥ n₀, ∀ j ≥ N, ∀ k ≥ N,
-    Section_4_3.dist (mk' n₀ a j) (mk' n₀ a k) ≤ ε := by sorry
+    Section_4_3.dist (mk' n₀ a j) (mk' n₀ a k) ≤ ε := by
+  constructor
+  · intro h ε hε
+    obtain ⟨ N, hN, h' ⟩ := h ε hε
+    use N
+    dsimp at hN
+    constructor
+    · exact hN
+    intro j hj k hk
+    simp only [Rat.Steady, show max n₀ N = N by omega] at h'
+    specialize h' j (by omega) k (by omega)
+    simp_all [show n₀ ≤ j by omega, hj, show n₀ ≤ k by omega]
+    exact h'
+
+  intro h ε hε
+  obtain ⟨ N, hN, h' ⟩ := h ε hε
+  use max n₀ N
+  constructor
+  · simp
+  intro n hn m hm
+  simp at hn hm
+  simp [hn, hm]
+  specialize h' n (by omega) m (by omega)
+  simp [hn, hm] at h'
+  exact h'
 
 noncomputable def Sequence.sqrt_two : Sequence :=
   (fun n:ℕ ↦ ((⌊ (Real.sqrt 2)*10^n ⌋ / 10^n):ℚ))
