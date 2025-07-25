@@ -168,6 +168,25 @@ noncomputable abbrev SetTheory.Set.card (X:Set) : ℕ := by
 theorem SetTheory.Set.has_card_card {X:Set} (hX: X.finite) : X.has_card (SetTheory.Set.card X) := by
   simp [card, hX, hX.choose_spec]
 
+theorem SetTheory.Set.has_card_to_card (X:Set) (n: ℕ): X.has_card n → X.card = n := by
+  intro h
+  rw [card]
+  have hf : X.finite := by rw [finite]; use n
+  simp only [hf, ↓reduceDIte]
+  generalize_proofs a
+  have ha := a.choose_spec
+  exact card_uniq ha h
+
+theorem SetTheory.Set.card_to_has_card (X:Set) (n: ℕ) (hn: n ≠ 0): X.card = n → X.has_card n := by
+  intro h
+  rw [← h]
+  exact has_card_card (by
+    by_contra! h0
+    simp only [card, h0, ↓reduceDIte] at h
+    have := h.symm
+    contradiction
+  )
+
 /-- Proposition 3.6.14 (a) / Exercise 3.6.4 -/
 theorem SetTheory.Set.card_insert {X:Set} (hX: X.finite) {x:Object} (hx: x ∉ X) :
     (X ∪ {x}).finite ∧ (X ∪ {x}).card = X.card + 1 := by sorry
