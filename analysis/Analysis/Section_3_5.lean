@@ -27,6 +27,8 @@ export SetTheory (Set Object nat)
 
 variable [SetTheory]
 
+open SetTheory.Set
+
 /-- Definition 3.5.1 (Ordered pair).  One could also have used `Object × Object` to
 define `OrderedPair` here. -/
 @[ext]
@@ -41,7 +43,12 @@ structure OrderedPair where
 theorem OrderedPair.eq (x y x' y' : Object) :
     (⟨ x, y ⟩ : OrderedPair) = (⟨ x', y' ⟩ : OrderedPair) ↔ x = x' ∧ y = y' := by aesop
 
-/-- Exercise 3.5.1 -/
+/-- Helper lemma for Exercise 3.5.1 -/
+lemma SetTheory.Set.pair_eq_singleton_iff {a b c: Object} : {a, b} = ({c}: Set) ↔
+    a = c ∧ b = c := by
+  sorry
+
+/-- Exercise 3.5.1, first part -/
 def OrderedPair.toObject : OrderedPair ↪ Object where
   toFun p := ({ (({p.fst}:Set):Object), (({p.fst, p.snd}:Set):Object) }:Set)
   inj' := by sorry
