@@ -236,7 +236,8 @@ noncomputable abbrev SetTheory.Set.iProd_equiv_prod_triple (X: ({0,1,2}:Set) →
 /-- Connections with Mathlib's `Set.pi` -/
 noncomputable abbrev SetTheory.Set.iProd_equiv_pi (I:Set) (X: I → Set) :
     iProd X ≃ Set.pi .univ (fun i:I ↦ ((X i):_root_.Set Object)) where
-  toFun := sorry
+  toFun := fun t ↦
+    ⟨sorry, by sorry⟩
   invFun := sorry
   left_inv := sorry
   right_inv := sorry
