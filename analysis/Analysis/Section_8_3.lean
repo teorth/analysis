@@ -142,7 +142,7 @@ theorem Uncountable.real : Uncountable ℝ := by
         calc
           _ = ∑' j:ℕ, (10:ℝ)^(-1-n₀:ℝ) * (1/(10:ℝ))^j := by
             apply tsum_congr; intro j
-            rw [npow_add, npow_add, Real.rpow_sub, Real.rpow_neg,
+            rw [pow_add, pow_add, Real.rpow_sub, Real.rpow_neg,
               Real.rpow_one, Real.rpow_natCast] <;> try positivity
             simp
             congr

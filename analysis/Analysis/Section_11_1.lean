@@ -298,13 +298,13 @@ noncomputable abbrev Partition.add_empty {I:BoundedInterval} (P: Partition I) : 
     choose J hJP hxJ using (P.exists_unique x hx).exists
     apply ExistsUnique.intro J (by aesop)
     intro K ⟨ hK, hxK ⟩
-    simp at hK; obtain hK | rfl := hK
+    simp at hK; obtain rfl | hK := hK
+    · simp [mem_iff] at hxK
     . exact (P.exists_unique x hx).unique ⟨ hK, hxK ⟩ ⟨ hJP, hxJ ⟩
-    simp [mem_iff] at hxK
   contains L hL := by
-    simp at hL; obtain hL | rfl := hL
+    simp at hL; obtain rfl | hL := hL
+    · simp [subset_iff]
     . exact P.contains _ hL
-    simp [subset_iff]
 }
 
 open Classical in
