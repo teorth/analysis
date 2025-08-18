@@ -187,3 +187,6 @@ in order to update the version of Lean and Mathlib used in the project you need 
 * in `analysis/`, run `lake update -Kenv=dev`
 * this may have the side effect of setting your `lean-toolchain` to the *latest* Lean version;
   if so, revert it to the intended version
+
+It is essential that the dependencies on `subverso` in the `analysis/` and `book/` directories
+stay in sync (in particular, matching the toolchain used in the `book/` directory).

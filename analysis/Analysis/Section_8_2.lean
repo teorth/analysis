@@ -256,7 +256,7 @@ theorem Sum'.of_finsupp {X:Type} {f:X → ℝ} {A: Finset X} (h: ∀ x ∉ A, f 
   unfold Sum'
   set E := { x | f x ≠ 0 }
   have hE : E ⊆ A := by intro x; simp [E]; by_contra!; aesop
-  have hfin : Finite E := .Set.subset _ hE
+  have hfin : Finite E := Finite.Set.subset _ hE
   set E' := E.toFinite.toFinset
   rw [Sum.of_finite (fun x:E ↦ f x), ←E'.sum_subtype (by simp [E'])]
   replace hE : E' ⊆ A := by aesop

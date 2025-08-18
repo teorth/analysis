@@ -10,7 +10,7 @@ package «Analysis» where
 
 -- Require Mathlib (the comprehensive library of mathematics in Lean)
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @ "v4.22.0"
+  "https://github.com/leanprover-community/mathlib4.git" @ "v4.23.0-rc2"
 
 -- This library is needed to build the online version.
 -- If ../book/lakefile.lean requires verso @ "v4.X.Y", then this line should require
@@ -29,7 +29,7 @@ lean_exe "literate-extract" where
 
 meta if get_config? env = some "dev" then
 require «doc-gen4» from git
-  "https://github.com/leanprover/doc-gen4" @ "v4.22.0"
+  "https://github.com/leanprover/doc-gen4" @ "v4.23.0-rc2"
 
 
 module_facet literate mod : System.FilePath := do
