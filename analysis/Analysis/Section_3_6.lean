@@ -31,10 +31,25 @@ variable [SetTheory]
 abbrev SetTheory.Set.EqualCard (X Y:Set) : Prop := ∃ f : X → Y, Function.Bijective f
 
 /-- Example 3.6.2 -/
-theorem SetTheory.Set.Example_3_6_2 : EqualCard {0,1,2} {3,4,5} := by sorry
+theorem SetTheory.Set.Example_3_6_2 : EqualCard {0,1,2} {3,4,5} := by
+  use open Classical in fun x ↦ ⟨
+    if x.val = 0 then 3 else if x.val = 1 then 4 else 5,
+    by aesop
+  ⟩
+  constructor
+  · intro; aesop
+  intro y
+  have : y = (3: Object) ∨ y = (4: Object) ∨ y = (5: Object) := by
+    have := y.property
+    aesop
+  rcases this with (_ | _ | _)
+  · use ⟨0, by simp⟩; aesop
+  · use ⟨1, by simp⟩; aesop
+  · use ⟨2, by simp⟩; aesop
 
 /-- Example 3.6.3 -/
-theorem SetTheory.Set.Example_3_6_3 : EqualCard nat (nat.specify (fun x ↦ Even (x:ℕ))) := by sorry
+theorem SetTheory.Set.Example_3_6_3 : EqualCard nat (nat.specify (fun x ↦ Even (x:ℕ))) := by
+  sorry
 
 @[refl]
 theorem SetTheory.Set.EqualCard.refl (X:Set) : EqualCard X X := by
