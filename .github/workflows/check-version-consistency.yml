@@ -1,0 +1,86 @@
+name: Validate Subverso Package Hashes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate-json:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Validate subverso package hashes
+      run: |
+        set -e
+        
+        echo "Checking expected version from book/lake-manifest.json..."
+        
+        # Get expected version from the primary file
+        if ! expected_version=$(jq -r '.packages[] | select(.name == "subverso") | .rev' book/lake-manifest.json 2>/dev/null); then
+          echo "::error::Failed to extract SubVerso hash from book/lake-manifest.json"
+          echo "::error::This means the respository structure has changed and this script needs updating."
+          exit 1
+        fi
+        
+        # Check if the result is non-empty
+        if [[ -z "$expected_version" || "$expected_version" == "null" ]]; then
+          echo "::error::No subverso package found or empty hash in book/lake-manifest.json"
+          echo "::error::This means the respository structure has changed and this script needs updating."
+          exit 1
+        fi
+        
+        echo "Expected version: $expected_version"
+        
+        echo "Finding all lake-manifest.json files..."
+        manifest_files=$(find . -name "lake-manifest.json" -type f)
+        
+        if [[ -z "$manifest_files" ]]; then
+          echo "::error::No lake-manifest.json files found in repository"
+          echo "::error::This means the respository structure has changed and this script needs updating."
+          exit 1
+        fi
+        
+        echo "Found files:"
+        echo "$manifest_files"
+        echo ""
+        
+        # Check each manifest file
+        exit_code=0
+        
+        while IFS= read -r file; do
+          echo "Checking $file..."
+          
+          if ! current_hash=$(jq -r '.packages[] | select(.name == "subverso") | .rev' "$file" 2>/dev/null); then
+            echo "::error::Failed to extract subverso hash from $file"
+            exit_code=1
+            continue
+          fi
+          
+          if [[ -z "$current_hash" || "$current_hash" == "null" ]]; then
+            echo "::error::No subverso package found or empty hash in $file"
+            exit_code=1
+            continue
+          fi
+          
+          if [[ "$current_hash" != "$expected_version" ]]; then
+            echo "::error::Hash mismatch in $file"
+            echo "::error::Expected: $expected_version"
+            echo "::error::Found: $current_hash"
+            exit_code=1
+          else
+            echo "✓ Hash matches: $current_hash"
+          fi
+        done <<< "$manifest_files"
+        
+        if [[ $exit_code -ne 0 ]]; then
+          echo ""
+          echo "::error::Mismatched versions of SubVerso. Please run ./sync-versions.sh in the respository"
+          echo "::error::root to fix the situation."
+          exit 1
+        fi
+        
+        echo ""
+        echo "✓ All SubVerso package hashes match across all lake-manifest.json files"
