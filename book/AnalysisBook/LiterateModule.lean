@@ -118,6 +118,162 @@ where
 
 open Verso.Genre.Blog Literate
 
+section
+-- Some terms generated in the code, especially as part of proof goals, are very, very deep when
+-- represented in Lean's core theory. This leads to problems in compilation: the compiler IR ends up
+-- being similarly deeply nested, and its analysis passes can overflow the stack. The code in this
+-- section splits highlighted Lean code into "chunks", both vertically and horizontally, separating
+-- pieces of it into different definitions, which allows the compiler to treat them individually.
+
+open Meta
+open Elab Term
+
+variable [Monad m] [MonadLiftT CoreM m] [MonadLiftT MetaM m] [MonadLiftT TermElabM m] [MonadMCtx m] [MonadLiftT IO m]
+
+deriving instance ToExpr for Token.Kind
+deriving instance ToExpr for Token
+deriving instance ToExpr for Highlighted.Span.Kind
+
+/--
+Splits highlighted code into “chunks”, both vertically and horizontally, avoiding both very wide and
+very deep terms.
+
+In particular, horizontal splits occur inside sequences, so each contains at most five items. These
+“chunks” are made into definitions. Vertical splits occur when recurring into tactic or span bodies,
+into message contents, or into hypotheses in proof states: each of these similarly becomes a
+definition.
+-/
+partial def chunkHighlighted (hl : Highlighted) (chunkSize : Nat := 5) : m Name := do
+  let mut chunks := #[]
+  let mut curr : Expr := emptyHl
+  let mut currSize := 0
+  let mut todo := [hl]
+  repeat
+    match todo with
+    | [] =>
+      chunks := chunks.push curr
+      break
+    | h :: hs =>
+      if currSize > chunkSize then
+        currSize := 0
+        chunks := chunks.push (.const (← defineHl curr) [])
+        curr := emptyHl
+      todo := hs
+      match h with
+      | .seq xs =>
+        todo := xs.toList ++ todo
+      | .span i hl' =>
+        let h' ← chunkHighlighted hl'
+        let i' ← i.mapM fun (k, c) => do
+          return mkApp4 (.const ``Prod.mk [0, 0]) sevType msgContentsType (toExpr k) (← chunkMsgContents c)
+        let i' ← mkArrayLit spanContentsType i'.toList
+        let h' := mkApp2 (.const ``Highlighted.span []) i' (.const h' [])
+        curr := mkApp2 (.const ``Highlighted.append []) curr h'
+        currSize := currSize + 1 + i.size
+      | .tactics i s e hl' =>
+        let h' ← chunkHighlighted hl'
+        let i' ← i.mapM chunkGoal
+        let i' ← mkArrayLit goalType i'.toList
+        let h' := mkApp4 (.const ``Highlighted.tactics []) i' (toExpr s) (toExpr e) (.const h' [])
+        curr := mkApp2 (.const ``Highlighted.append []) curr h'
+        currSize := currSize + 1 + i.size
+      | .unparsed .. | .text .. | .point .. | .token .. =>
+        if currSize > chunkSize then
+          chunks := chunks.push curr
+          curr := emptyHl
+          currSize := 0
+  return (← define chunks)
+where
+  hlType : Expr := .const ``Highlighted []
+  goalType : Expr := .app (.const ``Highlighted.Goal []) hlType
+  hypType : Expr := .app (.const ``Highlighted.Hypothesis []) hlType
+  sevType : Expr := .const ``Highlighted.Span.Kind []
+  msgContentsType : Expr := .app (.const ``Highlighted.MessageContents []) hlType
+  spanContentsType : Expr :=
+    mkApp2 (.const ``Prod [0,0]) (.const ``Highlighted.Span.Kind []) msgContentsType
+  emptyHl : Expr := .const ``Highlighted.empty []
+
+  chunkMsgContents (contents : Highlighted.MessageContents Highlighted) : m Expr := do
+    match contents with
+    | .text str =>
+      pure <| mkApp2 (.const ``Highlighted.MessageContents.text []) hlType (toExpr str)
+    | .append xs =>
+      let xs' ←
+        if xs.size > chunkSize then
+          let i := xs.size / 2
+          let e1 ← chunkMsgContents (.append xs[:i])
+          let e2 ← chunkMsgContents (.append xs[i:])
+          mkArrayLit msgContentsType [e1, e2]
+        else
+          mkArrayLit msgContentsType (← xs.mapM chunkMsgContents).toList
+      pure <| mkApp2 (.const ``Highlighted.MessageContents.append []) hlType xs'
+    | .trace cls msg chs exp =>
+      let chs ← chs.mapM chunkMsgContents
+      let chs ← mkArrayLit msgContentsType chs.toList
+      pure <|
+        mkApp5 (.const ``Highlighted.MessageContents.trace []) hlType
+          (toExpr cls)
+          (← chunkMsgContents msg)
+          chs
+          (toExpr exp)
+    | .term t =>
+      pure <| mkApp2 (.const ``Highlighted.MessageContents.term []) hlType (.const (← chunkHighlighted t) [])
+    | .goal g =>
+      let n ← mkFreshUserName `msgGoal
+      addDefn n goalType (← chunkGoal g)
+      pure <| mkApp2 (.const ``Highlighted.MessageContents.goal []) hlType (.const n [])
+
+
+  chunkGoal (g : Highlighted.Goal Highlighted) : m Expr := do
+    let {name, goalPrefix, hypotheses, conclusion} := g
+    let hs ← hypotheses.mapM fun h => do
+      let hn ← chunkHighlighted h.typeAndVal
+      pure <| mkApp3 (.const ``Highlighted.Hypothesis.mk []) hlType (toExpr h.names) (.const hn [])
+    let hs := .const (← defineHyps hs) []
+    let concl ← chunkHighlighted conclusion
+    pure <| mkApp5 (.const ``Highlighted.Goal.mk []) hlType (toExpr name) (toExpr goalPrefix) hs (.const concl [])
+
+  defineHyps (hs : Array Expr) : m Name := do
+    let n ← Lean.mkFreshUserName `hyps
+    let expr ←
+      if hs.size > 4 then
+        let i := hs.size / 2
+        let n1 ← defineHyps hs[:i]
+        let n2 ← defineHyps hs[i:]
+        pure <| mkApp3 (.const ``Array.append [0]) hypType (.const n1 []) (.const n2 [])
+      else
+        mkArrayLit hypType hs.toList
+    addDefn n (.app (.const ``Array [0]) hypType) expr
+    return n
+
+  defineHl (hl : Expr) : m Name := do
+    let n ← Lean.mkFreshUserName `hl
+    addDefn n hlType hl
+    return n
+
+  define (args : Array Expr) : m Name := do
+    let n ← Lean.mkFreshUserName `hlChunk
+    let args ← mkArrayLit hlType args.toList
+    let args ← instantiateMVars args
+    let f ← IO.FS.Handle.mk "log" .append
+    f.putStrLn s!"-------- {n} -------------"
+    f.putStrLn hl.toString
+    f.putStrLn (toString (← Meta.ppExpr args))
+    f.flush
+    addDefn n hlType <| .app (.const ``Highlighted.seq []) args
+    return n
+
+  addDefn (name : Name) (type value : Expr) : m Unit := do
+    addAndCompile <| .defnDecl {
+      name, type, value,
+      levelParams := []
+      hints := .regular 0
+      safety := .safe
+    }
+
+
+end
+
 def codeOpts : CodeOpts := { contextName := `name }
 
 open Verso Doc Elab PartElabM in
@@ -133,7 +289,7 @@ partial def docFromModAndTerms
     match kind with
     | ``Lean.Parser.Module.header =>
       if config.header then
-        addBlock (← ``(Block.other (BlockExt.highlightedCode codeOpts $(quote code)) Array.mkArray0))
+        addCodeBlock code
       else pure ()
     | ``moduleDoc =>
       let str ← getModuleDocString code
@@ -173,28 +329,38 @@ partial def docFromModAndTerms
           | _ => false)
         match docCommentIdx with
         | some i =>
+          let codeBefore ← chunkHighlighted (Highlighted.seq s[:i])
           let codeBefore ← ``(Block.other
-            (BlockExt.highlightedCode codeOpts $(quote (Highlighted.seq s[:i]))) Array.mkArray0)
+            (BlockExt.highlightedCode codeOpts $(mkIdent codeBefore)) Array.mkArray0)
           let some ⟨mdBlocks⟩ := MD4Lean.parse (← getDocCommentString s[i]!)
             | throwError m!"Failed to parse Markdown: {← getDocCommentString s[i]!}"
           let docCommentBlocks ← mdBlocks.mapM (fun b => ofBlock tms b)
-          let codeAfter ←``(Block.other (BlockExt.highlightedCode codeOpts $(quote (Highlighted.seq s[i+1:]))) Array.mkArray0)
-          let blocks := #[codeBefore] ++ docCommentBlocks ++ #[codeAfter]
+          let codeAfter ← chunkHighlighted (Highlighted.seq s[i+1:])
+          let codeAfter ←``(Block.other (BlockExt.highlightedCode codeOpts $(mkIdent codeAfter)) Array.mkArray0)
+
+          let blocks : Array Term := #[codeBefore] ++ docCommentBlocks ++ #[codeAfter]
           addBlock (← ``(Block.other (BlockExt.htmlDiv "declaration") #[$blocks,*]))
         | none =>
           -- No docComment attached to declaration, render definition as usual
-          addBlock (← ``(Block.other (BlockExt.highlightedCode codeOpts $(quote code)) Array.mkArray0))
-      | _ => addBlock (← ``(Block.other (BlockExt.highlightedCode codeOpts $(quote code)) Array.mkArray0))
+          addCodeBlock code
+          pure ()
+      | _ => addCodeBlock code
+        pure ()
 
     | ``eval | ``evalBang | ``reduceCmd | ``print | ``printAxioms | ``printEqns | ``«where» | ``version | ``synth | ``check =>
-      addBlock (← ``(Block.other (BlockExt.highlightedCode codeOpts $(quote code)) Array.mkArray0))
+      -- addCodeBlock code
       if let some msg := getFirstMessage code then
         let msg : Highlighted.Message := ⟨msg.1, msg.2⟩
         addBlock (← ``(Block.other (Blog.BlockExt.message false $(quote msg) []) #[]))
     | _ =>
-      addBlock (← ``(Block.other (BlockExt.highlightedCode codeOpts $(quote code)) Array.mkArray0))
+      pure ()
+      addCodeBlock code
   closePartsUntil 0 ⟨0⟩ -- TODO endPos?
 where
+  addCodeBlock (code : Highlighted) := do
+    let n ← chunkHighlighted code
+    addBlock (← ``(Block.other (BlockExt.highlightedCode codeOpts $(mkIdent n)) Array.mkArray0))
+
   arr (xs : Array Term) : PartElabM Term := do
     if xs.size ≤ 8 then
       pure <| Syntax.mkCApp (`Array ++ s!"mkArray{xs.size}".toName) xs
@@ -282,17 +448,20 @@ open Verso Doc Concrete in
 open Lean Elab Command in
 open PartElabM in
 def elabAnalysisPage (x : Ident) (mod : Ident) (config : LitPageConfig) (title : StrLit) (genre : Term) (metadata? : Option Term) (rw : Option (TSyntax ``rewrites)) : CommandElabM Unit :=
-  withTraceNode `verso.blog.literate (fun _ => pure m!"Literate '{title.getString}'") do
 
+  withTraceNode `verso.blog.literate (fun _ => pure m!"Literate '{title.getString}'") do
   let rewriter ← rw.mapM fun
     | `(rewrites|rewriting $[| $cases]*) => cases.mapM Internal.getSubst
     | rw => panic! s!"Unknown rewriter {rw}"
+
   let rewriter := rewriter.getD #[]
 
   let titleParts ← stringToInlines title
   let titleString := inlinesToString (← getEnv) titleParts
   let initState : PartElabM.State := .init (.node .none nullKind titleParts)
 
+  -- Each item pairs a top-level command with a mapping from terms found in docstrings to their
+  -- parsed, elaborated forms
   let items ← withTraceNode `verso.blog.literate.loadMod (fun _ => pure m!"Loading '{mod}'") <|
     loadModuleContent mod.getId.toString
 
