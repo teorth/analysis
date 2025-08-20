@@ -262,9 +262,6 @@ abbrev SetTheory.Set.Fin (n:ℕ) : Set := nat.specify (fun m ↦ (m:ℕ) < n)
 theorem SetTheory.Set.mem_Fin (n:ℕ) (x:Object) : x ∈ Fin n ↔ ∃ m, m < n ∧ x = m := by
   rw [specification_axiom'']; constructor
   . intro ⟨ h1, h2 ⟩; use ↑(⟨ x, h1 ⟩:nat); simp [h2]
-    calc
-      x = (⟨ x, h1 ⟩:nat) := rfl
-      _ = _ := by congr; simp
   intro ⟨ m, hm, h ⟩
   use (by rw [h, ←Object.ofnat_eq]; exact (m:nat).property)
   convert hm; simp [h, Equiv.symm_apply_eq]; rfl
