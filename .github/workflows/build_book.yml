@@ -22,14 +22,24 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install elan
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+      # The build directories for analysis/ and book/ are cached separately, because they
+      # use disjoint sets of build dependencies. There's no need to rebuild both completely
+      # when only one has a version bump.
       - name: Restore cache if available
         uses: actions/cache/restore@v4
         with:
           path: |
             ./analysis/.lake
+          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('analysis/lean-toolchain') }}-${{ hashFiles('analysis/lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('analysis/lean-toolchain') }}-${{ hashFiles('analysis/lake-manifest.json') }}
+      - name: Restore book cache if available
+        uses: actions/cache/restore@v4
+        with:
+          path: |
             ./book/.lake
-          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
-          restore-keys: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
+          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('book/lean-toolchain') }}-${{ hashFiles('book/lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('book/lean-toolchain') }}-${{ hashFiles('book/lake-manifest.json') }}
+
       # Getting the mathlib cache is only useful when mathlib gets updated, but will save a lot of time in that case.
       - name: Get Mathlib cache
         run: ~/.elan/bin/lake exe cache get || true
@@ -50,13 +60,20 @@ jobs:
         run: |
           find _site/docs -name "*.trace" -delete
           find _site/docs -name "*.hash" -delete
+      # The cache for analysis/ is saved here, rather than before building the book, because
+      # building the book generates JSON files full of literate program artifacts in analysis/.lake
       - name: Save cache
         uses: actions/cache/save@v4
         with:
           path: |
             ./analysis/.lake
+          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('analysis/lean-toolchain') }}-${{ hashFiles('analysis/lake-manifest.json') }}-${{ github.sha }}
+      - name: Save book cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
             ./book/.lake
-          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
+          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('book/lean-toolchain') }}-${{ hashFiles('book/lake-manifest.json') }}-${{ github.sha }}
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
