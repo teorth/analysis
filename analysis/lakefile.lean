@@ -6,6 +6,10 @@ package «Analysis» where
   leanOptions := #[
     ⟨`pp.unicode.fun, true⟩ -- pretty-prints `fun a ↦ b`
   ]
+  -- Settings applied only to command line builds
+  moreLeanArgs := #[
+    "-Dwarn.sorry=false" -- suppress warnings about `sorry` on the command line; remove when project is complete
+  ]
   -- add any additional package configuration options here
 
 -- Require Mathlib (the comprehensive library of mathematics in Lean)
