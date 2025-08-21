@@ -135,10 +135,12 @@ theorem Nat.add_pos_left {a:Nat} (b:Nat) (ha: a.IsPos) : (a + b).IsPos := by
   have : (a+b)++ ≠ 0 := succ_ne _
   exact this
 
-/-- Compare with Mathlib's `Nat.add_pos_right`. -/
+/-- Compare with Mathlib's `Nat.add_pos_right`.
+
+This theorem is a consequence of the previous theorem and `add_comm`, and `grind` can automatically discover such proofs.
+-/
 theorem Nat.add_pos_right {a:Nat} (b:Nat) (ha: a.IsPos) : (b + a).IsPos := by
-  rw [add_comm]
-  exact add_pos_left _ ha
+  grind [add_comm, add_pos_left]
 
 /-- Corollary 2.2.9 (if sum vanishes, then summands vanish).
     Compare with Mathlib's `Nat.add_eq_zero`. -/
