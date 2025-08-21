@@ -19,6 +19,9 @@ require mathlib from git
 -- updated in `../book/`, this should be set to the corresponding tag again.
 require subverso from git "https://github.com/leanprover/subverso" @ "main"
 
+-- This library is needed to build the online version.
+require MD4Lean from git "https://github.com/acmepjz/md4lean" @ "main"
+
 @[default_target]
 lean_lib «Analysis» where
   -- add any library configuration options here
@@ -34,10 +37,8 @@ require «doc-gen4» from git
 
 module_facet literate mod : System.FilePath := do
   let ws ← getWorkspace
-  let some extract ← findLeanExe? `«literate-extract»
-    | error "The `literate-extract` executable was not found"
 
-  let exeJob ← extract.exe.fetch
+  let exeJob ← «literate-extract».fetch
   let modJob ← mod.olean.fetch
 
   let buildDir := ws.root.buildDir

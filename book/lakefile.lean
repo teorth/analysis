@@ -157,7 +157,7 @@ Generates the JSON representation of the data needed for the literate page for t
 
 This is called as needed if the module has changed.
 -/
-def buildLiterateJson (pkg : NPackage n) (mod : String) : IO Unit := do
+def buildLiterateJson (pkg : NPackage n) (mod : String) : LogIO Unit := do
   let lakeVars :=
     #["LAKE", "LAKE_HOME", "LAKE_PKG_URL_MAP",
       "LEAN_SYSROOT", "LEAN_AR", "LEAN_PATH", "LEAN_SRC_PATH",
@@ -180,11 +180,12 @@ def buildLiterateJson (pkg : NPackage n) (mod : String) : IO Unit := do
 
     let args := #["run", "--install", toolchain, "lake", "build", s!"+{mod}:literate"]
 
-    discard <| IO.Process.run {
+    proc (quiet := true) {
       cmd, args, cwd := pkg.dir / analysisRoot,
       -- Unset Lake's environment variables
       env := lakeVars.map (·, none)
     }
+
   finally
     f.unlock
 
@@ -211,20 +212,29 @@ target genLib (pkg) : Unit := do
     let origLeanFile : System.FilePath := pkg.dir / analysisRoot / origName
     -- Changes to the original Lean file should invalidate the generated code
     addTrace (← computeTrace <| TextFilePath.mk origLeanFile)
-    -- We need to generate a file, but it doesn't need to be anything special. The sentinel file
-    -- merely represents the fact that the JSON was updated in the main project. It's empty, but its
-    -- trace file is important for cache invalidation.
+
+    -- We need to generate a file to represent the fact that the JSON was updated in the main
+    -- project. This serves as a kind of proxy for Lake.
     let jsonSentinel := defaultBuildDir / "originals" / module.toString
+
+    let jsonName := "/".intercalate (module.components.map (·.toString)) ++ ".json"
+    let jsonFile : System.FilePath := pkg.dir / analysisRoot / ".lake" / "build" / "literate" / jsonName
+    -- If the build directory in ../analysis is deleted, we need to regenerate these files. This
+    -- trace ensures that the files' absence is noticed.
+    addPureTrace (caption := "{jsonFile} exists") (← jsonFile.pathExists)
+
     buildFileUnlessUpToDate' jsonSentinel do
       logVerbose s!"Generating highlighting info for {module}"
       buildLiterateJson pkg module.toString
+      logVerbose s!"Built module's JSON"
+      -- Now that the JSON file definitely exists, add its dependencies to the sentinel's
+      let trace ← computeTrace (TextFilePath.mk jsonFile)
+      addTrace trace
       createParentDirs jsonSentinel
-      IO.FS.writeFile jsonSentinel "ok"
+      -- This content doesn't really matter, but it makes debugging simpler
+      IO.FS.writeFile jsonSentinel (toString (repr trace))
 
-    -- Changes to the highlighting JSON should also invalidate the generated code
-    let jsonName := "/".intercalate (module.components.map (·.toString)) ++ ".json"
-    let jsonFile : System.FilePath := pkg.dir / analysisRoot / ".lake" / "build" / "literate" / jsonName
-    addTrace (← computeTrace <| TextFilePath.mk jsonFile)
+
 
     -- The module itself contains the literate page
     let contents := s!"import AnalysisBook.LiterateModule\n\nset_option maxHeartbeats 100000000\n\nset_option maxRecDepth 20000\n\nanalysis_page {declName} from {module} as {repr title}\n"
