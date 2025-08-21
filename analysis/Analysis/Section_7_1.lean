@@ -262,11 +262,11 @@ theorem finite_series_of_finite_series {XX YY:Type*} (X: Finset XX) (Y: Finset Y
         constructor
         . intro ⟨ ⟨ x, y ⟩, hz ⟩ ⟨ ⟨ x', y' ⟩, hz' ⟩ hzz'
           simp [π] at hz hz' hzz' ⊢
-          cc
+          grind
         intro ⟨ y, hy ⟩; use ⟨ (x₀, y), by simp [hy] ⟩
       convert map_finite_series _ hπ with z
       obtain ⟨⟨x, y⟩, hz ⟩ := z
-      simp at hz ⊢; cc
+      simp at hz ⊢; grind
     _ = _ := by
       symm; convert finite_series_of_disjoint_union _ _
       . sorry

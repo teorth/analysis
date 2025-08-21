@@ -401,7 +401,7 @@ theorem Real.inv_of_equiv {a b:ℕ → ℚ} (ha: BoundedAwayZero a)
   have claim2 : P = LIM a⁻¹ := by
     simp only [P, hlim, LIM_mul hainv_cauchy hb_cauchy, LIM_mul habinv_cauchy hbinv_cauchy]
     rcongr n; simp [hb' n]
-  cc
+  grind
 
 open Classical in
 /--
