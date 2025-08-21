@@ -184,7 +184,7 @@ in order to update the version of Lean and Mathlib used in the project you need 
   to pin to the tag corresponding to the next Lean version
   (it is highly recommended that you update in incremental steps)
 * edit the `analysis/lean-toolchain` to change the Lean version to the next version
-* in `analysis/`, run `lake update -Kenv=dev`
+* in `analysis/`, run `lake update -R -Kenv=dev`
 * this may have the side effect of setting your `lean-toolchain` to the *latest* Lean version;
   if so, revert it to the intended version
 
