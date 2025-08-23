@@ -188,6 +188,8 @@ instance Rat.instCommRing : CommRing Rat where
 instance Rat.instRatCast : RatCast Rat where
   ratCast q := q.num // q.den
 
+theorem Rat.ratCast_inj : Function.Injective (fun n:ℚ ↦ (n:Rat)) := by sorry
+
 theorem Rat.coe_Rat_eq (a:ℤ) {b:ℤ} (hb: b ≠ 0) : (a/b:ℚ) = a // b := by
   set q := (a/b:ℚ)
   set num :ℤ := q.num
@@ -229,18 +231,6 @@ def Rat.coe_int_hom : ℤ →+* Rat where
   map_add' := by sorry
   map_mul' := by sorry
 
-/--
-  (Not from textbook) The textbook rationals are isomorphic (as a field) to the Mathlib rationals.
--/
-def Rat.equiv_rat : ℚ ≃+* Rat where
-  toFun n := (n:Rat)
-  invFun := by sorry
-  map_add' := by sorry
-  map_mul' := by sorry
-  left_inv := by sorry
-  right_inv := by sorry
-
-
 /-- Definition 4.2.6 (positivity) -/
 def Rat.isPos (q:Rat) : Prop := ∃ a b:ℤ, a > 0 ∧ b > 0 ∧ q = a/b
 
@@ -274,7 +264,7 @@ theorem Rat.gt_iff (x y:Rat) : x > y ↔ (x-y).isPos := by sorry
 theorem Rat.ge_iff (x y:Rat) : x ≥ y ↔ (x > y) ∨ (x = y) := by sorry
 
 /-- Proposition 4.2.9(a) (order trichotomy) / Exercise 4.2.5 -/
-theorem Rat.trichotomous' (x y z:Rat) : x > y ∨ x < y ∨ x = y := by sorry
+theorem Rat.trichotomous' (x y:Rat) : x > y ∨ x < y ∨ x = y := by sorry
 
 /-- Proposition 4.2.9(a) (order trichotomy) / Exercise 4.2.5 -/
 theorem Rat.not_gt_and_lt (x y:Rat) : ¬ (x > y ∧ x < y):= by sorry
@@ -355,7 +345,7 @@ theorem Rat.mul_lt_mul_right_of_neg (x y z:Rat) (hxy: x < y) (hz: z.isNeg) : x *
 abbrev Rat.equivRat : Rat ≃ ℚ where
   toFun := Quotient.lift (fun ⟨ a, b, h ⟩ ↦ a / b) (by
     sorry)
-  invFun := sorry
+  invFun := fun n: ℚ ↦ (n:Rat)
   left_inv n := sorry
   right_inv n := sorry
 
@@ -369,5 +359,10 @@ abbrev Rat.equivRat_ring : Rat ≃+* ℚ where
   toEquiv := equivRat
   map_add' := by sorry
   map_mul' := by sorry
+
+/--
+  (Not from textbook) The textbook rationals are isomorphic (as a field) to the Mathlib rationals.
+-/
+def Rat.equivRat_ring_symm : ℚ ≃+* Rat := Rat.equivRat_ring.symm
 
 end Section_4_2
