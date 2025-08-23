@@ -122,6 +122,9 @@ theorem Rat.coe_Nat_eq (n:ℕ) : (n:Rat) = n // 1 := rfl
 
 theorem Rat.of_Nat_eq (n:ℕ) : (ofNat(n):Rat) = (ofNat(n):Nat) // 1 := rfl
 
+/-- natCast distributes over successor -/
+theorem Rat.natCast_succ (n: ℕ) : ((n + 1: ℕ): Rat) = (n: Rat) + 1 := by sorry
+
 /-- intCast distributes over addition -/
 lemma Rat.intCast_add (a b:ℤ) : (a:Rat) + (b:Rat) = (a+b:ℤ) := by sorry
 
@@ -183,7 +186,10 @@ instance Rat.instCommRing : CommRing Rat where
   zero_mul := by sorry
   mul_zero := by sorry
   mul_assoc := by sorry
-  natCast_succ := by sorry
+  -- Usually CommRing will generate a natCast instance and a proof for this.
+  -- However, we are using a custom natCast for which `natCast_succ` cannot
+  -- be proven automatically by `rfl`. Luckily we have proven it already.
+  natCast_succ := natCast_succ
 
 instance Rat.instRatCast : RatCast Rat where
   ratCast q := q.num // q.den
