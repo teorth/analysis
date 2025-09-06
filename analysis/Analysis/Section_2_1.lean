@@ -73,9 +73,20 @@ lemma Nat.two_succ : 2++ = 3 := by rfl
   Axiom 2.3 (0 is not the successor of any natural number).
   Compare with Lean's `Nat.succ_ne_zero`.
 -/
+@[grind]
 theorem Nat.succ_ne (n:Nat) : n++ ≠ 0 := by
   by_contra h
   injection h
+
+theorem test1 (b : Nat)  (ha : b = 4): b++ = 3 := by sorry
+
+grind_pattern test1 => Nat.succ b
+
+@[grind]
+theorem test2 (a : Nat)  (ha : a = 3): a++ = 2 := by sorry
+
+
+example (a : Nat)  (ha : a = 4): a++++ = 2 := by grind
 
 /-- Proposition 2.1.6 (4 is not equal to zero) -/
 theorem Nat.four_ne : (4:Nat) ≠ 0 := by
@@ -88,6 +99,7 @@ theorem Nat.four_ne : (4:Nat) ≠ 0 := by
   Axiom 2.4 (Different natural numbers have different successors).
   Compare with Mathlib's `Nat.succ_inj`.
 -/
+@[grind]
 theorem Nat.succ_cancel {n m:Nat} (hnm: n++ = m++) : n = m := by
   injection hnm
 
@@ -96,9 +108,7 @@ theorem Nat.succ_cancel {n m:Nat} (hnm: n++ = m++) : n = m := by
   Compare with Mathlib's `Nat.succ_ne_succ`.
 -/
 theorem Nat.succ_ne_succ (n m:Nat) : n ≠ m → n++ ≠ m++ := by
-  intro h
-  contrapose! h
-  exact succ_cancel h
+  grind
 
 /-- Proposition 2.1.8 (6 is not equal to 2) -/
 theorem Nat.six_ne_two : (6:Nat) ≠ 2 := by

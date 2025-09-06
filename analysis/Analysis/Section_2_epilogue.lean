@@ -56,13 +56,18 @@ abbrev Chapter2.Nat.equivNat : Chapter2.Nat ≃ ℕ where
 abbrev Chapter2.Nat.map_add : ∀ (n m : Nat), (n + m).toNat = n.toNat + m.toNat := by
   intro n m
   induction' n with n hn
-  · rw [show zero = 0 from rfl, zero_add, _root_.Nat.zero_add]
-  sorry
+  · rw [show zero = 0 from rfl]
+    rw [zero_add, _root_.Nat.zero_add]
+  rw [succ_add, succ_toNat, succ_toNat, hn]
+  omega
 
 /-- The conversion preserves multiplication. -/
 abbrev Chapter2.Nat.map_mul : ∀ (n m : Nat), (n * m).toNat = n.toNat * m.toNat := by
   intro n m
-  sorry
+  induction' n with n hn
+  · rw [show zero = 0 from rfl, zero_mul, _root_.Nat.zero_mul]
+  rw [succ_mul, map_add, hn]
+  ring
 
 /-- The conversion preserves order. -/
 abbrev Chapter2.Nat.map_le_map_iff : ∀ {n m : Nat}, n.toNat ≤ m.toNat ↔ n ≤ m := by
