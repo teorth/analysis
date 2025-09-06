@@ -161,9 +161,9 @@ theorem SetTheory.Set.card_to_has_card {X:Set} {n: ℕ} (hn: n ≠ 0): X.card = 
 
 theorem SetTheory.Set.card_fin_eq (n:ℕ): (Fin n).has_card n := (has_card_iff _ _).mp ⟨ id, Function.bijective_id ⟩
 
-theorem SetTheory.Set.Fin_card {n:ℕ}: (Fin n).card = n := has_card_to_card (card_fin_eq n)
+theorem SetTheory.Set.Fin_card (n:ℕ): (Fin n).card = n := has_card_to_card (card_fin_eq n)
 
-theorem SetTheory.Set.Fin_finite {n:ℕ}: (Fin n).finite := ⟨n, card_fin_eq n⟩
+theorem SetTheory.Set.Fin_finite (n:ℕ): (Fin n).finite := ⟨n, card_fin_eq n⟩
 
 theorem SetTheory.Set.EquivCard_to_has_card_eq {X Y:Set} {n: ℕ} (h: X ≈ Y): X.has_card n ↔ Y.has_card n := by
   choose f hf using h; let e := Equiv.ofBijective f hf
@@ -237,33 +237,36 @@ theorem SetTheory.Set.card_image_inj {X Y:Set} (hX: X.finite) {f: X → Y}
 theorem SetTheory.Set.card_prod {X Y:Set} (hX: X.finite) (hY: Y.finite) :
     (X ×ˢ Y).finite ∧ (X ×ˢ Y).card = X.card * Y.card := by sorry
 
-noncomputable def SetTheory.Set.pow_fun_equiv {X Y : Set} : ↑(Y ^ X) ≃ (X → Y) where
+noncomputable def SetTheory.Set.pow_fun_equiv {A B : Set} : ↑(A ^ B) ≃ (B → A) where
   toFun := sorry
   invFun := sorry
   left_inv := sorry
   right_inv := sorry
 
+lemma SetTheory.Set.pow_fun_eq_iff {A B : Set} (x y : ↑(A ^ B)) : x = y ↔ pow_fun_equiv x = pow_fun_equiv y := by
+  rw [←pow_fun_equiv.apply_eq_iff_eq]
+
 /-- Proposition 3.6.14 (f) / Exercise 3.6.4 -/
-theorem SetTheory.Set.card_pow {X Y:Set} (hX: X.finite) (hY: Y.finite) :
+theorem SetTheory.Set.card_pow {X Y:Set} (hY: Y.finite) (hX: X.finite) :
     (Y ^ X).finite ∧ (Y ^ X).card = Y.card ^ X.card := by sorry
 
 /-- Exercise 3.6.5. You might find `SetTheory.Set.prod_commutator` useful. -/
 theorem SetTheory.Set.prod_EqualCard_prod (A B:Set) :
     EqualCard (A ×ˢ B) (B ×ˢ A) := by sorry
 
-noncomputable def SetTheory.Set.pow_fun_equiv' (X Y : Set) : ↑(Y ^ X) ≃ (X → Y) :=
-  pow_fun_equiv (X:=X) (Y:=Y)
+noncomputable abbrev SetTheory.Set.pow_fun_equiv' (A B : Set) : ↑(A ^ B) ≃ (B → A) :=
+  pow_fun_equiv (A:=A) (B:=B)
 
 /-- Exercise 3.6.6. You may find `SetTheory.Set.curry_equiv` useful. -/
 theorem SetTheory.Set.pow_pow_EqualCard_pow_prod (A B C:Set) :
     EqualCard ((A ^ B) ^ C) (A ^ (B ×ˢ C)) := by sorry
 
-example (a b c:ℕ): (a^b)^c = a^(b*c) := by sorry
+theorem SetTheory.Set.pow_pow_eq_pow_mul (a b c:ℕ): (a^b)^c = a^(b*c) := by sorry
 
 theorem SetTheory.Set.pow_prod_pow_EqualCard_pow_union (A B C:Set) (hd: Disjoint B C) :
     EqualCard ((A ^ B) ×ˢ (A ^ C)) (A ^ (B ∪ C)) := by sorry
 
-example (a b c:ℕ): (a^b) * a^c = a^(b+c) := by sorry
+theorem SetTheory.Set.pow_mul_pow_eq_pow_add (a b c:ℕ): (a^b) * a^c = a^(b+c) := by sorry
 
 /-- Exercise 3.6.7 -/
 theorem SetTheory.Set.injection_iff_card_le {A B:Set} (hA: A.finite) (hB: B.finite) :
