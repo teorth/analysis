@@ -24,12 +24,111 @@ Users of the companion who have completed the exercises in this section are welc
 
 -/
 
-/-- Proposition 4.4.1 (Interspersing of integers by rationals) / Exercise 4.4.1 -/
-theorem Rat.between_int (x:ℚ) : ∃! n:ℤ, n ≤ x ∧ x < n+1 := by
+#check Nat.mod_add_div
+#check Int.ediv
+
+example :  ∀ (m k : ℤ), m % k + k * (m / k) = m := by
+  exact fun m k ↦ Int.emod_add_ediv m k
+
+lemma Nat.exists_div_mod'' (n q : ℕ) (hq: 0 < q) :
+    ∃ m r, 0 ≤ r ∧ r < q ∧ n = m * q + r := by
+  use n / q, n % q
+  and_intros
+  grind
+  exact mod_lt n hq
+  rw [div_add_mod']
+
+lemma Nat.exists_div_mod''' (n q : ℕ) (hq: 0 < q) :
+    ∃! m, n = m * q + (n % q) := by
   sorry
 
+
+lemma Nat.exists_div_mod (n q : ℕ) (hq: 0 < q) :
+    ∃ (mr: Nat × Nat), 0 ≤ mr.2 ∧ mr.2 < q ∧ n = mr.1 * q + mr.2 := by
+  use (n / q, n % q)
+  and_intros
+  grind
+  exact mod_lt n hq
+  rw [div_add_mod']
+
+lemma Nat.exists_div_mod' (n q : ℕ) (hq: 0 < q) :
+    ∃! (mr: Nat × Nat), 0 ≤ mr.2 ∧ mr.2 < q ∧ n = mr.1 * q + mr.2 := by
+  use (n / q, n % q)
+  and_intros
+  grind
+  exact mod_lt n hq
+  rw [div_add_mod']
+
+  rintro ⟨ m, r ⟩ ⟨ _, h2, h3 ⟩
+  simp at h2 h3
+
+  obtain rfl := show  m = n / q by
+    have : ¬(m < n/q) := by grind [Nat.lt_div_iff_mul_lt]
+    have : ¬(n/q < m) := by grind [Nat.div_lt_iff_lt_mul]
+    grind
+
+  ext <;> simp
+  rw [h3]
+  simp
+  grind [mod_eq_of_lt]
+
+/-- Proposition 4.4.1 (Interspersing of integers by rationals) / Exercise 4.4.1 -/
+theorem Rat.between_int (x:ℚ) : ∃! n:ℤ, n ≤ x ∧ x < n+1 := by
+  by_cases h : 0 < x
+  have : ∃ p q : ℕ, x = p / q ∧ q ≠ 0 := by
+    use x.num.toNat, x.den
+    have : (x.num.toNat : ℚ) = x.num := by
+      norm_cast
+      exact (Int.eq_natCast_toNat.mpr (by positivity)).symm
+    rw [this]
+    constructor
+    exact Eq.symm (num_div_den x)
+    exact x.den_nz
+  obtain ⟨ p, q, h1, h2 ⟩ := this
+  have := Nat.exists_div_mod' p q (by positivity)
+  obtain ⟨ ⟨ m, r ⟩, ⟨  h3, h4, h5 ⟩, h6 ⟩  := this
+  use m
+  simp at *
+  and_intros
+  norm_cast
+  rw [h1, h5]
+  push_cast
+  rw [show ((m:ℚ) * q + r) / q = ((m:ℚ) * q) / q + r / q by ring]
+  rw [show ((m:ℚ) * q) / q = m by field_simp]
+  simp
+  positivity
+  rw [h1, h5]
+  push_cast
+  rw [show ((m:ℚ) * q + r) / q = ((m:ℚ) * q) / q + r / q by ring]
+  rw [show ((m:ℚ) * q) / q = m by field_simp]
+  simp
+  rw [div_lt_one_iff]
+  left
+  and_intros
+  norm_cast
+  grind
+  norm_cast
+
+  by_contra nu
+  simp at nu
+  obtain ⟨ n, hn1, hn2, hn3 ⟩ := nu
+  repeat sorry
+
+
+
 theorem Nat.exists_gt (x:ℚ) : ∃ n:ℕ, n > x := by
-  sorry
+  have := Rat.between_int x
+  obtain ⟨ n, ⟨ h1, h2 ⟩, h3 ⟩ := this
+  by_cases h : 0 < x
+  · have : 0 < (n:ℚ) + 1 := by linarith
+    norm_cast at this
+    lift n to ℕ using (by omega)
+    norm_cast at *
+    use (n + 1)
+
+  · use 1
+    norm_cast
+    linarith
 
 /-- Proposition 4.4.3 (Interspersing of rationals) -/
 theorem Rat.exists_between_rat {x y:ℚ} (h: x < y) : ∃ z:ℚ, x < z ∧ z < y := by
@@ -37,29 +136,32 @@ theorem Rat.exists_between_rat {x y:ℚ} (h: x < y) : ∃ z:ℚ, x < z ∧ z < y
   -- The reader is encouraged to find shorter proofs, for instance
   -- using Mathlib's `linarith` tactic.
   use (x+y)/2
-  have h' : x/2 < y/2 := by
-    rw [show x/2 = x*(1/2) by ring, show y/2 = y*(1/2) by ring]
-    apply mul_lt_mul_of_pos_right h; positivity
-  constructor
-  . convert add_lt_add_right h' (x/2) using 1 <;> ring
-  convert add_lt_add_right h' (y/2) using 1 <;> ring
+  constructor <;> linarith
 
 /-- Exercise 4.4.2 -/
 theorem Nat.no_infinite_descent : ¬ ∃ a:ℕ → ℕ, ∀ n, a (n+1) < a n := by
   sorry
 
 def Int.infinite_descent : Decidable (∃ a:ℕ → ℤ, ∀ n, a (n+1) < a n) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isTrue
+  use fun n => -n
+  intro n
+  dsimp
+  linarith
 
 #check even_iff_exists_two_mul
 #check odd_iff_exists_bit1
 
 theorem Nat.even_or_odd'' (n:ℕ) : Even n ∨ Odd n := by
-  sorry
+  exact even_or_odd n
 
 theorem Nat.not_even_and_odd (n:ℕ) : ¬ (Even n ∧ Odd n) := by
-  sorry
+  by_contra h
+  obtain ⟨ ⟨x, h1⟩ , ⟨ y, h2 ⟩ ⟩ := h
+  rw [h1] at h2
+  clear h1
+  clear n
+  omega
 
 #check Nat.rec
 
@@ -69,7 +171,8 @@ theorem Rat.not_exist_sqrt_two : ¬ ∃ x:ℚ, x^2 = 2 := by
   by_contra h; choose x hx using h
   have hnon : x ≠ 0 := by aesop
   wlog hpos : x > 0
-  . apply this _ _ _ (show -x>0 by simp; order) <;> grind
+  . have hneg : -x > 0 := by simp; order
+    apply this _ _ _ hneg <;> simp [hx,hnon]
   have hrep : ∃ p q:ℕ, p > 0 ∧ q > 0 ∧ p^2 = 2*q^2 := by
     use x.num.toNat, x.den
     observe hnum_pos : x.num > 0
@@ -109,7 +212,7 @@ theorem Rat.not_exist_sqrt_two : ¬ ∃ x:ℚ, x^2 = 2 := by
     | succ n ih => exact (hf _ ih).2
   have hlt (n:ℕ) : a (n+1) < a n := by
     have : a (n+1) = f (a n) := n.rec_add_one p (fun n p ↦ f p)
-    grind
+    simp [this, hf _ (ha n)]
   exact Nat.no_infinite_descent ⟨ a, hlt ⟩
 
 
@@ -125,7 +228,7 @@ theorem Rat.exist_approx_sqrt_two {ε:ℚ} (hε:ε>0) : ∃ x ≥ (0:ℚ), x^2 <
     aesop
   choose n hn using Nat.exists_gt (2/ε)
   rw [gt_iff_lt, div_lt_iff₀', mul_comm, ←sq_lt_sq₀] at hn <;> try positivity
-  grind
+  linarith [this n]
 
 /-- Example 4.4.6 -/
 example :
