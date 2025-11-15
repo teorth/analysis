@@ -764,10 +764,151 @@ lemma IsElementary.measure_of_disjUnion {d:ℕ} {E F: Set (EuclideanSpace' d)}
   -- Combine everything
   rw [h_union_measure, h_sum_split, hE_measure, hF_measure]
 
+-- Helper lemmas for measure_of_disjUnion'
+
+/-- Two different proofs that a set is elementary yield the same measure. -/
+lemma IsElementary.measure_irrelevant {d:ℕ} {E: Set (EuclideanSpace' d)}
+    (h₁ h₂ : IsElementary E) : h₁.measure = h₂.measure := by
+  classical
+  -- Use the partition data packaged inside h₂
+  obtain ⟨h_pair, h_union⟩ := h₂.partition.choose_spec
+  -- Evaluate both measures via the same partition
+  have h₁_exp := h₁.measure_eq h_pair h_union
+  have h₂_exp := h₂.measure_eq h_pair h_union
+  simp [h₂_exp] at h₁_exp
+  assumption
+
+/-- If two elementary sets are equal, their measures are equal. -/
+lemma IsElementary.measure_eq_of_set_eq {d:ℕ} {E F: Set (EuclideanSpace' d)}
+    (hE: IsElementary E) (hF: IsElementary F) (h: E = F) :
+    hE.measure = hF.measure := by
+  subst h  -- Now both proofs describe the same set
+  exact IsElementary.measure_irrelevant hE hF
+
+/-- The union over an empty finset of elementary sets is the empty set. -/
+lemma IsElementary.union'_empty_eq {d:ℕ} :
+    (⋃ E ∈ (∅ : Finset (Set (EuclideanSpace' d))), E) = ∅ := by
+  simp
+
+open Classical in
+/-- Measure of a sum over `insert a S'` equals the measure of `a` plus the measure of the sum over `S'`. -/
+lemma IsElementary.sum_insert_split {d:ℕ} {a: Set (EuclideanSpace' d)} {S': Finset (Set (EuclideanSpace' d))}
+    (ha : a ∉ S')
+    (hE: ∀ E ∈ insert a S', IsElementary E) :
+    ∑ E:(insert a S' : Finset (Set (EuclideanSpace' d))), (hE E.val E.property).measure =
+    (hE a (Finset.mem_insert_self _ _)).measure +
+    ∑ E:S', (hE E.val (Finset.mem_insert_of_mem E.property)).measure := by
+  induction S' using Finset.induction_on with
+  | empty =>
+    -- Base case: S' = ∅
+    -- LHS: ∑ E:(insert a ∅), ... = sum over {a}
+    -- RHS: measure of a + ∑ E:∅, ... = measure of a + 0
+    simp [Finset.sum_empty]
+  | @insert b S'' hb_notin ih =>
+    -- Inductive case: S' = insert b S''
+    -- Goal: ∑ E:(insert a (insert b S'')), ... = measure(a) + ∑ E:(insert b S''), ...
+    -- Use simp to expand both sides
+    simp [hb_notin]
+    -- Now split the sum on the LHS using Finset.sum_insert
+    -- First split out a
+    have ha_ne_b : a ≠ b := by simp_all
+    have ha_notin_S'' : a ∉ S'' := by simp_all
+    rw [Finset.sum_insert (by simp [ha_ne_b, ha_notin_S''])]
+    -- Now split out b from the remaining sum
+    rw [Finset.sum_insert (by simp [hb_notin])]
+    -- Both sides should now match
+    simp
+
 lemma IsElementary.measure_of_disjUnion' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
 (hE: ∀ E ∈ S, IsElementary E) (hdisj: S.toSet.PairwiseDisjoint id):
   (IsElementary.union' hE).measure = ∑ E:S, (hE E.val E.property).measure := by
-  sorry
+  -- Strategy: Induction on S. Base: empty set gives 0 = 0. Step: split S = insert a S',
+  -- show union = a ∪ (union S'), prove a disjoint from union S' via pairwise disjointness,
+  -- apply two-set additivity, use IH for S', combine.
+  classical
+  -- Induction on S using Finset.induction_on to reduce to two-set case
+  induction S using Finset.induction_on with
+  | empty =>
+    -- Base case: S = ∅, both sides are 0
+    have h_set_eq := IsElementary.union'_empty_eq (d := d)
+    have h_measure_eq : (IsElementary.union' hE).measure = (IsElementary.empty d).measure :=
+      IsElementary.measure_eq_of_set_eq (IsElementary.union' hE) (IsElementary.empty d) h_set_eq
+    rw [h_measure_eq]
+    -- Show (IsElementary.empty d).measure = 0
+    have h_empty_measure : (IsElementary.empty d).measure = 0 := by
+      have h_empty_eq : (∅ : Set (EuclideanSpace' d)) = ⋃ B ∈ (∅ : Finset (Box d)), B.toSet := by simp
+      have h_empty_disj : ((∅ : Finset (Box d)) : Set (Box d)).PairwiseDisjoint Box.toSet := by simp
+      rw [(IsElementary.empty d).measure_eq h_empty_disj h_empty_eq]
+      simp [Finset.sum_empty]
+    rw [h_empty_measure]
+    simp [Finset.sum_empty]
+  | @insert a S' ha_notin ih =>
+    -- Extract hypotheses for S' and element a
+    have hE_S' : ∀ E ∈ S', IsElementary E := by
+      intro E hE_mem
+      exact hE E (Finset.mem_insert_of_mem hE_mem)
+    have hdisj_S' : S'.toSet.PairwiseDisjoint id := by
+      intro E₁ hE₁ E₂ hE₂ hne
+      apply hdisj
+      · simp [hE₁]
+      · simp [hE₂]
+      · exact hne
+    have hE_a : IsElementary a := hE a (Finset.mem_insert_self _ _)
+
+    -- Show the union over insert a S' equals a ∪ (union over S')
+    have h_union_split : ⋃ E ∈ insert a S', E = a ∪ (⋃ E ∈ S', E) := by
+      ext x
+      simp [Set.mem_iUnion, Set.mem_union, Finset.mem_insert]
+
+    -- Prove a is disjoint from the union over S'
+    have h_disj : Disjoint a (⋃ E ∈ S', E) := by
+      rw [Set.disjoint_iff]
+      intro x ⟨hx_a, hx_rest⟩
+      simp [Set.mem_iUnion] at hx_rest
+      obtain ⟨E, hE_mem, hx_E⟩ := hx_rest
+      -- Use hdisj to show a and E are disjoint
+      have h_disj_a_E : Disjoint a E := by
+        have ha_mem : a ∈ (insert a S').toSet := by simp
+        have hE_mem' : E ∈ (insert a S').toSet := by simp [hE_mem]
+        have hne : a ≠ E := by
+          intro h; subst h
+          exact ha_notin hE_mem
+        -- hdisj: (insert a S').toSet.PairwiseDisjoint id means distinct sets are disjoint
+        -- Rewrite to extract the disjointness property
+        rw [Set.pairwiseDisjoint_iff] at hdisj
+        -- After rewriting, hdisj says: for distinct i, j in the set, (id i ∩ id j).Nonempty → i = j
+        -- We have x ∈ a and x ∈ E, so (id a ∩ id E).Nonempty, which would give a = E
+        -- But we also have hne : a ≠ E, so this is a contradiction
+        have h_inter_nonempty : (id a ∩ id E).Nonempty := by
+          simp [id]
+          exact ⟨x, hx_a, hx_E⟩
+        have h_eq := hdisj ha_mem hE_mem' h_inter_nonempty
+        -- h_eq says a = E, but we have hne : a ≠ E, contradiction
+        exact (hne h_eq).elim
+      rw [Set.disjoint_iff] at h_disj_a_E
+      exact h_disj_a_E ⟨hx_a, hx_E⟩
+
+    -- Apply the two-set additivity lemma
+    let hE_rest : IsElementary (⋃ E ∈ S', E) := IsElementary.union' hE_S'
+    have h_two_set : (hE_a.union hE_rest).measure = hE_a.measure + hE_rest.measure :=
+      IsElementary.measure_of_disjUnion hE_a hE_rest h_disj
+
+    -- Equate the union witness measure with the two-set union measure
+    have h_measure_eq : (IsElementary.union' hE).measure = (hE_a.union hE_rest).measure :=
+      IsElementary.measure_eq_of_set_eq (IsElementary.union' hE) (hE_a.union hE_rest) h_union_split
+
+    -- Split the sum into measure of a plus sum over S'
+    have h_sum_split := IsElementary.sum_insert_split ha_notin hE
+    -- Apply inductive hypothesis to the union over S', reconciling proof differences
+    have h_ih_applied : hE_rest.measure = ∑ E : S', (hE_S' E.val E.property).measure := ih hE_S' hdisj_S'
+    -- hE_S' is defined as hE_S' E hE_mem = hE E (Finset.mem_insert_of_mem hE_mem),
+    -- so the sums are definitionally equal and we can use h_ih_applied directly
+    have h_ih_adjusted : hE_rest.measure = ∑ E : S', (hE E.val (Finset.mem_insert_of_mem E.property)).measure :=
+      h_ih_applied
+
+    -- Combine all equalities to finish
+    rw [h_measure_eq, h_two_set, h_sum_split]
+    congr 1
 
 @[simp]
 lemma IsElementary.measure_of_empty (d:ℕ) : (IsElementary.empty d).measure = 0 := by
