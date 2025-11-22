@@ -16,6 +16,7 @@ _site/
 .claude/
 .cursor/
 Claude.md
+analysis/.repair
 
 # miscellaneous files
 analysis/Analysis/tobeIgnored/
