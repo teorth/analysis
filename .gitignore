@@ -19,4 +19,4 @@ Claude.md
 analysis/.repair
 
 # miscellaneous files
-analysis/Analysis/tobeIgnored/
+**/tobeIgnored/
