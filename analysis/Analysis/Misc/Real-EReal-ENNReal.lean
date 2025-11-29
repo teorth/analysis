@@ -184,6 +184,49 @@ lemma EReal.tsum_add_coe_ennreal {α : Type*} {a b : α → ENNReal} :
   congr 1
   exact h_tsum_add.symm
 
+/-- ENNReal coercion to EReal commutes with finite sums -/
+lemma EReal.coe_ennreal_finset_sum {α : Type*} {s : Finset α} {f : α → ENNReal} :
+    (∑ a ∈ s, f a : ENNReal).toEReal = ∑ a ∈ s, (f a).toEReal := by
+  induction s using Finset.cons_induction with
+  | empty => simp
+  | cons a t ha ih => simp only [Finset.sum_cons ha, EReal.coe_ennreal_add, ih]
+
+/-- Finite sum embedded in EReal is bounded by tsum.
+    For nonnegative reals, finite partial sums are always ≤ the infinite sum.
+    Strategy: Convert to ENNReal where sum_le_tsum holds, then transfer via coercion. -/
+lemma EReal.finset_sum_le_tsum {f : ℕ → ℝ} (hf : ∀ n, 0 ≤ f n) (t : Finset ℕ) :
+    (∑ n ∈ t, f n : EReal) ≤ ∑' n, (f n).toEReal := by
+  -- Convert LHS to EReal via coe_finset_sum
+  have hf_t : ∀ a ∈ t, 0 ≤ f a := fun a _ => hf a
+  rw [← EReal.coe_finset_sum hf_t]
+  -- Define the ENNReal version of f
+  let g : ℕ → ENNReal := fun n => ENNReal.ofReal (f n)
+  -- Key fact: ENNReal.sum_le_tsum always holds
+  have h_enn : ∑ n ∈ t, g n ≤ ∑' n, g n := ENNReal.sum_le_tsum t
+  -- Show each term equality: (f n).toEReal = (g n).toEReal for nonneg f n
+  have h_term : ∀ n, (f n).toEReal = (g n).toEReal := fun n => by
+    simp only [g, EReal.coe_ennreal_ofReal, max_eq_left (hf n)]
+  -- Show finite sum equality
+  have h_fin : (∑ n ∈ t, f n : ℝ).toEReal = (∑ n ∈ t, g n : ENNReal).toEReal := by
+    rw [EReal.coe_finset_sum hf_t, EReal.coe_ennreal_finset_sum]
+    exact Finset.sum_congr rfl (fun n _ => h_term n)
+  -- Show tsum equality
+  have h_inf : ∑' n, (f n).toEReal = (∑' n, g n : ENNReal).toEReal := by
+    have h_sum : Summable g := ENNReal.summable
+    -- Use that continuous additive maps commute with tsum
+    have h_coe_tsum : (∑' n, g n : ENNReal).toEReal = ∑' n, (g n).toEReal := by
+      let φ : ENNReal →+ EReal := {
+        toFun := (↑·)
+        map_zero' := by simp
+        map_add' := EReal.coe_ennreal_add
+      }
+      exact Summable.map_tsum h_sum φ continuous_coe_ennreal_ereal
+    rw [h_coe_tsum]
+    exact tsum_congr (fun n => h_term n)
+  -- Transfer inequality via monotone coercion
+  rw [h_fin, h_inf]
+  exact EReal.coe_ennreal_le_coe_ennreal_iff.mpr h_enn
+
 /-- Helper: For non-negative real sequences, tsum addition inequality in EReal.
     If f n + g n ≤ h n pointwise, then ∑' f.toEReal + ∑' g.toEReal ≤ ∑' h.toEReal. -/
 lemma EReal.tsum_add_le_of_nonneg_pointwise {f g h : ℕ → ℝ}

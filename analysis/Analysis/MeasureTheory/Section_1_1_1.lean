@@ -19,6 +19,7 @@ inductive BoundedInterval where
 
 open BoundedInterval
 
+/-- Coerces a BoundedInterval to its underlying set of real numbers. -/
 @[coe]
 def BoundedInterval.toSet (I: BoundedInterval) : Set ℝ := match I with
   | Ioo a b => .Ioo a b
@@ -26,12 +27,15 @@ def BoundedInterval.toSet (I: BoundedInterval) : Set ℝ := match I with
   | Ioc a b => .Ioc a b
   | Ico a b => .Ico a b
 
+/-- Enables coercion from BoundedInterval to Set ℝ. -/
 instance BoundedInterval.inst_coeSet : Coe BoundedInterval (Set ℝ) where
   coe := toSet
 
+/-- The empty BoundedInterval is represented as the degenerate open interval (0,0). -/
 instance BoundedInterval.instEmpty : EmptyCollection BoundedInterval where
   emptyCollection := Ioo 0 0
 
+/-- The empty BoundedInterval coerces to the empty set. -/
 @[simp]
 theorem BoundedInterval.coe_empty : ((∅ : BoundedInterval):Set ℝ) = ∅ := by
   simp [toSet]
@@ -40,6 +44,7 @@ open Classical in
 /-- This is to make Finsets of BoundedIntervals work properly -/
 noncomputable instance BoundedInterval.decidableEq : DecidableEq BoundedInterval := instDecidableEqOfLawfulBEq
 
+/-- Simp lemmas for coercing each BoundedInterval constructor to Set ℝ. -/
 @[simp]
 theorem BoundedInterval.set_Ioo (a b:ℝ) : (Ioo a b : Set ℝ) = .Ioo a b := by rfl
 
@@ -322,7 +327,7 @@ theorem mem_of_mem_Icc_ordConnected {X : Set ℝ}
     {x w z : ℝ} (hw : w ∈ X) (hz : z ∈ X) (hx : x ∈ Set.Icc w z) : x ∈ X :=
   hOrdConn hw hz hx
 
-
+/-- A set of reals is bounded and order-connected if and only if it equals some bounded interval. -/
 theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
     Bornology.IsBounded X ∧ X.OrdConnected ↔ ∃ I: BoundedInterval, X = I := by
   constructor
@@ -431,6 +436,7 @@ theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
         simp [set_Ico, Set.mem_Ico] at hx hy hz; simp [Set.mem_Ico]
         exact ⟨le_trans hx.1 hz.1, lt_of_le_of_lt hz.2 hy.2⟩
 
+/-- The intersection of two bounded intervals is again a bounded interval. -/
 theorem BoundedInterval.inter (I J: BoundedInterval) : ∃ K : BoundedInterval, (I:Set ℝ) ∩ (J:Set ℝ) = (K:Set ℝ) := by
   -- Strategy: Use the characterization theorem `BoundedInterval.ordConnected_iff`
   -- Step 1: Show that (I:Set ℝ) ∩ (J:Set ℝ) is bounded
@@ -449,33 +455,41 @@ theorem BoundedInterval.inter (I J: BoundedInterval) : ∃ K : BoundedInterval, 
     exact Set.OrdConnected.inter hI_ordConn hJ_ordConn
   exact (BoundedInterval.ordConnected_iff ((I:Set ℝ) ∩ (J:Set ℝ))).mp ⟨hBounded, hOrdConn⟩
 
+/-- Instance enabling ∩ notation for BoundedIntervals. -/
 noncomputable instance BoundedInterval.instInter : Inter BoundedInterval where
   inter I J := (inter I J).choose
 
+/-- The intersection of BoundedIntervals equals the set-theoretic intersection. -/
 @[simp]
 theorem BoundedInterval.inter_eq (I J: BoundedInterval) : (I ∩ J : BoundedInterval) = (I:Set ℝ) ∩ (J:Set ℝ)  :=
   (inter I J).choose_spec.symm
 
+/-- Instance enabling ∈ notation for membership in BoundedInterval. -/
 instance BoundedInterval.instMembership : Membership ℝ BoundedInterval where
   mem I x := x ∈ (I:Set ℝ)
 
+/-- Membership in BoundedInterval is equivalent to membership in its underlying set. -/
 @[simp]
 theorem BoundedInterval.mem_iff (I: BoundedInterval) (x:ℝ) :
   x ∈ I ↔ x ∈ (I:Set ℝ) := by rfl
 
+/-- Instance enabling ⊆ notation for BoundedIntervals. -/
 instance BoundedInterval.instSubset : HasSubset BoundedInterval where
   Subset I J := ∀ x, x ∈ I → x ∈ J
 
+/-- Subset of BoundedIntervals is equivalent to subset of their underlying sets. -/
 @[simp]
 theorem BoundedInterval.subset_iff (I J: BoundedInterval) :
   I ⊆ J ↔ (I:Set ℝ) ⊆ (J:Set ℝ) := by rfl
 
+/-- Extracts the left endpoint of a bounded interval. -/
 abbrev BoundedInterval.a (I: BoundedInterval) : ℝ := match I with
   | Ioo a _ => a
   | Icc a _ => a
   | Ioc a _ => a
   | Ico a _ => a
 
+/-- Extracts the right endpoint of a bounded interval. -/
 abbrev BoundedInterval.b (I: BoundedInterval) : ℝ := match I with
   | Ioo _ b => b
   | Icc _ b => b
@@ -490,19 +504,21 @@ lemma BoundedInterval.nonempty_implies_le (I : BoundedInterval) (h : I.toSet.Non
   | Ioc a b => exact le_of_lt (nonempty_Ioc_strictness h)
   | Ico a b => exact le_of_lt (nonempty_Ico_strictness h)
 
+/-- Any bounded interval is contained in the closed interval with the same endpoints. -/
 theorem BoundedInterval.subset_Icc (I: BoundedInterval) : I ⊆ Icc I.a I.b := match I with
   | Ioo _ _ => by simp [subset_iff, Set.Ioo_subset_Icc_self]
   | Icc _ _ => by simp [subset_iff]
   | Ioc _ _ => by simp [subset_iff, Set.Ioc_subset_Icc_self]
   | Ico _ _ => by simp [subset_iff, Set.Ico_subset_Icc_self]
 
+/-- The open interval with the same endpoints is contained in any bounded interval. -/
 theorem BoundedInterval.Ioo_subset (I: BoundedInterval) : Ioo I.a I.b ⊆ I := match I with
   | Ioo _ _ => by simp [subset_iff]
   | Icc _ _ => by simp [subset_iff, Set.Ioo_subset_Icc_self]
   | Ioc _ _ => by simp [subset_iff, Set.Ioo_subset_Ioc_self]
   | Ico _ _ => by simp [subset_iff, Set.Ioo_subset_Ico_self]
 
-/-- Definition 1.1.1 (boxes) -/
+/-- Definition 1.1.1 (boxes): The length of an interval is max(b - a, 0). -/
 abbrev BoundedInterval.length (I: BoundedInterval) : ℝ := max (I.b - I.a) 0
 
 /-- Length is always non-negative -/
@@ -511,30 +527,37 @@ lemma BoundedInterval.length_nonneg (I: BoundedInterval) : 0 ≤ I.length := le_
 /-- Using ||ₗ subscript here to not override || -/
 macro:max atomic("|" noWs) a:term noWs "|ₗ" : term => `(BoundedInterval.length $a)
 
+/-- A d-dimensional box is a Cartesian product of d bounded intervals. -/
 @[ext]
 structure Box (d:ℕ) where
   side : Fin d → BoundedInterval
 
+/-- Coerces a Box to its underlying set in d-dimensional Euclidean space. -/
 @[coe]
 abbrev Box.toSet {d:ℕ} (B: Box d) : Set (EuclideanSpace' d) :=
   Set.univ.pi (fun i ↦ ↑(B.side i))
 
+/-- Enables coercion from Box d to Set (EuclideanSpace' d). -/
 instance Box.inst_coeSet {d:ℕ} : Coe (Box d) (Set (EuclideanSpace' d)) where
   coe := toSet
 
+/-- Lifts a 1-dimensional interval to a 1-dimensional box. -/
 @[coe]
 abbrev BoundedInterval.toBox (I: BoundedInterval) : Box 1 where
   side := fun _ ↦ I
 
+/-- Enables coercion from BoundedInterval to Box 1. -/
 instance BoundedInterval.inst_coeBox : Coe (BoundedInterval) (Box 1) where
   coe := toBox
 
+/-- Coercing to Box 1 is injective: equal boxes implies equal intervals. -/
 @[simp]
 theorem BoundedInterval.toBox_inj {I J: BoundedInterval} : (I:Box 1) = (J:Box 1) ↔ I = J := by
   refine' ⟨fun h => _, fun h => h ▸ rfl⟩
   have : (I:Box 1).side 0 = (J:Box 1).side 0 := by rw [h]
   exact this
 
+/-- A 1D box's set equals the image of the interval under the Real ≃ EuclideanSpace' 1 equivalence. -/
 @[simp]
 theorem BoundedInterval.coe_of_box (I:BoundedInterval) : (I:Box 1).toSet = Real.equiv_EuclideanSpace' '' I.toSet := by
   ext x
@@ -546,7 +569,7 @@ theorem BoundedInterval.coe_of_box (I:BoundedInterval) : (I:Box 1).toSet = Real.
   have : i=0 := by omega
   grind
 
-/-- Definition 1.1.1 (boxes)-/
+/-- Definition 1.1.1 (boxes): The volume of a box is the product of its side lengths. -/
 abbrev Box.volume {d:ℕ} (B: Box d) : ℝ := ∏ i, |B.side i|ₗ
 
 /-- Using ||ᵥ subscript here to not override || -/
@@ -596,6 +619,7 @@ lemma Box.side_nonempty_of_nonempty {d:ℕ} (B : Box d) (hB : B.toSet.Nonempty) 
   simp [Box.toSet] at hf
   exact ⟨f i, hf i (Set.mem_univ i)⟩
 
+/-- The volume of a 1D box equals the length of the underlying interval. -/
 @[simp]
 theorem Box.volume_of_interval (I:BoundedInterval) : |(I:Box 1)|ᵥ = |I|ₗ := by
   simp [Box.volume]
@@ -664,46 +688,51 @@ lemma Box.toSet_injective_of_nonempty {d:ℕ} {B₁ B₂ : Box d}
       exact ⟨f i, hf i (Set.mem_univ i)⟩
   exact BoundedInterval.toSet_injective_of_nonempty h_sides_nonempty.1 h_sides_nonempty.2 h_side
 
+/-- A set is elementary if it can be expressed as a finite union of boxes. -/
 abbrev IsElementary {d:ℕ} (E: Set (EuclideanSpace' d)) : Prop := ∃ S : Finset (Box d), E = ⋃ B ∈ S, ↑B
 
+/-- Every box is an elementary set (witnessed by the singleton finset). -/
 theorem IsElementary.box {d:ℕ} (B: Box d) : IsElementary B.toSet := by
   use {B}
   simp
 
-/-- Exercise 1.1.1 (Boolean closure) -/
+/-- Exercise 1.1.1 (Boolean closure): The union of two elementary sets is elementary. -/
 theorem IsElementary.union {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E ∪ F) := by
   sorry
 
+/-- The union of a finset of elementary sets is elementary. -/
 lemma IsElementary.union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
 (hE: ∀ E ∈ S, IsElementary E) : IsElementary (⋃ E ∈ S, E) := by sorry
 
-/-- Exercise 1.1.1 (Boolean closure) -/
+/-- Exercise 1.1.1 (Boolean closure): The intersection of two elementary sets is elementary. -/
 theorem IsElementary.inter {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E ∩ F) := by
   sorry
 
+/-- The empty set is elementary. -/
 theorem IsElementary.empty (d:ℕ) : IsElementary (∅: Set (EuclideanSpace' d)) := by
   sorry
 
-/-- Exercise 1.1.1 (Boolean closure) -/
+/-- Exercise 1.1.1 (Boolean closure): The set difference of two elementary sets is elementary. -/
 theorem IsElementary.sdiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E \ F) := by
   sorry
 
-/-- Exercise 1.1.1 (Boolean closure) -/
+/-- Exercise 1.1.1 (Boolean closure): The symmetric difference of two elementary sets is elementary. -/
 theorem IsElementary.symmDiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (symmDiff E F) := by
   sorry
 
 open Pointwise
 
-/-- Exercise 1.1.1 (Boolean closure) -/
+/-- Exercise 1.1.1 (Boolean closure): Translation of an elementary set is elementary. -/
 theorem IsElementary.translate {d:ℕ} {E: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (x: EuclideanSpace' d) : IsElementary (E + {x}) := by
   sorry
 
-/-- A sublemma for proving Lemma 1.1.2(i).  It is a geometrically obvious fact but surprisingly annoying to prove formally. -/
+/-- A sublemma for proving Lemma 1.1.2(i): Any finset of intervals admits a common
+refinement into pairwise disjoint sub-intervals. -/
 theorem BoundedInterval.partition (S: Finset BoundedInterval) : ∃ T: Finset BoundedInterval, T.toSet.PairwiseDisjoint BoundedInterval.toSet ∧ ∀ I ∈ S, ∃ U : Set T, I = ⋃ J ∈ U, J.val.toSet := by
   let endpoints : Finset ℝ := S.image BoundedInterval.a ∪ S.image BoundedInterval.b
   have ha_mem {I:BoundedInterval} (hI: I ∈ S) : I.a ∈ endpoints := by grind
@@ -777,7 +806,7 @@ theorem BoundedInterval.partition (S: Finset BoundedInterval) : ∃ T: Finset Bo
     grind
   grind
 
-/-- Lemma 1.1.2(i) -/
+/-- Lemma 1.1.2(i): Any finset of boxes admits a common refinement into pairwise disjoint sub-boxes. -/
 theorem Box.partition {d:ℕ} (S: Finset (Box d)) : ∃ T: Finset (Box d), T.toSet.PairwiseDisjoint Box.toSet ∧ ∀ I ∈ S, ∃ U : Set T, I = ⋃ J ∈ U, J.val.toSet := by
   choose T hTdisj hT using BoundedInterval.partition
   let J : Fin d → Finset BoundedInterval := fun i ↦ T (S.image (fun B ↦ B.side i))
@@ -811,6 +840,7 @@ theorem Box.partition {d:ℕ} (S: Finset (Box d)) : ∃ T: Finset (Box d), T.toS
   rintro ⟨ B', ⟨ h1, h2 ⟩, h3 ⟩ i; use B'.side i
   aesop
 
+/-- Every elementary set can be partitioned into pairwise disjoint boxes. -/
 theorem IsElementary.partition {d:ℕ} {E: Set (EuclideanSpace' d)}
 (hE: IsElementary E) : ∃ T: Finset (Box d), T.toSet.PairwiseDisjoint Box.toSet ∧ E = ⋃ J ∈ T, J.toSet := by
   obtain ⟨ S, rfl ⟩ := hE
@@ -823,7 +853,7 @@ theorem IsElementary.partition {d:ℕ} {E: Set (EuclideanSpace' d)}
   . apply hT'.subset; intro _; simp; tauto
   ext; simp; grind
 
-/-- Helper lemma for Lemma 1.1.2(ii) -/
+/-- Helper lemma for Lemma 1.1.2(ii): The set of lattice points (multiples of 1/N) in an interval is finite. -/
 theorem BoundedInterval.sample_finite (I : BoundedInterval) {N:ℕ} (hN: N ≠ 0):
   Finite ↥(I.toSet ∩ (Set.range (fun n:ℤ ↦ (N:ℝ)⁻¹*n))) := by
   rw [Set.finite_coe_iff]
@@ -851,12 +881,13 @@ theorem BoundedInterval.sample_finite (I : BoundedInterval) {N:ℕ} (hN: N ≠ 0
       exact Int.le_floor.mpr this
   exact Set.Finite.subset ((Finset.finite_toSet _).image _) this
 
-/-- Exercise for Lemma 1.1.2(ii) -/
+/-- Exercise for Lemma 1.1.2(ii): Interval length equals the limit of lattice point counts scaled by 1/N. -/
 theorem BoundedInterval.length_eq (I : BoundedInterval) :
   Filter.atTop.Tendsto (fun N:ℕ ↦ (N:ℝ)⁻¹ * Nat.card ↥(I.toSet ∩ (Set.range (fun n:ℤ ↦ (N:ℝ)⁻¹*n))))
   (nhds |I|ₗ) := by
   sorry
 
+/-- Lattice points in a box decompose as a product of lattice points in each interval side. -/
 def Box.sample_congr {d:ℕ} (B:Box d) (N:ℕ) :
 ↥(B.toSet ∩ (Set.range (fun (n:Fin d → ℤ) i ↦ (N:ℝ)⁻¹*(n i)))) ≃ ((i : Fin d) → ↑(↑(B.side i) ∩ Set.range fun n:ℤ ↦ (N:ℝ)⁻¹ * ↑n)) := {
     toFun x i := by
@@ -874,13 +905,13 @@ def Box.sample_congr {d:ℕ} (B:Box d) (N:ℕ) :
     right_inv x := by aesop
   }
 
-/-- Helper lemma for Lemma 1.1.2(ii) -/
+/-- Helper lemma for Lemma 1.1.2(ii): The set of lattice points in a box is finite. -/
 theorem Box.sample_finite {d:ℕ} (B: Box d) {N:ℕ} (hN: N ≠ 0):
   Finite ↥(B.toSet ∩ (Set.range (fun (n:Fin d → ℤ) i ↦ (N:ℝ)⁻¹*(n i)))) := by
     rw [Equiv.finite_iff (B.sample_congr N)]
     apply @Pi.finite _ _ _ (fun i ↦ (B.side i).sample_finite hN)
 
-/-- Helper lemma for Lemma 1.1.2(ii) -/
+/-- Helper lemma for Lemma 1.1.2(ii): Box volume equals the limit of lattice point counts scaled by N^(-d). -/
 theorem Box.vol_eq {d:ℕ} (B: Box d):
   Filter.atTop.Tendsto (fun N:ℕ ↦ (N:ℝ)^(-d:ℝ) * Nat.card ↥(B.toSet ∩ (Set.range (fun (n:Fin d → ℤ) i ↦ (N:ℝ)⁻¹*(n i)))))
   (nhds |B|ᵥ) := by
@@ -892,7 +923,7 @@ theorem Box.vol_eq {d:ℕ} (B: Box d):
   apply Nat.card_congr (B.sample_congr N)
 
 
-/-- Lemma 1.1.2(ii), helper lemma -/
+/-- Lemma 1.1.2(ii), helper lemma: Sum of volumes equals limit of lattice counts over a disjoint union. -/
 theorem Box.sum_vol_eq {d:ℕ} {T: Finset (Box d)}
  (hT: T.toSet.PairwiseDisjoint Box.toSet) :
   Filter.atTop.Tendsto (fun N:ℕ ↦ (N:ℝ)^(-d:ℝ) * Nat.card ↥((⋃ B ∈ T, B.toSet) ∩ (Set.range (fun (n:Fin d → ℤ) i ↦ (N:ℝ)⁻¹*(n i)))))
@@ -927,7 +958,7 @@ theorem Box.sum_vol_eq {d:ℕ} {T: Finset (Box d)}
   intro ⟨ B, _ ⟩; convert B.sample_finite ?_
   omega
 
-/-- Lemma 1.1.2(ii) -/
+/-- Lemma 1.1.2(ii): Two disjoint partitions of the same set have equal sums of volumes. -/
 theorem Box.measure_uniq {d:ℕ} {T₁ T₂: Finset (Box d)}
  (hT₁: T₁.toSet.PairwiseDisjoint Box.toSet)
  (hT₂: T₂.toSet.PairwiseDisjoint Box.toSet)
@@ -937,9 +968,11 @@ theorem Box.measure_uniq {d:ℕ} {T₁ T₂: Finset (Box d)}
   rw [←heq]
   exact Box.sum_vol_eq hT₁
 
+/-- The elementary measure of a set, defined as the sum of volumes over a disjoint partition. -/
 noncomputable abbrev IsElementary.measure {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) : ℝ
   := ∑ B ∈ hE.partition.choose, |B|ᵥ
 
+/-- The measure equals the sum of volumes for any disjoint box partition of the set. -/
 theorem IsElementary.measure_eq {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E)
   {T: Finset (Box d)} (hT: T.toSet.PairwiseDisjoint Box.toSet)
   (heq : E = ⋃ B ∈ T, B.toSet):
@@ -957,6 +990,7 @@ theorem Box.measure_uniq' {d:ℕ} {T₁ T₂: Finset (Box d)}
  ∑ B ∈ T₁, |B|ᵥ = ∑ B ∈ T₂, |B|ᵥ := by
  sorry
 
+/-- Example: the measure of (1,2) ∪ [3,6] is 1 + 3 = 4. -/
 example :
   let E : Set (EuclideanSpace' 1) := Real.equiv_EuclideanSpace' '' ((Set.Ioo 1 2) ∪ (Set.Icc 3 6))
   ∃ hE : IsElementary E, hE.measure = 4 := by
@@ -974,6 +1008,7 @@ example :
   rw [Set.pairwiseDisjoint_iff]
   simp [T]; split_ands <;> intro ⟨ x, hx ⟩ <;> grind
 
+/-- Elementary measure is always non-negative. -/
 lemma IsElementary.measure_nonneg {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) :
   0 ≤ hE.measure := by
   -- Strategy:
@@ -995,6 +1030,7 @@ lemma IsElementary.measure_nonneg {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsEl
   -- Step 3: Apply Finset.sum_nonneg with the fact from step 2
   exact Finset.sum_nonneg hvol_nonneg
 
+/-- Measure is additive on disjoint elementary sets: μ(E ∪ F) = μ(E) + μ(F). -/
 lemma IsElementary.measure_of_disjUnion {d:ℕ} {E F: Set (EuclideanSpace' d)}
 (hE: IsElementary E) (hF: IsElementary F) (hdisj: Disjoint E F):
   (hE.union hF).measure = hE.measure + hF.measure := by
@@ -1142,6 +1178,7 @@ lemma IsElementary.sum_insert_split {d:ℕ} {a: Set (EuclideanSpace' d)} {S': Fi
     -- Both sides should now match
     simp
 
+/-- Measure is additive on pairwise disjoint finsets of elementary sets. -/
 lemma IsElementary.measure_of_disjUnion' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
 (hE: ∀ E ∈ S, IsElementary E) (hdisj: S.toSet.PairwiseDisjoint id):
   (IsElementary.union' hE).measure = ∑ E:S, (hE E.val E.property).measure := by
@@ -1233,6 +1270,7 @@ lemma IsElementary.measure_of_disjUnion' {d:ℕ} {S: Finset (Set (EuclideanSpace
     rw [h_measure_eq, h_two_set, h_sum_split]
     congr 1
 
+/-- The empty set has measure zero. -/
 @[simp]
 lemma IsElementary.measure_of_empty (d:ℕ) : (IsElementary.empty d).measure = 0 := by
   -- Strategy: Use empty partition T = ∅, apply measure_eq, simplify with Finset.sum_empty
@@ -1244,6 +1282,7 @@ lemma IsElementary.measure_of_empty (d:ℕ) : (IsElementary.empty d).measure = 0
   rw [(IsElementary.empty d).measure_eq h_empty_disj h_empty_eq]
   simp [Finset.sum_empty]
 
+/-- The measure of a single box equals its volume. -/
 @[simp]
 lemma IsElementary.measure_of_box {d:ℕ} (B: Box d) : (IsElementary.box B).measure = |B|ᵥ := by
   -- Strategy: Use singleton partition T = {B}, apply measure_eq, simplify with Finset.sum_singleton
@@ -1259,6 +1298,7 @@ lemma IsElementary.measure_of_box {d:ℕ} (B: Box d) : (IsElementary.box B).meas
   rw [(IsElementary.box B).measure_eq h_box_disj h_box_eq]
   simp [Finset.sum_singleton]
 
+/-- Elementary measure is monotone: if E ⊆ F then μ(E) ≤ μ(F). -/
 lemma IsElementary.measure_mono  {d:ℕ} {E F: Set (EuclideanSpace' d)}
 (hE: IsElementary E) (hF: IsElementary F) (hcont: E ⊆ F):
   hE.measure ≤ hF.measure := by
@@ -1297,6 +1337,7 @@ lemma IsElementary.measure_mono  {d:ℕ} {E F: Set (EuclideanSpace' d)}
   rw [← h_union_measure_eq, h_union_measure]
   linarith [IsElementary.measure_nonneg hF_sdiff_E]
 
+/-- Subadditivity of measure on unions: μ(E ∪ F) ≤ μ(E) + μ(F). -/
 lemma IsElementary.measure_of_union {d:ℕ} {E F: Set (EuclideanSpace' d)}
 (hE: IsElementary E) (hF: IsElementary F):
   (hE.union hF).measure ≤ hE.measure + hF.measure := by
@@ -1335,6 +1376,7 @@ lemma IsElementary.measure_of_union {d:ℕ} {E F: Set (EuclideanSpace' d)}
   linarith
 
 
+/-- Subadditivity of measure on finset unions: μ(⋃ S) ≤ ∑ μ(E) for E ∈ S. -/
 lemma IsElementary.measure_of_union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
 (hE: ∀ E ∈ S, IsElementary E) :
   (IsElementary.union' hE).measure ≤ ∑ E:S, (hE E.val E.property).measure := by
@@ -1430,6 +1472,7 @@ lemma Set.translate_inj {d:ℕ} (x: EuclideanSpace' d) (S₁ S₂ : Set (Euclide
     rw [Set.mem_singleton_iff.mp hb] at hab
     exact (add_right_cancel hab) ▸ ha
 
+/-- Elementary measure is translation-invariant: μ(E + {x}) = μ(E). -/
 lemma IsElementary.measure_of_translate {d:ℕ} {E: Set (EuclideanSpace' d)}
 (hE: IsElementary E) (x: EuclideanSpace' d):
   (hE.translate x).measure = hE.measure := by
@@ -1539,7 +1582,8 @@ lemma IsElementary.measure_of_translate {d:ℕ} {E: Set (EuclideanSpace' d)}
       exact Finset.sum_congr rfl fun B hB => (hf_spec B hB).2
     rw [h_translate_measure, h_sum_eq, hE.measure_eq hT_disj hE_eq]
 
-/-- Exercise 1.1.3 (uniqueness of elementary measure) -/
+/-- Exercise 1.1.3 (uniqueness of elementary measure): Any non-negative, additive, translation-invariant
+function on elementary sets is a scalar multiple of the standard elementary measure. -/
 theorem IsElementary.measure_uniq {d:ℕ} {m': (E: Set (EuclideanSpace' d)) → (IsElementary E) → ℝ}
   (hnonneg: ∀ E: Set (EuclideanSpace' d), ∀ hE: IsElementary E, m' E hE ≥ 0)
   (hadd: ∀ E F: Set (EuclideanSpace' d), ∀ (hE: IsElementary E) (hF: IsElementary F),
@@ -1547,8 +1591,10 @@ theorem IsElementary.measure_uniq {d:ℕ} {m': (E: Set (EuclideanSpace' d)) → 
   (htrans: ∀ E: Set (EuclideanSpace' d), ∀ (hE: IsElementary E) (x: EuclideanSpace' d), m' (E + {x}) (hE.translate x) = m' E hE) : ∃ c, c ≥ 0 ∧ ∀ E: Set (EuclideanSpace' d), ∀ hE: IsElementary E, m' E hE = c * hE.measure := by
     sorry
 
+/-- The d-dimensional unit cube (0,1]^d. -/
 abbrev Box.unit_cube (d:ℕ) : Box d := { side := fun _ ↦ BoundedInterval.Ioc 0 1}
 
+/-- Any measure satisfying normalization m'(unit cube) = 1 must equal the standard elementary measure. -/
 theorem IsElementary.measure_uniq' {d:ℕ} {m': (E: Set (EuclideanSpace' d)) → (IsElementary E) → ℝ}
   (hnonneg: ∀ E: Set (EuclideanSpace' d), ∀ hE: IsElementary E, m' E hE ≥ 0)
   (hadd: ∀ E F: Set (EuclideanSpace' d), ∀ (hE: IsElementary E) (hF: IsElementary F),
@@ -1558,15 +1604,17 @@ theorem IsElementary.measure_uniq' {d:ℕ} {m': (E: Set (EuclideanSpace' d)) →
   ∀ E: Set (EuclideanSpace' d), ∀ hE: IsElementary E, m' E hE = hE.measure := by
     sorry
 
+/-- The Cartesian product of two boxes is a box in the sum dimension. -/
 abbrev Box.prod {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) : Box (d₁ + d₂) where
   side i := by
     obtain ⟨ i, hi ⟩ := i
     exact if h : i < d₁ then B₁.side ⟨i, h⟩ else (B₂.side ⟨i - d₁, by omega⟩)
 
-/-- Exercise 1.1.4 -/
+/-- Exercise 1.1.4: The Cartesian product of two elementary sets is elementary. -/
 theorem IsElementary.prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace' d₁)} {E₂: Set (EuclideanSpace' d₂)}
   (hE₁: IsElementary E₁) (hE₂: IsElementary E₂) : IsElementary (EuclideanSpace'.prod E₁ E₂) := by sorry
 
+/-- Measure is multiplicative on products: μ(E₁ × E₂) = μ(E₁) * μ(E₂). -/
 theorem IsElementary.measure_of_prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace' d₁)} {E₂: Set (EuclideanSpace' d₂)}
   (hE₁: IsElementary E₁) (hE₂: IsElementary E₂)
   : (hE₁.prod hE₂).measure = hE₁.measure * hE₂.measure := by sorry

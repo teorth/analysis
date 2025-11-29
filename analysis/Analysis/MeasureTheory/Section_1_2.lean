@@ -12,18 +12,21 @@ A companion to (the introduction to) Section 1.2 of the book "An introduction to
 open BoundedInterval
 
 /-- Exercise 1.2.1 -/
+-- Jordan measurability is not preserved by countable unions: there exists a sequence of Jordan measurable sets whose union is not Jordan measurable.
 example : ∃ E: ℕ → Set ℝ, (∀ n, Bornology.IsBounded (E n)) ∧
   (∀ n, JordanMeasurable (Real.equiv_EuclideanSpace' '' (E n)))
   ∧ ¬ JordanMeasurable (⋃ n, Real.equiv_EuclideanSpace' '' (E n)) := by
   sorry
 
 /-- Exercise 1.2.1 -/
+-- Jordan measurability is not preserved by countable intersections: there exists a sequence of Jordan measurable sets whose intersection is not Jordan measurable.
 example : ∃ E: ℕ → Set ℝ, (∀ n, Bornology.IsBounded (E n)) ∧
   (∀ n, JordanMeasurable (Real.equiv_EuclideanSpace' '' (E n)))
   ∧ ¬ JordanMeasurable (⋂ n, Real.equiv_EuclideanSpace' '' (E n)) := by
   sorry
 
 /-- Exercise 1.2.2 -/
+-- The pointwise limit of uniformly bounded Riemann integrable functions need not be Riemann integrable.
 example : ∃ f: ℕ → ℝ → ℝ, ∃ F: ℝ → ℝ, ∃ M, ∀ n, ∀ x ∈ Set.Icc 0 1, |f n x| ≤ M ∧
     (∀ x ∈ Set.Icc 0 1, Filter.atTop.Tendsto (fun n ↦ f n x) (nhds (F x))) ∧
     (∀ n, RiemannIntegrableOn (f n) (Icc 0 1)) ∧
@@ -31,10 +34,12 @@ example : ∃ f: ℕ → ℝ → ℝ, ∃ F: ℝ → ℝ, ∃ M, ∀ n, ∀ x �
   sorry
 
 /-- Exercise 1.2.2 -/
+-- Determine whether uniform convergence of uniformly bounded Riemann integrable functions preserves Riemann integrability (true or false).
 def Ex_1_2_2b : Decidable ( ∀ f: ℕ → ℝ → ℝ, ∀ F: ℝ → ℝ, (∃ M, ∀ n, ∀ x ∈ Set.Icc 0 1, |f n x| ≤ M) → (∀ x ∈ Set.Icc 0 1, TendstoUniformly f F Filter.atTop) → (∀ n, RiemannIntegrableOn (f n) (Icc 0 1)) → RiemannIntegrableOn F (Icc 0 1) ) := by
   -- the first line of this construction should be either `apply isTrue` or `apply isFalse`, depending on whether you believe the given statement to be true or false.
   sorry
 
+-- The Jordan outer measure equals the infimum of sums of box volumes over all finite box covers.
 theorem Jordan_outer_eq {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBounded E) : Jordan_outer_measure E = sInf (((fun S: Finset (Box d) ↦ ∑ B ∈ S, |B|ᵥ)) '' { S | E ⊆ ⋃ B ∈ S, B.toSet }) := by
   -- Strategy: Show equality via two inequalities (le_antisymm)
   apply le_antisymm
@@ -735,6 +740,7 @@ lemma tsum_volume_finset_eq {d : ℕ} (hd : 0 < d) (S : Finset (Box d)) :
     simp only [S_seq, dif_pos hn_lt]
 
 
+-- For any bounded set, the Lebesgue outer measure is at most the Jordan outer measure.
 theorem Lebesgue_outer_measure_le_Jordan {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBounded E) : Lebesgue_outer_measure E ≤ Jordan_outer_measure E := by
   -- Strategy: Handle d = 0 separately using Lebesgue_outer_measure_of_dim_zero. For d > 0:
   -- Express Jordan outer measure as infimum over finite covers via Jordan_outer_eq.
@@ -927,9 +933,11 @@ theorem Lebesgue_outer_measure_le_Jordan {d:ℕ} {E: Set (EuclideanSpace' d)} (h
           exact EReal.sInf_image_coe h_nonempty h_bdd
 
 /-- Example 1.2.1.  With the junk value conventions of this companion, the Jordan outer measure of the rationals is zero rather than infinite (I think). -/
+-- The Jordan outer measure of the rationals in a bounded interval equals the interval length.
 example {R:ℝ} (hR: 0 < R) : Jordan_outer_measure (Real.equiv_EuclideanSpace' '' (Set.Icc (-R) R ∩ Set.range (fun q:ℚ ↦ (q:ℝ)))) = 2*R := by
   sorry
 
+-- Any countable set (in positive dimension) has Lebesgue outer measure zero.
 theorem Countable.Lebesgue_measure {d:ℕ} (hd : 0 < d) {E: Set (EuclideanSpace' d)} (hE: E.Countable) : Lebesgue_outer_measure E = 0 := by
   unfold Lebesgue_outer_measure
   -- Strategy: Cover E with singleton boxes, each with volume 0
@@ -1016,6 +1024,7 @@ theorem Countable.Lebesgue_measure {d:ℕ} (hd : 0 < d) {E: Set (EuclideanSpace'
 
   exact le_antisymm h_le h_ge
 
+-- The Lebesgue outer measure of the rationals in a bounded interval is zero.
 example {R:ℝ} : Lebesgue_outer_measure (Real.equiv_EuclideanSpace' '' (Set.Icc (-R) R ∩ Set.range (fun q:ℚ ↦ (q:ℝ)))) = 0 := by
   apply Countable.Lebesgue_measure (by omega : 0 < 1)
   apply Set.Countable.image
@@ -1025,12 +1034,15 @@ example {R:ℝ} : Lebesgue_outer_measure (Real.equiv_EuclideanSpace' '' (Set.Icc
     exact Set.countable_range (fun q:ℚ => (q:ℝ))
   exact this
 
+-- The Lebesgue outer measure of all rationals is zero.
 example : Lebesgue_outer_measure (Real.equiv_EuclideanSpace' '' (Set.range (fun q:ℚ ↦ (q:ℝ)))) = 0 := by
   apply Countable.Lebesgue_measure (by omega : 0 < 1)
   apply Set.Countable.image
   exact Set.countable_range (fun q:ℚ => (q:ℝ))
 
+-- A set is Lebesgue measurable if it can be approximated arbitrarily well from the outside by open sets.
 def LebesgueMeasurable {d:ℕ} (E: Set (EuclideanSpace' d)) : Prop :=
   ∀ ε > 0, ∃ U: Set (EuclideanSpace' d), IsOpen U ∧ E ⊆ U ∧ Lebesgue_outer_measure (U \ E) ≤ ε
 
+-- The Lebesgue measure of a set (equals its Lebesgue outer measure).
 noncomputable def Lebesgue_measure {d:ℕ} (E: Set (EuclideanSpace' d)) : EReal := Lebesgue_outer_measure E

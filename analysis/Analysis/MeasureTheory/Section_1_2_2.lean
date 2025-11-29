@@ -39,8 +39,22 @@ theorem IsNull.measurable {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsNull E) : 
   sorry
 
 /-- Lemma 1.2.13(iv) (Empty set is measurable). This lemma requires proof.  -/
-theorem LebesgueMeasurable.empty {d:ℕ} : LebesgueMeasurable (∅: Set (EuclideanSpace' d)) := by
-  sorry
+theorem LebesgueMeasurable.empty {d:ℕ} : LebesgueMeasurable (∅: Set (EuclideanSpace' d)) :=
+-- use (i) directly
+  IsOpen.measurable isOpen_empty
+
+theorem LebesgueMeasurable.empty' {d:ℕ} : LebesgueMeasurable (∅: Set (EuclideanSpace' d)) := by
+-- use definition of Lebesgue measurability
+  intro ε hε
+  use ∅
+  constructor
+  · exact isOpen_empty
+  constructor
+  · exact Set.empty_subset ∅
+  · have h_empty : ∅ \ ∅ = (∅ : Set (EuclideanSpace' d)) := Set.diff_self
+    rw [h_empty]
+    rw [Lebesgue_outer_measure.of_empty d]
+    exact le_of_lt hε
 
 /-- Lemma 1.2.13(v) (Complement of a measurable set is measurable). This lemma requires proof.  -/
 theorem LebesgueMeasurable.complement {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E) : LebesgueMeasurable (Eᶜ) := by
