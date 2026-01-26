@@ -1399,7 +1399,7 @@ theorem ComplexAbsolutelyIntegrable.abs_le {d:ℕ} {f: EuclideanSpace' d → ℂ
     have h_re : (hf.smul u).integ.re = ‖hf.integ‖ := by rw [h_integ_eq]; simp
     have h_re_integ : (hf.smul u).integ.re = (hf.smul u).re.integ := (hf.smul u).integ_re_eq_re_integ
     have h_norm_eq : (‖hf.integ‖ : ℝ) = (hf.smul u).re.integ := by rw [← h_re, h_re_integ]
-    -- Chain of inequalities: ‖∫f‖ = ∫Re(u*f) ≤ ∫|Re(u*f)| ≤ ∫|u*f| = ∫|f|
+    -- Chain of inequalities: ‖∫f‖ = ∫Re(u * f) ≤ ∫|Re(u * f)| ≤ ∫|u*f| = ∫|f|
     calc (‖hf.integ‖ : ℝ)
         = (hf.smul u).re.integ := h_norm_eq
       _ ≤ |(hf.smul u).re.integ| := le_abs_self _
