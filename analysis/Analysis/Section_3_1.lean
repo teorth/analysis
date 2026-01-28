@@ -855,7 +855,7 @@ theorem SetTheory.Set.coe_ssubset (X Y:Set) :
     (X : _root_.Set Object) ⊂ (Y : _root_.Set Object) ↔ X ⊂ Y := by sorry
 
 /-- Compatibility of singleton -/
-theorem SetTheory.Set.coe_singleton (x: Object) : ({x} : _root_.Set Object) = {x} := by sorry
+theorem SetTheory.Set.coe_singleton (x: Object) : (({x}:Set) : _root_.Set Object) = {x} := by sorry
 
 /-- Compatibility of union -/
 theorem SetTheory.Set.coe_union (X Y: Set) :
