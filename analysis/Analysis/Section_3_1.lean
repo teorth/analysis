@@ -859,21 +859,21 @@ theorem SetTheory.Set.coe_singleton (x: Object) : (({x}:Set) : _root_.Set Object
 
 /-- Compatibility of union -/
 theorem SetTheory.Set.coe_union (X Y: Set) :
-    (X ∪ Y : _root_.Set Object) = (X : _root_.Set Object) ∪ (Y : _root_.Set Object) := by sorry
+    ((X ∪ Y:Set) : _root_.Set Object) = (X : _root_.Set Object) ∪ (Y : _root_.Set Object) := by sorry
 
 /-- Compatibility of pair -/
-theorem SetTheory.Set.coe_pair (x y: Object) : ({x, y} : _root_.Set Object) = {x, y} := by sorry
+theorem SetTheory.Set.coe_pair (x y: Object) : (({x, y}:Set) : _root_.Set Object) = {x, y} := by sorry
 
 /-- Compatibility of subtype -/
 theorem SetTheory.Set.coe_subtype (X: Set) :  (X : _root_.Set Object) = X.toSubtype := by sorry
 
 /-- Compatibility of intersection -/
 theorem SetTheory.Set.coe_intersection (X Y: Set) :
-    (X ∩ Y : _root_.Set Object) = (X : _root_.Set Object) ∩ (Y : _root_.Set Object) := by sorry
+    ((X ∩ Y:Set) : _root_.Set Object) = (X : _root_.Set Object) ∩ (Y : _root_.Set Object) := by sorry
 
 /-- Compatibility of set difference-/
 theorem SetTheory.Set.coe_diff (X Y: Set) :
-    (X \ Y : _root_.Set Object) = (X : _root_.Set Object) \ (Y : _root_.Set Object) := by sorry
+    ((X \ Y:Set) : _root_.Set Object) = (X : _root_.Set Object) \ (Y : _root_.Set Object) := by sorry
 
 /-- Compatibility of disjointness -/
 theorem SetTheory.Set.coe_Disjoint (X Y: Set) :
