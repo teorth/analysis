@@ -64,7 +64,30 @@ theorem ContinuousWithinAt.tfae (X:Set ℝ) (f: ℝ → ℝ) {x₀:ℝ} (h : x�
     ∀ a:ℕ → ℝ, (∀ n, a n ∈ X) → Filter.atTop.Tendsto a (nhds x₀) → Filter.atTop.Tendsto (fun n ↦ f (a n)) (nhds (f x₀)),
     ∀ ε > 0, ∃ δ > 0, ∀ x ∈ X, |x-x₀| < δ → |f x - f x₀| < ε
   ].TFAE := by
-  sorry
+  tfae_have 1 ↔ 3 := by
+    rw [ContinuousWithinAt.iff]
+    dsimp [Convergesto, Real.CloseNear, Real.CloseFn]
+    simp only [abs_sub_lt_iff, Set.mem_Ioo, Set.mem_inter_iff]
+    apply forall_congr'; intro ε
+    apply imp_congr_right; intro hε
+    apply exists_congr; intro δ
+    apply and_congr_right; intro hδ
+    apply forall_congr'; intro x
+    rw [and_imp]
+    apply imp_congr_right; intro hx
+    apply imp_congr_left
+    constructor <;> intro h
+    constructor
+    linarith
+    linarith
+    constructor
+    linarith
+    linarith
+
+  tfae_have 1 ↔ 2 := by
+    rw [ContinuousWithinAt.iff]
+    rw [Convergesto.iff_conv _ _ (AdherentPt.of_mem h)]
+  tfae_finish
 
 /-- Remark 9.4.8 --/
 theorem _root_.Filter.Tendsto.comp_of_continuous {X:Set ℝ} {f: ℝ → ℝ} {x₀:ℝ} (h : x₀ ∈ X)
@@ -138,8 +161,40 @@ example : Continuous (fun x:ℝ ↦ |x^2-8*x+8|^(Real.sqrt 2) / (x^2 + 1)) := by
 
 /-- Exercise 9.4.6 -/
 theorem ContinuousOn.restrict {X Y:Set ℝ} {f: ℝ → ℝ} (hY: Y ⊆ X) (hf: ContinuousOn f X) : ContinuousOn f Y := by
-  sorry
+  rw [Metric.continuousOn_iff] at *
+  intro x hx ε hε
+  rcases hf x (hY hx) ε hε with ⟨δ, hδ_pos, h_imply⟩
+  use δ, hδ_pos
+  intro y hy h_dist
+  apply h_imply y (hY hy) h_dist
 
 /-- Exercise 9.4.7 -/
 theorem Continuous.polynomial {n:ℕ} (c: Fin n → ℝ) : Continuous (fun x:ℝ ↦ ∑ i, c i * x ^ (i:ℕ)) := by
-  sorry
+  rw [continuous_iff_continuousAt]
+  intro x
+  rw [← continuousWithinAt_univ]
+  have h_pow : ∀ k : ℕ, ContinuousWithinAt (fun x ↦ x ^ k) Set.univ x := by
+    intro k
+    induction k with
+    | zero =>
+      simp
+      exact continuousWithinAt_const
+    | succ k hk =>
+      simp [pow_succ]
+      apply ContinuousWithinAt.mul' (h := Set.mem_univ x)
+      · exact hk
+      · exact continuousWithinAt_id
+  have h_sum : ∀ s : Finset (Fin n), ContinuousWithinAt (fun x ↦ ∑ i ∈  s, c i * x ^ (i:ℕ)) Set.univ x := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty =>
+      simp
+      exact continuousWithinAt_const
+    | insert a s ha hs =>
+      simp [ha]
+      apply ContinuousWithinAt.add (h := Set.mem_univ x)
+      apply ContinuousWithinAt.mul' (h := Set.mem_univ x)
+      exact continuousWithinAt_const
+      exact h_pow a
+      exact hs
+  exact h_sum Finset.univ
