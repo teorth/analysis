@@ -27,6 +27,7 @@ Users of the companion who have completed the exercises in this section are welc
 namespace Chapter5
 
 
+@[ext]
 structure DedekindCut where
   E : Set ℚ
   nonempty : E.Nonempty
@@ -130,6 +131,95 @@ lemma Real.equivR_iff (x : Real) (y : ℝ) : y = Real.equivR x ↔ y.toCut = x.t
   simp only [equivR, Equiv.trans_apply, ←Equiv.apply_eq_iff_eq_symm_apply]
   rfl
 
+-- In order to use this definition, we need some machinery
+-----
+
+-- We start by showing it works for ratCasts
+theorem Real.equivR_ratCast {q: ℚ} : equivR q = (q: ℝ) := by
+  sorry
+
+lemma Real.equivR_nat {n: ℕ} : equivR n = (n: ℝ) := equivR_ratCast
+lemma Real.equivR_int {n: ℤ} : equivR n = (n: ℝ) := equivR_ratCast
+
+----
+
+-- We then want to set up a way to convert from the Real `LIM` to the ℝ `Real.mk`
+-- To do this we need a few things:
+
+-- Convertion between the notions of Cauchy Sequences
+theorem Sequence.IsCauchy.to_IsCauSeq {a: ℕ → ℚ} (ha: IsCauchy a) : IsCauSeq _root_.abs a := by
+  sorry
+
+-- Convertion of an `IsCauchy` to a `CauSeq`
+abbrev Sequence.IsCauchy.CauSeq {a: ℕ → ℚ} : (ha: IsCauchy a) → CauSeq ℚ _root_.abs := 
+  (⟨a, ·.to_IsCauSeq⟩)
+
+-- We then set up the conversion from Sequence.Equiv to CauSeq.LimZero because 
+-- it is the equivalence relation
+example {a b: CauSeq ℚ abs} : a ≈ b ↔ CauSeq.LimZero (a - b) := by rfl
+
+theorem Sequence.Equiv.LimZero {a b: ℕ → ℚ} (ha: IsCauchy a) (hb: IsCauchy b) (h:Equiv a b) 
+  : CauSeq.LimZero (ha.CauSeq - hb.CauSeq) := by
+    sorry
+
+-- We can now use it to convert between different functions in Real.mk
+theorem Real.mk_eq_mk {a b: ℕ → ℚ} (ha : Sequence.IsCauchy a) (hb : Sequence.IsCauchy b) (hab: Sequence.Equiv a b)
+  : Real.mk ha.CauSeq = Real.mk hb.CauSeq := Real.mk_eq.mpr (hab.LimZero ha hb)
+
+-- Both directions of the equivalence
+theorem Sequence.Equiv_iff_LimZero {a b: ℕ → ℚ} (ha: IsCauchy a) (hb: IsCauchy b) 
+  : Equiv a b ↔ CauSeq.LimZero (ha.CauSeq - hb.CauSeq) := by
+    refine ⟨(·.LimZero ha hb), ?_⟩
+    sorry
+
+----
+-- We create some cauchy sequences with useful properties
+
+-- We show that for any sequence, it will eventually be arbitrarily close to its LIM
+open Real in
+theorem Sequence.difference_approaches_zero {a: ℕ → ℚ} (ha: Sequence.IsCauchy a) :
+  ∀ε > 0, ∃N, ∀n ≥ N, |LIM a - a n| ≤ (ε: ℚ) := by
+    sorry
+
+-- There exists a Cauchy sequence entirely above the LIM
+theorem Real.exists_equiv_above {a: ℕ → ℚ} (ha: Sequence.IsCauchy a) 
+  : ∃(b: ℕ → ℚ), Sequence.IsCauchy b ∧ Sequence.Equiv a b ∧ ∀n, LIM a ≤ b n := by 
+    sorry
+
+-- There exists a Cauchy sequence entirely below the LIM
+theorem Real.exists_equiv_below {a: ℕ → ℚ} (ha: Sequence.IsCauchy a) 
+  : ∃(b: ℕ → ℚ), Sequence.IsCauchy b ∧ Sequence.Equiv a b ∧ ∀n, b n ≤ LIM a := by 
+    sorry
+
+----
+
+-- useful theorems for the following proof
+#check Real.mk_le
+#check Real.mk_le_of_forall_le
+#check Real.mk_const
+
+-- Transform a `Real` to an `ℝ` by going through Cauchy Sequences
+-- we can use the conversion of Real.mk_eq to use different sequences to show different parts
+theorem Real.equivR_eq' {a: ℕ → ℚ} (ha: Sequence.IsCauchy a) 
+  : (LIM a).equivR = Real.mk ha.CauSeq := by 
+    by_cases hq: ∃(q: ℚ), q = LIM a
+    · sorry
+    show sSup (Rat.cast '' (LIM a).toSet_Rat) = _
+    refine IsLUB.csSup_eq ⟨?_, ?_⟩ (Set.Nonempty.image _ <| Real.toSet_Rat_nonempty _)
+    · -- show that `Real.mk ha.CauSeq` is an upper bound
+      intro _ hy
+      obtain ⟨y, hy, h⟩ := Set.mem_image _ _ _ |>.mp hy
+      rw [← h, show (y: ℝ) = Real.mk (CauSeq.const _ y) from rfl]
+      sorry
+    -- show that for any other upper bound, `Real.mk ha.CauSeq` is smaller
+    intro M hM
+    sorry
+
+lemma Real.equivR_eq (x: Real) : ∃(a : ℕ → ℚ) (ha: Sequence.IsCauchy a), 
+  x = LIM a ∧ x.equivR = Real.mk ha.CauSeq := by 
+    obtain ⟨a, ha, rfl⟩ := x.eq_lim
+    exact ⟨a, ha, rfl, equivR_eq' ha⟩
+
 /-- The isomorphism preserves order and ring operations -/
 noncomputable abbrev Real.equivR_ordered_ring : Real ≃+*o ℝ where
   toEquiv := equivR
@@ -137,6 +227,19 @@ noncomputable abbrev Real.equivR_ordered_ring : Real ≃+*o ℝ where
   map_mul' := by sorry
   map_le_map_iff' := by sorry
 
+-- helpers for converting properties between Real and ℝ
+lemma Real.equivR_map_mul {x y : Real} : equivR (x * y) = equivR x * equivR y :=
+  equivR_ordered_ring.map_mul _ _
+
+lemma Real.equivR_map_inv {x: Real} : equivR (x⁻¹) = (equivR x)⁻¹ :=
+  map_inv₀ equivR_ordered_ring _
+
+theorem Real.equivR_map_pos {x: Real} : 0 < x ↔ 0 < equivR x := by sorry
+
+theorem Real.equivR_map_nonneg {x: Real} : 0 ≤ x ↔ 0 ≤ equivR x := by sorry
+
+
+-- Showing equivalence of the different pows
 theorem Real.pow_of_equivR (x:Real) (n:ℕ) : equivR (x^n) = (equivR x)^n := by
   sorry
 
