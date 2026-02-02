@@ -138,7 +138,11 @@ example : Continuous (fun x:ℝ ↦ |x^2-8*x+8|^(Real.sqrt 2) / (x^2 + 1)) := by
 
 /-- Exercise 9.4.6 -/
 theorem ContinuousOn.restrict {X Y:Set ℝ} {f: ℝ → ℝ} (hY: Y ⊆ X) (hf: ContinuousOn f X) : ContinuousOn f Y := by
-  sorry
+  intro x hx
+  have h_cont_X := hf x (hY hx)
+  unfold ContinuousWithinAt at *
+  apply Filter.Tendsto.mono_left h_cont_X
+  exact nhdsWithin_mono x hY
 
 /-- Exercise 9.4.7 -/
 theorem Continuous.polynomial {n:ℕ} (c: Fin n → ℝ) : Continuous (fun x:ℝ ↦ ∑ i, c i * x ^ (i:ℕ)) := by
