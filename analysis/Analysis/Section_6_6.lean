@@ -26,12 +26,12 @@ example (a:ℕ → ℝ) : Sequence.subseq a (fun n ↦ a (2 * n)) := by sorry
 example {f: ℕ → ℕ} (hf: StrictMono f) : Function.Injective f := by sorry
 
 example :
-    Sequence.subseq (fun n ↦ if Even n then 1 + (10:ℝ)^(-(n/2:ℤ)-1) else (1:ℝ)^(-(n/2:ℤ)-1))
+    Sequence.subseq (fun n ↦ if Even n then 1 + (10:ℝ)^(-(n/2:ℤ)-1) else (10:ℝ)^(-(n/2:ℤ)-1))
     (fun n ↦ 1 + (10:ℝ)^(-(n:ℤ)-1)) := by
   sorry
 
 example :
-    Sequence.subseq (fun n ↦ if Even n then 1 + (10:ℝ)^(-(n/2:ℤ)-1) else (1:ℝ)^(-(n/2:ℤ)-1))
+    Sequence.subseq (fun n ↦ if Even n then 1 + (10:ℝ)^(-(n/2:ℤ)-1) else (10:ℝ)^(-(n/2:ℤ)-1))
     (fun n ↦ (10:ℝ)^(-(n:ℤ)-1)) := by
   sorry
 
