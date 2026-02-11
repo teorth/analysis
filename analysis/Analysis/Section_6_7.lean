@@ -180,7 +180,7 @@ theorem Real.ratPow_mono_of_gt_one {x:ℝ} (hx: x > 1) {q r:ℝ} : rpow x q > rp
   sorry
 
 /-- Proposition 6.7.3(e) / Exercise 6.7.1 -/
-theorem Real.ratPow_mono_of_lt_one {x:ℝ} (hx0: 0 < x) (hx: x < 1) {q r:ℝ} : rpow x q < rpow x r ↔ q < r := by
+theorem Real.ratPow_mono_of_lt_one {x:ℝ} (hx0: 0 < x) (hx: x < 1) {q r:ℝ} : rpow x q > rpow x r ↔ q < r := by
   sorry
 
 /-- Proposition 6.7.3(f) / Exercise 6.7.1 -/
