@@ -137,5 +137,5 @@ theorem Chapter6.Sequence.liminf_eq (a:ℕ → ℝ) :
   sorry
 
 /-- Identification of `rpow` and Mathlib exponentiation -/
-theorem Chapter6.Real.rpow_eq_rpow (x:ℝ) (α:ℝ) : rpow x α = x^α := by
+theorem Chapter6.Real.rpow_eq_rpow {x:ℝ} (hx: x > 0) (α:ℝ) : rpow x α = x^α := by
   sorry
