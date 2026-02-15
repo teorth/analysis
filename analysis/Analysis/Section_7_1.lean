@@ -80,11 +80,11 @@ theorem finite_series_add {m n:ℤ} (a b: ℤ → ℝ) :
   ∑ i ∈ Icc m n, (a i + b i) = ∑ i ∈ Icc m n, a i + ∑ i ∈ Icc m n, b i := by sorry
 
 /-- Lemma 7.1.4(d) / Exercise 7.1.1 -/
-theorem finite_series_const_mul {m n:ℤ}  (a: ℤ → ℝ) (c:ℝ) :
+theorem finite_series_const_mul {m n:ℤ} (a: ℤ → ℝ) (c:ℝ) :
   ∑ i ∈ Icc m n, c * a i = c * ∑ i ∈ Icc m n, a i := by sorry
 
 /-- Lemma 7.1.4(e) / Exercise 7.1.1 -/
-theorem abs_finite_series_le {m n:ℤ}   (a: ℤ → ℝ) (c:ℝ) :
+theorem abs_finite_series_le {m n:ℤ} (a: ℤ → ℝ) :
   |∑ i ∈ Icc m n, a i| ≤ ∑ i ∈ Icc m n, |a i| := by sorry
 
 /-- Lemma 7.1.4(f) / Exercise 7.1.1 -/
@@ -307,6 +307,19 @@ theorem lim_of_finite_series {X:Type*} [Fintype X] (a: X → ℕ → ℝ) (L : X
     Filter.atTop.Tendsto (fun n ↦ ∑ x, a x n) (nhds (∑ x, L x)) := by
   sorry
 
+/-- Exercise 7.1.6 -/
+theorem sum_union_disjoint {n : ℕ} {S : Type*} [Fintype S]
+    (E : Fin n → Finset S)
+    (disj : ∀ i j : Fin n, i ≠ j → Disjoint (E i) (E j))
+    (cover : ∀ s : S, ∃ i, s ∈ E i)
+    (f : S → ℝ) :
+    ∑ s, f s = ∑ i, ∑ s ∈ E i, f s := by
+  sorry
 
+/-- Exercise 7.1.7. Uses `Fin m` (so `aᵢ < m`) instead of the book's `aᵢ ≤ m`;
+  the bound is baked into the type, and `<` replaces `≤` to match the 0-indexed shift. -/
+theorem sum_finite_col_row_counts {n m : ℕ} (a : Fin n → Fin m) :
+    ∑ i, (a i : ℕ) = ∑ j : Fin m, {i : Fin n | j < a i}.toFinset.card := by
+  sorry
 
 end Finset
