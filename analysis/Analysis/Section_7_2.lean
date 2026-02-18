@@ -119,7 +119,7 @@ theorem Series.diverges_of_nodecay {s:Series} (h: ¬ Filter.atTop.Tendsto s.seq 
   sorry
 
 /-- Example 7.2.7 -/
-theorem Series.example_7_2_7 : ((fun n:ℕ ↦ (1:ℝ)):Series).diverges := by
+theorem Series.example_7_2_7 : ((fun _:ℕ ↦ (1:ℝ)):Series).diverges := by
   apply diverges_of_nodecay
   sorry
 
@@ -134,7 +134,7 @@ abbrev Series.absConverges (s:Series) : Prop := s.abs.converges
 
 abbrev Series.condConverges (s:Series) : Prop := s.converges ∧ ¬ s.absConverges
 
-/-- Proposition 7.2.9 (Absolute convergence test) / Example 7.2.4 -/
+/-- Proposition 7.2.9 (Absolute convergence test) / Exercise 7.2.4 -/
 theorem Series.converges_of_absConverges {s:Series} (h : s.absConverges) : s.converges := by
   sorry
 
@@ -196,14 +196,15 @@ theorem Series.example_7_2_13c :  example_7_2_13.condConverges := by
 
 instance Series.inst_add : Add Series where
   add a b := {
-    m := max a.m b.m
-    seq n := if n ≥ max a.m b.m then a.seq n + b.seq n else 0
-    vanish n hn := by rw [lt_iff_not_ge] at hn; simp [hn]
+    m := min a.m b.m
+    seq n := a.seq n + b.seq n
+    vanish n hn := by simp [a.vanish n (by omega), b.vanish n (by omega)]
   }
 
 theorem Series.add_coe (a b: ℕ → ℝ) : (a:Series) + (b:Series) = (fun n ↦ a n + b n) := by
   ext n; rfl
-  by_cases h:n ≥ 0 <;> simp [h, HAdd.hAdd, Add.add]
+  change (a:Series).seq n + (b:Series).seq n = _
+  by_cases h:n ≥ 0 <;> simp [h]
 
 /-- Proposition 7.2.14 (a) (Series laws) / Exercise 7.2.5.  The `convergesTo` form can be more convenient for applications. -/
 theorem Series.convergesTo.add {s t:Series} {L M: ℝ} (hs: s.convergesTo L) (ht: t.convergesTo M) :
@@ -235,14 +236,15 @@ theorem Series.smul {c:ℝ} {s:Series} (hs: s.converges) :
 /-- The corresponding API for subtraction was not in the textbook, but is useful in later sections, so is included here. -/
 instance Series.inst_sub : Sub Series where
   sub a b := {
-    m := max a.m b.m
-    seq n := if n ≥ max a.m b.m then a.seq n - b.seq n else 0
-    vanish := by grind
+    m := min a.m b.m
+    seq n := a.seq n - b.seq n
+    vanish n hn := by simp [a.vanish n (by omega), b.vanish n (by omega)]
   }
 
 theorem Series.sub_coe (a b: ℕ → ℝ) : (a:Series) - (b:Series) = (fun n ↦ a n - b n) := by
   ext n; rfl
-  by_cases h:n ≥ 0 <;> simp [h, HSub.hSub, Sub.sub]
+  change (a:Series).seq n - (b:Series).seq n = _
+  by_cases h:n ≥ 0 <;> simp [h]
 
 theorem Series.convergesTo.sub {s t:Series} {L M: ℝ} (hs: s.convergesTo L) (ht: t.convergesTo M) :
     (s - t).convergesTo (L - M) := by
@@ -268,7 +270,7 @@ theorem Series.shift {s:Series} {x:ℝ} (h: s.convergesTo x) (L:ℤ) :
 
 /-- Lemma 7.2.15 (telescoping series) / Exercise 7.2.6 -/
 theorem Series.telescope {a:ℕ → ℝ} (ha: Filter.atTop.Tendsto a (nhds 0)) :
-    ((fun n:ℕ ↦ a (n+1) - a n):Series).convergesTo (a 0) := by
+    ((fun n:ℕ ↦ a n - a (n+1)):Series).convergesTo (a 0) := by
   sorry
 
 /- Exercise 7.2.1  -/
