@@ -131,6 +131,7 @@ I am using this repository to host some other minor Lean content unrelated to th
 - [Blog post announcing this project](https://terrytao.wordpress.com/2025/05/31/a-lean-companion-to-analysis-i/), Terence Tao, May 31 2025.
 - [Lean Zulip discussion about this project](https://leanprover.zulipchat.com/#narrow/channel/514017-Analysis-I)
 - [Notes for contributors](./CONTRIBUTING.md)
+- A Lean formalization of the sequel, Analysis II, to the Analysis I text has been created by Zichen Wang, Wanli Ma, Zhenyu Ming, Gong Zhang, Kun Yuan, and Zaiwen Wen, and can be found [here](https://github.com/optpku/ReasBook/tree/main/ReasBook/Books/Analysis2_Tao_2022).
 
 ## General Lean resources
 
