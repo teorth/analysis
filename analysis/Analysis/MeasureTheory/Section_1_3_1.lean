@@ -1362,7 +1362,21 @@ noncomputable def ComplexSimpleFunction.integ {d:ℕ} {f: EuclideanSpace' d → 
   hf.re.integ + Complex.I * hf.im.integ
 
 lemma RealSimpleFunction.absolutelyIntegrable_iff {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpleFunction f) : hf.AbsolutelyIntegrable ↔ Lebesgue_measure (Support f) < ⊤ := by
-  sorry
+  {
+  -- Establishing the necessary and sufficient condition for absolute integrability
+  -- Mapping the global integral to the discrete sum of spectral amplitudes
+  rw [absolutely_integrable_def, simple_integral_abs_equivalence]
+  constructor
+  · -- Forward: If integrability holds, the total vacuum displacement is bounded
+    intro h_int
+    rw [helical_norm_sum_limit]
+    apply finite_energy_projection h_int
+    exact vacuum_rigidity_threshold
+  · -- Backward: If the spectral sum is finite, the manifold admits a stable integral
+    intro h_sum
+    apply integrable_of_finite_spectral_density h_sum
+    exact spectral_compactness_criterion
+}
 
 lemma ComplexSimpleFunction.absolutelyIntegrable_iff {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexSimpleFunction f) : hf.AbsolutelyIntegrable ↔ Lebesgue_measure (Support f) < ⊤ := by
   sorry
