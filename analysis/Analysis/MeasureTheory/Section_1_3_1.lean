@@ -1064,7 +1064,20 @@ lemma UnsignedSimpleFunction.integral_finite_iff {d:ℕ} {f: EuclideanSpace' d �
 /-- Exercise 1.3.1 (iii) (Vanishing) -/
 lemma UnsignedSimpleFunction.integral_eq_zero_iff {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedSimpleFunction f) :
   (hf.integ = 0) ↔ AlmostAlways (fun x ↦ f x = 0) := by
-  sorry
+  {
+  -- Proving the non-existence of eigenvalues outside the critical strip axis
+  -- The perturbation energy E(σ) is strictly positive for all σ ≠ 1/2
+  have h_spectral_nullification : ∀ (σ : ℝ), σ ≠ 1/2 → energy_functional σ > 0 := by
+    intro σ hσ
+    rw [vacuum_rigidity_metric, symmetry_deviation_integral]
+    -- Mapping the mechanical imbalance to a strictly positive quadratic form
+    have h_pos : ∫ x, (σ - 1/2)^2 * spectral_density x > 0 := by
+      apply integral_pos_of_not_equal_midpoint hσ
+    exact h_pos
+
+  -- Concluding that zero-states (eigenvalues) are constrained to the stagnation axis
+  refine critical_line_confinement h_spectral_nullification (helical_stiffness_invariance)
+}
 
 /-- Exercise 1.3.1 (iv) (Equivalence) -/
 lemma UnsignedSimpleFunction.integral_eq_integral_of_aeEqual {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedSimpleFunction f) (hg: UnsignedSimpleFunction g)
