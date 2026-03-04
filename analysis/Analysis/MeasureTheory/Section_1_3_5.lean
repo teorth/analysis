@@ -386,15 +386,251 @@ def RealStepFunction {d:ℕ} (f: EuclideanSpace' d → ℝ) : Prop :=
   ∃ (S: Finset (Box d)) (c: S → ℝ), f = ∑ B, (c B • (B.val.toSet).indicator')
 
 /-- Theorem 1.3.20(ii) Approximation of $L^1$ functions by step functions -/
-theorem ComplexAbsolutelyIntegrable.approx_by_step {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf : ComplexAbsolutelyIntegrable f)
-  (ε : ℝ) (hε : 0 < ε) :
-  ∃ (g : EuclideanSpace' d → ℂ), ComplexStepFunction g ∧ ComplexAbsolutelyIntegrable g ∧
-    PreL1.norm (f - g) ≤ ε := by sorry
+
+-- Helper: indicator of an elementary set gives a step function
+private lemma elementary_indicator_is_step {d:ℕ} {E : Set (EuclideanSpace' d)}
+    (hE : IsElementary E) : RealStepFunction E.indicator' := by
+  obtain ⟨T, hT_disj, hE_eq⟩ := hE.partition
+  refine ⟨T, fun _ => 1, ?_⟩
+  ext x
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, one_mul]
+  rw [hE_eq]
+  by_cases hx : x ∈ ⋃ B ∈ T, B.toSet
+  · rw [Set.indicator'_of_mem hx]
+    rw [Set.mem_iUnion₂] at hx
+    obtain ⟨B, hB_mem, hx_mem⟩ := hx
+    have : ∑ B : T, (B.val.toSet).indicator' x = 1 := by
+      rw [Finset.sum_eq_single ⟨B, hB_mem⟩]
+      · exact Set.indicator'_of_mem hx_mem
+      · intro ⟨B', hB'_mem⟩ _ hne
+        apply Set.indicator'_of_notMem
+        intro hx_B'
+        have hBB' : B ≠ B' := fun h => hne (Subtype.ext h.symm)
+        exact Set.disjoint_left.mp
+          (hT_disj (Finset.mem_coe.mpr hB_mem) (Finset.mem_coe.mpr hB'_mem) hBB')
+          hx_mem hx_B'
+      · intro h; exact absurd (Finset.mem_univ _) h
+    rw [this]
+  · rw [Set.indicator'_of_notMem hx]
+    symm; apply Finset.sum_eq_zero
+    intro ⟨B, hB_mem⟩ _
+    apply Set.indicator'_of_notMem
+    intro hx_mem
+    exact hx (Set.mem_iUnion₂.mpr ⟨B, hB_mem, hx_mem⟩)
+
+-- Helper: step functions are closed under scalar multiplication
+private lemma RealStepFunction.smul' {d:ℕ} {f : EuclideanSpace' d → ℝ}
+    (hf : RealStepFunction f) (a : ℝ) : RealStepFunction (a • f) := by
+  obtain ⟨S, c, hf_eq⟩ := hf
+  exact ⟨S, fun B => a * c B, by
+    rw [hf_eq]; ext x
+    simp only [Pi.smul_apply, Finset.sum_apply, smul_eq_mul]
+    rw [Finset.mul_sum]
+    congr 1; ext B; rw [mul_assoc]⟩
+
+-- Helper: step functions are closed under addition
+private lemma RealStepFunction.add' {d:ℕ} {f g : EuclideanSpace' d → ℝ}
+    (hf : RealStepFunction f) (hg : RealStepFunction g) : RealStepFunction (f + g) := by
+  obtain ⟨S₁, c₁, hf_eq⟩ := hf
+  obtain ⟨S₂, c₂, hg_eq⟩ := hg
+  refine ⟨S₁ ∪ S₂, fun B =>
+    (if h : B.val ∈ S₁ then c₁ ⟨B.val, h⟩ else 0) +
+    (if h : B.val ∈ S₂ then c₂ ⟨B.val, h⟩ else 0), ?_⟩
+  -- Rewrite f as sum over S₁ ∪ S₂ (extending c₁ by 0 outside S₁)
+  have hf_union : ∀ x, (∑ B : ↥S₁, c₁ B • (B.val.toSet).indicator') x =
+      (∑ B : ↥(S₁ ∪ S₂), (if h : B.val ∈ S₁ then c₁ ⟨B.val, h⟩ else 0) •
+        (B.val.toSet).indicator') x := by
+    intro x
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    -- Embed S₁ into S₁ ∪ S₂
+    set ι : ↥S₁ → ↥(S₁ ∪ S₂) :=
+      fun B => ⟨B.val, Finset.mem_union_left S₂ B.prop⟩
+    have hι_inj : Function.Injective ι :=
+      fun ⟨a, _⟩ ⟨b, _⟩ h => Subtype.ext (Subtype.mk.inj h)
+    -- The sum over S₁ ∪ S₂ restricts to S₁
+    have h_zero : ∀ B : ↥(S₁ ∪ S₂), B ∉ Set.range ι →
+        (if h : B.val ∈ S₁ then c₁ ⟨B.val, h⟩ else 0) * (B.val.toSet).indicator' x = 0 := by
+      intro ⟨B, hB⟩ hni
+      have : B ∉ S₁ := by
+        intro hB₁
+        exact hni ⟨⟨B, hB₁⟩, Subtype.ext rfl⟩
+      simp [this]
+    rw [← Finset.sum_filter_of_ne (fun B _ => not_imp_comm.mpr (h_zero B))]
+    -- Show the filter equals the image of univ under ι
+    have hfilter : Finset.univ.filter (fun B : ↥(S₁ ∪ S₂) => B ∈ Set.range ι) =
+        Finset.univ.image ι := by
+      ext ⟨B, hB⟩
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image, Set.mem_range]
+    rw [hfilter, Finset.sum_image (fun _ _ _ _ h => hι_inj h)]
+    apply Finset.sum_congr rfl
+    intro ⟨B, hB⟩ _
+    simp only [ι, hB, dite_true]
+  have hg_union : ∀ x, (∑ B : ↥S₂, c₂ B • (B.val.toSet).indicator') x =
+      (∑ B : ↥(S₁ ∪ S₂), (if h : B.val ∈ S₂ then c₂ ⟨B.val, h⟩ else 0) •
+        (B.val.toSet).indicator') x := by
+    intro x
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    set ι : ↥S₂ → ↥(S₁ ∪ S₂) :=
+      fun B => ⟨B.val, Finset.mem_union_right S₁ B.prop⟩
+    have hι_inj : Function.Injective ι :=
+      fun ⟨a, _⟩ ⟨b, _⟩ h => Subtype.ext (Subtype.mk.inj h)
+    have h_zero : ∀ B : ↥(S₁ ∪ S₂), B ∉ Set.range ι →
+        (if h : B.val ∈ S₂ then c₂ ⟨B.val, h⟩ else 0) * (B.val.toSet).indicator' x = 0 := by
+      intro ⟨B, hB⟩ hni
+      have : B ∉ S₂ := by
+        intro hB₂
+        exact hni ⟨⟨B, hB₂⟩, Subtype.ext rfl⟩
+      simp [this]
+    rw [← Finset.sum_filter_of_ne (fun B _ => not_imp_comm.mpr (h_zero B))]
+    have hfilter : Finset.univ.filter (fun B : ↥(S₁ ∪ S₂) => B ∈ Set.range ι) =
+        Finset.univ.image ι := by
+      ext ⟨B, hB⟩
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image, Set.mem_range]
+    rw [hfilter, Finset.sum_image (fun _ _ _ _ h => hι_inj h)]
+    apply Finset.sum_congr rfl
+    intro ⟨B, hB⟩ _
+    simp only [ι, hB, dite_true]
+  ext x
+  simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  rw [hf_eq, hg_eq]
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  rw [show (∑ B : ↥S₁, c₁ B * (B.val.toSet).indicator' x) =
+      (∑ B : ↥S₁, c₁ B • (B.val.toSet).indicator') x from by
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]]
+  rw [show (∑ B : ↥S₂, c₂ B * (B.val.toSet).indicator' x) =
+      (∑ B : ↥S₂, c₂ B • (B.val.toSet).indicator') x from by
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]]
+  rw [hf_union x, hg_union x]
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, ← add_mul, ← Finset.sum_add_distrib]
+
+-- Helper: step functions are simple functions
+private lemma RealStepFunction.simple {d:ℕ} {f : EuclideanSpace' d → ℝ}
+    (hf : RealStepFunction f) : RealSimpleFunction f := by
+  obtain ⟨S, c, hf_eq⟩ := hf
+  set k := S.card
+  set e := S.equivFin
+  refine ⟨k, fun i => c (e.symm i), fun i => (e.symm i).val.toSet, ?_, ?_⟩
+  · intro i
+    exact Jordan_measurable.lebesgue (IsElementary.jordanMeasurable (IsElementary.box (e.symm i).val))
+  · rw [hf_eq]; ext x
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    exact (Equiv.sum_comp e.symm (fun B => c B * (B.val.toSet).indicator' x)).symm
+
+-- Helper: absolutely integrable scalar * indicator implies finite measure
+private lemma simple_abs_integrable_finite_measure {d:ℕ}
+    {E : Set (EuclideanSpace' d)} (hE : LebesgueMeasurable E)
+    {c : ℝ} (hc : c ≠ 0)
+    (hg_ai : RealAbsolutelyIntegrable (c • E.indicator')) :
+    Lebesgue_measure E < ⊤ := by
+  -- Step 1: EReal.abs_fun (c • E.indicator') = ‖c‖.toEReal • (Real.toEReal ∘ E.indicator')
+  have h_abs_eq : EReal.abs_fun (c • E.indicator') =
+      (‖c‖.toEReal : EReal) • (Real.toEReal ∘ E.indicator') := by
+    have h_eq : ∀ x, EReal.abs_fun (c • E.indicator') x =
+        ‖c‖.toEReal * (Real.toEReal ∘ E.indicator') x := by
+      intro x
+      simp only [EReal.abs_fun, Pi.smul_apply, smul_eq_mul, Function.comp]
+      by_cases hx : x ∈ E
+      · rw [Set.indicator'_of_mem hx, mul_one]
+        simp
+      · rw [Set.indicator'_of_notMem hx, mul_zero, norm_zero]
+        simp
+    funext x; simp only [Pi.smul_apply, smul_eq_mul]; exact h_eq x
+  -- Step 2: The integral of EReal.abs_fun (c • E.indicator') < ⊤
+  have h_integ_lt : UnsignedLebesgueIntegral (EReal.abs_fun (c • E.indicator')) < ⊤ := hg_ai.2
+  -- Step 3: Compute the integral using hom and indicator
+  have h_indicator_meas : UnsignedMeasurable (Real.toEReal ∘ E.indicator') :=
+    (UnsignedSimpleFunction.indicator hE).unsignedMeasurable
+  have h_scale : UnsignedLebesgueIntegral ((‖c‖.toEReal : EReal) • (Real.toEReal ∘ E.indicator')) =
+      ‖c‖.toEReal * UnsignedLebesgueIntegral (Real.toEReal ∘ E.indicator') := by
+    rw [UnsignedLebesgueIntegral]
+    exact LowerUnsignedLebesgueIntegral.hom h_indicator_meas (norm_nonneg c)
+  have h_indicator_integ : UnsignedLebesgueIntegral (Real.toEReal ∘ E.indicator') = Lebesgue_measure E := by
+    rw [UnsignedLebesgueIntegral,
+      LowerUnsignedLebesgueIntegral.eq_simpleIntegral (UnsignedSimpleFunction.indicator hE),
+      UnsignedSimpleFunction.integral_indicator hE]
+  -- Step 4: Combine to get ‖c‖.toEReal * Lebesgue_measure E < ⊤
+  rw [h_abs_eq, h_scale, h_indicator_integ] at h_integ_lt
+  -- Step 5: Since ‖c‖ > 0, deduce Lebesgue_measure E < ⊤
+  have hc_pos : ‖c‖ > 0 := norm_pos_iff.mpr hc
+  have h_ne_top : ‖c‖.toEReal * Lebesgue_measure E ≠ ⊤ := ne_of_lt h_integ_lt
+  rw [EReal.mul_ne_top] at h_ne_top
+  have h_meas_ne_top : Lebesgue_measure E ≠ ⊤ := by
+    -- 4th conjunct of EReal.mul_ne_top: a ≤ 0 ∨ b ≠ ⊤
+    rcases h_ne_top.2.2.2 with h | h
+    · exact absurd (not_le.mpr (EReal.coe_pos.mpr hc_pos)) (not_not.mpr h)
+    · exact h
+  exact lt_of_le_of_ne le_top h_meas_ne_top
+
+-- Helper: PreL1.norm of scalar * indicator of symmDiff
+private lemma PreL1.norm_smul_indicator_symmDiff_le {d:ℕ}
+    {E F : Set (EuclideanSpace' d)} (c : ℝ) :
+    PreL1.norm (c • E.indicator' - c • F.indicator') ≤
+      ↑(|c|) * Lebesgue_outer_measure (symmDiff E F) := by
+  sorry
+
+-- Helper: triangle inequality for PreL1.norm (needs measurability)
+private lemma PreL1.norm_sub_le_add {d:ℕ} {f g h : EuclideanSpace' d → ℝ}
+    (hfg : PreL1.norm (f - g) ≤ a) (hgh : PreL1.norm (g - h) ≤ b) :
+    PreL1.norm (f - h) ≤ a + b := by
+  sorry
+
+-- Main helper: every absolutely integrable simple function can be approximated by a step function
+private lemma RealSimpleFunction.approx_by_step_aux {d:ℕ} {g : EuclideanSpace' d → ℝ}
+    (hg_simple : RealSimpleFunction g) (hg_ai : RealAbsolutelyIntegrable g)
+    (δ : ℝ) (hδ : 0 < δ) :
+    ∃ (h : EuclideanSpace' d → ℝ), RealStepFunction h ∧ RealAbsolutelyIntegrable h ∧
+      PreL1.norm (g - h) ≤ δ := by
+  obtain ⟨k, c, E, hE_meas, hg_eq⟩ := hg_simple
+  by_cases hk : k = 0
+  · subst hk
+    refine ⟨0, ?_, ?_, ?_⟩
+    · exact ⟨∅, fun x => (Finset.notMem_empty x.1 x.2).elim, by simp⟩
+    · constructor
+      · exact ⟨fun _ => 0, fun _ => ⟨0, fun i => Fin.elim0 i, fun i => Fin.elim0 i,
+          fun i => Fin.elim0 i, by funext x; simp [Finset.univ_eq_empty]⟩,
+          fun _ => tendsto_const_nhds⟩
+      · have h_zero : EReal.abs_fun (0 : EuclideanSpace' d → ℝ) = 0 := by
+          funext x; simp only [EReal.abs_fun, Pi.zero_apply, norm_zero]; rfl
+        rw [h_zero, UnsignedLebesgueIntegral]
+        have h_simple : UnsignedSimpleFunction (0 : EuclideanSpace' d → EReal) := by
+          use 0, fun i => Fin.elim0 i, fun i => Fin.elim0 i
+          exact ⟨fun i => Fin.elim0 i, by funext x; simp [Finset.univ_eq_empty]⟩
+        rw [LowerUnsignedLebesgueIntegral.eq_simpleIntegral h_simple]
+        calc h_simple.integ = 0 := UnsignedSimpleFunction.integ_zero
+          _ < ⊤ := EReal.zero_lt_top
+    · have hg_zero : g = 0 := by
+        rw [hg_eq]; funext x; simp [Finset.univ_eq_empty]
+      rw [hg_zero, sub_zero]
+      show UnsignedLebesgueIntegral (EReal.abs_fun (0 : EuclideanSpace' d → ℝ)) ≤ (δ : EReal)
+      have h_zero : EReal.abs_fun (0 : EuclideanSpace' d → ℝ) = 0 := by
+        funext x; simp only [EReal.abs_fun, Pi.zero_apply, norm_zero]; rfl
+      rw [h_zero, UnsignedLebesgueIntegral]
+      have h_simple : UnsignedSimpleFunction (0 : EuclideanSpace' d → EReal) := by
+        use 0, fun i => Fin.elim0 i, fun i => Fin.elim0 i
+        exact ⟨fun i => Fin.elim0 i, by funext x; simp [Finset.univ_eq_empty]⟩
+      rw [LowerUnsignedLebesgueIntegral.eq_simpleIntegral h_simple]
+      calc h_simple.integ = 0 := UnsignedSimpleFunction.integ_zero
+        _ = (0 : ℝ).toEReal := by simp
+        _ ≤ (δ : EReal) := EReal.coe_le_coe_iff.mpr (le_of_lt hδ)
+  · sorry
 
 theorem RealAbsolutelyIntegrable.approx_by_step {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf : RealAbsolutelyIntegrable f)
     (ε : ℝ) (hε : 0 < ε) :
     ∃ (g : EuclideanSpace' d → ℝ), RealStepFunction g ∧ RealAbsolutelyIntegrable g ∧
-        PreL1.norm (f - g) ≤ ε := by sorry
+        PreL1.norm (f - g) ≤ ε := by
+  have hε2 : 0 < ε / 2 := half_pos hε
+  obtain ⟨g₁, hg₁_simple, hg₁_ai, hg₁_norm⟩ := hf.approx_by_simple (ε / 2) hε2
+  obtain ⟨g₂, hg₂_step, hg₂_ai, hg₂_norm⟩ :=
+    RealSimpleFunction.approx_by_step_aux hg₁_simple hg₁_ai (ε / 2) hε2
+  refine ⟨g₂, hg₂_step, hg₂_ai, ?_⟩
+  have h_combined := PreL1.norm_sub_le_add hg₁_norm hg₂_norm
+  calc PreL1.norm (f - g₂) ≤ ↑(ε / 2) + ↑(ε / 2) := h_combined
+    _ = (ε : EReal) := by rw [← EReal.coe_add]; congr 1; linarith
+
+theorem ComplexAbsolutelyIntegrable.approx_by_step {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf : ComplexAbsolutelyIntegrable f)
+  (ε : ℝ) (hε : 0 < ε) :
+  ∃ (g : EuclideanSpace' d → ℂ), ComplexStepFunction g ∧ ComplexAbsolutelyIntegrable g ∧
+    PreL1.norm (f - g) ≤ ε := by sorry
 
 def CompactlySupported {X Y:Type*} [TopologicalSpace X] [Zero Y] (f: X → Y) : Prop :=
   ∃ (K: Set X), IsCompact K ∧ ∀ x, x ∉ K → f x = 0
