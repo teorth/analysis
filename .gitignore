@@ -19,6 +19,7 @@ Claude.md
 analysis/.repair
 **/.env
 **/.aider.conf.yml
+**/.formalize
 
 # miscellaneous files
 **/tobeIgnored/
