@@ -23,6 +23,7 @@ Step 5a: Repeat Step 2a for the final part of the proof of `singleton_law` after
 
 Step 5b: Repeat Step 2b for the final part of the proof of `singleton_law` after Lemma 3.
 
+Some manual golfing was performed afterwards.
 -/
 
 
@@ -39,10 +40,10 @@ variable {M : Type _} [Magma M]
 
 -- Step 0: S and f notation
 -- S z x = (x ◇ z) ◇ z  (written S_z(x) in the informal proof)
-def S (z x : M) : M := (x ◇ z) ◇ z
+abbrev S (z x : M) : M := (x ◇ z) ◇ z
 
 -- f x y = x ◇ S y x = x ◇ ((x ◇ y) ◇ y)  (written f(x,y) in the informal proof)
-def f (x y : M) : M := x ◇ S y x
+abbrev f (x y : M) : M := x ◇ S y x
 
 /-
 The main equation (Equation1689) is: x = (y ◇ x) ◇ S z x, i.e., x = (y ◇ x) ◇ S z x.
@@ -52,11 +53,8 @@ We denote S_z(x) = S z x = (x ◇ z) ◇ z and f(x,y) = f x y = x ◇ S y x = x 
 -- Auxiliary lemma used in Lemma 1 and Lemma 2:
 -- S b a lies in the left ideal of a, i.e., S b a = a ◇ S z (S b a) for any z.
 lemma S_left_ideal (h : Equation1689 M) (a b z : M) : S b a = a ◇ S z (S b a) := by
-  simp only [S]
-  have key : (a ◇ a) ◇ ((a ◇ b) ◇ b) = a := (h a a b).symm
   have step := h ((a ◇ b) ◇ b) (a ◇ a) z
-  rw [key] at step
-  exact step
+  grind
 
 /-
 **Lemma 1:** For any a, b, c, one has S_b(a) = a ◇ f(b,c),  i.e., S b a = a ◇ f b c.
@@ -71,14 +69,9 @@ the right-hand side above and get, as announced,
 lemma lemma1 (h : Equation1689 M) (a b c : M) : S b a = a ◇ f b c := by
   have h1 : ∀ z : M, S b a = a ◇ S z (S b a) := S_left_ideal h a b
   -- The main equation with x = b, y = a ◇ b, z = c gives b = ((a◇b)◇b) ◇ ((b◇c)◇c) = S b a ◇ S c b.
-  have h2 : S b a ◇ S c b = b := by
-    simp only [S]
-    exact (h b (a ◇ b) c).symm
+  have h2 : S b a ◇ S c b = b := (h b (a ◇ b) c).symm
   -- Therefore S (S c b) (S b a) = (S b a ◇ S c b) ◇ S c b = b ◇ S c b = f b c.
-  have h3 : S (S c b) (S b a) = f b c := by
-    simp only [S, f]
-    simp only [S] at h2
-    rw [h2]
+  have h3 : S (S c b) (S b a) = f b c := by grind
   -- Combine: S b a = a ◇ S (S c b) (S b a) = a ◇ f b c.
   calc S b a = a ◇ S (S c b) (S b a) := h1 (S c b)
     _ = a ◇ f b c := by rw [h3]
@@ -94,7 +87,7 @@ which has the desired form for d = S c b.  (Thus, the statement actually holds f
 lemma lemma2 (h : Equation1689 M) (a : M) : ∃ b c d : M, f b c = S d a := by
   -- Take b := S a a (= S_a(a)), c := a, d := S a (S a a) (= S c b).
   -- The proof works for all a, c; any x works for b = S x a.
-  refine ⟨S a a, a, S a (S a a), ?_⟩
+  use S a a, a, S a (S a a)
   -- From the same argument as the first equation in the proof of Lemma 1 (with b := a, z := a):
   --   b = S a a = a ◇ S a (S a a) = a ◇ S c b.
   have hb : S a a = a ◇ S a (S a a) := S_left_ideal h a a a
@@ -102,7 +95,7 @@ lemma lemma2 (h : Equation1689 M) (a : M) : ∃ b c d : M, f b c = S d a := by
   calc f (S a a) a
       = S a a ◇ S a (S a a)              := rfl
     _ = (a ◇ S a (S a a)) ◇ S a (S a a) := by congr
-    _ = S (S a (S a a)) a               := rfl
+    _ = S (S a (S a a)) a                := rfl
 
 /-
 **Lemma 3:** For all a there exists e such that S_e(a) = a,  i.e., S e a = a.
@@ -119,15 +112,14 @@ lemma lemma3 (h : Equation1689 M) (a : M) : ∃ e : M, S e a = a := by
   -- Get b, c, d from Lemma 2, so that f b c = S d a.
   obtain ⟨b, c, d, hd⟩ := lemma2 h a
   -- Take e := f a d.
-  refine ⟨f a d, ?_⟩
+  use f a d
   -- The main equation with x = a, y = a ◇ a, z = b gives a = ((a ◇ a) ◇ a) ◇ S b a.
-  have h_main : a = ((a ◇ a) ◇ a) ◇ S b a := by
-    simp only [S]; exact h a (a ◇ a) b
+  have h_main : a = ((a ◇ a) ◇ a) ◇ S b a := by grind
   -- Lemma 1 gives S b a = a ◇ f b c, so a = ((a ◇ a) ◇ a) ◇ (a ◇ f b c).
   have h_step2 : a = ((a ◇ a) ◇ a) ◇ (a ◇ f b c) :=
     h_main.trans (by rw [lemma1 h a b c])
   -- Since f b c = S d a by hd, a ◇ f b c = a ◇ S d a = f a d.
-  have h_step3 : a ◇ f b c = f a d := by rw [hd]; rfl
+  have h_step3 : a ◇ f b c = f a d := by grind
   -- Lemma 1 with b←a, c←d gives S a a = a ◇ f a d, i.e., (a ◇ a) ◇ a = a ◇ f a d.
   have h_step4 : (a ◇ a) ◇ a = a ◇ f a d := by
     simpa only [S] using lemma1 h a a d
@@ -152,27 +144,20 @@ theorem singleton_law (h : Equation1689 M) : Equation2 M := by
   have hS : ∀ a b : M, S a b = a := by
     intro a b
     obtain ⟨e, he⟩ := lemma3 h a
-    simp only [S]
-    have step := h a b e
-    simp only [S] at he
-    rw [he] at step
-    exact step.symm
+    grind
   -- Step 2: (a ◇ b) ◇ c = b for all a, b, c.
   -- Main eq (x=b, y=a, z=c) gives b = (a ◇ b) ◇ S c b = (a ◇ b) ◇ c by hS.
   have hrel : ∀ a b c : M, (a ◇ b) ◇ c = b := by
     intro a b c
     have step := h b a c
-    have hSraw : (b ◇ c) ◇ c = c := by simpa only [S] using hS c b
-    rw [hSraw] at step
-    exact step.symm
+    grind
   -- Step 3: a ◇ b = c for all a, b, c.
   -- From hrel: (d ◇ a) ◇ c = a, so a ◇ b = ((d ◇ a) ◇ c) ◇ b = c by hrel.
   have hconst : ∀ a b c : M, a ◇ b = c := by
     intro a b c
     have h1 : (a ◇ a) ◇ c = a := hrel a a c
     have h2 : ((a ◇ a) ◇ c) ◇ b = c := hrel (a ◇ a) c b
-    calc a ◇ b = ((a ◇ a) ◇ c) ◇ b := by rw [h1]
-      _ = c := h2
+    grind
   -- Conclude: x = x ◇ x = y.
   intro x y
   exact (hconst x x x).symm.trans (hconst x x y)
