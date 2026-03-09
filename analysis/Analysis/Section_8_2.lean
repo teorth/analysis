@@ -471,12 +471,12 @@ theorem permute_convergesTo_of_divergent {a: ℕ → ℝ} (ha: (a:Series).conver
   obtain ⟨ a_plus, ha_plus_bij, ha_plus_mono ⟩ := (Nat.monotone_enum_of_infinite A_plus).exists
   obtain ⟨ a_minus, ha_minus_bij, ha_minus_mono ⟩ := (Nat.monotone_enum_of_infinite A_minus).exists
   let F : (n : ℕ) → ((m : ℕ) → m < n → ℕ) → ℕ :=
-    fun j n' ↦ if ∑ i:Fin j, n' i (by simp) > L then
+    fun j n' ↦ if ∑ i:Fin j, a (n' i (by simp)) < L then
       Nat.min { n ∈ A_plus | ∀ i:Fin j, n ≠ n' i (by simp) }
     else
       Nat.min { n ∈ A_minus | ∀ i:Fin j, n ≠ n' i (by simp) }
   let n' : ℕ → ℕ := Nat.strongRec F
-  have hn' (j:ℕ) : n' j = if ∑ i:Fin j, n' i > L then
+  have hn' (j:ℕ) : n' j = if ∑ i:Fin j, a (n' i) < L then
       Nat.min { n ∈ A_plus | ∀ i:Fin j, n ≠ n' i }
     else
       Nat.min { n ∈ A_minus | ∀ i:Fin j, n ≠ n' i }
@@ -484,8 +484,8 @@ theorem permute_convergesTo_of_divergent {a: ℕ → ℝ} (ha: (a:Series).conver
   have hn'_plus_inf (j:ℕ) : Infinite { n ∈ A_plus | ∀ i:Fin j, n ≠ n' i } := by sorry
   have hn'_minus_inf (j:ℕ) : Infinite { n ∈ A_minus | ∀ i:Fin j, n ≠ n' i } := by sorry
   have hn'_inj : Injective n' := by sorry
-  have h_case_I : Infinite { j | ∑ i:Fin j, n' i > L } := by sorry
-  have h_case_II : Infinite { j | ∑ i:Fin j, n' i ≤ L } := by sorry
+  have h_case_I : Infinite { j | ∑ i:Fin j, a (n' i) < L } := by sorry
+  have h_case_II : Infinite { j | ∑ i:Fin j, a (n' i) ≥ L } := by sorry
   have hn'_surj : Surjective n' := by sorry
   have hconv : atTop.Tendsto (a ∘ n') (nhds 0) := by sorry
   have hsum : (a ∘ n':Series).convergesTo L := by sorry
