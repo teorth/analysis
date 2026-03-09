@@ -1,7 +1,7 @@
 import Mathlib.Tactic
 
 /-
-A informal proof of the theorem `singleton_law` is provided below.  Claude Code was used to formalize this proof using the following steps:
+A informal proof of the theorem `singleton_law` is provided below, courtesy of Bruno Le Floch https://leanprover.zulipchat.com/#narrow/channel/458659-Equational/topic/Alternative.20proofs.20of.20E1689.E2.8A.A2E2/near/517189582.  Claude Code was used to formalize this proof using the following steps:
 
 Step 0: Formalize the `S` and `f` notation.
 
@@ -122,7 +122,7 @@ lemma lemma3 (h : Equation1689 M) (a : M) : ∃ e : M, S e a = a := by
   have h_step3 : a ◇ f b c = f a d := by grind
   -- Lemma 1 with b←a, c←d gives S a a = a ◇ f a d, i.e., (a ◇ a) ◇ a = a ◇ f a d.
   have h_step4 : (a ◇ a) ◇ a = a ◇ f a d := by
-    simpa only [S] using lemma1 h a a d
+    simpa using lemma1 h a a d
   -- Combine: S(f a d) a = (a ◇ f a d) ◇ f a d = ((a ◇ a) ◇ a) ◇ f a d
   --        = ((a ◇ a) ◇ a) ◇ (a ◇ f b c) = ((a ◇ a) ◇ a) ◇ S b a = a.
   calc S (f a d) a
