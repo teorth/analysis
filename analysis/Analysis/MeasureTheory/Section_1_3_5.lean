@@ -1379,7 +1379,106 @@ theorem RealAbsolutelyIntegrable.approx_by_continuous_compact {d:ℕ} {f: Euclid
 theorem ComplexAbsolutelyIntegrable.approx_by_continuous_compact {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf : ComplexAbsolutelyIntegrable f)
   (ε : ℝ) (hε : 0 < ε) :
   ∃ (g : EuclideanSpace' d → ℂ), Continuous g ∧ CompactlySupported g ∧
-    PreL1.norm (f - g) ≤ ε := by sorry
+    PreL1.norm (f - g) ≤ ε := by
+  -- Approximate real and imaginary parts within ε/2
+  -- Use internal aux helpers to also get RealAbsolutelyIntegrable
+  have hε2 : 0 < ε / 2 := half_pos hε
+  have hε4 : 0 < ε / 2 / 2 := half_pos hε2
+  -- Real part: step function approximation then continuous approximation
+  obtain ⟨h_re, hh_re_step, hh_re_ai, hh_re_norm⟩ :=
+    (ComplexAbsolutelyIntegrable.re f hf).approx_by_step (ε / 2 / 2) hε4
+  obtain ⟨g_re, hg_re_cont, hg_re_cs, hg_re_ai, hg_re_norm'⟩ :=
+    RealStepFunction.approx_by_continuous_compact_aux hh_re_step hh_re_ai (ε / 2 / 2) hε4
+  have hg_re_norm : PreL1.norm (Complex.re_fun f - g_re) ≤ ↑(ε / 2) := by
+    have := PreL1.norm_sub_le_add ((ComplexAbsolutelyIntegrable.re f hf).sub hh_re_ai)
+      (hh_re_ai.sub hg_re_ai) hh_re_norm hg_re_norm'
+    calc PreL1.norm (Complex.re_fun f - g_re)
+        ≤ ↑(ε / 2 / 2) + ↑(ε / 2 / 2) := this
+      _ = ↑(ε / 2) := by rw [← EReal.coe_add]; congr 1; linarith
+  -- Imaginary part: step function approximation then continuous approximation
+  obtain ⟨h_im, hh_im_step, hh_im_ai, hh_im_norm⟩ :=
+    (ComplexAbsolutelyIntegrable.im f hf).approx_by_step (ε / 2 / 2) hε4
+  obtain ⟨g_im, hg_im_cont, hg_im_cs, hg_im_ai, hg_im_norm'⟩ :=
+    RealStepFunction.approx_by_continuous_compact_aux hh_im_step hh_im_ai (ε / 2 / 2) hε4
+  have hg_im_norm : PreL1.norm (Complex.im_fun f - g_im) ≤ ↑(ε / 2) := by
+    have := PreL1.norm_sub_le_add ((ComplexAbsolutelyIntegrable.im f hf).sub hh_im_ai)
+      (hh_im_ai.sub hg_im_ai) hh_im_norm hg_im_norm'
+    calc PreL1.norm (Complex.im_fun f - g_im)
+        ≤ ↑(ε / 2 / 2) + ↑(ε / 2 / 2) := this
+      _ = ↑(ε / 2) := by rw [← EReal.coe_add]; congr 1; linarith
+  -- Construct complex approximation g = ↑g_re + I • ↑g_im
+  set g : EuclideanSpace' d → ℂ :=
+    Real.complex_fun g_re + Complex.I • Real.complex_fun g_im with hg_def
+  have hg_re_eq : Complex.re_fun g = g_re := by
+    ext x; simp only [Complex.re_fun, hg_def, Pi.add_apply, Pi.smul_apply, smul_eq_mul,
+      Real.complex_fun, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, Complex.I_im, Complex.ofReal_im]; ring
+  have hg_im_eq : Complex.im_fun g = g_im := by
+    ext x; simp only [Complex.im_fun, hg_def, Pi.add_apply, Pi.smul_apply, smul_eq_mul,
+      Real.complex_fun, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.I_re, Complex.I_im, Complex.ofReal_re]; ring
+  -- g is continuous
+  have hg_cont : Continuous g := by
+    apply Continuous.add
+    · exact Complex.continuous_ofReal.comp hg_re_cont
+    · exact continuous_const.mul (Complex.continuous_ofReal.comp hg_im_cont)
+  -- g is compactly supported
+  have hg_cs : CompactlySupported g := by
+    obtain ⟨K_re, hK_re_compact, hK_re_supp⟩ := hg_re_cs
+    obtain ⟨K_im, hK_im_compact, hK_im_supp⟩ := hg_im_cs
+    refine ⟨K_re ∪ K_im, hK_re_compact.union hK_im_compact, fun x hx => ?_⟩
+    rw [Set.mem_union] at hx; push_neg at hx
+    simp only [hg_def, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Real.complex_fun]
+    rw [hK_re_supp x hx.1, hK_im_supp x hx.2]
+    simp
+  -- g is absolutely integrable
+  have hg_ai : ComplexAbsolutelyIntegrable g := by
+    apply (ComplexAbsolutelyIntegrable.iff g).mpr
+    exact ⟨hg_re_eq ▸ hg_re_ai, hg_im_eq ▸ hg_im_ai⟩
+  refine ⟨g, hg_cont, hg_cs, ?_⟩
+  -- Norm bound: PreL1.norm (f - g) ≤ ε
+  show UnsignedLebesgueIntegral (EReal.abs_fun (f - g)) ≤ (ε : EReal)
+  have hfg_re : Complex.re_fun (f - g) = Complex.re_fun f - g_re := by
+    ext x; simp only [Complex.re_fun, hg_def, Pi.sub_apply, Pi.add_apply, Pi.smul_apply,
+      smul_eq_mul, Real.complex_fun, Complex.sub_re, Complex.add_re, Complex.ofReal_re,
+      Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im]; ring
+  have hfg_im : Complex.im_fun (f - g) = Complex.im_fun f - g_im := by
+    ext x; simp only [Complex.im_fun, hg_def, Pi.sub_apply, Pi.add_apply, Pi.smul_apply,
+      smul_eq_mul, Real.complex_fun, Complex.sub_im, Complex.add_im, Complex.ofReal_im,
+      Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re]; ring
+  have h_bound : ∀ x, EReal.abs_fun (f - g) x ≤
+      (EReal.abs_fun (Complex.re_fun (f - g)) + EReal.abs_fun (Complex.im_fun (f - g))) x :=
+    fun x => by
+      simp only [EReal.abs_fun, Complex.re_fun, Complex.im_fun, Pi.add_apply]
+      rw [← EReal.coe_add]
+      exact EReal.coe_le_coe_iff.mpr (by
+        calc ‖(f - g) x‖ ≤ |((f - g) x).re| + |((f - g) x).im| :=
+            Complex.norm_le_abs_re_add_abs_im _
+          _ = ‖((f - g) x).re‖ + ‖((f - g) x).im‖ := by rw [Real.norm_eq_abs, Real.norm_eq_abs])
+  have hfg_ai := hf.sub hg_ai
+  have hfg_re_ai := ComplexAbsolutelyIntegrable.re (f - g) hfg_ai
+  have hfg_im_ai := ComplexAbsolutelyIntegrable.im (f - g) hfg_ai
+  have h_mono : UnsignedLebesgueIntegral (EReal.abs_fun (f - g)) ≤
+      UnsignedLebesgueIntegral (EReal.abs_fun (Complex.re_fun (f - g)) +
+                                EReal.abs_fun (Complex.im_fun (f - g))) :=
+    LowerUnsignedLebesgueIntegral.mono hfg_ai.abs.1
+      (hfg_re_ai.abs.1.add hfg_im_ai.abs.1) (AlmostAlways.ofAlways h_bound)
+  have h_add : UnsignedLebesgueIntegral (EReal.abs_fun (Complex.re_fun (f - g)) +
+      EReal.abs_fun (Complex.im_fun (f - g))) =
+      UnsignedLebesgueIntegral (EReal.abs_fun (Complex.re_fun (f - g))) +
+      UnsignedLebesgueIntegral (EReal.abs_fun (Complex.im_fun (f - g))) :=
+    LowerUnsignedLebesgueIntegral.add hfg_re_ai.abs.1 hfg_im_ai.abs.1
+      (hfg_re_ai.abs.1.add hfg_im_ai.abs.1)
+  rw [h_add] at h_mono
+  rw [show EReal.abs_fun (Complex.re_fun (f - g)) =
+        EReal.abs_fun (Complex.re_fun f - g_re) from by rw [hfg_re],
+      show EReal.abs_fun (Complex.im_fun (f - g)) =
+        EReal.abs_fun (Complex.im_fun f - g_im) from by rw [hfg_im]] at h_mono
+  calc UnsignedLebesgueIntegral (EReal.abs_fun (f - g))
+      ≤ UnsignedLebesgueIntegral (EReal.abs_fun (Complex.re_fun f - g_re)) +
+        UnsignedLebesgueIntegral (EReal.abs_fun (Complex.im_fun f - g_im)) := h_mono
+    _ ≤ (↑(ε / 2) : EReal) + (↑(ε / 2) : EReal) := add_le_add hg_re_norm hg_im_norm
+    _ = (ε : EReal) := by rw [← EReal.coe_add]; congr 1; linarith
 
 def UniformlyConvergesTo {X Y:Type*} [PseudoMetricSpace Y] (f: ℕ → X → Y) (g: X → Y) : Prop := ∀ ε>0, ∃ N, ∀ n ≥ N, ∀ x, dist (f n x) (g x) ≤ ε
 
