@@ -55,7 +55,7 @@ theorem integ_of_monotone {a b:ℝ} {f:ℝ → ℝ} (hf: MonotoneOn f (Icc a b))
         set j := ⌊ (x-a)/δ ⌋₊
         have hxa : 0 ≤ x-a := by linarith
         have hxaδ : 0 ≤ (x-a)/δ := by positivity
-        have hxb : x < b := by grind
+        have hxb : x < b := lt_of_le_of_ne hx.2 hb
         have hxj : x ∈ e j := by
           simp [e, mem_iff, j]; split_ands
           . calc
@@ -87,7 +87,7 @@ theorem integ_of_monotone {a b:ℝ} {f:ℝ → ℝ} (hf: MonotoneOn f (Icc a b))
       _ = ∑ j ∈ .range N, (sSup (f '' (Ico (a + δ*j) (a + δ*(j+1))))) * |Ico (a + δ*j) (a + δ*(j+1))|ₗ := by simp [P]; congr
       _ ≤ ∑ j ∈ .range N, f (a + δ*(j+1)) * δ := by
         apply Finset.sum_le_sum; intro j hj
-        convert (mul_le_mul_right hδpos).mpr ?_
+        convert (mul_le_mul_iff_left₀ hδpos).mpr ?_
         . simp [length]; ring_nf; simp [le_of_lt hδpos]
         apply csSup_le
         . simp; grind
@@ -102,7 +102,7 @@ theorem integ_of_monotone {a b:ℝ} {f:ℝ → ℝ} (hf: MonotoneOn f (Icc a b))
       _ = ∑ j ∈ .range N, (sInf (f '' (Ico (a + δ*j) (a + δ*(j+1))))) * |Ico (a + δ*j) (a + δ*(j+1))|ₗ := by simp [P]; congr
       _ ≥ ∑ j ∈ .range N, f (a + δ*j) * δ := by
         apply Finset.sum_le_sum; intro j hj
-        convert (mul_le_mul_right hδpos).mpr ?_
+        convert (mul_le_mul_iff_left₀ hδpos).mpr ?_
         . simp [length]; ring_nf; simp [le_of_lt hδpos]
         apply le_csInf
         . simp; grind

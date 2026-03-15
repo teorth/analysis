@@ -26,11 +26,11 @@ noncomputable abbrev EuclideanSpace' (n: ℕ) := EuclideanSpace ℝ (Fin n)
 
 abbrev EuclideanSpace'.equiv_Real : EuclideanSpace' 1 ≃ ℝ where
   toFun x := x ⟨ 0, by simp ⟩
-  invFun x := (fun _ ↦ x)
+  invFun x := .toLp 2 (fun _ ↦ x)
   left_inv x := by
-    ext ⟨ i, hi ⟩; have : i=0 := by omega
-    subst this; simp
-  right_inv x := by aesop
+    apply PiLp.ext; intro ⟨i, hi⟩; have : i = 0 := by omega
+    subst this; rfl
+  right_inv x := by rfl
 
 abbrev Real.equiv_EuclideanSpace' : ℝ ≃ EuclideanSpace' 1 := EuclideanSpace'.equiv_Real.symm
 
@@ -64,19 +64,23 @@ theorem EuclideanSpace'.dot_apply {n:ℕ} (x y: EuclideanSpace' n) : x ⬝ y = �
 #check lt_top_iff_ne_top
 
 def EuclideanSpace'.prod_equiv (d₁ d₂:ℕ) : EuclideanSpace' (d₁ + d₂) ≃ EuclideanSpace' d₁ × EuclideanSpace' d₂ where
-  toFun x := by
-    constructor
-    . intro ⟨ i, hi ⟩; exact x ⟨ i, by omega ⟩
-    intro ⟨ i, hi⟩; exact x ⟨ i+d₁, by omega ⟩
-  invFun x i := by
-    obtain ⟨ i, hi ⟩ := i
-    exact if h:i < d₁ then x.1 ⟨ i, h ⟩ else x.2 ⟨ i-d₁, by omega ⟩
+  toFun x :=
+    (.toLp 2 (fun ⟨i, hi⟩ => x ⟨i, by omega⟩),
+     .toLp 2 (fun ⟨i, hi⟩ => x ⟨i + d₁, by omega⟩))
+  invFun x := .toLp 2 (fun ⟨i, hi⟩ =>
+    if h : i < d₁ then x.1 ⟨i, h⟩ else x.2 ⟨i - d₁, by omega⟩)
   left_inv x := by
-    ext ⟨ i, hi ⟩; by_cases h : i < d₁ <;> simp [h]
-    congr; omega
+    apply PiLp.ext; intro ⟨i, hi⟩
+    simp only
+    split
+    · rfl
+    next h =>
+      have := Nat.sub_add_cancel (Nat.not_lt.mp h)
+      simp only [this]
   right_inv x := by
-    ext ⟨ i, hi ⟩ <;> simp [hi]
-    congr!; omega
+    ext ⟨i, hi⟩
+    · simp [dif_pos hi]
+    · simp [show ¬(i + d₁ < d₁) by omega]
 
 def EuclideanSpace'.prod {d₁ d₂:ℕ} (E₁: Set (EuclideanSpace' d₁)) (E₂: Set (EuclideanSpace' d₂)) : Set (EuclideanSpace' (d₁+d₂)) := (EuclideanSpace'.prod_equiv d₁ d₂).symm '' (E₁ ×ˢ E₂)
 

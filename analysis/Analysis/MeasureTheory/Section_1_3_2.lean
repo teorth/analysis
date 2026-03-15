@@ -2814,14 +2814,10 @@ lemma f_lifted_zero_set_measurable : LebesgueMeasurable {x : EuclideanSpace' 1 |
   · apply IsOpen.measurable
     have h_open : IsOpen (Set.Icc (0:ℝ) 1)ᶜ := isOpen_compl_iff.mpr isClosed_Icc
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_
-        intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -2872,14 +2868,10 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
   apply LebesgueMeasurable.union
   · apply IsOpen.measurable
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_
-        intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -2887,14 +2879,10 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
     exact e.isOpenMap (Set.Iio 0) isOpen_Iio
   · apply IsOpen.measurable
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_
-        intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -2949,13 +2937,10 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
       le_csSup_of_le h_bdd_above h_zero_in_S (le_refl 0),
       csSup_le (Set.nonempty_of_mem h_zero_in_S) (fun x hx => hx.1.2)⟩
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_; intro _; exact continuous_id
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -3185,7 +3170,7 @@ example : ∃ (f: EuclideanSpace' 1 → EReal) (_hf: UnsignedMeasurable f) (E: S
           constructor
           · rintro ⟨r, hr, rfl⟩; simp [hr]
           · intro hx; exact ⟨_, hx, EuclideanSpace'.equiv_Real.symm_apply_apply x⟩
-        exact this ▸ IsClosed.preimage (continuous_apply _) isClosed_Icc
+        exact this ▸ IsClosed.preimage (PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) _) isClosed_Icc
       have h_diff_null : IsNull (Icc' \ A') := by
         apply Countable.Lebesgue_measure Nat.one_pos
         have : Icc' \ A' = Real.equiv_EuclideanSpace' '' (Set.Icc 0 1 \ A) := by

@@ -50,9 +50,8 @@ theorem IsElementary.contains_bounded {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: 
   -- Step 3: Show E ⊆ B.toSet
   have hE_subset : E ⊆ B.toSet := by
     intro x hx
-    simp [Box.toSet]
-    intro i _
-    simp
+    simp only [Box.mem_toSet]
+    intro i
     have h_mem : x ∈ Metric.closedBall 0 M := hE_ball hx
     rw [Metric.mem_closedBall, dist_zero_right] at h_mem
     have h_M_bound : M ≤ max M 0 := le_max_left _ _
@@ -511,7 +510,7 @@ theorem JordanMeasurable.mes_of_disjUnion {d:ℕ} {E F : Set (EuclideanSpace' d)
 
 /-- Exercise 1.1.6 (iii) (finite additivity) -/
 lemma JordanMeasurable.measure_of_disjUnion' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
-(hE: ∀ E ∈ S, JordanMeasurable E) (hdisj: S.toSet.PairwiseDisjoint id):
+(hE: ∀ E ∈ S, JordanMeasurable E) (hdisj: (S : Set (Set (EuclideanSpace' d))).PairwiseDisjoint id):
   (JordanMeasurable.union' hE).measure = ∑ E:S, (hE E.val E.property).measure := by
   induction' S using Finset.induction with E S hS ih;
   all_goals try { exact fun x y => Classical.propDecidable _ };
@@ -588,7 +587,9 @@ lemma JordanMeasurable.measure_of_union' {d:ℕ} {S: Finset (Set (EuclideanSpace
     Finset.coe_mem, Finset.sum_empty, le_refl];
   · convert le_trans ( JordanMeasurable.mes_of_union ( hE a ( Finset.mem_insert_self a S ) ) ( JordanMeasurable.union' fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) ) ( add_le_add_left ( ih fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) _ ) using 1;
     · simp_all only [Finset.univ_eq_attach, Finset.mem_insert, Finset.coe_mem, or_true, Set.iUnion_iUnion_eq_or_left];
-    · simp +decide [ Finset.sum_insert, ha ]
+    · simp +decide [Finset.sum_insert, ha]
+      classical
+      apply Finset.sum_image; intro x _ y _ hxy; exact Subtype.ext (Subtype.mk.inj hxy)
 
 open Pointwise
 
@@ -689,7 +690,7 @@ lemma JordanMeasurable.measure_triangle (T: Affine.Triangle ℝ (EuclideanSpace'
 
 /-- Exercise 1.1.9  A polytope is the convex hull of a finite set of vertices. -/
 abbrev IsPolytope {d:ℕ} (P: Set (EuclideanSpace' d)) : Prop :=
-  ∃ (V: Finset (EuclideanSpace' d)), P = convexHull ℝ (V.toSet)
+  ∃ (V: Finset (EuclideanSpace' d)), P = convexHull ℝ (V : Set _)
 
 /-- Exercise 1.1.9: Every polytope is Jordan measurable. -/
 lemma JordanMeasurable.polytope {d:ℕ} {P: Set (EuclideanSpace' d)} (hP: IsPolytope P) : JordanMeasurable P := by
@@ -745,12 +746,16 @@ lemma JordanMeasurable.measure_linear {d:ℕ} (T: EuclideanSpace' d ≃ₗ[ℝ] 
 /-- An invertible matrix defines a linear equivalence on Euclidean space. -/
 noncomputable def Matrix.linear_equiv {d:ℕ} (A: Matrix (Fin d) (Fin d) ℝ) [Invertible A] :
 EuclideanSpace' d ≃ₗ[ℝ] EuclideanSpace' d where
-  toFun x := toLin' A x
-  map_add' := LinearMap.map_add (toLin' A)
-  map_smul' := LinearMap.CompatibleSMul.map_smul (toLin' A)
-  invFun x := toLin' A⁻¹ x
-  left_inv x := by simp
-  right_inv x := by simp
+  toFun x := .toLp 2 (toLin' A x.ofLp)
+  map_add' x y := by
+    apply PiLp.ext; intro i; simp [WithLp.toLp, WithLp.ofLp, map_add]
+  map_smul' r x := by
+    apply PiLp.ext; intro i; simp [WithLp.toLp, WithLp.ofLp, map_smul]
+  invFun x := .toLp 2 (toLin' A⁻¹ x.ofLp)
+  left_inv x := by
+    apply PiLp.ext; intro i; simp
+  right_inv x := by
+    apply PiLp.ext; intro i; simp
 
 /-- Exercise 1.1.11 (3) -/
 -- For a linear map from an invertible matrix, the measure scaling factor equals the absolute value of the determinant.
@@ -772,7 +777,7 @@ lemma JordanMeasurable.null_mono {d:ℕ} {E F: Set (EuclideanSpace' d)} (h: null
 /-- Exercise 1.1.13 -/
 -- The Jordan measure equals the limit of scaled lattice point counts in the set.
 theorem JordanMeasure.measure_eq {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: JordanMeasurable E):
-  Filter.atTop.Tendsto (fun N:ℕ ↦ (N:ℝ)^(-d:ℝ) * Nat.card ↥(E ∩ (Set.range (fun (n:Fin d → ℤ) i ↦ (N:ℝ)⁻¹*(n i)))))
+  Filter.atTop.Tendsto (fun N:ℕ ↦ (N:ℝ)^(-d:ℝ) * Nat.card ↥(E ∩ (Set.range (fun (n:Fin d → ℤ) ↦ .toLp 2 (fun i ↦ (N:ℝ)⁻¹*(n i))))))
   (nhds hE.measure) := by sorry
 
 /-- A dyadic box at scale 2^(-n) with multi-index i: the half-open cube [i/2^n, (i+1)/2^n). -/
@@ -828,7 +833,7 @@ theorem JordanMeasurable.measure_of_prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSp
 
 /-- Two sets are isometric if one is an orthogonal transformation plus translation of the other. -/
 abbrev Isometric {d:ℕ} (E F: Set (EuclideanSpace' d)) : Prop :=
- ∃ A ∈ Matrix.orthogonalGroup (Fin d) ℝ, ∃ x₀, F = ((Matrix.toLin' A) '' E: Set (EuclideanSpace' d)) + {x₀}
+ ∃ A ∈ Matrix.orthogonalGroup (Fin d) ℝ, ∃ x₀, F = ((fun x => WithLp.toLp 2 (Matrix.toLin' A x.ofLp)) '' E) + {x₀}
 
 /-- Exercise 1.1.17 -/
 theorem JordanMeasurable.measure_of_equidecomposable {d n:ℕ} {E F: Set (EuclideanSpace' d)}

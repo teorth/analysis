@@ -738,7 +738,7 @@ structure PiecewiseConstantFunction (I: BoundedInterval) where
   f : ℝ → ℝ
   T : Finset BoundedInterval
   c : T → ℝ
-  disjoint: T.toSet.PairwiseDisjoint BoundedInterval.toSet
+  disjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet
   cover : I.toSet = ⋃ J ∈ T, J.toSet
   const : ∀ J:T, ∀ x ∈ J.val, f x = c J
 
@@ -1042,7 +1042,7 @@ lemma RiemannIntegrableOn.continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I
 
 -- A function that is continuous on each piece of a partition is Riemann integrable on the whole interval.
 lemma RiemannIntegrableOn.piecewise_continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I = Icc I.a I.b)
- (T: Finset BoundedInterval)  (hdisjoint: T.toSet.PairwiseDisjoint BoundedInterval.toSet)
+ (T: Finset BoundedInterval)  (hdisjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet)
  (hcover : I.toSet = ⋃ J ∈ T, J.toSet) (hcont: ∀ J ∈ T, ContinuousOn f J.toSet) : RiemannIntegrableOn f I := by sorry
 
 /-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/

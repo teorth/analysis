@@ -230,7 +230,7 @@ abbrev SetTheory.Set.iUnion (I: Set) (A: I → Set) : Set :=
 theorem SetTheory.Set.mem_iUnion {I:Set} (A: I → Set) (x:Object) :
     x ∈ iUnion I A ↔ ∃ α:I, x ∈ A α := by
   rw [union_axiom]; constructor
-  . simp_all [replacement_axiom]; grind
+  . simp_all [replacement_axiom]
   grind [replacement_axiom]
 
 open Classical in

@@ -11,6 +11,43 @@ A companion to (the introduction to) Section 1.2.1 of the book "An introduction 
 
 open BoundedInterval
 
+/-- Express `Box.toSet` as a preimage of a pi set under the PiLp homeomorphism. -/
+lemma Box.toSet_eq_ofLp_preimage {d : ℕ} (B : Box d) :
+    B.toSet = (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)) ⁻¹' Set.univ.pi (fun i => (B.side i).toSet) := by
+  ext x; simp only [Box.mem_toSet, Set.mem_preimage, Set.mem_pi, Set.mem_univ, true_implies]; rfl
+
+/-- The interior of `Box.toSet` expressed as a preimage. -/
+lemma Box.interior_toSet {d : ℕ} (B : Box d) :
+    interior B.toSet = (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)) ⁻¹'
+      Set.univ.pi (fun i => interior (B.side i).toSet) := by
+  rw [Box.toSet_eq_ofLp_preimage,
+    ← (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).preimage_interior,
+    interior_pi_set Set.finite_univ]
+
+/-- The closure of `Box.toSet` expressed as a preimage. -/
+lemma Box.closure_toSet {d : ℕ} (B : Box d) :
+    closure B.toSet = (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)) ⁻¹'
+      Set.univ.pi (fun i => closure (B.side i).toSet) := by
+  rw [Box.toSet_eq_ofLp_preimage,
+    ← (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).preimage_closure,
+    closure_pi_set]
+
+/-- The frontier of `Box.toSet` expressed via the PiLp homeomorphism. -/
+lemma Box.frontier_toSet {d : ℕ} (B : Box d) :
+    frontier B.toSet = (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)) ⁻¹'
+      frontier (Set.univ.pi (fun i => (B.side i).toSet)) := by
+  rw [Box.toSet_eq_ofLp_preimage,
+    ← (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).preimage_frontier]
+
+/-- A box with Icc sides is closed. -/
+lemma Box.isClosed_toSet_of_Icc {d : ℕ} (B : Box d)
+    (h : ∀ i, ∃ a b, B.side i = BoundedInterval.Icc a b) : IsClosed B.toSet := by
+  rw [Box.toSet_eq_ofLp_preimage]
+  apply IsClosed.preimage (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).continuous
+  apply isClosed_set_pi; intro i _
+  obtain ⟨a, b, hab⟩ := h i
+  simp only [hab, BoundedInterval.toSet]; exact isClosed_Icc
+
 /-- Exercise 1.2.3(i) (Empty set) -/
 theorem Lebesgue_outer_measure.of_empty (d:ℕ) : Lebesgue_outer_measure (∅: Set (EuclideanSpace' d)) = 0 := by
   sorry
@@ -376,9 +413,9 @@ lemma diameter_nonneg {d:ℕ} (B: Box d) : 0 ≤ B.diameter := by
       rw [hr]
       -- y, z ∈ B.toSet means ∀ i, y i ∈ B.side i and z i ∈ B.side i
       have hy_coord : ∀ i, y i ∈ (B.side i).toSet := by
-        intro i; exact hy i (Set.mem_univ i)
+        intro i; exact hy i
       have hz_coord : ∀ i, z i ∈ (B.side i).toSet := by
-        intro i; exact hz i (Set.mem_univ i)
+        intro i; exact hz i
       -- For each coordinate, the difference is bounded by the side length
       have coord_bound : ∀ i, |(y - z) i| ≤ |B.side i|ₗ := by
         intro i
@@ -459,9 +496,9 @@ lemma dist_le_diameter {d:ℕ} (B: Box d) {x y: EuclideanSpace' d}
     rw [hr]
     -- z, w ∈ B.toSet means ∀ i, z i ∈ B.side i and w i ∈ B.side i
     have hz_coord : ∀ i, z i ∈ (B.side i).toSet := by
-      intro i; exact hz i (Set.mem_univ i)
+      intro i; exact hz i
     have hw_coord : ∀ i, w i ∈ (B.side i).toSet := by
-      intro i; exact hw i (Set.mem_univ i)
+      intro i; exact hw i
     -- For each coordinate, the difference is bounded by the side length
     have coord_bound : ∀ i, |(z - w) i| ≤ |B.side i|ₗ := by
       intro i
@@ -619,8 +656,8 @@ lemma diameter_eq_sqrt_sum_sq {d:ℕ} (B: Box d) (h: B.toSet.Nonempty) :
     apply Finset.sum_le_sum
     intro i _
     -- |x i - y i|² ≤ |B.side i|ₗ²
-    have hx_i : x i ∈ (B.side i).toSet := hx i (Set.mem_univ i)
-    have hy_i : y i ∈ (B.side i).toSet := hy i (Set.mem_univ i)
+    have hx_i : x i ∈ (B.side i).toSet := hx i
+    have hy_i : y i ∈ (B.side i).toSet := hy i
     have coord_bound : |x i - y i| ≤ |B.side i|ₗ := by
       cases h_side : B.side i <;>
           simp [BoundedInterval.toSet, h_side] at hx_i hy_i <;>
@@ -666,7 +703,7 @@ lemma diameter_eq_sqrt_sum_sq {d:ℕ} (B: Box d) (h: B.toSet.Nonempty) :
         -- Each interval is nonempty (from h: B.toSet.Nonempty)
         have h_interval_nonempty : ∀ i, (B.side i).toSet.Nonempty := by
           intro i; obtain ⟨x, hx⟩ := h
-          exact ⟨x i, hx i (Set.mem_univ i)⟩
+          exact ⟨x i, hx i⟩
         -- We'll construct points coordinate-wise with ≥ for all and > for positive-length
         let ratio := c / √(∑ i, |B.side i|ₗ^2)
         have h_ratio_lt_one : ratio < 1 := by
@@ -700,18 +737,20 @@ lemma diameter_eq_sqrt_sum_sq {d:ℕ} (B: Box d) (h: B.toSet.Nonempty) :
             exact ⟨xi, hxi, yi, hyi, le_of_lt hlt, fun _ => hlt⟩
         -- Use Classical.choose to extract the points
         classical
-        let x : Fin d → ℝ := fun i => (h_exists_points i).choose
-        let y : Fin d → ℝ := fun i => (h_exists_points i).choose_spec.2.choose
-        have hx_mem : ∀ i, x i ∈ (B.side i).toSet := fun i => (h_exists_points i).choose_spec.1
-        have hy_mem : ∀ i, y i ∈ (B.side i).toSet := fun i =>
+        let x' : Fin d → ℝ := fun i => (h_exists_points i).choose
+        let y' : Fin d → ℝ := fun i => (h_exists_points i).choose_spec.2.choose
+        have hx_mem : ∀ i, x' i ∈ (B.side i).toSet := fun i => (h_exists_points i).choose_spec.1
+        have hy_mem : ∀ i, y' i ∈ (B.side i).toSet := fun i =>
           (h_exists_points i).choose_spec.2.choose_spec.1
-        have h_diff_le : ∀ i, |B.side i|ₗ * ratio ≤ |x i - y i| := fun i =>
+        have h_diff_le : ∀ i, |B.side i|ₗ * ratio ≤ |x' i - y' i| := fun i =>
           (h_exists_points i).choose_spec.2.choose_spec.2.1
-        have h_diff_lt : ∀ i, 0 < |B.side i|ₗ → |B.side i|ₗ * ratio < |x i - y i| := fun i =>
+        have h_diff_lt : ∀ i, 0 < |B.side i|ₗ → |B.side i|ₗ * ratio < |x' i - y' i| := fun i =>
           (h_exists_points i).choose_spec.2.choose_spec.2.2
         -- x, y ∈ B.toSet
-        have hx_box : x ∈ B.toSet := fun i _ => hx_mem i
-        have hy_box : y ∈ B.toSet := fun i _ => hy_mem i
+        let x : EuclideanSpace' d := .toLp 2 x'
+        let y : EuclideanSpace' d := .toLp 2 y'
+        have hx_box : x ∈ B.toSet := fun i => hx_mem i
+        have hy_box : y ∈ B.toSet := fun i => hy_mem i
         -- The distance √(∑ (x_i - y_i)²) > c
         use √(∑ i, (x i - y i)^2)
         constructor
@@ -983,11 +1022,11 @@ lemma subdivide_diameter_bound {d:ℕ} (B: Box d) (hB : B.toSet.Nonempty) :
   -- From nonemptiness of B, each side interval is nonempty
   have h_side_nonempty : ∀ i, (B.side i).toSet.Nonempty := by
     intro i; obtain ⟨x, hx⟩ := hB
-    exact ⟨x i, hx i (Set.mem_univ i)⟩
+    exact ⟨x i, hx i⟩
   -- First show B' is nonempty (the midpoint of each side is in both halves)
   have hB'_nonempty : B'.toSet.Nonempty := by
-    use fun i => (B.side i).midpoint
-    intro i _
+    use .toLp 2 (fun i => (B.side i).midpoint)
+    intro i
     simp only [hB'_def]
     split_ifs with h
     · exact BoundedInterval.midpoint_mem_bisect_snd (B.side i) (h_side_nonempty i)
@@ -1077,11 +1116,11 @@ lemma subdivide_one_step_nonempty {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) :
   simp only [Finset.mem_image, Finset.mem_univ, true_and] at hB'
   obtain ⟨choice, rfl⟩ := hB'
   -- The midpoint of B is in all sub-boxes
-  use fun i => (B.side i).midpoint
-  intro i _
+  use .toLp 2 (fun i => (B.side i).midpoint)
+  intro i
   have h_side_nonempty : (B.side i).toSet.Nonempty := by
     obtain ⟨x, hx⟩ := hB
-    exact ⟨x i, hx i (Set.mem_univ i)⟩
+    exact ⟨x i, hx i⟩
   simp only
   split_ifs with h
   · exact BoundedInterval.midpoint_mem_bisect_snd (B.side i) h_side_nonempty
@@ -1490,11 +1529,11 @@ lemma subdivide_iter_covers {d:ℕ} (B : Box d) (k : ℕ) (x : EuclideanSpace' d
       simp only [subdivide_iter_succ, Finset.mem_biUnion]
       exact ⟨B'', hB''_mem, by simp only [subdivide, Finset.mem_image, Finset.mem_univ, true_and]; exact ⟨c, rfl⟩⟩
     · -- x ∈ B'.toSet: for each i, x i is in the appropriate half
-      intro i hi
+      intro i
       have hx_i : x i ∈ (B''.side i).toSet := by
         have := hx_B''
         simp only [toSet] at this
-        exact this i (Set.mem_univ i)
+        exact this i
       simp only [B']
       by_cases hm : x i ≥ (B''.side i).midpoint
       · have hc : c i = true := decide_eq_true hm
@@ -1516,14 +1555,13 @@ lemma volume_nonneg {d : ℕ} (B : Box d) : 0 ≤ B.volume := by
 /-- Closed boxes (all sides are Icc) in Euclidean space are compact sets. -/
 lemma isCompact {d : ℕ} (B : Box d) (h_closed : ∀ i, ∃ a b, B.side i = BoundedInterval.Icc a b) :
     IsCompact B.toSet := by
-  unfold Box.toSet
   -- Use Tychonoff: product of compact sets is compact
+  rw [Box.toSet_eq_ofLp_preimage]
+  apply (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).isClosedEmbedding.isCompact_preimage
   apply isCompact_univ_pi
   intro i
-  -- Each side is Icc a b, which is compact
   obtain ⟨a, b, hi⟩ := h_closed i
   rw [hi]
-  -- IsCompact ↑(BoundedInterval.Icc a b) = IsCompact (Set.Icc a b)
   exact isCompact_Icc
 
 end Box
@@ -2241,10 +2279,9 @@ lemma BoundedInterval.isBounded (I: BoundedInterval) : Bornology.IsBounded I.toS
 
 /-- Every box is bounded (product of bounded intervals) -/
 lemma Box.isBounded {d:ℕ} (B: Box d) : Bornology.IsBounded B.toSet := by
-  unfold Box.toSet
-  apply Bornology.IsBounded.pi
-  intro i
-  exact BoundedInterval.isBounded (B.side i)
+  rw [Box.toSet_eq_ofLp_preimage]
+  exact (PiLp.antilipschitzWith_ofLp 2 (fun _ : Fin d => ℝ)).isBounded_preimage
+    (Bornology.IsBounded.pi (fun i => BoundedInterval.isBounded (B.side i)))
 
 /-- Enlarge a box to an open box with controlled volume increase -/
 lemma Box.inflate {d:ℕ} (B: Box d) (δ: ℝ) (hδ: 0 < δ) :
@@ -2257,8 +2294,7 @@ lemma Box.inflate {d:ℕ} (B: Box d) (δ: ℝ) (hδ: 0 < δ) :
     refine ⟨?_, isOpen_interior, by linarith⟩
     -- B.toSet ⊆ interior B.toSet: in dim 0, B.toSet = Set.univ which is open
     have hB_univ : B.toSet = Set.univ := by
-      rw [Box.toSet, ← Set.empty_pi (fun i => (B.side i).toSet)]
-      congr 1; ext i; exact Fin.elim0 i
+      ext x; simp only [Box.mem_toSet, Set.mem_univ, iff_true]; intro i; exact Fin.elim0 i
     rw [hB_univ, interior_univ]
   -- Dimension d > 0: use continuity argument to find small enough ε
   push_neg at hd
@@ -2287,34 +2323,32 @@ lemma Box.inflate {d:ℕ} (B: Box d) (δ: ℝ) (hδ: 0 < δ) :
   · -- Prove B.toSet ⊆ interior B'.toSet
     -- First show B'.toSet is open (product of open intervals)
     have hB'_open : IsOpen B'.toSet := by
-      rw [Box.toSet]
-      apply isOpen_set_pi (Set.finite_univ)
-      intro i _
-      simp only [B', BoundedInterval.toSet]
-      exact isOpen_Ioo
+      rw [B'.toSet_eq_ofLp_preimage]
+      exact (isOpen_set_pi Set.finite_univ (fun i _ => by
+        simp only [B', BoundedInterval.toSet]; exact isOpen_Ioo)).preimage (PiLp.continuous_ofLp 2 _)
     -- So interior B'.toSet = B'.toSet
     rw [hB'_open.interior_eq]
     -- Now show B.toSet ⊆ B'.toSet
     intro x hx
-    rw [Box.toSet, Set.mem_pi] at hx ⊢
-    intro i _
+    simp only [Box.mem_toSet] at hx ⊢
+    intro i
     simp only [B', BoundedInterval.toSet, Set.mem_Ioo, BoundedInterval.a, BoundedInterval.b]
     -- Get hx for this specific index i after the case split
     cases hside : (B.side i) with
     | Ioo a b =>
-      have hxi := hx i (Set.mem_univ i)
+      have hxi := hx i
       simp only [BoundedInterval.toSet, hside, Set.mem_Ioo] at hxi ⊢
       exact ⟨by linarith, by linarith⟩
     | Icc a b =>
-      have hxi := hx i (Set.mem_univ i)
+      have hxi := hx i
       simp only [BoundedInterval.toSet, hside, Set.mem_Icc] at hxi ⊢
       exact ⟨by linarith, by linarith⟩
     | Ioc a b =>
-      have hxi := hx i (Set.mem_univ i)
+      have hxi := hx i
       simp only [BoundedInterval.toSet, hside, Set.mem_Ioc] at hxi ⊢
       exact ⟨by linarith, by linarith⟩
     | Ico a b =>
-      have hxi := hx i (Set.mem_univ i)
+      have hxi := hx i
       simp only [BoundedInterval.toSet, hside, Set.mem_Ico] at hxi ⊢
       exact ⟨by linarith, by linarith⟩
   constructor
@@ -2363,8 +2397,7 @@ lemma Box.shrink_to_closed {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) (δ: ℝ) (
     use B
     have h_closed : IsClosed B.toSet := by
       have : B.toSet = Set.univ := by
-        rw [Box.toSet, ← Set.empty_pi (fun i => (B.side i).toSet)]
-        congr 1; ext i; exact Fin.elim0 i
+        ext x; simp only [Box.mem_toSet, Set.mem_univ, iff_true]; intro i; exact Fin.elim0 i
       rw [this]; exact isClosed_univ
     exact ⟨Set.Subset.refl _, h_closed, by linarith, hB⟩
   -- Dimension d > 0
@@ -2421,8 +2454,8 @@ lemma Box.shrink_to_closed {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) (δ: ℝ) (
     · -- B'.toSet ⊆ B.toSet
       -- Strategy: Icc (a+ε) (b-ε) ⊆ Ioo a b ⊆ (B.side i).toSet
       intro x hx
-      rw [Box.toSet, Set.mem_pi] at hx ⊢
-      intro i _; specialize hx i (Set.mem_univ i)
+      simp only [Box.mem_toSet] at hx ⊢
+      intro i; specialize hx i
       simp only [B', BoundedInterval.toSet, Set.mem_Icc] at hx
       have hne := h_sides_nonempty i
       have hε_small : 2 * ε < |B.side i|ₗ := by
@@ -2450,8 +2483,9 @@ lemma Box.shrink_to_closed {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) (δ: ℝ) (
         simp only [BoundedInterval.toSet, Set.mem_Ico, hside, BoundedInterval.a, BoundedInterval.b] at hx ⊢
         exact ⟨by linarith [hx.1], by linarith [hx.2]⟩
     · -- IsClosed B'.toSet
-      rw [Box.toSet]; apply isClosed_set_pi; intro i _
-      simp only [B', BoundedInterval.toSet]; exact isClosed_Icc
+      rw [B'.toSet_eq_ofLp_preimage]
+      exact (isClosed_set_pi (fun i _ => by simp only [B', BoundedInterval.toSet]; exact isClosed_Icc)).preimage
+        (PiLp.continuous_ofLp 2 _)
     · -- Volume bound
       have hB'_vol : |B'|ᵥ = g ε := by
         simp only [Box.volume, g, B']; congr 1; ext i
@@ -2488,11 +2522,13 @@ lemma Box.shrink_to_closed {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) (δ: ℝ) (
       -- The shrunk box has sides [a+ε, b-ε] where 2ε < L (min side length)
       -- So a+ε < b-ε for each side, making each coordinate interval nonempty
       -- Product of nonempty sets is nonempty
-      rw [Box.toSet]
-      apply Set.pi_nonempty_iff.mpr
+      suffices h : ∀ i, ((B'.side i).toSet).Nonempty by
+        rw [B'.toSet_eq_ofLp_preimage]
+        exact (Set.pi_nonempty_iff.mpr (fun i => ⟨(h i).some, fun _ => (h i).some_mem⟩)).preimage
+          (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).surjective
       intro i
-      simp only [B', BoundedInterval.toSet, Set.mem_univ, true_implies]
-      rw [← Set.nonempty_def, Set.nonempty_Icc]
+      simp only [B', BoundedInterval.toSet]
+      rw [Set.nonempty_Icc]
       -- Need: (B.side i).a + ε ≤ (B.side i).b - ε, i.e., 2ε ≤ (B.side i).b - (B.side i).a
       have h_side_pos := h_all_pos i
       simp only [BoundedInterval.length] at h_side_pos
@@ -2520,15 +2556,16 @@ lemma Box.shrink_to_closed {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) (δ: ℝ) (
     use B'
     refine ⟨?_, ?_, ?_, ?_⟩
     · intro y hy
-      rw [Box.toSet, Set.mem_pi] at hy hx ⊢
-      intro i _
-      specialize hy i (Set.mem_univ i)
-      specialize hx i (Set.mem_univ i)
+      simp only [Box.mem_toSet] at hy hx ⊢
+      intro i
+      specialize hy i
+      specialize hx i
       simp only [B', BoundedInterval.toSet, Set.mem_Icc] at hy
       have heq : y i = x i := le_antisymm hy.2 hy.1
       rw [heq]; exact hx
-    · rw [Box.toSet]; apply isClosed_set_pi; intro i _
-      simp only [B', BoundedInterval.toSet]; exact isClosed_Icc
+    · rw [B'.toSet_eq_ofLp_preimage]
+      exact (isClosed_set_pi (fun i _ => by simp only [B', BoundedInterval.toSet]; exact isClosed_Icc)).preimage
+        (PiLp.continuous_ofLp 2 _)
     · have hvol' : |B'|ᵥ = 0 := by
         simp only [Box.volume, B']
         have h0 : (⟨0, hd_pos⟩ : Fin d) ∈ Finset.univ := Finset.mem_univ _
@@ -2538,8 +2575,8 @@ lemma Box.shrink_to_closed {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) (δ: ℝ) (
       rw [hvol', hvol_zero]; linarith
     · -- B'.toSet.Nonempty (degenerate case): B' = {x} is a singleton containing x
       use x
-      rw [Box.toSet, Set.mem_pi]
-      intro i _
+      simp only [Box.mem_toSet]
+      intro i
       simp only [B', BoundedInterval.toSet, Set.mem_Icc, le_refl, and_self]
 
 namespace IsElementary
@@ -2887,7 +2924,7 @@ lemma measure_le_cover_sum {d : ℕ} (_hd : 0 < d) {E : Set (EuclideanSpace' d)}
     -- K = ⋃ B' is a disjoint union (since B' ⊆ B and original B are disjoint)
     -- For disjoint unions: m(K) = ∑ |B'|, so we have equality
     -- The B' boxes form a disjoint partition of K
-    have h_B'_disj : (Finset.univ : Finset { B // B ∈ P_nonempty }).toSet.PairwiseDisjoint
+    have h_B'_disj : ((Finset.univ : Finset { B // B ∈ P_nonempty }) : Set { B // B ∈ P_nonempty }).PairwiseDisjoint
         (fun x => (B' x.1 x.2).toSet) := by
       intro ⟨B₁, hB₁⟩ _ ⟨B₂, hB₂⟩ _ hne
       have hB₁P : B₁ ∈ P := Finset.mem_filter.mp hB₁ |>.1
@@ -2901,7 +2938,7 @@ lemma measure_le_cover_sum {d : ℕ} (_hd : 0 < d) {E : Set (EuclideanSpace' d)}
     -- Build finset of B' boxes
     let T := Finset.univ.image (fun (x : { B // B ∈ P_nonempty }) => B' x.1 x.2)
     -- Show T is pairwise disjoint
-    have hT_disj : T.toSet.PairwiseDisjoint Box.toSet := by
+    have hT_disj : (T : Set (Box d)).PairwiseDisjoint Box.toSet := by
       intro box₁ hbox₁ box₂ hbox₂ hne
       simp only [T, Finset.mem_coe, Finset.mem_image] at hbox₁ hbox₂
       obtain ⟨⟨B₁, hB₁⟩, _, rfl⟩ := hbox₁
@@ -3107,9 +3144,9 @@ theorem Lebesgue_outer_measure.elementary {d:ℕ} (E: Set (EuclideanSpace' d)) (
 /-- Cantor's theorem -/
 theorem EuclideanSpace'.uncountable (d:ℕ) (hd: 0 < d) : Uncountable (EuclideanSpace' d) := by
   -- Embed ℝ into EuclideanSpace' d via x ↦ (x, 0, 0, ..., 0)
-  let f : ℝ → EuclideanSpace' d := fun x i => if i = ⟨0, hd⟩ then x else 0
+  let f : ℝ → EuclideanSpace' d := fun x => .toLp 2 (fun i => if i = ⟨0, hd⟩ then x else 0)
   have hf : Function.Injective f := fun x y hxy => by
-    have : f x ⟨0, hd⟩ = f y ⟨0, hd⟩ := congrFun hxy ⟨0, hd⟩
+    have : f x ⟨0, hd⟩ = f y ⟨0, hd⟩ := by have := congrArg (· ⟨0, hd⟩) hxy; exact this
     simp only [f, ↓reduceIte] at this
     exact this
   exact hf.uncountable
@@ -3303,7 +3340,7 @@ lemma U_real_isOpen (ε : ℝ) : IsOpen (U_real ε) := by
 /-- U is open in EuclideanSpace' 1 -/
 lemma U_isOpen (ε : ℝ) : IsOpen (U ε) := by
   apply IsOpen.preimage _ (U_real_isOpen ε)
-  exact continuous_apply _
+  exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) _
 
 /-- The radius at step n -/
 noncomputable def radius (ε : ℝ) (n : ℕ) : ℝ := ε / 2^(n+1)
@@ -3624,7 +3661,7 @@ example : ∃ (E: Set (EuclideanSpace' 1)), Bornology.IsBounded E ∧
   case compact =>
     -- B is compact (continuous preimage of compact)
     have hB_compact : IsCompact B := by
-      have h_cont : Continuous EuclideanSpace'.equiv_Real := continuous_apply _
+      have h_cont : Continuous EuclideanSpace'.equiv_Real := PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) _
       apply Metric.isCompact_of_isClosed_isBounded (isClosed_Icc.preimage h_cont)
       rw [Metric.isBounded_iff_subset_closedBall 0]
       use 3
@@ -3740,7 +3777,7 @@ lemma IsElementary.measure_of_almostDisjUnion {d:ℕ} {E F: Set (EuclideanSpace'
     IsElementary.measure_of_disjUnion hE hF_sdiff_E h_disj
   -- Step 4: Show both unions represent the same set
   set T := (hE.union hF).partition.choose
-  have hT_disj : T.toSet.PairwiseDisjoint Box.toSet := (hE.union hF).partition.choose_spec.1
+  have hT_disj : (T : Set (Box d)).PairwiseDisjoint Box.toSet := (hE.union hF).partition.choose_spec.1
   have h_eq : E ∪ F = ⋃ B ∈ T, B.toSet := (hE.union hF).partition.choose_spec.2
   have h_measure_eq : (hE.union hF_sdiff_E).measure = (hE.union hF).measure := by
     rw [(hE.union hF_sdiff_E).measure_eq hT_disj (by rw [← h_union_decomp, h_eq]),
@@ -3769,7 +3806,7 @@ lemma IsElementary.measure_of_almostDisjUnion {d:ℕ} {E F: Set (EuclideanSpace'
     have hEF_inter : IsElementary (E ∩ F) := IsElementary.inter hE hF
     have h_F_measure : hF.measure = (hEF_inter.union hF_sdiff_E).measure := by
       set T_F := hF.partition.choose
-      have hT_F_disj : T_F.toSet.PairwiseDisjoint Box.toSet := hF.partition.choose_spec.1
+      have hT_F_disj : (T_F : Set (Box d)).PairwiseDisjoint Box.toSet := hF.partition.choose_spec.1
       have hF_eq : F = ⋃ B ∈ T_F, B.toSet := hF.partition.choose_spec.2
       rw [(hEF_inter.union hF_sdiff_E).measure_eq hT_F_disj (by rw [← h_decomp_F, hF_eq]),
           hF.measure_eq hT_F_disj hF_eq]
@@ -3782,7 +3819,7 @@ lemma IsElementary.measure_of_almostDisjUnion {d:ℕ} {E F: Set (EuclideanSpace'
     -- For an elementary set with empty interior, all its partition boxes must be degenerate
     have h_inter_measure_zero : hEF_inter.measure = 0 := by
       set T_EF := hEF_inter.partition.choose
-      have hT_EF_disj : T_EF.toSet.PairwiseDisjoint Box.toSet := hEF_inter.partition.choose_spec.1
+      have hT_EF_disj : (T_EF : Set (Box d)).PairwiseDisjoint Box.toSet := hEF_inter.partition.choose_spec.1
       have hEF_eq : E ∩ F = ⋃ B ∈ T_EF, B.toSet := hEF_inter.partition.choose_spec.2
       rw [hEF_inter.measure_eq hT_EF_disj hEF_eq]
       apply Finset.sum_eq_zero
@@ -3798,21 +3835,16 @@ lemma IsElementary.measure_of_almostDisjUnion {d:ℕ} {E F: Set (EuclideanSpace'
       -- Use that a box with empty interior has volume zero
       -- interior B = ∅ means some side has empty interior, i.e., is a single point or empty
       -- For a box, this means some BoundedInterval has a = b (degenerate)
-      rw [Box.toSet] at hB_interior_empty
-      rw [interior_pi_set Set.finite_univ] at hB_interior_empty
       -- The interior of a box is empty iff some side interval has empty interior
       have hB_empty_or_degenerate : B.toSet = ∅ ∨ ∃ i, interior (B.side i).toSet = ∅ := by
         by_cases hB_nonempty : B.toSet.Nonempty
         · right
           by_contra h_all_nonempty
           push_neg at h_all_nonempty
-          have : (Set.univ.pi fun i => interior (B.side i).toSet).Nonempty := by
-            apply Set.univ_pi_nonempty_iff.mpr
-            intro i
-            exact h_all_nonempty i
-          rw [Set.eq_empty_iff_forall_notMem] at hB_interior_empty
-          obtain ⟨x, hx⟩ := this
-          exact hB_interior_empty x hx
+          have : (Set.univ.pi fun i => interior (B.side i).toSet).Nonempty :=
+            Set.univ_pi_nonempty_iff.mpr (fun i => h_all_nonempty i)
+          rw [B.interior_toSet] at hB_interior_empty
+          exact (this.preimage (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).surjective).ne_empty hB_interior_empty
         · left
           exact Set.not_nonempty_iff_eq_empty.mp hB_nonempty
       rcases hB_empty_or_degenerate with hB_empty | ⟨i, hi⟩
@@ -3924,10 +3956,13 @@ lemma BoundedInterval.interior_closure_subset_closure_interior (I : BoundedInter
     the box uses closed intervals (Icc), open intervals (Ioo), or half-open intervals,
     because the frontier of a box is a lower-dimensional set (union of faces). -/
 lemma Box.interior_frontier_eq_empty {d : ℕ} (B : Box d) : interior (frontier B.toSet) = ∅ := by
-  rw [Box.toSet, frontier, closure_pi_set, interior_pi_set Set.finite_univ, Set.diff_eq,
+  rw [Box.frontier_toSet, ← (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).preimage_interior]
+  rw [frontier, closure_pi_set, interior_pi_set Set.finite_univ, Set.diff_eq,
       interior_inter, interior_pi_set Set.finite_univ, interior_compl, closure_pi_set]
   apply Set.eq_empty_iff_forall_notMem.mpr
-  intro x ⟨hx1, hx2⟩
+  intro x hx
+  simp only [Set.mem_preimage] at hx
+  have ⟨hx1, hx2⟩ := hx
   apply hx2
   exact Set.pi_mono (fun i _ => BoundedInterval.interior_closure_subset_closure_interior _) hx1
 
@@ -4197,29 +4232,21 @@ theorem Lebesgue_outer_measure.univ {d:ℕ} {hd: 0 < d} : Lebesgue_outer_measure
     simp only [AlmostDisjoint]
     -- Interior of Icc-box is Ioo-box
     have h_int : ∀ c : Fin d → ℤ, interior (UnitBox c).toSet =
-        Set.univ.pi (fun i => Set.Ioo (c i : ℝ) ((c i : ℝ) + 1)) := by
+        {x | ∀ i, x i ∈ Set.Ioo (c i : ℝ) ((c i : ℝ) + 1)} := by
       intro c
-      simp only [Box.toSet, BoundedInterval.toSet, UnitBox]
-      rw [interior_pi_set (Set.finite_univ)]
-      congr 1
-      ext i
-      simp only [interior_Icc]
+      rw [Box.interior_toSet]
+      ext x; simp only [Set.mem_preimage, Set.mem_pi, Set.mem_univ, true_implies,
+        Set.mem_setOf_eq, UnitBox, BoundedInterval.toSet, interior_Icc]; rfl
     rw [h_int a, h_int b]
     ext x
-    simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
+    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
     intro ha hb
     apply hab
     funext i
-    -- ha says: ∀ j ∈ univ, x j ∈ Ioo (a j) (a j + 1)
+    -- ha says: ∀ j, x j ∈ Ioo (a j) (a j + 1)
     -- So for coordinate i: a i < x i < a i + 1, meaning ⌊x i⌋ = a i
-    have hai : x i ∈ Set.Ioo (a i : ℝ) ((a i : ℝ) + 1) := by
-      have := ha i (Set.mem_univ i)
-      simp only [Set.mem_Ioo] at this ⊢
-      exact this
-    have hbi : x i ∈ Set.Ioo (b i : ℝ) ((b i : ℝ) + 1) := by
-      have := hb i (Set.mem_univ i)
-      simp only [Set.mem_Ioo] at this ⊢
-      exact this
+    have hai : x i ∈ Set.Ioo (a i : ℝ) ((a i : ℝ) + 1) := ha i
+    have hbi : x i ∈ Set.Ioo (b i : ℝ) ((b i : ℝ) + 1) := hb i
     rw [Set.mem_Ioo] at hai hbi
     have ha_floor : (⌊x i⌋ : ℤ) = a i := by
       apply Int.floor_eq_iff.mpr
@@ -4396,12 +4423,10 @@ lemma sidelength_le_one {d:ℕ} {n:ℕ} (a: Fin d → ℤ) (i : Fin d) :
 /-- The interior of a dyadic cube. -/
 lemma interior {d:ℕ} (n:ℤ) (a: Fin d → ℤ) :
     interior (DyadicCube n a).toSet =
-    Set.univ.pi (fun i => Set.Ioo ((a i : ℝ) / 2^n) (((a i : ℝ) + 1) / 2^n)) := by
-  simp only [Box.toSet, BoundedInterval.toSet, DyadicCube]
-  rw [interior_pi_set (Set.finite_univ)]
-  congr 1
-  ext i
-  simp only [interior_Icc]
+    {x | ∀ i, x i ∈ Set.Ioo ((a i : ℝ) / 2^n) (((a i : ℝ) + 1) / 2^n)} := by
+  rw [Box.interior_toSet]
+  ext x; simp only [Set.mem_preimage, Set.mem_pi, Set.mem_univ, true_implies,
+    Set.mem_setOf_eq, DyadicCube, BoundedInterval.toSet, interior_Icc]; rfl
 
 /-- Dyadic cubes at the same scale with different indices have disjoint interiors. -/
 lemma almost_disjoint_same_scale {d:ℕ} {n:ℤ} {a b : Fin d → ℤ} (hab : a ≠ b) :
@@ -4409,18 +4434,12 @@ lemma almost_disjoint_same_scale {d:ℕ} {n:ℤ} {a b : Fin d → ℤ} (hab : a 
   simp only [AlmostDisjoint]
   rw [DyadicCube.interior, DyadicCube.interior]
   ext x
-  simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
+  simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
   intro ha hb
   apply hab
   funext i
-  have hai : x i ∈ Set.Ioo ((a i : ℝ) / 2^n) (((a i : ℝ) + 1) / 2^n) := by
-    have := ha i (Set.mem_univ i)
-    simp only [Set.mem_Ioo] at this ⊢
-    exact this
-  have hbi : x i ∈ Set.Ioo ((b i : ℝ) / 2^n) (((b i : ℝ) + 1) / 2^n) := by
-    have := hb i (Set.mem_univ i)
-    simp only [Set.mem_Ioo] at this ⊢
-    exact this
+  have hai : x i ∈ Set.Ioo ((a i : ℝ) / 2^n) (((a i : ℝ) + 1) / 2^n) := ha i
+  have hbi : x i ∈ Set.Ioo ((b i : ℝ) / 2^n) (((b i : ℝ) + 1) / 2^n) := hb i
   rw [Set.mem_Ioo] at hai hbi
   -- Both intervals contain x i, so a i = b i
   have h2n_pos : (0:ℝ) < 2^n := zpow_pos (by norm_num : (0:ℝ) < 2) n
@@ -4446,7 +4465,7 @@ lemma cover_univ {d:ℕ} (n:ℤ) :
   ext x
   simp only [Set.mem_iUnion, Set.mem_univ, iff_true]
   use fun i => ⌊x i * 2^n⌋
-  intro i _
+  intro i
   simp only [DyadicCube, BoundedInterval.toSet, Set.mem_Icc]
   have h2n_pos : (0:ℝ) < 2^n := zpow_pos (by norm_num : (0:ℝ) < 2) n
   constructor
@@ -4481,9 +4500,9 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
     by_cases h_subset : ∀ i, (a i : ℝ) / 2^n ≤ (b i : ℝ) / 2^m ∧ ((b i : ℝ) + 1) / 2^m ≤ ((a i : ℝ) + 1) / 2^n
     · -- DyadicCube m b ⊆ DyadicCube n a
       right; right
-      intro x hx i hi
+      intro x hx i
       simp only [DyadicCube, BoundedInterval.toSet, Set.mem_Icc] at hx ⊢
-      have hxi := hx i hi
+      have hxi := hx i
       exact ⟨le_trans (h_subset i).1 hxi.1, le_trans hxi.2 (h_subset i).2⟩
     · -- Not contained, so they are almost disjoint
       left
@@ -4491,10 +4510,10 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
       obtain ⟨i, hi⟩ := h_subset
       simp only [AlmostDisjoint, DyadicCube.interior]
       ext x
-      simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
+      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
       intro ha hb
-      have hai := ha i (Set.mem_univ i)
-      have hbi := hb i (Set.mem_univ i)
+      have hai := ha i
+      have hbi := hb i
       have h2n_pos : (0:ℝ) < 2^n := zpow_pos (by norm_num : (0:ℝ) < 2) n
       have h2m_pos : (0:ℝ) < 2^m := zpow_pos (by norm_num : (0:ℝ) < 2) m
       have h_mn_pos : 0 < m - n := Int.sub_pos_of_lt hn
@@ -4586,9 +4605,9 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
     by_cases h_subset : ∀ i, (b i : ℝ) / 2^m ≤ (a i : ℝ) / 2^n ∧ ((a i : ℝ) + 1) / 2^n ≤ ((b i : ℝ) + 1) / 2^m
     · -- DyadicCube n a ⊆ DyadicCube m b
       right; left
-      intro x hx i hi
+      intro x hx i
       simp only [DyadicCube, BoundedInterval.toSet, Set.mem_Icc] at hx ⊢
-      have hxi := hx i hi
+      have hxi := hx i
       exact ⟨le_trans (h_subset i).1 hxi.1, le_trans hxi.2 (h_subset i).2⟩
     · -- Not contained, so they are almost disjoint
       left
@@ -4596,10 +4615,10 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
       obtain ⟨i, hi⟩ := h_subset
       simp only [AlmostDisjoint, DyadicCube.interior]
       ext x
-      simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
+      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
       intro ha hb
-      have hai := ha i (Set.mem_univ i)
-      have hbi := hb i (Set.mem_univ i)
+      have hai := ha i
+      have hbi := hb i
       have h2n_pos : (0:ℝ) < 2^n := zpow_pos (by norm_num : (0:ℝ) < 2) n
       have h2m_pos : (0:ℝ) < 2^m := zpow_pos (by norm_num : (0:ℝ) < 2) m
       have h_nm_pos : 0 < n - m := Int.sub_pos_of_lt hm
@@ -4693,7 +4712,7 @@ lemma IsOpen.exists_dyadic_cube_subset {d:ℕ} {E : Set (EuclideanSpace' d)} (hE
   have h2n_pos : (0:ℝ) < 2^n := by positivity
   constructor
   · -- x ∈ DyadicCube n a
-    intro i _
+    intro i
     simp only [DyadicCube, BoundedInterval.toSet, Set.mem_Icc]
     constructor
     · have h1 : (⌊x i * 2^n⌋ : ℝ) ≤ x i * 2^n := Int.floor_le _
@@ -4712,7 +4731,7 @@ lemma IsOpen.exists_dyadic_cube_subset {d:ℕ} {E : Set (EuclideanSpace' d)} (hE
     have h2n_inv : (2:ℝ)^(-n:ℤ) = 1 / 2^n := by rw [zpow_neg, zpow_natCast]; ring
     have h_zpow : (2:ℝ) ^ (↑n:ℤ) = 2 ^ n := zpow_natCast 2 n
     have hyi : ∀ i, |y i - x i| ≤ 2^(-n:ℤ) := fun i => by
-      have hyi_mem := hy i (Set.mem_univ i)
+      have hyi_mem := hy i
       simp only [DyadicCube, BoundedInterval.toSet, Set.mem_Icc, h_zpow] at hyi_mem
       -- hyi_mem : ⌊x i * 2^n⌋ / 2^n ≤ y i ∧ y i ≤ (⌊x i * 2^n⌋ + 1) / 2^n
       have hxi_floor : (⌊x i * 2^n⌋ : ℝ) / 2^n ≤ x i := by
@@ -4766,7 +4785,7 @@ noncomputable def dyadicCubeContaining {d:ℕ} (n:ℤ) (x : EuclideanSpace' d) :
 /-- The dyadic cube containing x at scale n indeed contains x. -/
 lemma dyadicCubeContaining_mem {d:ℕ} (n:ℤ) (x : EuclideanSpace' d) :
     x ∈ (dyadicCubeContaining n x).toSet := by
-  intro i _
+  intro i
   simp only [dyadicCubeContaining, DyadicCube, BoundedInterval.toSet, Set.mem_Icc]
   have h2n_pos : (0:ℝ) < 2^n := zpow_pos (by norm_num : (0:ℝ) < 2) n
   constructor
@@ -4783,13 +4802,11 @@ lemma dyadicCubeContaining_mem {d:ℕ} (n:ℤ) (x : EuclideanSpace' d) :
 /-- The interior of a dyadic cube is nonempty. -/
 lemma dyadicCubeInteriorNonempty {d:ℕ} (n:ℤ) (a: Fin d → ℤ) :
     (interior (s := (DyadicCube n a).toSet)).Nonempty := by
-  rw [DyadicCube.interior]
-  apply Set.univ_pi_nonempty_iff.mpr
-  intro k
-  apply Set.nonempty_Ioo.mpr
-  have h2n_pos : (0 : ℝ) < 2 ^ n := zpow_pos (by norm_num) _
-  apply div_lt_div_of_pos_right _ h2n_pos
-  linarith
+  rw [Box.interior_toSet]
+  exact (Set.univ_pi_nonempty_iff.mpr (fun k => by
+    simp only [DyadicCube, BoundedInterval.toSet, interior_Icc]
+    exact Set.nonempty_Ioo.mpr (div_lt_div_of_pos_right (by linarith) (zpow_pos (by norm_num) _))
+  )).preimage (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).surjective
 
 /-- At the same scale, dyadic cubes with different indices cannot have one contained in the other
     (since containment would imply empty interior for one). -/
@@ -4822,10 +4839,10 @@ lemma dyadicCubeLargerNotInSmaller {d:ℕ} (hd : 0 < d) {n m : ℤ} (hnm : n < m
     apply zpow_lt_zpow_right₀ (by norm_num : 1 < (2:ℝ))
     omega
   -- Construct the left endpoint of DyadicCube n a
-  let x_left : EuclideanSpace' d := fun j => (a j : ℝ) / 2^n
+  let x_left : EuclideanSpace' d := .toLp 2 (fun j => (a j : ℝ) / 2^n)
   -- x_left is in DyadicCube n a (it's the left corner)
   have hx_left : x_left ∈ (DyadicCube n a).toSet := by
-    intro j _
+    intro j
     simp only [x_left, DyadicCube, BoundedInterval.toSet, Set.mem_Icc]
     constructor
     · exact le_refl _
@@ -4834,10 +4851,10 @@ lemma dyadicCubeLargerNotInSmaller {d:ℕ} (hd : 0 < d) {n m : ℤ} (hnm : n < m
       apply div_lt_div_of_pos_right _ h2n_pos
       linarith
   -- Construct the right endpoint of DyadicCube n a
-  let x_right : EuclideanSpace' d := fun j => ((a j : ℝ) + 1) / 2^n
+  let x_right : EuclideanSpace' d := .toLp 2 (fun j => ((a j : ℝ) + 1) / 2^n)
   -- x_right is in DyadicCube n a (it's the right corner)
   have hx_right : x_right ∈ (DyadicCube n a).toSet := by
-    intro j _
+    intro j
     simp only [x_right, DyadicCube, BoundedInterval.toSet, Set.mem_Icc]
     constructor
     · have h2n_pos : (0:ℝ) < 2^n := zpow_pos (by norm_num) n
@@ -4846,8 +4863,8 @@ lemma dyadicCubeLargerNotInSmaller {d:ℕ} (hd : 0 < d) {n m : ℤ} (hnm : n < m
       linarith
     · exact le_refl _
   -- Both endpoints are in DyadicCube m b by h_sub
-  have h_left_in := h_sub hx_left i (Set.mem_univ i)
-  have h_right_in := h_sub hx_right i (Set.mem_univ i)
+  have h_left_in := h_sub hx_left i
+  have h_right_in := h_sub hx_right i
   simp only [x_left, x_right, DyadicCube, BoundedInterval.toSet, Set.mem_Icc] at h_left_in h_right_in
   -- From h_left_in: (a i)/2^n ≥ (b i)/2^m
   -- From h_right_in: ((a i)+1)/2^n ≤ ((b i)+1)/2^m
@@ -4980,10 +4997,7 @@ theorem IsOpen.eq_union_boxes {d:ℕ} (hd : 0 < d) (E: Set (EuclideanSpace' d)) 
           have h_cube_closed : ∀ p ∈ Q_max, IsClosed (DyadicCube (p.1 : ℤ) p.2).toSet := by
             intro p _
             -- DyadicCube is product of Icc intervals, which are closed
-            simp only [Box.toSet, DyadicCube]
-            apply isClosed_set_pi (i := Set.univ)
-            intro i _
-            exact isClosed_Icc
+            exact Box.isClosed_toSet_of_Icc _ (fun i => ⟨_, _, rfl⟩)
           -- E equals the union of cubes in Q_max
           have hE_union_Qmax : E = ⋃ p ∈ Q_max, (DyadicCube (p.1 : ℤ) p.2).toSet := by
             ext x
@@ -5285,7 +5299,7 @@ theorem Lebesgue_outer_measure.eq {d:ℕ} (E: Set (EuclideanSpace' d)) : Lebesgu
     · -- d = 0: In dimension 0, EuclideanSpace' 0 is a singleton type
       subst hd
       have h_singleton : ∀ (y z : EuclideanSpace' 0), y = z := fun y z =>
-        funext fun i => Fin.elim0 i
+        PiLp.ext fun i => Fin.elim0 i
       by_cases hE_empty : E = ∅
       · -- E = ∅: m*(∅) = 0, and sInf S ≥ 0 (all outer measures are ≥ 0)
         -- Actually we need sInf S ≤ m*(E) = 0
@@ -5617,8 +5631,8 @@ lemma Lebesgue_outer_measure.finite_of_compact {d : ℕ} {E : Set (EuclideanSpac
   have h_E_sub_B : E ⊆ B.toSet := by
     intro y hy
     have h_in_ball : y ∈ Metric.closedBall x r := h_sub_ball hy
-    rw [Set.mem_pi]
-    intro i _
+    simp only [Box.mem_toSet]
+    intro i
     rw [Metric.mem_closedBall] at h_in_ball
     have h_dist : ‖y - x‖ ≤ r := h_in_ball
     have h_coord_diff : |(y - x) i| ≤ ‖y - x‖ := EuclideanSpace'.coord_le_norm (y - x) i

@@ -141,8 +141,10 @@ example : Example_6_4_9.liminf = ⊤ := by sorry
 theorem Sequence.gt_limsup_bounds {a:Sequence} {x:EReal} (h: x > a.limsup) :
     ∃ N ≥ a.m, ∀ n ≥ N, a n < x := by
   -- This proof is written to follow the structure of the original text.
-  simp [limsup, sInf_lt_iff] at h
-  obtain ⟨_, ⟨ N, ⟨ hN, rfl ⟩ ⟩, ha ⟩ := h; use N
+  simp only [limsup, sInf_lt_iff] at h
+  obtain ⟨y, hy, ha⟩ := h
+  obtain ⟨N, hN, hNy⟩ := hy
+  rw [hNy] at ha; use N
   simp [hN, upperseq] at ha ⊢; intro n _
   have hn' : n ≥ (a.from N).m := by grind
   convert lt_of_le_of_lt ((a.from N).le_sup hn') ha using 1

@@ -230,14 +230,10 @@ lemma exercise_1_2_1_union :
       classical
       -- Continuity of the forward and inverse maps
       have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-        have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-          refine continuous_pi ?_
-          intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-        simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+        show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+        exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
       have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-        have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-          continuous_apply (⟨0, by decide⟩ : Fin 1)
-        simpa [EuclideanSpace'.equiv_Real] using this
+        exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
       -- Package the equivalence as a homeomorphism to apply the library lemma
       let e : ℝ ≃ₜ EuclideanSpace' 1 :=
         { toEquiv := Real.equiv_EuclideanSpace'
@@ -355,14 +351,10 @@ lemma exercise_1_2_1_union :
       classical
       -- Continuity of the forward and inverse maps
       have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-        have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-          refine continuous_pi ?_
-          intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-        simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+        show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+        exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
       have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-        have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-          continuous_apply (⟨0, by decide⟩ : Fin 1)
-        simpa [EuclideanSpace'.equiv_Real] using this
+        exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
       -- Package these maps as a homeomorphism and apply the general lemma on interiors
       let e : ℝ ≃ₜ EuclideanSpace' 1 :=
         { toEquiv := Real.equiv_EuclideanSpace'
@@ -1511,7 +1503,6 @@ theorem Countable.Lebesgue_measure {d:ℕ} (hd : 0 < d) {E: Set (EuclideanSpace'
          obtain ⟨n, rfl⟩ := hx
          simp [Set.mem_iUnion]
          use n
-         unfold Box.toSet
          intro i
          simp [BoundedInterval.toSet]
          exact ⟨le_refl _, le_refl _⟩

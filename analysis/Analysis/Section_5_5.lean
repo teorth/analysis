@@ -67,7 +67,8 @@ example : IsLUB (.Icc 0 1) (1 : Real) := by sorry
 example : ¬∃ M, IsLUB (∅: Set Real) M := by sorry
 
 /-- Proposition 5.5.8 (Uniqueness of least upper bound)-/
-theorem Real.LUB_unique {E: Set Real} {M M': Real} (h1: IsLUB E M) (h2: IsLUB E M') : M = M' := by grind [Real.isLUB_def]
+theorem Real.LUB_unique {E: Set Real} {M M': Real} (h1: IsLUB E M) (h2: IsLUB E M') : M = M' :=
+  le_antisymm (h1.2 h2.1) (h2.2 h1.1)
 
 /-- definition of "bounded above", using Mathlib notation -/
 theorem Real.bddAbove_def (E: Set Real) : BddAbove E ↔ ∃ M, M ∈ upperBounds E := Set.nonempty_def
