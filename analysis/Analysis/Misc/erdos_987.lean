@@ -55,10 +55,10 @@ theorem Erdos_987 (z: ℕ → Circle) :
       simp_rw [←normSq_eq_norm_sq, ←ofReal_inj, ofReal_sum, normSq_eq_conj_mul_self, map_sum, sum_mul_sum, sum_comm (s := range n) (t := range K)]
       apply sum_congr rfl; intro k _; apply sum_congr rfl; intro k' _
       apply sum_congr rfl; intro j _; apply sum_congr rfl; intro j' _
-      simp; field_simp; calc
-        _ = (starRingEnd ℂ) (w j:ℂ)^k * (w j':ℂ)^k' * ((starRingEnd ℂ) (w j:ℂ)^k' * (w j:ℂ)^k') := by ring
-        _ = (starRingEnd ℂ) (w j:ℂ)^k * (w j':ℂ)^k' * ((starRingEnd ℂ) (w j':ℂ)^k * (w j':ℂ)^k) := by simp [←Circle.coe_inv_eq_conj]
-        _ = _ := by ring
+      simp only [map_pow, map_mul, map_div₀]
+      field_simp
+      ring_nf
+      simp [← Circle.coe_inv_eq_conj]
     _ ≤ ∑ k ∈ range K, ∑ k' ∈ range K, ((C')^2 + (if k < k' + k₀ ∧ k' < k + k₀ then n^2 else 0)) := by
       apply sum_le_sum; intro k hk; apply sum_le_sum; intro k' hk'; simp at hk hk'
       split_ifs with h

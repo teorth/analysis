@@ -1294,7 +1294,8 @@ lemma RealAbsolutelyIntegrable.integ_sub' {d:ℕ} {f g: EuclideanSpace' d → �
   -- The integral depends only on function values
   have h_integ_eq : (hf.sub hg).integ = (hf.add (hg.smul (-1 : ℝ))).integ := by
     simp only [RealAbsolutelyIntegrable.integ, UnsignedAbsolutelyIntegrable.integ, heq]
-  rw [h_integ_eq, RealAbsolutelyIntegrable.integ_add', RealAbsolutelyIntegrable.integ_smul']
+  rw [h_integ_eq, RealAbsolutelyIntegrable.integ_add' (hf := hf) (hg := hg.smul _),
+      RealAbsolutelyIntegrable.integ_smul' (hf := hg)]
   ring
 
 -- Helper: scalar multiplication linearity for complex integral
@@ -1329,12 +1330,14 @@ lemma ComplexAbsolutelyIntegrable.integ_smul {d:ℕ} {f: EuclideanSpace' d → �
   -- Use linearity of real integral for the decomposed forms
   have h_re_linear : h_re_decomp.integ = c.re * hf.re.integ - c.im * hf.im.integ := by
     rw [show h_re_decomp = (hf.re.smul c.re).sub (hf.im.smul c.im) from rfl]
-    rw [RealAbsolutelyIntegrable.integ_sub', RealAbsolutelyIntegrable.integ_smul',
-        RealAbsolutelyIntegrable.integ_smul']
+    rw [RealAbsolutelyIntegrable.integ_sub' (hf := hf.re.smul c.re) (hg := hf.im.smul c.im),
+        RealAbsolutelyIntegrable.integ_smul' (hf := hf.re),
+        RealAbsolutelyIntegrable.integ_smul' (hf := hf.im)]
   have h_im_linear : h_im_decomp.integ = c.re * hf.im.integ + c.im * hf.re.integ := by
     rw [show h_im_decomp = (hf.im.smul c.re).add (hf.re.smul c.im) from rfl]
-    rw [RealAbsolutelyIntegrable.integ_add', RealAbsolutelyIntegrable.integ_smul',
-        RealAbsolutelyIntegrable.integ_smul']
+    rw [RealAbsolutelyIntegrable.integ_add' (hf := hf.im.smul c.re) (hg := hf.re.smul c.im),
+        RealAbsolutelyIntegrable.integ_smul' (hf := hf.im),
+        RealAbsolutelyIntegrable.integ_smul' (hf := hf.re)]
 
   rw [h_re_integ, h_im_integ, h_re_linear, h_im_linear]
   -- Need to simplify the imaginary part of (re_integ + I * im_integ)

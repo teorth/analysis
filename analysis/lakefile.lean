@@ -14,7 +14,7 @@ package «Analysis» where
 
 -- Require Mathlib (the comprehensive library of mathematics in Lean)
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @ "v4.23.0-rc2"
+  "https://github.com/leanprover-community/mathlib4.git" @ "v4.24.1"
 
 -- This library is needed to build the online version.
 -- If ../book/lakefile.lean requires verso @ "v4.X.Y", then this line should require

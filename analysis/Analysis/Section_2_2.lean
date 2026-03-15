@@ -106,8 +106,7 @@ theorem Nat.add_left_cancel (a b c:Nat) (habc: a + b = a + c) : b = c := by
   revert a; apply induction
   . intro hbc
     rwa [zero_add, zero_add] at hbc
-  intro a ih
-  intro hbc
+  intro a ih hbc
   rw [succ_add, succ_add] at hbc
   replace hbc := succ_cancel hbc
   exact ih hbc

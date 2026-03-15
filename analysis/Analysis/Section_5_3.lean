@@ -372,7 +372,8 @@ theorem Real.inv_isCauchy_of_boundedAwayZero {a:ℕ → ℚ} (ha: BoundedAwayZer
   choose N ha_cauchy using ha_cauchy; use N;
   peel 4 ha_cauchy with n hn m hm ha_cauchy
   calc
-    _ = |(a m - a n) / (a m * a n)| := by congr; field_simp [ha' m, ha' n]; grind
+    _ = |(a m - a n) / (a m * a n)| := by
+        congr; simp only [Pi.inv_apply]; field_simp [ha' m, ha' n]
     _ ≤ |a m - a n| / c^2 := by rw [abs_div, abs_mul, sq]; gcongr <;> solve_by_elim
     _ = |a n - a m| / c^2 := by rw [abs_sub_comm]
     _ ≤ (c^2 * ε) / c^2 := by gcongr

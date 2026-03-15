@@ -152,11 +152,15 @@ lemma Real.LUB_claim2 {E : Set Real} (N:ℕ) {a b: ℕ → ℚ}
     rw [abs_le]
     split_ands
     . specialize hm1 n; specialize hm2 n'
-      have bound1 : ((a-b) n') < a n := by rw [lt_of_coe]; contrapose! hm2; grind [upperBound_upper]
+      have bound1 : ((a-b) n') < a n := by
+        rw [lt_of_coe]; contrapose! hm2
+        exact upperBound_upper (by exact_mod_cast hm2) hm1
       have bound3 : 1/((n':ℚ)+1) ≤ 1/(N+1) := by gcongr
-      rw [←neg_le_neg_iff] at bound3; rw [Pi.sub_apply] at bound1; grind
+      rw [Pi.sub_apply, hb n'] at bound1; rw [one_div] at bound1 bound3; linarith
     specialize hm1 n'; specialize hm2 n
-    have bound1 : ((a-b) n) < a n' := by rw [lt_of_coe]; contrapose! hm2; grind [upperBound_upper]
+    have bound1 : ((a-b) n) < a n' := by
+      rw [lt_of_coe]; contrapose! hm2
+      exact upperBound_upper (by exact_mod_cast hm2) hm1
     have bound2 : ((a-b) n) = a n - 1 / (n+1) := by simp [hb n]
     have bound3 : 1/((n+1):ℚ) ≤ 1/(N+1) := by gcongr
     linarith

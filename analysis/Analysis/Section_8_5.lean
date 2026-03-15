@@ -274,7 +274,8 @@ theorem WellFoundedLT.partialOrder {X:Type} [PartialOrder X] (x₀ : X) : ∃ Y 
   simp [IsStrictUpperBound.iff] at hs
   have hYs_Ω : ⟨ _, hYs_Ω₀ ⟩ ∈ Ω := by
     simp [Ω, -Set.mem_insert_iff, -and_imp]
-    rintro x ⟨ (rfl | hx), hxx₀ ⟩
+    intro x hx hxx₀
+    rcases hx with rfl | hx
     . unfold sY_infty; congr 1
       symm; apply Subtype.val_injective; convert hF _
       . ext; simp; constructor

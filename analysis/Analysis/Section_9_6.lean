@@ -53,7 +53,8 @@ theorem BddOn.of_continuous_on_compact {a b:ℝ} (h:a < b) {f:ℝ → ℝ} (hf: 
   -- This proof is written to follow the structure of the original text.
   by_contra! hunbound; simp [BddOn] at hunbound
   set x := fun (n:ℕ) ↦ (hunbound n).choose
-  have hx (n:ℕ) : a ≤ x n ∧ x n ≤ b ∧ n < |f (x n)| := (hunbound n).choose_spec
+  have hx (n:ℕ) : a ≤ x n ∧ x n ≤ b ∧ n < |f (x n)| := by
+    obtain ⟨⟨h1, h2⟩, h3⟩ := (hunbound n).choose_spec; exact ⟨h1, h2, h3⟩
   set X := Set.Icc a b
   observe hXclosed : IsClosed X
   observe hXbounded : Bornology.IsBounded X

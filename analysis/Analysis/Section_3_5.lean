@@ -75,7 +75,7 @@ theorem SetTheory.Set.mem_slice (x z:Object) (Y:Set) :
 
 /-- Definition 3.5.4 (Cartesian product) -/
 abbrev SetTheory.Set.cartesian (X Y:Set) : Set :=
-  union (X.replace (P := fun x z ↦ z = slice x Y) (by grind))
+  union (X.replace (P := fun x z ↦ z = slice x Y) (by intro _ _ _ ⟨h1, h2⟩; exact h1.trans h2.symm))
 
 /-- This instance enables the ×ˢ notation for Cartesian product. -/
 instance SetTheory.Set.inst_SProd : SProd Set Set Set where

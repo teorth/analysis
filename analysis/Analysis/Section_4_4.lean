@@ -83,7 +83,7 @@ theorem Rat.not_exist_sqrt_two : ¬ ∃ x:ℚ, x^2 = 2 := by
     refine ⟨ by simp [hpos], hden_pos, ?_ ⟩
     rw [←num_div_den x] at hx; field_simp at hx
     have hnum_cast : x.num = x.num.toNat := Int.eq_natCast_toNat.mpr (by positivity)
-    rw [hnum_cast] at hx; norm_cast at hx
+    rw [hnum_cast] at hx; norm_cast at hx; grind
   set P : ℕ → Prop := fun p ↦ p > 0 ∧ ∃ q > 0, p^2 = 2*q^2
   have hP : ∃ p, P p := by aesop
   have hiter (p:ℕ) (hPp: P p) : ∃ q, q < p ∧ P q := by

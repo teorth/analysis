@@ -221,7 +221,6 @@ Example 5.1.7: The sequence 1, 1/2, 1/3, ... is not 0.1-steady
 -/
 lemma Sequence.ex_5_1_7_a : ¬ (0.1:ℚ).Steady ((fun n:ℕ ↦ (n+1:ℚ)⁻¹ ):Sequence) := by
   intro h; rw [Rat.Steady.coe] at h; specialize h 0 2; simp [Rat.Close] at h; norm_num at h
-  rw [abs_of_nonneg] at h <;> grind
 
 /--
 Example 5.1.7: The sequence a_10, a_11, a_12, ... is 0.1-steady

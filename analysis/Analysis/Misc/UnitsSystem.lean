@@ -1,6 +1,8 @@
 import Mathlib.Tactic
 import Mathlib.Algebra.Group.InjSurj
 import Mathlib.Order.Defs.PartialOrder
+import Mathlib.Algebra.Order.Module.Defs
+
 
 /-! A framework to formalize units (such as length, time, mass, velocity, etc.) in Lean.
 -/
@@ -238,7 +240,6 @@ theorem Scalar.toFormal_smul {d:Dimensions} (c:ℝ) (q:Scalar d)
 theorem Formal.smul_eq_mul (c:ℝ) (x:Formal) : c • x = (c:Formal) * x := by
   ext n
   simp [Scalar.toFormal]
-  rw [Finsupp.smul_apply, AddMonoidAlgebra.single_zero_mul_apply, _root_.smul_eq_mul]
 
 @[simp]
 theorem Formal.smul_eq_mul' (c:ℕ) (x:Formal) : c • x = (c:Formal) * x := by
@@ -409,9 +410,15 @@ noncomputable instance Scalar.instLinearOrder (d:Dimensions) : LinearOrder (Scal
 theorem Scalar.val_lt {d:Dimensions} (x y:Scalar d) :
   x < y ↔ x.val < y.val := by simp only [lt_iff_not_ge, val_le]
 
-noncomputable instance Scalar.instOrderedSMul (d:Dimensions) : OrderedSMul ℝ (Scalar d) where
-  smul_lt_smul_of_pos := by simp [val_lt]; intros; gcongr
-  lt_of_smul_lt_smul_of_pos := by simp [val_lt]; intro _ _ _ _ h2; rwa [←mul_lt_mul_iff_of_pos_left h2]
+noncomputable instance Scalar.instPosSMulStrictMono (d:Dimensions) : PosSMulStrictMono ℝ (Scalar d) where
+  smul_lt_smul_of_pos_left {_a} ha {_b₁ _b₂} hb := by
+    simp only [val_lt, val_smul, smul_eq_mul] at *; exact mul_lt_mul_of_pos_left hb ha
+
+noncomputable instance Scalar.instSMulPosStrictMono (d:Dimensions) : SMulPosStrictMono ℝ (Scalar d) where
+  smul_lt_smul_of_pos_right {_b} hb {_a₁ _a₂} ha := by
+    simp only [val_lt, val_smul, smul_eq_mul] at *; exact mul_lt_mul_of_pos_right ha hb
+
+noncomputable instance Scalar.instIsStrictOrderedModule (d:Dimensions) : IsStrictOrderedModule ℝ (Scalar d) where
 
 -- TODO: add in some `gcongr` lemmas for this order
 

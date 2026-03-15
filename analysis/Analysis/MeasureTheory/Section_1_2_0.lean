@@ -1087,9 +1087,7 @@ lemma Lebesgue_outer_measure_of_dim_zero {E: Set (EuclideanSpace' 0)} :
           · apply Finset.single_le_sum (fun i _ => h_nonneg i)
             simp
           · -- Now show ∑ n ∈ range (n₀+1), g n ≤ tsum
-            apply sum_le_hasSum (Finset.range (n₀ + 1))
-            · intro i _; exact h_nonneg i
-            · exact this
+            exact sum_le_hasSum (L := .unconditional ℕ) _ (fun i _ => h_nonneg i) this
         rw [h_single] at h_fin_le
         exact h_fin_le
       rw [h_gn0] at h_le

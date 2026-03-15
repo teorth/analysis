@@ -46,7 +46,7 @@ noncomputable def TaggedPartition.uniform (I: BoundedInterval) (n: ℕ) (hn: n >
   x_end := by
     show I.a + (I.b - I.a) * ((Fin.last n).val : ℝ) / n = I.b
     rw [Fin.val_last]
-    field_simp
+    field_simp; linarith
   x_mono i j hij := by
     have h_width_pos : 0 < I.b - I.a := by linarith
     have h_n_pos : 0 < (n : ℝ) := Nat.cast_pos.mpr hn
@@ -84,7 +84,7 @@ lemma TaggedPartition.uniform_norm (I: BoundedInterval) (n: ℕ) (hn: n > 0) (hI
     show (I.a + (I.b - I.a) * (i.succ.val : ℝ) / n) - (I.a + (I.b - I.a) * (i.castSucc.val : ℝ) / n) = (I.b - I.a) / n
     rw [show i.castSucc.val = i.val from rfl, Fin.val_succ]
     field_simp
-    ring
+    push_cast; ring
   -- The supremum of a constant function is that constant
   have h_bdd : BddAbove (Set.range P.delta) := Set.Finite.bddAbove (Set.finite_range P.delta)
   have h_le : ∀ i, P.delta i ≤ (I.b - I.a) / n := by
@@ -503,7 +503,7 @@ lemma TaggedPartition.uniform_delta {I: BoundedInterval} {n: ℕ} (hn: n > 0) (h
   simp only
   rw [Fin.val_succ, show i.castSucc.val = i.val from rfl]
   field_simp
-  ring
+  push_cast; ring
 
 /-- For any x in [a,b], find the subinterval index containing x -/
 noncomputable def findSubintervalIndex (lo hi : ℝ) (n : ℕ) (hn : n > 0) (x : ℝ) (_hx : lo ≤ x ∧ x ≤ hi) : Fin n :=

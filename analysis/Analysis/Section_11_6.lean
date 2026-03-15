@@ -35,7 +35,7 @@ theorem integ_of_monotone {a b:ℝ} {f:ℝ → ℝ} (hf: MonotoneOn f (Icc a b))
     have hNpos : 0 < N := by rify; linarith [show 0 < 1/ε by positivity]
     set δ := (b-a)/N
     have hδpos : 0 < δ := by positivity
-    have hbeq : b = a + δ*N := by simp [δ]; field_simp
+    have hbeq : b = a + δ*N := by simp [δ]; field_simp; linarith
     set e : ℕ ↪ BoundedInterval := {
       toFun j := Ico (a + δ*j) (a + δ*(j+1))
       inj' j k hjk := by simp at hjk; obtain _ | _ := hjk <;> linarith
@@ -62,7 +62,7 @@ theorem integ_of_monotone {a b:ℝ} {f:ℝ → ℝ} (hf: MonotoneOn f (Icc a b))
               _ ≤ a + δ * ((x-a)/δ) := by gcongr; grind [Nat.floor_le]
               _ = x := by grind
           calc
-            _ = a + δ * ((x-a)/δ) := by field_simp
+            _ = a + δ * ((x-a)/δ) := by field_simp; linarith
             _ < _ := by gcongr; apply Nat.lt_floor_add_one
         apply ExistsUnique.intro (e j)
         . refine ⟨ ?_, hxj ⟩; right; use j; simp [j, Nat.floor_lt hxaδ, div_lt_iff₀' hδpos]; linarith
