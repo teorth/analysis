@@ -473,7 +473,7 @@ lemma red_from_apex_at_least_11
       + ((G.neighborFinset apex).filter (fun v => ¬ (color (Sym2.mk (apex, v)) = 0))).card
       = (G.neighborFinset apex).card := by
     simpa [blueNeighbors] using
-      (Finset.filter_card_add_filter_neg_card_eq_card
+      (Finset.card_filter_add_card_filter_not
         (s := G.neighborFinset apex)
         (p := fun v => color (Sym2.mk (apex, v)) = 0))
 
@@ -550,7 +550,7 @@ lemma redBlocks_partition_card (color : Sym2 V → Fin 2) :
   classical
   -- Standard `filter` + `filter (¬p)` partition identity.
   simpa [redBlock1, redBlock2] using
-    (Finset.filter_card_add_filter_neg_card_eq_card
+    (Finset.card_filter_add_card_filter_not
       (s := redNeighbors color) (p := fun v => inBlock1 v))
 
 /-- **Pigeonhole step.** If there is no blue `K_{1,5}`, then

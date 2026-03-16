@@ -2809,7 +2809,8 @@ lemma measure_le_cover_sum {d : ℕ} (_hd : 0 < d) {E : Set (EuclideanSpace' d)}
       intro B hB; linarith [hB'_vol B hB]
     -- Use helper lemmas to bound the sum
     have hP_nonempty_sub : P_nonempty ⊆ P := Finset.filter_subset _ P
-    have h_sum_bound := partition_volume_bound hP_nonempty_sub (by positivity : 0 < δ / (4 * P.card)) h_vol_bound
+    have hδ4P_pos : 0 < δ / (4 * P.card) := div_pos hδ_pos (mul_pos (by norm_num) (Nat.cast_pos.mpr hcard_pos))
+    have h_sum_bound := partition_volume_bound hP_nonempty_sub hδ4P_pos h_vol_bound
     have h_loss_bound := card_ratio_bound hP_nonempty_sub hδ_pos hcard_pos
     linarith [h_sum_bound, h_loss_bound]
   -- Step 10b: K is elementary (finite union of closed boxes)
