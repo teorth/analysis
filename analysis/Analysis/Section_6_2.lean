@@ -131,9 +131,6 @@ theorem EReal.inf_eq_neg_sup (E: Set EReal) : sInf E = - sSup (-E) := by
   simp_rw [←isGLB_iff_sInf_eq, isGLB_iff_le_iff, EReal.le_neg]
   intro b
   simp [lowerBounds]
-  constructor
-  . intro h a ha; specialize h (-a) (by simp [ha]); grind [neg_le_neg_iff]
-  grind [EReal.le_neg_of_le_neg]
 
 /-- Example 6.2.7 -/
 abbrev Example_6_2_7 : Set EReal := { x | ∃ n:ℕ, x = -((n+1):EReal)} ∪ {⊥}

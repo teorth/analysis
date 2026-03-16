@@ -57,8 +57,7 @@ lemma Real.sqrt_sum_le_sum_sqrt {ι : Type*} [Fintype ι] [DecidableEq ι] (f : 
               apply Finset.sum_nonneg
               intro j _; exact hf j
         _ ≤ √(f i) + ∑ x ∈ s, √(f x) := by
-              apply add_le_add_left
-              exact ih
+              exact add_le_add_right ih _
 
 -- =============================================================================
 -- EReal utilities

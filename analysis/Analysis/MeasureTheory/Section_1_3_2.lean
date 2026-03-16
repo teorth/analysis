@@ -960,7 +960,7 @@ private lemma floor_approx_iSup_eq (r : ℝ) (hr : r ≥ 0) :
     have h3 : r ≤ f N + ε := by linarith
     calc (r : EReal) ≤ (f N + ε : ℝ) := EReal.coe_le_coe_iff.mpr h3
          _ = (f N : EReal) + (ε : EReal) := by rw [← EReal.coe_add]
-         _ ≤ (⨆ n : ℕ, (f n : EReal)) + ε := add_le_add_right h_le_iSup ε
+         _ ≤ (⨆ n : ℕ, (f n : EReal)) + ε := add_le_add_left h_le_iSup ε
   · -- Lower bound: iSup ≤ r
     apply iSup_le
     intro n
@@ -2498,7 +2498,7 @@ lemma mem_CantorSet_of_ternary_02 {y : ℝ} (d : ℕ → ℕ)
   constructor
   · linarith
   · rw [← h_one_third_pow]
-    exact add_le_add_left h_tail_bound _
+    exact add_le_add_right h_tail_bound _
 
 /-- Existence of a binary-to-ternary function: g(x) = ∑ 2bⱼ 3^{-j}. -/
 lemma binaryToTernary_exists : ∃ g : ℝ → ℝ, BinaryToTernaryProperties g := by

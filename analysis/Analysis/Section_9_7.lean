@@ -26,8 +26,8 @@ theorem intermediate_value {a b:ℝ} (hab: a < b) {f:ℝ → ℝ} (hf: Continuou
   . by_cases hya : y = f a; use a; grind
     by_cases hyb : y = f b; use b; grind
     simp at hy_left
-    replace hya : f a < y := lt_of_le_of_ne hy_left.1 (Ne.symm hya)
-    replace hyb : y < f b := lt_of_le_of_ne hy_left.2 hyb
+    replace hya : f a < y := by grind
+    replace hyb : y < f b := by grind
     set E := {x | x ∈ Set.Icc a b ∧ f x < y}
     have hE : E ⊆ .Icc a b := fun x ⟨hx₁, hx₂⟩ ↦ hx₁
     have hE_bdd : BddAbove E := bddAbove_Icc.mono hE
@@ -57,10 +57,7 @@ theorem intermediate_value {a b:ℝ} (hab: a < b) {f:ℝ → ℝ} (hf: Continuou
       replace := this.comp_of_continuous hc (hf.continuousWithinAt hc) (fun n ↦ hE (hx1 n))
       have hfxny (n:ℕ) : f (x n) ≤ y := by specialize hx1 n; simp [E] at hx1; grind
       exact le_of_tendsto' this hfxny
-    have hne : c < b := by
-      by_contra h; push_neg at h
-      have hcb : c = b := le_antisymm hc.2 h
-      rw [hcb] at hfc_upper; linarith
+    have hne : c < b := by grind
     have hfc_lower : y ≤ f c := by
       have : ∃ N:ℕ, ∀ n ≥ N, (c+1/(n+1:ℝ)) < b := by
         choose N hN using exists_nat_gt (1/(b-c))

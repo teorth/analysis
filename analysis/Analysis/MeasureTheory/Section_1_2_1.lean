@@ -2996,21 +2996,21 @@ lemma measure_le_cover_sum {d : ℕ} (_hd : 0 < d) {E : Set (EuclideanSpace' d)}
         congr 1
         rw [EReal.coe_finset_sum (fun x _ => h_vol_nonneg' x)]
     _ ≤ (hK_elem.measure : EReal) + (δ / 4 : ℝ) := by
-        apply add_le_add_right
+        apply add_le_add_left
         rw [h_coe_sum]
         exact h_step2
     _ ≤ (∑ n ∈ t, (S' n).volume : ℝ) + (δ / 4 : ℝ) := by
-        apply add_le_add_right h_step3
+        apply add_le_add_left h_step3
     _ = (∑ n ∈ t, ((S' n).volume : EReal)) + (δ / 4 : ℝ) := by
         congr 1
         rw [EReal.coe_finset_sum (fun n _ => Box.volume_nonneg _)]
     _ ≤ (∑' n, (S' n).volume : EReal) + (δ / 4 : ℝ) := by
-        apply add_le_add_right
+        apply add_le_add_left
         exact h_step4
     _ ≤ (∑' n, (S n).volume : EReal) + (δ / 2 : ℝ) + (δ / 4 : ℝ) := by
         have h1 : (∑' n, (S' n).volume : EReal) ≤ (∑' n, (S n).volume : EReal) + (δ / 2 : ℝ) := h_inflate_bound
         calc (∑' n, (S' n).volume : EReal) + (δ / 4 : ℝ)
-            ≤ ((∑' n, (S n).volume : EReal) + (δ / 2 : ℝ)) + (δ / 4 : ℝ) := add_le_add_right h1 _
+            ≤ ((∑' n, (S n).volume : EReal) + (δ / 2 : ℝ)) + (δ / 4 : ℝ) := add_le_add_left h1 _
           _ = (∑' n, (S n).volume : EReal) + (δ / 2 : ℝ) + (δ / 4 : ℝ) := rfl
     _ = (∑' n, (S n).volume : EReal) + ((δ / 2 : ℝ) + (δ / 4 : ℝ)) := by rw [add_assoc]
     _ = (∑' n, (S n).volume : EReal) + (3 * δ / 4 : ℝ) := by
@@ -3019,7 +3019,7 @@ lemma measure_le_cover_sum {d : ℕ} (_hd : 0 < d) {E : Set (EuclideanSpace' d)}
         congr 1
         ring
     _ ≤ (∑' n, (S n).volume : EReal) + (δ : ℝ) := by
-        apply add_le_add_left
+        apply add_le_add_right
         exact_mod_cast (by linarith : (3 * δ / 4 : ℝ) ≤ δ)
 
 /-- Direction 1: Elementary measure is a lower bound for outer measure
@@ -3049,7 +3049,7 @@ lemma measure_le_outer_measure {d:ℕ} (hd: 0 < d) {E: Set (EuclideanSpace' d)}
       ≤ ∑' n, (S n).volume.toEReal := h_cover_bound
     _ ≤ Lebesgue_outer_measure E + (ε / 2 : ℝ) := hS_sum
     _ ≤ Lebesgue_outer_measure E + ε := by
-        apply add_le_add_left
+        apply add_le_add_right
         exact_mod_cast (by linarith : ε / 2 ≤ ε)
 
 /-- Direction 2: Outer measure is bounded by elementary measure
@@ -5544,7 +5544,7 @@ theorem Lebesgue_outer_measure.eq {d:ℕ} (E: Set (EuclideanSpace' d)) : Lebesgu
           ≤ ∑' n, (B' n).volume.toEReal := hU_measure
         _ ≤ (∑' n, (B n).volume.toEReal) + (ε/2 : ℝ) := hB'_vol_sum
         _ ≤ (Lebesgue_outer_measure E + (ε/2 : ℝ)) + (ε/2 : ℝ) := by
-            apply add_le_add_right hB_sum
+            apply add_le_add_left hB_sum
         _ = Lebesgue_outer_measure E + ε := by
             rw [add_assoc]
             congr 1

@@ -67,8 +67,8 @@ example : IsLUB (.Icc 0 1) (1 : Real) := by sorry
 example : ¬∃ M, IsLUB (∅: Set Real) M := by sorry
 
 /-- Proposition 5.5.8 (Uniqueness of least upper bound)-/
-theorem Real.LUB_unique {E: Set Real} {M M': Real} (h1: IsLUB E M) (h2: IsLUB E M') : M = M' :=
-  le_antisymm (h1.2 h2.1) (h2.2 h1.1)
+theorem Real.LUB_unique {E: Set Real} {M M': Real} (h1: IsLUB E M) (h2: IsLUB E M') : M = M' := by
+  grind [Real.isLUB_def]
 
 /-- definition of "bounded above", using Mathlib notation -/
 theorem Real.bddAbove_def (E: Set Real) : BddAbove E ↔ ∃ M, M ∈ upperBounds E := Set.nonempty_def
@@ -153,15 +153,11 @@ lemma Real.LUB_claim2 {E : Set Real} (N:ℕ) {a b: ℕ → ℚ}
     rw [abs_le]
     split_ands
     . specialize hm1 n; specialize hm2 n'
-      have bound1 : ((a-b) n') < a n := by
-        rw [lt_of_coe]; contrapose! hm2
-        exact upperBound_upper (by exact_mod_cast hm2) hm1
+      have bound1 : ((a-b) n') < a n := by rw [lt_of_coe]; contrapose! hm2; grind [upperBound_upper]
       have bound3 : 1/((n':ℚ)+1) ≤ 1/(N+1) := by gcongr
-      rw [Pi.sub_apply, hb n'] at bound1; rw [one_div] at bound1 bound3; linarith
+      rw [←neg_le_neg_iff] at bound3; rw [Pi.sub_apply] at bound1; grind
     specialize hm1 n'; specialize hm2 n
-    have bound1 : ((a-b) n) < a n' := by
-      rw [lt_of_coe]; contrapose! hm2
-      exact upperBound_upper (by exact_mod_cast hm2) hm1
+    have bound1 : ((a-b) n) < a n' := by rw [lt_of_coe]; contrapose! hm2; grind [upperBound_upper]
     have bound2 : ((a-b) n) = a n - 1 / (n+1) := by simp [hb n]
     have bound3 : 1/((n+1):ℚ) ≤ 1/(N+1) := by gcongr
     linarith

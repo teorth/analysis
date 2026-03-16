@@ -389,7 +389,7 @@ example (a b c d e:Nat) (hab: a ≤ b) (hbc: b < c) (hcd: c ≤ d)
 /-- (Not from textbook) Nat has the structure of an ordered monoid. This allows for tactics
 such as `gcongr` to be applicable to the Chapter 2 natural numbers. -/
 instance Nat.isOrderedAddMonoid : IsOrderedAddMonoid Nat where
-  add_le_add_left a b hab c := (add_le_add_left a b c).mp hab
+  add_le_add_left a b hab c := (Nat.add_le_add_right a b c).mp hab
 
 /-- This illustration of the `gcongr` tactic is not from the
     textbook. -/

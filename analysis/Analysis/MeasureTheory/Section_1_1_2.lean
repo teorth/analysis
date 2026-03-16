@@ -574,7 +574,7 @@ theorem JordanMeasurable.mes_of_union {d:ℕ} {E F : Set (EuclideanSpace' d)}
     convert JordanMeasurable.mes_of_disjUnion hE hG_measurable hG.1 using 1;
   have hG_measure_le : hG_measurable.measure ≤ hF.measure := by
     apply JordanMeasurable.mono hG_measurable hF hG.2.2;
-  exact h_contra <| by simpa only [ hG.2.1 ] using hG_measure.le.trans <| add_le_add_left hG_measure_le _;
+  exact h_contra <| by simpa only [ hG.2.1 ] using hG_measure.le.trans <| add_le_add_right hG_measure_le _;
 
 /-- Exercise 1.1.6 (v) (finite subadditivity) -/
 lemma JordanMeasurable.measure_of_union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
@@ -585,7 +585,7 @@ lemma JordanMeasurable.measure_of_union' {d:ℕ} {S: Finset (Set (EuclideanSpace
   exact Classical.typeDecidableEq (Set (EuclideanSpace' d));
   · simp_all only [Finset.notMem_empty, Set.iUnion_of_empty, Set.iUnion_empty, mes_of_empty, Finset.univ_eq_empty,
     Finset.coe_mem, Finset.sum_empty, le_refl];
-  · convert le_trans ( JordanMeasurable.mes_of_union ( hE a ( Finset.mem_insert_self a S ) ) ( JordanMeasurable.union' fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) ) ( add_le_add_left ( ih fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) _ ) using 1;
+  · convert le_trans ( JordanMeasurable.mes_of_union ( hE a ( Finset.mem_insert_self a S ) ) ( JordanMeasurable.union' fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) ) ( add_le_add_right ( ih fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) _ ) using 1;
     · simp_all only [Finset.univ_eq_attach, Finset.mem_insert, Finset.coe_mem, or_true, Set.iUnion_iUnion_eq_or_left];
     · simp +decide [Finset.sum_insert, ha]
       classical

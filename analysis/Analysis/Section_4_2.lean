@@ -64,7 +64,7 @@ infix:100 " // " => Rat.formalDiv
 
 /-- Definition 4.2.1 (Rationals) -/
 theorem Rat.eq (a c:ℤ) {b d:ℤ} (hb: b ≠ 0) (hd: d ≠ 0): a // b = c // d ↔ a * d = c * b := by
-  simp [hb, hd, Setoid.r]
+  simp [formalDiv, hb, hd, Quotient.eq, PreRat.instSetoid]
 
 /-- Definition 4.2.1 (Rationals) -/
 theorem Rat.eq_diff (n:Rat) : ∃ a b, b ≠ 0 ∧ n = a // b := by
@@ -84,11 +84,8 @@ instance Rat.decidableEq : DecidableEq Rat := by
 instance Rat.add_inst : Add Rat where
   add := Quotient.lift₂ (fun ⟨ a, b, h1 ⟩ ⟨ c, d, h2 ⟩ ↦ (a*d+b*c) // (b*d)) (by
     intro ⟨ a, b, h1 ⟩ ⟨ c, d, h2 ⟩ ⟨ a', b', h1' ⟩ ⟨ c', d', h2' ⟩ h3 h4
-    simp_all [Setoid.r]
-    calc
-      _ = (a*b')*d*d' + b*b'*(c*d') := by ring
-      _ = (a'*b)*d*d' + b*b'*(c'*d) := by rw [h3, h4]
-      _ = _ := by ring
+    simp_all [Quotient.eq, PreRat.instSetoid]
+    linear_combination d * d' * h3 + b * b' * h4
   )
 
 /-- Definition 4.2.2 (Addition of rationals) -/

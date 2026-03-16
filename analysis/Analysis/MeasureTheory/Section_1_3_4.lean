@@ -1205,7 +1205,8 @@ lemma RealAbsolutelyIntegrable.integ_smul' {d:ℕ} {f: EuclideanSpace' d → ℝ
       simp only [UnsignedLebesgueIntegral, h_neg]
       exact LowerUnsignedLebesgueIntegral.hom hf.pos.1 hnc
     rw [h_pos_scale, h_neg_scale]
-    simp only [EReal.toReal_mul, EReal.toReal_neg, EReal.toReal_coe]
+    have : (-↑c : EReal) = ↑(-c) := rfl
+    simp only [EReal.toReal_mul, this, EReal.toReal_coe]
     ring
 
 -- Helper: addition linearity for real integral

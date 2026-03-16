@@ -1157,7 +1157,7 @@ private lemma Lebesgue_measure.countable_union_bounded {d:ℕ} (hd : 0 < d)
             conv_lhs => rw [h_partition]
         _ ≤ Lebesgue_measure (F n) + Lebesgue_measure (E n \ F n) := h_binary_subadd
         _ ≤ Lebesgue_measure (F n) + ε / 2^(n+1) := by
-          apply add_le_add_left
+          apply add_le_add_right
           exact (hF n).2.2
     -- Sum the approximations: ∑' m(E_n) ≤ ∑' m(F_n) + ∑' (ε/2^{n+1}) = ∑' m(F_n) + ε
     have h_sum_eps : ∑' n, (ε / (2 : EReal)^(n+1)) = ε := by
@@ -1245,7 +1245,7 @@ private lemma Lebesgue_measure.countable_union_bounded {d:ℕ} (hd : 0 < d)
     calc ∑' n, Lebesgue_measure (E n)
         ≤ ∑' n, Lebesgue_measure (F n) + ε := h_tsum_approx
       _ = Lebesgue_measure (⋃ n, F n) + ε := by rw [h_compact_case]
-      _ ≤ Lebesgue_measure (⋃ n, E n) + ε := add_le_add_right h_union_mono ε
+      _ ≤ Lebesgue_measure (⋃ n, E n) + ε := add_le_add_left h_union_mono ε
   exact le_antisymm h_le h_ge
 
 /-- Lemma 1.2.15(b) (Countable additivity).
