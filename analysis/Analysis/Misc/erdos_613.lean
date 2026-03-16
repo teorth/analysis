@@ -80,9 +80,7 @@ def G : SimpleGraph V where
   symm := by
     intro u v h
     cases u <;> cases v <;> grind [GAdj]
-  loopless := by
-    intro v
-    cases v <;> simp [GAdj]
+  loopless := ⟨by intro v; cases v <;> simp [GAdj]⟩
 
 /-!
 Convenience simp lemmas. These are optional but help when you start proving

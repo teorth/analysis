@@ -40,7 +40,7 @@ theorem Series.converges_of_nonneg_iff {s: Series} (h: s.nonneg) : s.converges â
     use M; peel hM with N hM
     exact (le_abs_self _).trans hM
   intro hbound
-  obtain hinfin | hfin := tendsto_of_monotone (partial_of_nonneg h)
+  obtain hinfin | hfin := tendsto_atTop_of_monotone (partial_of_nonneg h)
   . choose M hM using hbound
     choose N hN using (hinfin.eventually_gt_atTop M).exists
     grind
