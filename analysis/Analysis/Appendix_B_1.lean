@@ -72,7 +72,7 @@ theorem Digit.mk_eq_iff (d:Digit) {n:ℕ} (h: n < 10) : d = mk h ↔ (d:ℕ) = n
 #check (9:Digit)
 
 theorem Digit.eq (n: Digit) : n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 3 ∨ n = 4 ∨ n = 5 ∨ n = 6 ∨ n = 7 ∨ n = 8 ∨ n = 9 := by
-  fin_cases n <;> simp
+  fin_cases n <;> simp +decide
 
 /-- Definition B.1.2 -/
 structure PosintDecimal where
@@ -97,7 +97,7 @@ theorem PosintDecimal.head_ne_zero (p:PosintDecimal) : p.head ≠ 0 := p.nonzero
 theorem PosintDecimal.head_ne_zero' (p:PosintDecimal) : (p.head:ℕ) ≠ 0 := by
   by_contra!
   apply head_ne_zero p
-  simp_all [Digit.toNat]
+  simp_all [Digit.toNat, Digit.inj]; rfl
 
 theorem PosintDecimal.length_pos (p:PosintDecimal) : 0 < p.digits.length := by
   simp [List.length_pos_iff, p.nonempty]
@@ -131,7 +131,7 @@ example : (PosintDecimal.mk' 3 [1, 4] (by decide):ℕ) = 314 := by decide
 /-- Remark B.1.3 -/
 @[simp]
 theorem PosintDecimal.ten_eq_ten : (mk' 1 [0] (by decide):ℕ) = 10 := by
-  simp [toNat, mk', Digit.toNat]
+  decide
 
 theorem PosintDecimal.digit_eq {d:Digit} (h: d ≠ 0) : (mk' d [] h:ℕ) = d := by
   simp [toNat, mk']
@@ -154,24 +154,31 @@ theorem PosintDecimal.pos (p:PosintDecimal) : 0 < (p:ℕ) := by
 abbrev PosintDecimal.append (p:PosintDecimal) (d:Digit) : PosintDecimal :=
   mk' p.head (p.digits.tail ++ [d]) p.head_ne_zero
 
+/-- `toNat` equals Horner (left-fold) evaluation of the digit list. -/
+theorem PosintDecimal.toNat_eq_foldl (q : PosintDecimal) :
+    q.toNat = q.digits.foldl (fun acc (d : Digit) => acc * 10 + d.toNat) 0 := by
+  suffices h : ∀ (L : List Digit) (acc : ℕ),
+      L.foldl (fun a (d : Digit) => a * 10 + d.toNat) acc =
+      acc * 10 ^ L.length + ∑ i : Fin L.length, (L[L.length - 1 - ↑i]).toNat * 10 ^ (↑i : ℕ)
+    from by simp [toNat, h q.digits 0]
+  intro L; induction L with
+  | nil => simp
+  | cons a t ih =>
+    intro acc; simp only [List.foldl_cons, List.length_cons]
+    -- Decompose the Fin (t.length+1) sum: last term is a*10^|t|, rest matches the Fin t.length sum
+    have : ∑ x : Fin (t.length + 1), ((a :: t)[t.length - ↑x] : ℕ) * 10 ^ (↑x : ℕ) =
+        (∑ x : Fin t.length, (t[t.length - 1 - ↑x] : ℕ) * 10 ^ (↑x : ℕ)) + a * 10 ^ t.length := by
+      refine (Fin.sum_univ_castSucc _).trans ?_
+      congr 1 <;> grind
+    grind
+
 @[simp]
 theorem PosintDecimal.append_toNat (p:PosintDecimal) (d:Digit) :
   (p.append d:ℕ) = d.toNat + 10 * p.toNat  := by
-  simp [append, toNat, mk', Finset.mul_sum]
-  rw [Fin.sum_univ_succAbove _ 0]
-  congr 1
-  . simp
-  have := p.length_pos
-  convert Fin.sum_congr' _ _ with i; swap; grind
-  simp
-  trans p.digits[p.digits.length - 1 - (i:ℕ)].toNat * (10^(i:ℕ) * 10); swap; ring
-  congr 2
-  have : p.head :: (p.digits.tail ++ [d]) = p.digits ++ [d] := by
-    rw [←List.cons_append, head, List.cons_head_tail]
-  have hlen : p.digits.length - 1 - ↑i < (p.digits ++ [d]).length := by grind
-  calc
-    _ = (p.digits ++ [d])[p.digits.length - 1 - ↑i] := by congr
-    _ = _ := List.getElem_append_left _
+  rw [toNat_eq_foldl, toNat_eq_foldl]; simp only [append, mk']
+  rw [show p.head :: (p.digits.tail ++ [d]) = p.digits ++ [d] from by
+    simp [head, ← List.cons_append, List.cons_head_tail]]
+  rw [List.foldl_append]; simp [List.foldl]; ring
 
 theorem PosintDecimal.eq_append {p:PosintDecimal} (h: 2 ≤ p.digits.length) : ∃ (q:PosintDecimal) (d:Digit), p = q.append d := by
   use mk' p.head (p.digits.tail.dropLast) p.head_ne_zero

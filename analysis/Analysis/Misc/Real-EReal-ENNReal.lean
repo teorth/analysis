@@ -75,7 +75,7 @@ lemma EReal.lt_add_of_pos_coe {x : EReal} {ε : ℝ} (hε : 0 < ε) (h_ne_bot : 
 lemma EReal.le_of_forall_pos_le_add' {a b : EReal}
     (h : ∀ ε : ℝ, 0 < ε → a ≤ b + ε) : a ≤ b := by
   by_cases hb : b = ⊤
-  · simp [hb]
+  · subst hb; exact le_top
   · by_contra ha_gt
     push_neg at ha_gt
     -- a > b and b ≠ ⊤
@@ -86,7 +86,7 @@ lemma EReal.le_of_forall_pos_le_add' {a b : EReal}
       specialize h 1 (by norm_num : (0:ℝ) < 1)
       have hb1 : b + (1 : ℝ) < ⊤ := by
         cases b with
-        | bot => simp
+        | bot => exact bot_lt_top
         | top => exact (hb rfl).elim
         | coe b' =>
           have : (b' : EReal) + (1:ℝ) = ((b' + 1) : ℝ) := by norm_cast

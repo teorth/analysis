@@ -160,9 +160,9 @@ noncomputable abbrev SetTheory.Set.prod_commutator (X Y:Set) : X ×ˢ Y ≃ Y ×
 /-- Example 3.5.5. A function of two variables can be thought of as a function of a pair. -/
 noncomputable abbrev SetTheory.Set.curry_equiv {X Y Z:Set} : (X → Y → Z) ≃ (X ×ˢ Y → Z) where
   toFun f z := f (fst z) (snd z)
-  invFun f x y := f ⟨ (⟨ x, y ⟩:OrderedPair), by simp ⟩
-  left_inv _ := by simp
-  right_inv _ := by simp [←pair_eq_fst_snd]
+  invFun f x y := f (mk_cartesian x y)
+  left_inv _ := by ext; simp
+  right_inv _ := by simp
 
 /-- Definition 3.5.6.  The indexing set `I` plays the role of `{ i : 1 ≤ i ≤ n }` in the text.
     See Exercise 3.5.10 below for some connections betweeen this concept and the preceding notion

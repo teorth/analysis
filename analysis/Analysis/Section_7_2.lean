@@ -51,7 +51,7 @@ theorem Series.eval_mk' {m:ℤ} (a : { n // n ≥ m } → ℝ) {n : ℤ} (h:n �
     (Series.mk' a).seq n = a ⟨ n, h ⟩ := by simp [h]
 
 /-- Definition 7.2.2 (Convergence of series) -/
-abbrev Series.partial (s : Series) (N:ℤ) : ℝ := ∑ n ∈ Finset.Icc s.m N, s.seq n
+noncomputable abbrev Series.partial (s : Series) (N:ℤ) : ℝ := ∑ n ∈ Finset.Icc s.m N, s.seq n
 
 theorem Series.partial_succ (s : Series) {N:ℤ} (h: N ≥ s.m-1) : s.partial (N+1) = s.partial N + s.seq (N+1) := by
   unfold Series.partial
@@ -150,7 +150,7 @@ theorem Series.converges_of_alternating {m:ℤ} {a: { n // n ≥ m} → ℝ} (ha
   . intro h; apply decay_of_converges at h
     rw [tendsto_iff_dist_tendsto_zero] at h ⊢
     rw [←Filter.tendsto_comp_val_Ici_atTop (a := m)] at h
-    convert h using 2 with _ n
+    refine h.congr (fun n => ?_)
     simp [n.property]
   intro h
   unfold converges convergesTo

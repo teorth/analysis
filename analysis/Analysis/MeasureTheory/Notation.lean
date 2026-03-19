@@ -15,11 +15,11 @@ noncomputable abbrev Set.indicator' {X: Type*} (E: Set X) := indicator E (fun _ 
 
 theorem Set.indicator'_apply {X: Type*} (E: Set X) (x: X) [Decidable (x ∈ E)] : indicator' E x = if x ∈ E then 1 else 0 := indicator_apply _ _ _
 
-theorem Set.indicator'_of_mem {X: Type*} {E:Set X} {x:X} (h: x ∈ E) : indicator' E x = 1 := by
-  convert indicator_of_mem h (fun _ ↦ (1:ℝ))
+theorem Set.indicator'_of_mem {X: Type*} {E:Set X} {x:X} (h: x ∈ E) : indicator' E x = 1 :=
+  indicator_of_mem h _
 
-theorem Set.indicator'_of_notMem {X: Type*} {E:Set X} {x:X} (h: x ∉ E) : indicator' E x = 0 := by
-  convert indicator_of_notMem h (fun _ ↦ (1:ℝ))
+theorem Set.indicator'_of_notMem {X: Type*} {E:Set X} {x:X} (h: x ∉ E) : indicator' E x = 0 :=
+  indicator_of_notMem h _
 
 /-- A version of `EuclideanSpace` suitable for this text. -/
 noncomputable abbrev EuclideanSpace' (n: ℕ) := EuclideanSpace ℝ (Fin n)
@@ -55,7 +55,7 @@ infix:100 " ⬝ " => inner ℝ
 
 theorem EuclideanSpace'.dot_apply {n:ℕ} (x y: EuclideanSpace' n) : x ⬝ y = ∑ i, (x i)*(y i) := by
   convert PiLp.inner_apply x y using 2 with i
-  simp; ring
+  simp [inner, mul_comm]
 
 #check top_add
 #check add_top

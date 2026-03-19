@@ -99,7 +99,8 @@ theorem NNRealDecimal.not_inj : (1:NNReal) = (mk 1 fun _ ↦ 0) ∧ (1:NNReal) =
       rw [←rpow_add_one]; simp; norm_num
     simp [this, ←coe_inj]
     rw [NNReal.coe_sub, NNReal.coe_sub]
-    . simp; linarith
+    . suffices h : ∀ c a : ℝ, c = 9 → 1 - a * 10 + c * a = 1 - a by apply h; norm_cast
+      grind
     . apply rpow_le_one_of_one_le_of_nonpos; norm_num; linarith
     rw [←rpow_add_one]
     apply rpow_le_one_of_one_le_of_nonpos; norm_num; linarith; norm_num

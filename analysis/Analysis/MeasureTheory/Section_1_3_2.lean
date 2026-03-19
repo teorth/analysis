@@ -212,8 +212,7 @@ private lemma limsupSet_LebesgueMeasurable {g : ℕ → EuclideanSpace' d → ER
 
 -- This is the main technical work of the proof
 private lemma iii_imp_v : stmt_iii f → stmt_v f := by
-  intro ⟨g, hg_simple, hg_ae_conv⟩
-  intro t
+  intro ⟨g, hg_simple, hg_ae_conv⟩ t
   -- The null set where convergence fails
   let N := {x | ¬Filter.atTop.Tendsto (fun n ↦ g n x) (nhds (f x))}
   have hN_null : IsNull N := hg_ae_conv
@@ -263,7 +262,7 @@ private lemma iii_imp_v : stmt_iii f → stmt_v f := by
         use 0
         intro N
         -- Since f x = ⊤ and f x > t, we have t < ⊤
-        have ht_lt_top' : t < ⊤ := by rw [← hfx_top]; exact hfx
+        have ht_lt_top' : t < ⊤ := lt_of_lt_of_eq hfx hfx_top
         -- Therefore t + 1 < ⊤ (since 1 is finite)
         have h_t1_lt_top : t + 1 < ⊤ := EReal.add_lt_top (ne_top_of_lt ht_lt_top') (EReal.coe_ne_top 1)
         -- Show g n x > t + 1 for some n ≥ N using that g n → ⊤
@@ -453,15 +452,14 @@ private lemma v_imp_vi : stmt_v f → stmt_vi f := by
   · -- t = ⊤: {f ≥ ⊤} = {f = ⊤} = ⋂_{n ∈ ℕ} {f > n}
     have h_eq : {x | f x ≥ ⊤} = ⋂ (n : ℕ), {x | f x > n} := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_iInter, ge_iff_le, top_le_iff]
+      simp only [Set.mem_setOf_eq, Set.mem_iInter, ge_iff_le]
       constructor
       · intro hfx n
-        simp only [gt_iff_lt]
-        rw [hfx]; exact EReal.coe_lt_top n
+        simp only [gt_iff_lt, top_le_iff.mp hfx]
+        apply EReal.coe_lt_top
       · intro hfx
-        exact EReal.eq_top_of_forall_nat_lt hfx
-    rw [h_eq]
-    exact LebesgueMeasurable.countable_inter (fun n => hv _)
+        exact top_le_iff.mpr (EReal.eq_top_of_forall_nat_lt hfx)
+    exact h_eq ▸ LebesgueMeasurable.countable_inter (fun n => hv _)
   · -- t is finite: use {f ≥ t} = ⋂_{n≥1} {f > t - 1/(n+1)}
     -- Since t < ⊤ and ⊥ < t, we know t is a real number
     induction t using EReal.rec with
@@ -1076,8 +1074,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             rw [hbot] at h_min_ge; exact not_le.mpr EReal.bot_lt_zero h_min_ge
-          · exfalso; have h1 := min_le_right (f x) ↑n; rw [htop] at h1
-            exact not_le.mpr (EReal.coe_lt_top n) h1
+          · grind
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             exact not_le.mpr hneg (EReal.toReal_nonneg h_min_ge)
@@ -1136,7 +1133,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
             -- Goal: ↑↑(n * 2 ^ n) / ↑(2 ^ n) = ↑n
             -- Use EReal.coe_natCast to normalize coercions
             simp only [← EReal.coe_natCast, ← EReal.coe_div, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat]
-            congr 1; field_simp
+            grind
       rw [h_eq]
       exact ball_leb.inter (hvi n)
     · -- k < n * 2^n: level set is {‖x‖ ≤ n} ∩ {f x ≥ k/2^n} ∩ {f x < (k+1)/2^n}
@@ -1155,8 +1152,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             rw [hbot] at h_min_ge; exact not_le.mpr EReal.bot_lt_zero h_min_ge
-          · exfalso; have h1 := min_le_right (f x) ↑n; rw [htop] at h1
-            exact not_le.mpr (EReal.coe_lt_top n) h1
+          · exact absurd (htop ▸ min_le_right (f x) (↑n : EReal)) (not_le.mpr (EReal.coe_lt_top n))
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             exact not_le.mpr hneg (EReal.toReal_nonneg h_min_ge)
@@ -1573,7 +1569,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
           have hN_ne_top : ((N : ℕ) : EReal) ≠ ⊤ := EReal.coe_ne_top N
           have hN_nonneg : (0 : ℝ) ≤ N := Nat.cast_nonneg N
           have hN_toReal : ((N : ℕ) : EReal).toReal = N := EReal.toReal_coe N
-          simp only [approx_fn, h_norm, ite_true, hfx_top, min_eq_right le_top,
+          simp only [approx_fn, h_norm, ite_true, hfx_top, min_top_left,
                      hN_ne_bot, hN_ne_top, ite_false, hN_toReal, not_lt.mpr hN_nonneg]
           -- floor(N * 2^N) / 2^N = N
           have h_floor_eq : (⌊(N : ℝ) * 2^N⌋₊ : ℝ) / 2^N = N := by
@@ -2108,7 +2104,7 @@ lemma binaryDigit_first_diff {x y : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (hy : y 
       have hpos : 0 < |x - y| := abs_pos.mpr (sub_ne_zero.mpr hne)
       obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one hpos (by norm_num : (1:ℝ)/2 < 1)
       have := h_close n
-      have h1 : (1:ℝ) / 2^n = (1/2)^n := by simp [one_div, div_eq_mul_inv, mul_pow]
+      have h1 : (1:ℝ) / 2^n = (1/2)^n := by simp [div_eq_mul_inv]
       linarith
     exact absurd hxy_eq (ne_of_lt hxy)
   let k := Nat.find h_exists_diff
@@ -2348,7 +2344,7 @@ private lemma partial_sum_eq_floor {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (n :
     have h_pow_succ : (2:ℝ)^(n+1) = 2 * 2^n := by ring
     rw [h_pow_succ]
     have h_half_pow : (1/2:ℝ)^(n+1) = 1 / (2 * 2^n) := by
-      rw [← h_pow_succ]; simp [one_div, div_eq_mul_inv, mul_pow]
+      rw [← h_pow_succ]; simp [div_eq_mul_inv]
     rw [h_half_pow]
     have h_floor' : (⌊2 * 2^n * x⌋₊ : ℝ) = 2 * (⌊(2:ℝ)^n * x⌋₊ : ℝ) + (⌊2 * 2^n * x⌋₊ % 2 : ℕ) := by
       have h2eq : (2:ℝ) * 2^n * x = (2:ℝ)^(n+1) * x := by ring
@@ -2400,7 +2396,7 @@ lemma non_dyadic_eq_binary_sum {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (_hnd : 
     have h_gap : Filter.Tendsto (fun n : ℕ => (1:ℝ) / (2:ℝ)^n) Filter.atTop (nhds 0) := by
       have h1 : Filter.Tendsto (fun n : ℕ => ((1:ℝ)/2)^n) Filter.atTop (nhds 0) :=
         tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
-      convert h1 using 1; ext n; simp [one_div, div_eq_mul_inv, mul_pow]
+      convert h1 using 1; ext n; simp [div_eq_mul_inv]
     have h_between : ∀ n, x - (1:ℝ) / (2:ℝ)^n < (⌊(2:ℝ)^n * x⌋₊ : ℝ) / (2:ℝ)^n ∧
         (⌊(2:ℝ)^n * x⌋₊ : ℝ) / (2:ℝ)^n ≤ x := fun n => ⟨by linarith [h_upper n], h_lower n⟩
     apply Metric.tendsto_atTop.mpr
@@ -2467,7 +2463,7 @@ lemma mem_CantorSet_of_ternary_02 {y : ℝ} (d : ℕ → ℕ)
     simp only [Finset.mem_range] at hj
     rw [dif_pos hj]
     simp only [a]
-    field_simp; ring_nf; simp [← mul_pow]
+    field_simp; ring_nf; simp
   have h_tail_nonneg : 0 ≤ ∑' j, (d (n + j) : ℝ) * (1/3:ℝ)^(n + j + 1) := by
     apply tsum_nonneg; intro j; positivity
   have h_tail_bound : ∑' j, (d (n + j) : ℝ) * (1/3:ℝ)^(n + j + 1) ≤ (1/3:ℝ)^n := by
@@ -2494,7 +2490,7 @@ lemma mem_CantorSet_of_ternary_02 {y : ℝ} (d : ℕ → ℕ)
             _ = (2:ℝ) * (1/3:ℝ)^(n + 1) * (1 - 1/3)⁻¹ := by rw [h1]
             _ = (1/3:ℝ)^n := by field_simp; ring
   rw [h_split, h_partial]
-  have h_one_third_pow : (1/3:ℝ)^n = 1 / 3^n := by simp [one_div, div_eq_mul_inv, mul_pow]
+  have h_one_third_pow : (1/3:ℝ)^n = 1 / 3^n := by simp [div_eq_mul_inv]
   constructor
   · linarith
   · rw [← h_one_third_pow]

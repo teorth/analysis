@@ -154,10 +154,10 @@ notation3:max α"["I"]ₗ" => α_length α I
 
 theorem α_length_of_empty (α: ℝ → ℝ) {I: BoundedInterval} (hI: (I:Set ℝ) = ∅) : α[I]ₗ = 0 :=
   match I with
-  | Icc _ _ => by simp [Set.Icc_eq_empty_iff] at *; simp [α_length, *]
+  | Icc _ _ => by simp [Set.Icc_eq_empty_iff] at *; simp [*]
   | Ico a b => by simp [Set.Ico_eq_empty_iff] at *; intro h; have := le_antisymm hI h; subst this; simp
   | Ioc a b => by simp [Set.Ioc_eq_empty_iff] at *; intro h; have := le_antisymm hI h; subst this; simp
-  | Ioo _ _ => by simp [Set.Ioo_eq_empty_iff] at *; simp [α_length, *]
+  | Ioo _ _ => by simp [Set.Ioo_eq_empty_iff] at *; simp [*]
 
 @[simp]
 theorem α_length_of_pt {α: ℝ → ℝ} (a:ℝ) : α[Icc a a]ₗ = jump α a := by simp [α_length, jump]

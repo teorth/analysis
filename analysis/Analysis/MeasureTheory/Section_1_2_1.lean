@@ -1708,32 +1708,12 @@ lemma le_of_finset_cover {d:ℕ} (hd: 0 < d) (E: Set (EuclideanSpace' d))
           have h_inner : ∀ n, ∑' (B : (I n : Set (Box d))), B.val.volume.toEReal =
                               (∑ B ∈ I n, B.volume).toEReal := by
             intro n
-            -- Use Finset.fintypeCoeSort for tsum_fintype
-            haveI : Fintype (I n : Set (Box d)) := Finset.fintypeCoeSort (I n)
             rw [tsum_fintype]
             have h_nonneg : ∀ B ∈ I n, 0 ≤ B.volume := fun B _ => Box.volume_nonneg B
-            -- Convert sum: need to go from ↑↑(I n) to { x // x ∈ I n } to I n
-            have h_subtype : ∑ B : { x // x ∈ I n }, B.val.volume = ∑ B ∈ I n, B.volume :=
+            have h_sum_real : ∑ B : ↥(I n), (↑B : Box d).volume = ∑ B ∈ I n, B.volume :=
               Finset.sum_coe_sort (I n) (fun B => B.volume)
-            -- Convert from ↑↑(I n) to { x // x ∈ I n } using equivalence
-            let e : (I n : Set (Box d)) ≃ { x // x ∈ I n } := {
-              toFun := fun ⟨B, hB⟩ => ⟨B, hB⟩
-              invFun := fun ⟨B, hB⟩ => ⟨B, hB⟩
-              left_inv := fun _ => rfl
-              right_inv := fun _ => rfl
-            }
-            -- Use Fintype.sum_equiv - the fintype instances will be handled by congr
-            have h_equiv : ∑ B : (I n : Set (Box d)), B.val.volume =
-                          ∑ B : { x // x ∈ I n }, B.val.volume :=
-              Fintype.sum_equiv e (fun B => B.val.volume) (fun B => B.val.volume)
-                (fun ⟨B, hB⟩ => rfl)
-            -- Combine: the fintype instances differ but the sums are equal
-            have h_sum_real : ∑ B : (I n : Set (Box d)), B.val.volume = ∑ B ∈ I n, B.volume := by
-              rw [h_equiv]
-              -- Use erw (exact rewrite) which is more lenient with typeclass instances
-              erw [h_subtype]
-            calc ∑ B : (I n : Set (Box d)), B.val.volume.toEReal
-                = (∑ B : (I n : Set (Box d)), B.val.volume).toEReal := by
+            calc ∑ B : ↥(I n), (↑B : Box d).volume.toEReal
+                = (∑ B : ↥(I n), (↑B : Box d).volume).toEReal := by
                     symm
                     apply EReal.coe_finset_sum
                     intro ⟨B, hB⟩ _
@@ -1967,7 +1947,7 @@ theorem Lebesgue_outer_measure.union_of_separated {d:ℕ} (hd: 0 < d) {E F : Set
   have h_ge : Lebesgue_outer_measure E + Lebesgue_outer_measure F ≤ Lebesgue_outer_measure (E ∪ F) := by
     -- Case 1: If m*(E ∪ F) = ⊤, then the inequality holds trivially
     by_cases h_inf : Lebesgue_outer_measure (E ∪ F) = ⊤
-    · simp [h_inf]
+    · simp only [h_inf]; apply le_top
 
     -- Case 2: m*(E ∪ F) < ⊤
     · -- For any ε > 0, we'll show m*(E) + m*(F) ≤ m*(E ∪ F) + ε
@@ -3186,9 +3166,8 @@ example {d:ℕ} {hd: 0 < d} : ∃ (S:Type) (E: S → Set (EuclideanSpace' d)), �
 lemma EuclideanSpace'_dist_eq_Real_dist (x y : EuclideanSpace' 1) :
     dist x y = dist (EuclideanSpace'.equiv_Real x) (EuclideanSpace'.equiv_Real y) := by
   rw [EuclideanSpace.dist_eq, Real.dist_eq]
-  simp only [Fintype.univ_ofSubsingleton, Fin.zero_eta, Finset.sum_singleton, Real.sqrt_sq_eq_abs,
-    EuclideanSpace'.equiv_Real, Equiv.coe_fn_mk]
-  rw [Real.dist_eq, abs_abs]
+  simp only [Fin.zero_eta, Real.sqrt_sq_eq_abs, EuclideanSpace'.equiv_Real, Equiv.coe_fn_mk,
+    Fin.sum_univ_one, Real.dist_eq, abs_abs]
 
 /-- Preimage of closed interval [a,b] under equiv_Real equals the corresponding 1D box -/
 lemma preimage_Icc_eq_box (a b : ℝ) :
@@ -4914,8 +4893,7 @@ theorem IsOpen.eq_union_boxes {d:ℕ} (hd : 0 < d) (E: Set (EuclideanSpace' d)) 
     let n₀ := Nat.find hP
     obtain ⟨a₀, ha₀_mem, ha₀_sub⟩ := Nat.find_spec hP
     use n₀, a₀, ha₀_mem, ha₀_sub
-    intro m hm b hb_mem
-    intro hsub
+    intro m hm b hb_mem hsub
     exact Nat.find_min hP hm ⟨b, hb_mem, hsub⟩
   -- Define maximal cubes: for each x ∈ E, pick the cube at minimal scale
   -- Define the set of maximal cube indices
@@ -5585,7 +5563,7 @@ lemma Lebesgue_outer_measure.exists_open_superset_measure_le {d:ℕ} (E: Set (Eu
     rw [h_outer_reg, h_top]
     cases ε with
     | bot => exact absurd hε (not_lt.mpr bot_le)
-    | top => simp
+    | top => exact le_top
     | coe r => exact le_top
   · have h_lt : sInf S < sInf S + ε := by
       cases ε with

@@ -27,7 +27,7 @@ example {X:Type} [PartialOrder X] {x y:X} (h₁: x ≤ y) (h₂: y ≤ x) : x = 
 example {X:Type} [PartialOrder X] {x y z:X} (h₁: x ≤ y) (h₂: y ≤ z) : x ≤ z := le_trans h₁ h₂
 example {X:Type} [PartialOrder X] (x y:X) : x < y ↔ x ≤ y ∧ x ≠ y := lt_iff_le_and_ne
 
-def PartialOrder.mk {X:Type} [LE X]
+@[implicit_reducible] def PartialOrder.mk {X:Type} [LE X]
   (hrefl: ∀ x:X, x ≤ x)
   (hantisymm: ∀ x y:X, x ≤ y → y ≤ x → x = y)
   (htrans: ∀ x y z:X, x ≤ y → y ≤ z → x ≤ z) : PartialOrder X :=
@@ -47,7 +47,7 @@ def IsTotal (X:Type) [PartialOrder X] : Prop := ∀ x y:X, x ≤ y ∨ y ≤ x
 example {X:Type} [LinearOrder X] : IsTotal X := le_total
 
 open Classical in
-noncomputable def LinearOrder.mk {X:Type} [PartialOrder X]
+@[implicit_reducible] noncomputable def LinearOrder.mk {X:Type} [PartialOrder X]
   (htotal: IsTotal X) : LinearOrder X :=
 {
    le_total := htotal
@@ -61,7 +61,7 @@ noncomputable def LinearOrder.mk {X:Type} [PartialOrder X]
 #check inferInstanceAs (LinearOrder EReal)
 
 
-noncomputable def LinearOrder.subtype {X:Type} [LinearOrder X] (A: Set X) : LinearOrder A :=
+@[implicit_reducible] noncomputable def LinearOrder.subtype {X:Type} [LinearOrder X] (A: Set X) : LinearOrder A :=
 LinearOrder.mk (by
   sorry
   )
@@ -134,10 +134,12 @@ example {X:Type} [LinearOrder X] [WellFoundedLT X] (A: Set X) : WellFoundedLT A 
 theorem WellFoundedLT.subset {X:Type} [PartialOrder X] {A B: Set X} (hA: IsTotal A) [hwell: WellFoundedLT A] (hAB: B ⊆ A) : WellFoundedLT B := by
   set hAlin : LinearOrder A := LinearOrder.mk hA
   set hBlin : LinearOrder B := LinearOrder.mk (hA.subset hAB)
-  rw [iff] at hwell ⊢; intro C hC
+  rw [iff' hA] at hwell; rw [iff' (hA.subset hAB)]; intro C hC
   have ⟨ ⟨ ⟨ x, hx ⟩, hx' ⟩, hmin ⟩ := hwell ((B.embeddingOfSubset _ hAB) '' C) (by aesop)
   simp at hx'; choose y hy hyC this using hx'; use ⟨ _, hyC ⟩
-  simp_all [IsMin, Set.embeddingOfSubset]; grind
+  simp_all [IsMin, Set.embeddingOfSubset]
+  intro a ha_B ha_C
+  apply hmin _ (hAB ha_B) <;> trivial
 
 /-- Proposition 8.5.10 / Exercise 8.5.10 -/
 theorem WellFoundedLT.strong_induction {X:Type} [LinearOrder X] [WellFoundedLT X] {P:X → Prop}

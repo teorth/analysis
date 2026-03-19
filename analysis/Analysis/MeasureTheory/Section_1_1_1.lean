@@ -785,12 +785,15 @@ theorem BoundedInterval.partition (S: Finset BoundedInterval) : ∃ T: Finset Bo
     have hxr : x ≤ sorted ⟨ r, hr ⟩ := by convert Nat.find_spec H; grind
     have hnr : n < r := by
       by_contra!
-      replace : (sorted ⟨r, hr⟩).val ≤ (sorted ⟨n, hn⟩).val := by simp [this]
+      replace : (sorted ⟨r, hr⟩).val ≤ (sorted ⟨n, hn⟩).val := by
+        simp only [Subtype.coe_le_coe]
+        apply sorted.monotone; simpa
       simp [show x = sorted ⟨ n, hn ⟩ by order] at hend
     refine' ⟨ Ioo (sorted ⟨ r-1, by omega ⟩) (sorted ⟨ r, hr ⟩), _ , _, _ ⟩
     . apply Set.Subset.trans _ I.Ioo_subset
       simp [hnI, hmI]
-      apply Set.Ioo_subset_Ioo <;> simp <;> omega
+      apply Set.Ioo_subset_Ioo <;> simp [Subtype.coe_le_coe] <;>
+        apply sorted.monotone <;> grind
     . simp [T]; refine' ⟨ r-1, by omega, _ ⟩
       simp [a, show r-1 < k by omega, show r < k by omega, show r-1+1=r by omega]
     simp
@@ -953,7 +956,7 @@ theorem Box.sum_vol_eq {d:ℕ} {T: Finset (Box d)}
           have h := this.choose_spec
           apply hT.elim h.1 hB
           rw [Set.not_disjoint_iff]; grind
-        simp [h, ←eq_cast_iff_heq]
+        subst h; rfl
     }
   intro ⟨ B, _ ⟩; convert B.sample_finite ?_
   omega

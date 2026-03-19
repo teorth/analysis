@@ -29,7 +29,7 @@ class UnitsSystem where
   addCommGroup: AddCommGroup Dimensions
 
 /- The additive group structure of `Dimensions` needs to be explicitly registered as an instance. -/
-attribute [instance] UnitsSystem.addCommGroup
+attribute [implicit_reducible, instance] UnitsSystem.addCommGroup
 
 namespace UnitsSystem
 
@@ -128,7 +128,9 @@ we currently are not implementing this. -/
 theorem Scalar.neZero_iff {d:Dimensions} (q:Scalar d) : NeZero q ↔ q.val ≠ 0 := by simp [_root_.neZero_iff, ←val_inj]
 
 @[simp, norm_cast]
-theorem Scalar.toFormal_zero {d:Dimensions} : ((0:Scalar d):Formal) = 0 := by simp [toFormal]
+theorem Scalar.toFormal_zero {d:Dimensions} : ((0:Scalar d):Formal) = 0 := by
+  simp only [toFormal, AddMonoidAlgebra.single, val_zero, Finsupp.single_zero]
+  rfl
 
 /-- In the next few lines of code we give `Scalar d` the structure of a real vector space,
 which is of course compatible with the real vector space structure on `Formal`. -/
@@ -141,7 +143,8 @@ theorem Scalar.val_add {d:Dimensions} (q₁ q₂:Scalar d) : (q₁ + q₂).val =
 /-- Note how the `simp` lemma is in the direction of pushing casts inward. -/
 @[simp,norm_cast]
 theorem Scalar.toFormal_add {d:Dimensions} (q₁ q₂:Scalar d) : ((q₁ + q₂:Scalar d):Formal) = (q₁:Formal) + (q₂:Formal) := by
-  simp [toFormal]
+  simp only [toFormal, val_add, Finsupp.single_add]
+  rfl
 
 instance Scalar.instNeg {d:Dimensions} : Neg (Scalar d) where
   neg q := ⟨-q.val⟩
@@ -155,7 +158,7 @@ instance Scalar.instNeZero_neg {d:Dimensions} (q:Scalar d) [h:NeZero q] : NeZero
 
 @[simp,norm_cast]
 theorem Scalar.toFormal_neg {d:Dimensions} (q:Scalar d) : ((-q:Scalar d):Formal) = -(q:Formal) := by
-  simp [toFormal]
+  simp only [toFormal, val_neg, Finsupp.single_neg]; rfl
 
 instance Scalar.instSub {d:Dimensions} : Sub (Scalar d) where
   sub q₁ q₂ := ⟨q₁.val - q₂.val⟩
@@ -165,7 +168,7 @@ theorem Scalar.val_sub {d:Dimensions} (q₁ q₂ : Scalar d) : (q₁ - q₂).val
 
 @[simp,norm_cast]
 theorem Scalar.toFormal_sub {d:Dimensions} (q₁ q₂ :Scalar d) : ((q₁ - q₂ :Scalar d):Formal) = (q₁:Formal) - q₂ := by
-  simp [toFormal]
+  simp only [toFormal, val_sub, Finsupp.single_sub]; rfl
 
 instance Scalar.instSMul {α} {d:Dimensions} [SMul α ℝ] : SMul α (Scalar d) where
   smul c q := ⟨c • q.val⟩
@@ -247,7 +250,7 @@ theorem Formal.smul_eq_mul' (c:ℕ) (x:Formal) : c • x = (c:Formal) * x := by
 
 @[simp]
 theorem Formal.smul_eq_mul'' (c:ℤ) (x:Formal) : c • x = (c:Formal) * x := by
-  simp
+  exact zsmul_eq_mul x c
 
 @[norm_cast,simp]
 theorem Scalar.coe_mul (r s:ℝ) : ((r*s:ℝ):Scalar 0) = r • (s:Scalar 0) := by

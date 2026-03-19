@@ -84,7 +84,7 @@ instance Rat.decidableEq : DecidableEq Rat := by
 instance Rat.add_inst : Add Rat where
   add := Quotient.lift₂ (fun ⟨ a, b, h1 ⟩ ⟨ c, d, h2 ⟩ ↦ (a*d+b*c) // (b*d)) (by
     intro ⟨ a, b, h1 ⟩ ⟨ c, d, h2 ⟩ ⟨ a', b', h1' ⟩ ⟨ c', d', h2' ⟩ h3 h4
-    simp_all [Quotient.eq, PreRat.instSetoid]
+    simp_all [Quotient.eq]
     linear_combination d * d' * h3 + b * b' * h4
   )
 

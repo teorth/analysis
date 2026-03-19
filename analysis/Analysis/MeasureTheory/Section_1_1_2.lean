@@ -313,7 +313,6 @@ lemma JordanMeasurable.union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
   exact empty d;
   norm_num +zetaDelta at *;
   · exact JordanMeasurable.union hE.1 ( hS hE.2 );
-  · exact Classical.typeDecidableEq (Set (EuclideanSpace' d))
 
 /-- Exercise 1.1.6 (i) (Boolean closure) -/
 theorem JordanMeasurable.inter {d:ℕ} {E F : Set (EuclideanSpace' d)}
@@ -513,7 +512,6 @@ lemma JordanMeasurable.measure_of_disjUnion' {d:ℕ} {S: Finset (Set (EuclideanS
 (hE: ∀ E ∈ S, JordanMeasurable E) (hdisj: (S : Set (Set (EuclideanSpace' d))).PairwiseDisjoint id):
   (JordanMeasurable.union' hE).measure = ∑ E:S, (hE E.val E.property).measure := by
   induction' S using Finset.induction with E S hS ih;
-  all_goals try { exact fun x y => Classical.propDecidable _ };
   · simp_all only [Finset.coe_empty, Set.pairwiseDisjoint_empty, Finset.notMem_empty, Set.iUnion_of_empty,
     Set.iUnion_empty, mes_of_empty, Finset.univ_eq_empty, Finset.coe_mem, Finset.sum_empty];
   · simp_all only [Set.PairwiseDisjoint, Finset.univ_eq_attach, Finset.mem_insert,
@@ -581,8 +579,6 @@ lemma JordanMeasurable.measure_of_union' {d:ℕ} {S: Finset (Set (EuclideanSpace
 (hE: ∀ E ∈ S, JordanMeasurable E) :
   (JordanMeasurable.union' hE).measure ≤ ∑ E:S, (hE E.val E.property).measure := by
   induction' S using Finset.induction_on with a S ha ih;
-  rotate_right;
-  exact Classical.typeDecidableEq (Set (EuclideanSpace' d));
   · simp_all only [Finset.notMem_empty, Set.iUnion_of_empty, Set.iUnion_empty, mes_of_empty, Finset.univ_eq_empty,
     Finset.coe_mem, Finset.sum_empty, le_refl];
   · convert le_trans ( JordanMeasurable.mes_of_union ( hE a ( Finset.mem_insert_self a S ) ) ( JordanMeasurable.union' fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) ) ( add_le_add_right ( ih fun E hE' => hE E ( Finset.mem_insert_of_mem hE' ) ) _ ) using 1;
@@ -748,9 +744,9 @@ noncomputable def Matrix.linear_equiv {d:ℕ} (A: Matrix (Fin d) (Fin d) ℝ) [I
 EuclideanSpace' d ≃ₗ[ℝ] EuclideanSpace' d where
   toFun x := .toLp 2 (toLin' A x.ofLp)
   map_add' x y := by
-    apply PiLp.ext; intro i; simp [WithLp.toLp, WithLp.ofLp, map_add]
+    apply PiLp.ext; intro i; simp [map_add]
   map_smul' r x := by
-    apply PiLp.ext; intro i; simp [WithLp.toLp, WithLp.ofLp, map_smul]
+    apply PiLp.ext; intro i; simp [map_smul]
   invFun x := .toLp 2 (toLin' A⁻¹ x.ofLp)
   left_inv x := by
     apply PiLp.ext; intro i; simp

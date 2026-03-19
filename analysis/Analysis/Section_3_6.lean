@@ -74,7 +74,7 @@ abbrev SetTheory.Set.has_card (X:Set) (n:ℕ) : Prop := X ≈ Fin n
 
 theorem SetTheory.Set.has_card_iff (X:Set) (n:ℕ) :
     X.has_card n ↔ ∃ f: X → Fin n, Function.Bijective f := by
-  simp [has_card, HasEquiv.Equiv, Setoid.r, EqualCard]
+  simp [has_card, HasEquiv.Equiv, instHasEquivOfSetoid, Setoid.r, EqualCard]
 
 /-- Remark 3.6.6 -/
 theorem SetTheory.Set.Remark_3_6_6 (n:ℕ) :
@@ -201,7 +201,7 @@ theorem SetTheory.Set.bounded_on_finite {n:ℕ} (f: Fin n → nat) : ∃ M, ∀ 
 theorem SetTheory.Set.nat_infinite : infinite nat := by
   -- This proof is written to follow the structure of the original text.
   by_contra this; choose n hn using this
-  simp [has_card] at hn; symm at hn; simp [HasEquiv.Equiv, Setoid.r, EqualCard] at hn
+  simp [has_card] at hn; symm at hn; simp [HasEquiv.Equiv] at hn
   choose f hf using hn; choose M hM using bounded_on_finite f
   replace hf := hf.surjective ↑(M+1); contrapose! hf
   peel hM with hi; contrapose! hi

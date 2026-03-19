@@ -55,7 +55,7 @@ theorem Erdos_987 (z: ℕ → Circle) :
       simp_rw [←normSq_eq_norm_sq, ←ofReal_inj, ofReal_sum, normSq_eq_conj_mul_self, map_sum, sum_mul_sum, sum_comm (s := range n) (t := range K)]
       apply sum_congr rfl; intro k _; apply sum_congr rfl; intro k' _
       apply sum_congr rfl; intro j _; apply sum_congr rfl; intro j' _
-      simp only [map_pow, map_mul, map_div₀]
+      simp only [map_pow, map_div₀]
       field_simp
       ring_nf
       simp [← Circle.coe_inv_eq_conj]

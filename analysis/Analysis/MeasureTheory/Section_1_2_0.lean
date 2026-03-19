@@ -1061,7 +1061,7 @@ lemma Lebesgue_outer_measure_of_dim_zero {E: Set (EuclideanSpace' 0)} :
               intro n h
               simp at h
               exact h
-            exact (summable_of_finite_support h_supp).hasSum
+            exact (summable_of_hasFiniteSupport h_supp).hasSum
           · -- Case 2: X is infinite
             -- The sum is Top. We prove HasSum g Top.
             have h_top : HasSum g ⊤ := by
@@ -1160,7 +1160,7 @@ lemma EReal.sInf_image_coe {s : Set ℝ} (hs : s.Nonempty) (h_bdd : BddBelow s) 
         by_cases h_top : sInf ((fun y : ℝ => (y : EReal)) '' s) = ⊤
         · -- Get contradiction: ↑x₀ ≥ ⊤
           have : (x₀ : EReal) ≥ ⊤ := by rw [←h_top]; exact h_le_x0
-          simp at this
+          simp [not_le.mpr] at this
         · -- sInf(↑''s) is not ⊥ (from h_bot) and not ⊤ (from h_top)
           -- So it must be a casted real
           -- Use EReal trichotomy: either ⊥, ⊤, or casted real
