@@ -13,11 +13,10 @@ section
 variable [Monad m] [MonadError m] [MonadQuotation m]
 
 
-
 partial def getCommentString' (pref : String) (hl : Highlighted) : m String := do
-  let str := (← getString hl).trim
-  let str := str.stripPrefix pref |>.stripSuffix "-/" |>.trim
-  pure str
+  let str := (← getString hl).trimAscii
+  let str := str.dropPrefix pref |>.dropSuffix "-/" |>.trimAscii
+  pure str.copy
 where getString : Highlighted → m String
   | .text txt | .unparsed txt => pure txt
   | .tactics .. => throwError "Tactics found in module docstring!"
@@ -45,7 +44,7 @@ def loadModuleContent (mod : String) (leanProject : System.FilePath := "../analy
       let toolchainfile := projectDir / "lean-toolchain"
       if !(← toolchainfile.pathExists) then
         throw <| .userError s!"File {toolchainfile} doesn't exist, couldn't load project"
-      pure (← IO.FS.readFile toolchainfile).trim
+      pure (← IO.FS.readFile toolchainfile).trimAscii.copy
     | some override => pure override
 
   -- Kludge: remove variables introduced by Lake. Clearing out DYLD_LIBRARY_PATH and
@@ -82,7 +81,7 @@ def loadModuleContent (mod : String) (leanProject : System.FilePath := "../analy
       }
       if res.exitCode != 0 then
         reportFail projectDir cmd args res
-      IO.FS.readFile res.stdout.trim
+      IO.FS.readFile res.stdout.trimAscii.copy
     finally f.unlock
 
   let .ok (.arr json) := Json.parse jsonFile
@@ -137,6 +136,7 @@ deriving instance ToExpr for Highlighted.Span.Kind
 
 initialize hlExportExt : EnvExtension Exporting ←
   registerEnvExtension (pure {})
+
 
 def hlFromExport (exportLit : String) : Highlighted :=
   match Json.parse exportLit with
@@ -221,16 +221,16 @@ partial def docFromModAndTerms
         match docCommentIdx with
         | some i =>
           let codeBefore ← hlViaExport (Highlighted.seq s[:i])
-          let codeBefore ← ``(Block.other
+          let codeBefore ← ``(Verso.Doc.Block.other
             (BlockExt.highlightedCode codeOpts $(mkIdent codeBefore)) Array.mkArray0)
           let some ⟨mdBlocks⟩ := MD4Lean.parse (← getDocCommentString s[i]!)
             | throwError m!"Failed to parse Markdown: {← getDocCommentString s[i]!}"
           let docCommentBlocks ← mdBlocks.mapM (fun b => ofBlock tms b)
           let codeAfter ← hlViaExport (Highlighted.seq s[i+1:])
-          let codeAfter ←``(Block.other (BlockExt.highlightedCode codeOpts $(mkIdent codeAfter)) Array.mkArray0)
+          let codeAfter ←``(Verso.Doc.Block.other (BlockExt.highlightedCode codeOpts $(mkIdent codeAfter)) Array.mkArray0)
 
           let blocks : Array Term := #[codeBefore] ++ docCommentBlocks ++ #[codeAfter]
-          addBlock (← ``(Block.other (BlockExt.htmlDiv "declaration") #[$blocks,*]))
+          addBlock (← ``(Verso.Doc.Block.other (BlockExt.htmlDiv "declaration") #[$blocks,*]))
         | none =>
           -- No docComment attached to declaration, render definition as usual
           addCodeBlock code
@@ -242,7 +242,7 @@ partial def docFromModAndTerms
       -- addCodeBlock code
       if let some msg := getFirstMessage code then
         let msg : Highlighted.Message := ⟨msg.1, msg.2⟩
-        addBlock (← ``(Block.other (Blog.BlockExt.message false $(quote msg) []) #[]))
+        addBlock (← ``(Verso.Doc.Block.other (Blog.BlockExt.message false $(quote msg) []) #[]))
     | _ =>
       pure ()
       addCodeBlock code
@@ -250,7 +250,7 @@ partial def docFromModAndTerms
 where
   addCodeBlock (code : Highlighted) := do
     let n ← hlViaExport code
-    addBlock (← ``(Block.other (BlockExt.highlightedCode codeOpts $(mkIdent n)) Array.mkArray0))
+    addBlock (← ``(Verso.Doc.Block.other (BlockExt.highlightedCode codeOpts $(mkIdent n)) Array.mkArray0))
 
   arr (xs : Array Term) : PartElabM Term := do
     if xs.size ≤ 8 then
@@ -262,45 +262,45 @@ where
   | .header .. => throwError "Headers should be processed at the part level"
   | .p txt => do
     let inlines ← txt.mapM (ofInline tms)
-    ``(Block.para $(← arr inlines))
+    ``(Verso.Doc.Block.para $(← arr inlines))
   | .ul _ _ lis => do
-    ``(Doc.Block.ul $(← arr (← lis.mapM (ofLi tms))))
+    ``(Verso.Doc.Block.ul $(← arr (← lis.mapM (ofLi tms))))
   | .ol _ start _ lis => do
-    ``(Doc.Block.ol $(quote (start : Int)) $(← arr (← lis.mapM (ofLi tms))))
+    ``(Verso.Doc.Block.ol $(quote (start : Int)) $(← arr (← lis.mapM (ofLi tms))))
   | .code info lang _ strs => do
     let str := strs.toList |> String.join
     if info.isEmpty && lang.isEmpty then
-      ``(Doc.Block.code $(quote str))
+      ``(Verso.Doc.Block.code $(quote str))
     else
       let msg : MessageData :=
         "Info and language information in code blocks is not supported:" ++
         indentD m!"info is {repr info} and language is {repr lang}"
       throwError msg
   | .blockquote bs => do
-    ``(Doc.Block.blockquote $(← arr (← bs.mapM (ofBlock tms))))
+    ``(Verso.Doc.Block.blockquote $(← arr (← bs.mapM (ofBlock tms))))
   | b => throwError "Unsupported block {repr b}"
 
   ofLi (tms : HashMap String Highlighted) : MD4Lean.Li MD4Lean.Block → PartElabM Term
   | {isTask, taskChar:=_, taskMarkOffset:=_, contents} => do
     if isTask then throwError "Tasks not supported"
-    ``(Doc.ListItem.mk $(← arr (← contents.mapM (ofBlock tms))))
+    ``(Verso.Doc.ListItem.mk $(← arr (← contents.mapM (ofBlock tms))))
 
   ofInline (tms : HashMap String Highlighted) : MD4Lean.Text → PartElabM Term
-  | .normal str => ``(Inline.text $(quote str))
+  | .normal str => ``(Verso.Doc.Inline.text $(quote str))
   | .nullchar => throwError "Unsupported null character in Markdown"
-  | .softbr txt => ``(Inline.linebreak $(quote txt))
+  | .softbr txt => ``(Verso.Doc.Inline.linebreak $(quote txt))
   | .a href _title _isAuto contents => do
     let href := (← href.mapM ofAttrText).toList |> String.join
     let contents ← contents.mapM (ofInline tms)
-    ``(Inline.link $(← arr contents) $(quote href))
+    ``(Verso.Doc.Inline.link $(← arr contents) $(quote href))
   | .code str => do
     let codeStr := String.join str.toList
     if let some hl := tms[codeStr]? then
-      ``(Inline.other (InlineExt.highlightedCode codeOpts $(quote hl)) #[])
+      ``(Verso.Doc.Inline.other (InlineExt.highlightedCode codeOpts $(quote hl)) #[])
     else
-      ``(Inline.code $(quote <| String.join str.toList))
-  | .em txt => do ``(Inline.emph $(← arr (← txt.mapM (ofInline tms))))
-  | .strong txt => do ``(Inline.bold $(← arr (← txt.mapM (ofInline tms))))
+      ``(Verso.Doc.Inline.code $(quote <| String.join str.toList))
+  | .em txt => do ``(Verso.Doc.Inline.emph $(← arr (← txt.mapM (ofInline tms))))
+  | .strong txt => do ``(Verso.Doc.Inline.bold $(← arr (← txt.mapM (ofInline tms))))
   | .img src _title alt => do
     let mut src := (← src.mapM ofAttrText).toList |> String.join
     for (pat, template) in rewriter do
@@ -312,13 +312,13 @@ where
           | .ok v => src := src ++ v
         break
     let alt := (alt.map inlineText).toList |> String.join
-    ``(Inline.image $(quote alt) $(quote src))
+    ``(Verso.Doc.Inline.image $(quote alt) $(quote src))
   | .latexMath strs =>
     let str := strs.toList |> String.join
-    ``(Inline.math MathMode.inline $(quote str))
+    ``(Verso.Doc.Inline.math MathMode.inline $(quote str))
   | .latexMathDisplay strs =>
     let str := strs.toList |> String.join
-    ``(Inline.math MathMode.display $(quote str))
+    ``(Verso.Doc.Inline.math MathMode.display $(quote str))
   | other => throwError "Unimplemented {repr other}"
 
   inlineText : MD4Lean.Text → String
@@ -356,9 +356,13 @@ def elabAnalysisPage (x : Ident) (mod : Ident) (config : LitPageConfig) (title :
   let items ← withTraceNode `verso.blog.literate.loadMod (fun _ => pure m!"Loading '{mod}'") <|
     loadModuleContent mod.getId.toString
 
-  let g ← runTermElabM fun _ => Term.elabTerm genre (some (.const ``Doc.Genre []))
-
-  let ((), _st, st') ← liftTermElabM <| PartElabM.run genre g {} initState <| do
+  let ctx ← runTermElabM fun _ => do
+    let g ← Term.elabTerm genre (some (.const ``Doc.Genre []))
+    pure { genreSyntax := genre
+           genre := g
+           refsAllowed := .onlyIfDefined
+           docReconstructionPlaceholder := some <| mkIdent (← mkFreshUserName `docReconst) : DocElabContext }
+  let ((), docState, partState) ← liftTermElabM <| PartElabM.run ctx {} initState <| do
     setTitle titleString (← liftDocElabM <| titleParts.mapM (elabInline ⟨·⟩))
     if let some metadata := metadata? then
       modifyThe PartElabM.State fun st => {st with partContext.metadata := some metadata}
@@ -367,7 +371,7 @@ def elabAnalysisPage (x : Ident) (mod : Ident) (config : LitPageConfig) (title :
       docFromModAndTerms config items rewriter
 
 
-  let finished := st'.partContext.toPartFrame.close 0
+  let finished := partState.partContext.toPartFrame.close 0
   let finished :=
     -- Obey the Markdown convention of a single top-level header being the title of the document, if it's been followed
     if let .mk _ _ _ metadata #[] #[p] _ := finished then
@@ -378,7 +382,9 @@ def elabAnalysisPage (x : Ident) (mod : Ident) (config : LitPageConfig) (title :
       | _ => p
     else finished
 
-  elabCommand <| ← `(def $x : Part $genre := $(← finished.toSyntax' genre))
+  let ty ← ``(VersoDoc $genre)
+  let doc ← runTermElabM fun _ => finished.toVersoDoc genre ctx docState partState
+  elabCommand <| ← `(def $x : $ty := $doc)
 
 open Verso.Genre.Blog.Literate in
 open Lean.Parser.Tactic in

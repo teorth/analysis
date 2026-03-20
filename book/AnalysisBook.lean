@@ -14,8 +14,9 @@ def theme : Theme := { Theme.default with
         <head>
           <meta charset="UTF-8"/>
           <title>{{ (← param (α := String) "title") }} " — Verso "</title>
-          <link rel="stylesheet" href="/static/style.css"/>
+          <base href="/analysis/"/>
           <script>"window.__versoSiteRoot=\"/analysis/\""</script>
+          <link rel="stylesheet" href="static/style.css"/>
           {{← builtinHeader }}
         </head>
         <body>
