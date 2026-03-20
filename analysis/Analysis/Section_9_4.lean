@@ -25,7 +25,7 @@ theorem ContinuousWithinAt.iff (X:Set ℝ) (f: ℝ → ℝ)  (x₀:ℝ) :
   rw [ContinuousWithinAt.eq_1, Convergesto.iff, nhdsWithin.eq_1]
 
 #check ContinuousOn.eq_1
-#check continuous_iff_continuousOn_univ
+#check continuousOn_univ
 #check continuousWithinAt_univ
 
 /-- Example 9.4.2 --/

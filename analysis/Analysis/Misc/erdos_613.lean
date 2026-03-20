@@ -14,7 +14,7 @@ def hasMonoStar {V:Type*} (G : SimpleGraph V) (color : Sym2 V → Fin 2)
   ∃ (x : V) (S : Finset V),
     S.card = k ∧
     x ∉ S ∧
-    ∀ ⦃y : V⦄, y ∈ S → G.Adj x y ∧ color (Sym2.mk (x, y)) = col
+    ∀ ⦃y : V⦄, y ∈ S → G.Adj x y ∧ color (s(x, y)) = col
 
 /-- “Color-`col` monochromatic triangle”: there exist `a b c` with all three edges
     present in `G` and colored `col`.  (Adjacency already forces distinctness.) -/
@@ -22,9 +22,9 @@ def hasMonoTriangle {V:Type*} (G : SimpleGraph V) (color : Sym2 V → Fin 2)
     (col : Fin 2) : Prop :=
   ∃ a b c : V,
     G.Adj a b ∧ G.Adj b c ∧ G.Adj a c ∧
-    color (Sym2.mk (a, b)) = col ∧
-    color (Sym2.mk (b, c)) = col ∧
-    color (Sym2.mk (a, c)) = col
+    color (s(a, b)) = col ∧
+    color (s(b, c)) = col ∧
+    color (s(a, c)) = col
 
 /-- **Statement (n = 5 case of Pikhurko’s counterexample).**
 There exists a simple graph on `16` vertices with exactly `44` edges such that
@@ -80,9 +80,7 @@ def G : SimpleGraph V where
   symm := by
     intro u v h
     cases u <;> cases v <;> grind [GAdj]
-  loopless := by
-    intro v
-    cases v <;> simp [GAdj]
+  loopless := ⟨by intro v; cases v <;> simp [GAdj]⟩
 
 /-!
 Convenience simp lemmas. These are optional but help when you start proving
@@ -386,8 +384,12 @@ theorem edge_count_44 : G.edgeSet.ncard = 44 := by
   rw [←SimpleGraph.coe_edgeFinset, Set.ncard_coe_finset]
   rw [←Equiv.sum_comp VEquiv.symm _] at hand
   simp_rw [Fintype.sum_sum_type] at hand
-  simp [VEquiv, degree_A1, degree_B1, degree_A2, degree_B2, degree_apex, -Set.toFinset_card] at hand
-  grind
+  have : ∀ i, G.degree (VEquiv.symm (.inl (.inl (.inl (.inl i))))) = G.degree (A1 i) := fun _ => rfl
+  have : ∀ j, G.degree (VEquiv.symm (.inl (.inl (.inl (.inr j))))) = G.degree (B1 j) := fun _ => rfl
+  have : ∀ i, G.degree (VEquiv.symm (.inl (.inl (.inr i)))) = G.degree (A2 i) := fun _ => rfl
+  have : ∀ j, G.degree (VEquiv.symm (.inl (.inr j))) = G.degree (B2 j) := fun _ => rfl
+  have : ∀ u, G.degree (VEquiv.symm (.inr u)) = G.degree apex := fun _ => rfl
+  simp_all [degree_A1, degree_B1, degree_A2, degree_B2, degree_apex]; omega
 
 end PikhurkoN5
 
@@ -417,11 +419,11 @@ lemma fin2_eq_one_iff_ne_zero (a : Fin 2) : (a = 1) ↔ a ≠ 0 := by
 
 /-- The set of blue neighbors of `apex` in color class `0`. -/
 noncomputable def blueNeighbors (color : Sym2 V → Fin 2) : Finset V :=
-  (G.neighborFinset apex).filter (fun v => color (Sym2.mk (apex, v)) = 0)
+  (G.neighborFinset apex).filter (fun v => color (s(apex, v)) = 0)
 
 /-- The set of red neighbors of `apex` in color class `1`. -/
 noncomputable def redNeighbors (color : Sym2 V → Fin 2) : Finset V :=
-  (G.neighborFinset apex).filter (fun v => color (Sym2.mk (apex, v)) = 1)
+  (G.neighborFinset apex).filter (fun v => color (s(apex, v)) = 1)
 
 /-- If there is no blue `K_{1,5}`, then the apex has at most 4 blue neighbors. -/
 lemma blueNeighbors_card_le_4
@@ -455,7 +457,7 @@ lemma blueNeighbors_card_le_4
     refine ⟨apex, S, hScard, hapex_notin, ?_⟩
     intro y hy
     have hy' : y ∈ blueNeighbors color := hSsubset hy
-    have hy_in : y ∈ G.neighborFinset apex ∧ color (Sym2.mk (apex, y)) = 0 := by
+    have hy_in : y ∈ G.neighborFinset apex ∧ color (s(apex, y)) = 0 := by
       simpa [blueNeighbors] using hy'
     exact ⟨by simpa using hy_in.1, hy_in.2⟩
 
@@ -470,15 +472,15 @@ lemma red_from_apex_at_least_11
   -- Split neighbors of apex into blue vs. non-blue; identify non-blue with red.
   have hsplit :
       (blueNeighbors color).card
-      + ((G.neighborFinset apex).filter (fun v => ¬ (color (Sym2.mk (apex, v)) = 0))).card
+      + ((G.neighborFinset apex).filter (fun v => ¬ (color (s(apex, v)) = 0))).card
       = (G.neighborFinset apex).card := by
     simpa [blueNeighbors] using
-      (Finset.filter_card_add_filter_neg_card_eq_card
+      (Finset.card_filter_add_card_filter_not
         (s := G.neighborFinset apex)
-        (p := fun v => color (Sym2.mk (apex, v)) = 0))
+        (p := fun v => color (s(apex, v)) = 0))
 
   have hred_is_notblue :
-      (G.neighborFinset apex).filter (fun v => ¬ (color (Sym2.mk (apex, v)) = 0))
+      (G.neighborFinset apex).filter (fun v => ¬ (color (s(apex, v)) = 0))
       =
       redNeighbors color := by
     ext v; by_cases hv : v ∈ G.neighborFinset apex
@@ -490,8 +492,8 @@ lemma red_from_apex_at_least_11
   have hsum : (blueNeighbors color).card + (redNeighbors color).card
               = (G.neighborFinset apex).card := by
     convert Finset.card_sdiff_add_card_eq_card _
-    . simp [←hred_is_notblue, blueNeighbors]
-      grind
+    . simp only [←hred_is_notblue, blueNeighbors]
+      ext v; grind
     . infer_instance
     simp [redNeighbors]
 
@@ -550,7 +552,7 @@ lemma redBlocks_partition_card (color : Sym2 V → Fin 2) :
   classical
   -- Standard `filter` + `filter (¬p)` partition identity.
   simpa [redBlock1, redBlock2] using
-    (Finset.filter_card_add_filter_neg_card_eq_card
+    (Finset.card_filter_add_card_filter_not
       (s := redNeighbors color) (p := fun v => inBlock1 v))
 
 /-- **Pigeonhole step.** If there is no blue `K_{1,5}`, then
@@ -803,7 +805,7 @@ lemma redBlock2B2_card_le_5 (color : Sym2 V → Fin 2) :
 lemma exists_red_A1_of_block1_ge6
     (color : Sym2 V → Fin 2)
     (h6 : 6 ≤ (redBlock1 color).card) :
-    ∃ i : Fin 2, G.Adj apex (A1 i) ∧ color (Sym2.mk (apex, A1 i)) = 1 := by
+    ∃ i : Fin 2, G.Adj apex (A1 i) ∧ color (s(apex, A1 i)) = 1 := by
   classical
   -- From the decomposition `|redBlock1| = |A1-part| + |B1-part|`
   -- and `|B1-part| ≤ 5`, we get `|A1-part| ≥ 1`.
@@ -835,7 +837,7 @@ lemma exists_red_A1_of_block1_ge6
 lemma exists_red_A2_of_block2_ge6
     (color : Sym2 V → Fin 2)
     (h6 : 6 ≤ (redBlock2 color).card) :
-    ∃ i : Fin 3, G.Adj apex (A2 i) ∧ color (Sym2.mk (apex, A2 i)) = 1 := by
+    ∃ i : Fin 3, G.Adj apex (A2 i) ∧ color (s(apex, A2 i)) = 1 := by
   classical
   have hdecomp := redBlock2_card_eq_sum color
   have hB2le := redBlock2B2_card_le_5 color
@@ -862,8 +864,8 @@ in the appropriate clique `A1` or `A2`. -/
 lemma exists_red_clique_neighbor
     (color : Sym2 V → Fin 2)
     (hNoBlueStar : ¬ hasMonoStar G color 0 5) :
-    (∃ i : Fin 2, G.Adj apex (A1 i) ∧ color (Sym2.mk (apex, A1 i)) = 1) ∨
-    (∃ i : Fin 3, G.Adj apex (A2 i) ∧ color (Sym2.mk (apex, A2 i)) = 1) := by
+    (∃ i : Fin 2, G.Adj apex (A1 i) ∧ color (s(apex, A1 i)) = 1) ∨
+    (∃ i : Fin 3, G.Adj apex (A2 i) ∧ color (s(apex, A2 i)) = 1) := by
   classical
   -- Your previous lemma:
   have h := exists_block_receives_at_least_6_red color hNoBlueStar
@@ -884,7 +886,7 @@ open V
 lemma A1_mem_redBlock1_of_red
     (color : Sym2 V → Fin 2) (i : Fin 2)
     (_hAdj : G.Adj apex (A1 i))
-    (hRed : color (Sym2.mk (apex, A1 i)) = 1) :
+    (hRed : color (s(apex, A1 i)) = 1) :
     A1 i ∈ redBlock1 color := by
   classical
   -- First: `A1 i` is a red neighbor of `apex`.
@@ -900,7 +902,7 @@ lemma A1_mem_redBlock1_of_red
 lemma A2_mem_redBlock2_of_red
     (color : Sym2 V → Fin 2) (i : Fin 3)
     (_hAdj : G.Adj apex (A2 i))
-    (hRed : color (Sym2.mk (apex, A2 i)) = 1) :
+    (hRed : color (s(apex, A2 i)) = 1) :
     A2 i ∈ redBlock2 color := by
   classical
   have hRN : A2 i ∈ redNeighbors color := by
@@ -918,7 +920,7 @@ lemma triangle_or_blueStar_from_block1
     (h6 : 6 ≤ (redBlock1 color).card)
     (i : Fin 2)
     (hAdj : G.Adj apex (A1 i))
-    (hRedApexA1 : color (Sym2.mk (apex, A1 i)) = 1) :
+    (hRedApexA1 : color (s(apex, A1 i)) = 1) :
     hasMonoTriangle G color 1 ∨ hasMonoStar G color 0 5 := by
   classical
   -- Put `y0 := A1 i` into `redBlock1`.
@@ -939,7 +941,7 @@ lemma triangle_or_blueStar_from_block1
 
   -- Either some `y ∈ T` makes the edge `(A1 i,y)` red (→ triangle), or all are blue (→ star).
   classical
-  by_cases hTri : ∃ y ∈ T, color (Sym2.mk (A1 i, y)) = 1
+  by_cases hTri : ∃ y ∈ T, color (s(A1 i, y)) = 1
   · rcases hTri with ⟨y, hyT, hyRedA1y⟩
     -- Facts from membership: `y ≠ A1 i`, `y ∈ redBlock1`.
     have hy_erase : y ∈ (redBlock1 color).erase (A1 i) := hTsub hyT
@@ -972,13 +974,13 @@ lemma triangle_or_blueStar_from_block1
     · exact hyRedA1y
     · simpa using hyRedApexY
   · -- No red `(A1 i,y)` with `y ∈ T` ⇒ all `(A1 i,y)` are blue.
-    have hAllBlue : ∀ {y}, y ∈ T → color (Sym2.mk (A1 i, y)) = 0 := by
+    have hAllBlue : ∀ {y}, y ∈ T → color (s(A1 i, y)) = 0 := by
       intro y hy
-      have h1 : color (Sym2.mk (A1 i, y)) ≠ 1 := by
+      have h1 : color (s(A1 i, y)) ≠ 1 := by
         intro contra; exact hTri ⟨y, hy, contra⟩
       -- In `Fin 2`, being not `1` is being `0`.
       -- (If you prefer, keep and reuse your earlier lemma `fin2_eq_one_iff_ne_zero`.)
-      have : color (Sym2.mk (A1 i, y)) = 0 ∨ color (Sym2.mk (A1 i, y)) = 1 := by
+      have : color (s(A1 i, y)) = 0 ∨ color (s(A1 i, y)) = 1 := by
         grind
       exact this.resolve_right h1
     -- Show `A1 i ∉ T`.
@@ -1016,7 +1018,7 @@ lemma triangle_or_blueStar_from_block2
     (h6 : 6 ≤ (redBlock2 color).card)
     (i : Fin 3)
     (hAdj : G.Adj apex (A2 i))
-    (hRedApexA2 : color (Sym2.mk (apex, A2 i)) = 1) :
+    (hRedApexA2 : color (s(apex, A2 i)) = 1) :
     hasMonoTriangle G color 1 ∨ hasMonoStar G color 0 5 := by
   classical
   have hy0_in : A2 i ∈ redBlock2 color := A2_mem_redBlock2_of_red color i hAdj hRedApexA2
@@ -1030,7 +1032,7 @@ lemma triangle_or_blueStar_from_block2
   obtain ⟨T, hTsub, hTcard⟩ :=
     Finset.exists_subset_card_eq ((redBlock2 color).erase (A2 i)) h5
 
-  by_cases hTri : ∃ y ∈ T, color (Sym2.mk (A2 i, y)) = 1
+  by_cases hTri : ∃ y ∈ T, color (s(A2 i, y)) = 1
   · rcases hTri with ⟨y, hyT, hyRedA2y⟩
     have hy_erase : y ∈ (redBlock2 color).erase (A2 i) := hTsub hyT
     have hy_ne : y ≠ A2 i := (Finset.mem_erase.mp hy_erase).1
@@ -1056,11 +1058,11 @@ lemma triangle_or_blueStar_from_block2
     · exact hyRedA2y
     · simpa using hyRedApexY
   ·
-    have hAllBlue : ∀ {y}, y ∈ T → color (Sym2.mk (A2 i, y)) = 0 := by
+    have hAllBlue : ∀ {y}, y ∈ T → color (s(A2 i, y)) = 0 := by
       intro y hy
-      have h1 : color (Sym2.mk (A2 i, y)) ≠ 1 := by
+      have h1 : color (s(A2 i, y)) ≠ 1 := by
         intro contra; exact hTri ⟨y, hy, contra⟩
-      have : color (Sym2.mk (A2 i, y)) = 0 ∨ color (Sym2.mk (A2 i, y)) = 1 := by grind
+      have : color (s(A2 i, y)) = 0 ∨ color (s(A2 i, y)) = 1 := by grind
       exact this.resolve_right h1
     have hnotin : A2 i ∉ T := by
       intro hx

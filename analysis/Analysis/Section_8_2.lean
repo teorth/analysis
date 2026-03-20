@@ -391,22 +391,20 @@ theorem Sum'.eq_tsum {X:Type} (f:X → ℝ) (h: AbsConvergent' f) :
     choose g hg using hE.symm
     have : ((f ∘ Subtype.val) ∘ g:Series).absConverges := by
       apply AbsConvergent.comp hg
-      simp [←AbsConvergent'.of_countable hE,]
+      rw [←AbsConvergent'.of_countable hE]
       exact h.subtype E
     replace this := Sum.eq hg this
-    convert convergesTo_uniq this _
-    replace : ∑' x, f x = ∑' n, f (g n) := calc
-      _ = ∑' x:E, f x := by
-        rw [←tsum_univ f]
-        have hcompl : E = .univ \ {x | f x = 0 } := by aesop
-        convert (tsum_setElem_eq_tsum_setElem_diff _ {x | f x = 0} (by aesop))
-      _ = _ := (Equiv.tsum_eq (Equiv.ofBijective _ hg) _).symm
-    rw [this]
-    unfold convergesTo; rw [Filter.Tendsto.int_natCast_atTop]
-    convert (Summable.tendsto_sum_tsum_nat ?_).comp (tendsto_add_atTop_nat 1) with n
-    . ext N; simp [Series.partial, Nat.range_succ_eq_Icc_zero]
-    rw [AbsConvergent'.iff_Summable] at h
-    exact h.comp_injective (i := Subtype.val ∘ g) (Subtype.val_injective.comp hg.1)
+    convert convergesTo_uniq this _ using 1
+    · replace : ∑' x, f x = ∑' n, f (g n) := calc
+        _ = ∑' x:E, f x := by
+          exact (tsum_subtype_eq_of_support_subset (fun x hx => hx)).symm
+        _ = _ := (Equiv.tsum_eq (Equiv.ofBijective _ hg) _).symm
+      rw [this]
+      unfold convergesTo; rw [Filter.Tendsto.int_natCast_atTop]
+      convert (Summable.tendsto_sum_tsum_nat ?_).comp (tendsto_add_atTop_nat 1) with n
+      . ext N; simp [Series.partial, Nat.range_succ_eq_Icc_zero]
+      rw [AbsConvergent'.iff_Summable] at h
+      exact h.comp_injective (i := Subtype.val ∘ g) (Subtype.val_injective.comp hg.1)
   rw [of_finsupp (A := E.toFinite.toFinset)]; symm; apply tsum_eq_sum
   all_goals simp [E]
 

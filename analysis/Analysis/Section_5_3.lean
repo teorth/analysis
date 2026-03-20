@@ -171,8 +171,9 @@ noncomputable instance Real.add_inst : Add Real where
 theorem Real.LIM_add {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a + LIM b = LIM (a + b) := by
   simp_rw [LIM_def ha, LIM_def hb, LIM_def (Sequence.IsCauchy.add ha hb)]
-  convert Quotient.liftOn₂_mk _ _ _ _
-  rw [dif_pos]
+  convert Quotient.liftOn₂_mk _ _ _ _ using 1
+  simp [LIM]; grind
+
 
 /-- Proposition 5.3.10 (Product of Cauchy sequences is Cauchy) -/
 theorem Sequence.IsCauchy.mul {a b:ℕ → ℚ}  (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
@@ -211,8 +212,8 @@ noncomputable instance Real.mul_inst : Mul Real where
 theorem Real.LIM_mul {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a * LIM b = LIM (a * b) := by
   simp_rw [LIM_def ha, LIM_def hb, LIM_def (Sequence.IsCauchy.mul ha hb)]
-  convert Quotient.liftOn₂_mk _ _ _ _
-  rw [dif_pos]
+  convert Quotient.liftOn₂_mk _ _ _ _ using 1
+  simp [LIM]; grind
 
 instance Real.instRatCast : RatCast Real where
   ratCast := fun q ↦
@@ -372,7 +373,8 @@ theorem Real.inv_isCauchy_of_boundedAwayZero {a:ℕ → ℚ} (ha: BoundedAwayZer
   choose N ha_cauchy using ha_cauchy; use N;
   peel 4 ha_cauchy with n hn m hm ha_cauchy
   calc
-    _ = |(a m - a n) / (a m * a n)| := by congr; field_simp [ha' m, ha' n]; grind
+    _ = |(a m - a n) / (a m * a n)| := by
+        congr; simp only [Pi.inv_apply]; field_simp [ha' m, ha' n]
     _ ≤ |a m - a n| / c^2 := by rw [abs_div, abs_mul, sq]; gcongr <;> solve_by_elim
     _ = |a n - a m| / c^2 := by rw [abs_sub_comm]
     _ ≤ (c^2 * ε) / c^2 := by gcongr
@@ -410,7 +412,7 @@ theorem Real.inv_def {a:ℕ → ℚ} (h: BoundedAwayZero a) (hc: (a:Sequence).Is
   observe hx : LIM a ≠ 0
   set x := LIM a
   have ⟨ h1, h2, h3 ⟩ := (boundedAwayZero_of_nonzero hx).choose_spec
-  simp [instInv, hx, -Quotient.eq]
+  simp [Inv.inv, hx]
   exact inv_of_equiv h2 h1 h hc h3.symm
 
 @[simp]

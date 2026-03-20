@@ -65,7 +65,7 @@ theorem integ_of_uniform_cts {I: BoundedInterval} {f:ℝ → ℝ} (hf: UniformCo
           simp only [length_of_subsingleton, hlength J hJ] at h
           linarith [show 0 < (b-a) / N by positivity]
         replace (y:ℝ) (hy:y ∈ J) : sSup (f '' J) ≤ f y + ε := by
-          apply csSup_le hJnon; grind [mem_iff]
+          apply csSup_le hJnon; rintro _ ⟨z, hz, rfl⟩; exact this hz hy
         replace : sSup (f '' J) - ε ≤ sInf (f '' J) := by
           apply le_csInf hJnon; grind [mem_iff]
         linarith

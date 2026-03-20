@@ -33,7 +33,7 @@ def TaggedPartition.RiemannSum {I: BoundedInterval} {n:ℕ} (f: ℝ → ℝ) (P:
 
 /-- `Sigma (TaggedPartition I)` is the type of all partitions of `I` with an unspecified number `n` of components.  Here we define what it means to converge to zero in this type. -/
 -- A filter on Sigma (TaggedPartition I) converging to zero as the partition norm shrinks.
-instance TaggedPartition.nhds_zero (I: BoundedInterval) : Filter (Sigma (TaggedPartition I)) := Filter.comap (fun P ↦ P.snd.norm) (nhds 0)
+noncomputable def TaggedPartition.nhds_zero (I: BoundedInterval) : Filter (Sigma (TaggedPartition I)) := Filter.comap (fun P ↦ P.snd.norm) (nhds 0)
 
 -- Riemann integrability: Riemann sums converge to R as the partition norm tends to zero.
 def riemann_integral_eq (f: ℝ → ℝ) (I: BoundedInterval) (R: ℝ) : Prop := (TaggedPartition.nhds_zero I).Tendsto (fun P ↦ TaggedPartition.RiemannSum f P.snd) (nhds R)
@@ -46,12 +46,12 @@ noncomputable def TaggedPartition.uniform (I: BoundedInterval) (n: ℕ) (hn: n >
   x_end := by
     show I.a + (I.b - I.a) * ((Fin.last n).val : ℝ) / n = I.b
     rw [Fin.val_last]
-    field_simp
+    field_simp; linarith
   x_mono i j hij := by
     have h_width_pos : 0 < I.b - I.a := by linarith
     have h_n_pos : 0 < (n : ℝ) := Nat.cast_pos.mpr hn
     have : (i.val : ℝ) < (j.val : ℝ) := Nat.cast_lt.mpr hij
-    apply add_lt_add_left
+    apply add_lt_add_right
     apply div_lt_div_of_pos_right
     · exact mul_lt_mul_of_pos_left this h_width_pos
     · exact h_n_pos
@@ -64,7 +64,7 @@ noncomputable def TaggedPartition.uniform (I: BoundedInterval) (n: ℕ) (hn: n >
       have h_n_pos : 0 < (n : ℝ) := Nat.cast_pos.mpr hn
       show I.a + (I.b - I.a) * (i.castSucc.val : ℝ) / n ≤ I.a + (I.b - I.a) * (i.succ.val : ℝ) / n
       rw [show i.castSucc.val = i.val from rfl, Fin.val_succ]
-      apply add_le_add_left
+      apply add_le_add_right
       apply div_le_div_of_nonneg_right
       · apply mul_le_mul_of_nonneg_left _ h_width_nonneg
         norm_num
@@ -84,7 +84,7 @@ lemma TaggedPartition.uniform_norm (I: BoundedInterval) (n: ℕ) (hn: n > 0) (hI
     show (I.a + (I.b - I.a) * (i.succ.val : ℝ) / n) - (I.a + (I.b - I.a) * (i.castSucc.val : ℝ) / n) = (I.b - I.a) / n
     rw [show i.castSucc.val = i.val from rfl, Fin.val_succ]
     field_simp
-    ring
+    push_cast; ring
   -- The supremum of a constant function is that constant
   have h_bdd : BddAbove (Set.range P.delta) := Set.Finite.bddAbove (Set.finite_range P.delta)
   have h_le : ∀ i, P.delta i ≤ (I.b - I.a) / n := by
@@ -147,8 +147,8 @@ instance TaggedPartition.nhds_zero_neBot (I: BoundedInterval) (hI: I = Icc I.a I
       let i0 : Fin n := ⟨0, h_n_pos⟩
       have h_delta_nonneg : 0 ≤ P.delta i0 := by
         unfold TaggedPartition.delta
-        have h_lt : i0.castSucc < i0.succ := Fin.castSucc_lt_succ i0
-        have h_x_lt : P.x i0.castSucc < P.x i0.succ := P.x_mono.imp h_lt
+        have h_lt : i0.castSucc < i0.succ := Fin.castSucc_lt_succ
+        have h_x_lt : P.x i0.castSucc < P.x i0.succ := P.x_mono h_lt
         linarith
       have h_bdd : BddAbove (Set.range P.delta) := Set.Finite.bddAbove (Set.finite_range P.delta)
       have h_le_sup : P.delta i0 ≤ iSup P.delta := le_ciSup h_bdd i0
@@ -179,7 +179,7 @@ lemma riemann_sum_eq_zero_of_zero_length {f : ℝ → ℝ} {I : BoundedInterval}
     have h_last_pos : 0 < (Fin.last n).val := by rw [Fin.val_last]; exact h_n_pos
     -- This means (0 : Fin (n+1)) < Fin.last n as Fin values
     have h_fin_lt : (0 : Fin (n+1)) < Fin.last n := h_last_pos
-    have : P.x 0 < P.x (Fin.last n) := P.x_mono.imp h_fin_lt
+    have : P.x 0 < P.x (Fin.last n) := P.x_mono h_fin_lt
     rw [P.x_start, P.x_end] at this
     unfold BoundedInterval.length at h_len
     simp at h_len
@@ -355,8 +355,8 @@ lemma riemann_integral_eq_iff {f:ℝ → ℝ} {I: BoundedInterval} (R:ℝ): riem
         have h_delta_nonneg : 0 ≤ P.delta i0 := by
           unfold TaggedPartition.delta
           -- Show P.x i0.castSucc ≤ P.x i0.succ using strict monotonicity
-          have h_lt : i0.castSucc < i0.succ := Fin.castSucc_lt_succ i0
-          have h_x_lt : P.x i0.castSucc < P.x i0.succ := P.x_mono.imp h_lt
+          have h_lt : i0.castSucc < i0.succ := Fin.castSucc_lt_succ
+          have h_x_lt : P.x i0.castSucc < P.x i0.succ := P.x_mono h_lt
           linarith
         -- Show 0 ≤ iSup by showing 0 ≤ some element in the range
         -- The range is bounded above since Fin n is finite
@@ -415,8 +415,8 @@ lemma riemann_integral_eq_iff {f:ℝ → ℝ} {I: BoundedInterval} (R:ℝ): riem
           let i0 : Fin n := Fin.mk 0 h_fin_zero
           have h_delta_nonneg : 0 ≤ P.delta i0 := by
             unfold TaggedPartition.delta
-            have h_lt : i0.castSucc < i0.succ := Fin.castSucc_lt_succ i0
-            have h_x_lt : P.x i0.castSucc < P.x i0.succ := P.x_mono.imp h_lt
+            have h_lt : i0.castSucc < i0.succ := Fin.castSucc_lt_succ
+            have h_x_lt : P.x i0.castSucc < P.x i0.succ := P.x_mono h_lt
             linarith
           have h_bdd : BddAbove (Set.range P.delta) := by
             have h_finite : (Set.range P.delta).Finite := Set.finite_range P.delta
@@ -503,7 +503,7 @@ lemma TaggedPartition.uniform_delta {I: BoundedInterval} {n: ℕ} (hn: n > 0) (h
   simp only
   rw [Fin.val_succ, show i.castSucc.val = i.val from rfl]
   field_simp
-  ring
+  push_cast; ring
 
 /-- For any x in [a,b], find the subinterval index containing x -/
 noncomputable def findSubintervalIndex (lo hi : ℝ) (n : ℕ) (hn : n > 0) (x : ℝ) (_hx : lo ≤ x ∧ x ≤ hi) : Fin n :=
@@ -529,7 +529,7 @@ lemma findSubintervalIndex_spec (lo hi : ℝ) (n : ℕ) (hn : n > 0) (hlohi : lo
            _ = x - lo := by field_simp
     have h_k_le_floor : k ≤ Nat.floor ((x - lo) / Δ) := Nat.min_le_left _ _
     calc lo + k * Δ ≤ lo + Nat.floor ((x - lo) / Δ) * Δ := by
-           apply add_le_add_left
+           apply add_le_add_right
            apply mul_le_mul_of_nonneg_right (Nat.cast_le.mpr h_k_le_floor) (le_of_lt hΔ_pos)
          _ ≤ lo + (x - lo) := by linarith [h_floor_le]
          _ = x := by ring
@@ -574,7 +574,7 @@ lemma findSubintervalIndex_spec (lo hi : ℝ) (n : ℕ) (hn : n > 0) (hlohi : lo
         calc x = lo + (x - lo) := by ring
              _ = lo + ((x - lo) / Δ) * Δ := by field_simp
              _ < lo + (↑(Nat.floor ((x - lo) / Δ)) + 1) * Δ := by
-                 apply add_lt_add_left
+                 apply add_lt_add_right
                  apply mul_lt_mul_of_pos_right h_lt_floor hΔ_pos
              _ = lo + (↑k + 1) * Δ := by rw [h_k_eq_floor]
       linarith [h_lt]
@@ -738,7 +738,7 @@ structure PiecewiseConstantFunction (I: BoundedInterval) where
   f : ℝ → ℝ
   T : Finset BoundedInterval
   c : T → ℝ
-  disjoint: T.toSet.PairwiseDisjoint BoundedInterval.toSet
+  disjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet
   cover : I.toSet = ⋃ J ∈ T, J.toSet
   const : ∀ J:T, ∀ x ∈ J.val, f x = c J
 
@@ -1042,7 +1042,7 @@ lemma RiemannIntegrableOn.continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I
 
 -- A function that is continuous on each piece of a partition is Riemann integrable on the whole interval.
 lemma RiemannIntegrableOn.piecewise_continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I = Icc I.a I.b)
- (T: Finset BoundedInterval)  (hdisjoint: T.toSet.PairwiseDisjoint BoundedInterval.toSet)
+ (T: Finset BoundedInterval)  (hdisjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet)
  (hcover : I.toSet = ⋃ J ∈ T, J.toSet) (hcont: ∀ J ∈ T, ContinuousOn f J.toSet) : RiemannIntegrableOn f I := by sorry
 
 /-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/

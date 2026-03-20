@@ -134,7 +134,7 @@ theorem PiecewiseConstantOn.RS_integ_of_comp {a b:ℝ} (hab: a < b) {φ f:ℝ �
   choose P' hf using hf
   set P := P'.remove_empty
   replace hf : PiecewiseConstantWith f P := by
-    intro J hJ; simp [P, Partition.remove_empty, Partition.instMembership] at hJ; exact hf J hJ.1
+    intro J hJ; simp [P, (· ∈ ·)] at hJ; exact hf J hJ.1
   rw [integ_def hf]
   unfold PiecewiseConstantWith.integ
   set φ_inv : P.intervals → Set ℝ := fun J ↦ { x:ℝ | x ∈ Set.Icc a b ∧ φ x ∈ (J:Set ℝ) }

@@ -32,7 +32,7 @@ theorem Series.root_test_pos {s : Series}
     set α := α'.toReal
     have hαα' : α' = α := by
       symm; apply coe_toReal
-      . contrapose! h; simp [h]
+      . contrapose! h; simp [h]; exact le_top
       contrapose! hpos; simp [hpos]
     rw [hαα'] at h hpos; norm_cast at h hpos
     set ε := (1-α)/2
@@ -109,7 +109,7 @@ theorem Series.ratio_ineq {c:ℤ → ℝ} (m:ℤ) (hpos: ∀ n ≥ m, c n > 0) :
   refine ⟨ ?_, liminf_le_limsup ?_ ?_, ?_ ⟩ <;> try isBoundedDefault
   . sorry
   set L' := limsup (fun n ↦ ((c (n+1) / c n:ℝ):EReal)) .atTop
-  by_cases hL : L' = ⊤; simp [hL]
+  by_cases hL : L' = ⊤; · rw [hL]; exact le_top
   have hL'pos : 0 ≤ L' := by
     apply le_limsup_of_frequently_le'
     rw [frequently_atTop]
@@ -123,7 +123,7 @@ theorem Series.ratio_ineq {c:ℤ → ℝ} (m:ℤ) (hpos: ∀ n ≥ m, c n > 0) :
   have hLpos : 0 ≤ L := by rw [hL'] at hL'pos; norm_cast at hL'pos
   apply le_of_forall_gt_imp_ge_of_dense
   intro y hy
-  by_cases hy' : y = ⊤; simp [hy']
+  by_cases hy' : y = ⊤; · simp [hy']; exact le_top
   have : y = y.toReal := by symm; apply coe_toReal hy'; contrapose! hy; simp [hy]
   rw [this, hL', EReal.coe_lt_coe_iff] at hy
   set ε := y.toReal - L

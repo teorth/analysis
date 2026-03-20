@@ -75,7 +75,7 @@ theorem SetTheory.Set.mem_slice (x z:Object) (Y:Set) :
 
 /-- Definition 3.5.4 (Cartesian product) -/
 abbrev SetTheory.Set.cartesian (X Y:Set) : Set :=
-  union (X.replace (P := fun x z ↦ z = slice x Y) (by grind))
+  union (X.replace (P := fun x z ↦ z = slice x Y) (by intro _ _ _ ⟨h1, h2⟩; exact h1.trans h2.symm))
 
 /-- This instance enables the ×ˢ notation for Cartesian product. -/
 instance SetTheory.Set.inst_SProd : SProd Set Set Set where
@@ -160,9 +160,9 @@ noncomputable abbrev SetTheory.Set.prod_commutator (X Y:Set) : X ×ˢ Y ≃ Y ×
 /-- Example 3.5.5. A function of two variables can be thought of as a function of a pair. -/
 noncomputable abbrev SetTheory.Set.curry_equiv {X Y Z:Set} : (X → Y → Z) ≃ (X ×ˢ Y → Z) where
   toFun f z := f (fst z) (snd z)
-  invFun f x y := f ⟨ (⟨ x, y ⟩:OrderedPair), by simp ⟩
-  left_inv _ := by simp
-  right_inv _ := by simp [←pair_eq_fst_snd]
+  invFun f x y := f (mk_cartesian x y)
+  left_inv _ := by ext; simp
+  right_inv _ := by simp
 
 /-- Definition 3.5.6.  The indexing set `I` plays the role of `{ i : 1 ≤ i ≤ n }` in the text.
     See Exercise 3.5.10 below for some connections betweeen this concept and the preceding notion

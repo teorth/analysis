@@ -91,7 +91,7 @@ lemma ratPow_lim_uniq {x α:ℝ} (hx: x > 0) {q q': ℕ → ℚ}
       rcongr _ n
       rw [←rpow_add (by linarith)]
       simp [r]
-    grind
+    exact this.2.symm
   intro ε hε
   have h1 := lim_of_roots hx
   have h2 := tendsTo_inv h1 (by norm_num)

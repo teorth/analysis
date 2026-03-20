@@ -230,14 +230,10 @@ lemma exercise_1_2_1_union :
       classical
       -- Continuity of the forward and inverse maps
       have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-        have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-          refine continuous_pi ?_
-          intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-        simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+        show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+        exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
       have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-        have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-          continuous_apply (⟨0, by decide⟩ : Fin 1)
-        simpa [EuclideanSpace'.equiv_Real] using this
+        exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
       -- Package the equivalence as a homeomorphism to apply the library lemma
       let e : ℝ ≃ₜ EuclideanSpace' 1 :=
         { toEquiv := Real.equiv_EuclideanSpace'
@@ -355,14 +351,10 @@ lemma exercise_1_2_1_union :
       classical
       -- Continuity of the forward and inverse maps
       have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-        have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-          refine continuous_pi ?_
-          intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-        simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+        show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+        exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
       have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-        have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-          continuous_apply (⟨0, by decide⟩ : Fin 1)
-        simpa [EuclideanSpace'.equiv_Real] using this
+        exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
       -- Package these maps as a homeomorphism and apply the general lemma on interiors
       let e : ℝ ≃ₜ EuclideanSpace' 1 :=
         { toEquiv := Real.equiv_EuclideanSpace'
@@ -1069,7 +1061,7 @@ lemma Lebesgue_outer_measure_of_dim_zero {E: Set (EuclideanSpace' 0)} :
               intro n h
               simp at h
               exact h
-            exact (summable_of_finite_support h_supp).hasSum
+            exact (summable_of_hasFiniteSupport h_supp).hasSum
           · -- Case 2: X is infinite
             -- The sum is Top. We prove HasSum g Top.
             have h_top : HasSum g ⊤ := by
@@ -1087,9 +1079,7 @@ lemma Lebesgue_outer_measure_of_dim_zero {E: Set (EuclideanSpace' 0)} :
           · apply Finset.single_le_sum (fun i _ => h_nonneg i)
             simp
           · -- Now show ∑ n ∈ range (n₀+1), g n ≤ tsum
-            apply sum_le_hasSum (Finset.range (n₀ + 1))
-            · intro i _; exact h_nonneg i
-            · exact this
+            exact sum_le_hasSum (L := .unconditional ℕ) _ (fun i _ => h_nonneg i) this
         rw [h_single] at h_fin_le
         exact h_fin_le
       rw [h_gn0] at h_le
@@ -1170,7 +1160,7 @@ lemma EReal.sInf_image_coe {s : Set ℝ} (hs : s.Nonempty) (h_bdd : BddBelow s) 
         by_cases h_top : sInf ((fun y : ℝ => (y : EReal)) '' s) = ⊤
         · -- Get contradiction: ↑x₀ ≥ ⊤
           have : (x₀ : EReal) ≥ ⊤ := by rw [←h_top]; exact h_le_x0
-          simp at this
+          simp [not_le.mpr] at this
         · -- sInf(↑''s) is not ⊥ (from h_bot) and not ⊤ (from h_top)
           -- So it must be a casted real
           -- Use EReal trichotomy: either ⊥, ⊤, or casted real
@@ -1513,7 +1503,6 @@ theorem Countable.Lebesgue_measure {d:ℕ} (hd : 0 < d) {E: Set (EuclideanSpace'
          obtain ⟨n, rfl⟩ := hx
          simp [Set.mem_iUnion]
          use n
-         unfold Box.toSet
          intro i
          simp [BoundedInterval.toSet]
          exact ⟨le_refl _, le_refl _⟩
