@@ -52,8 +52,8 @@ def CartesianProduct.equiv {I U: Type} (X : I → Set U) :
 def Function.equiv {I X:Type} : (∀ _:I, X) ≃ (I → X) := {
   toFun f := f
   invFun f := f
-  left_inv f := rfl
-  right_inv f := rfl
+  left_inv _ := rfl
+  right_inv _ := rfl
 }
 
 def product_zero_equiv {X: Fin 0 → Type} : (∀ i:Fin 0, X i) ≃ PUnit := {
@@ -147,7 +147,8 @@ theorem exists_function {X Y : Type} {P : X → Y → Prop} (h: ∀ x, ∃ y, P 
 from `exists_function`, avoiding previous results that relied more explicitly
 on the axiom of choice. -/
 theorem axiom_of_choice_from_exists_function {I: Type} {X: I → Type} (h : ∀ i, Nonempty (X i)) :
-  Nonempty (∀ i, X i) := ⟨ fun i ↦ (h i).some ⟩
+  Nonempty (∀ i, X i) := by
+  sorry
 
 /-- Exercise 8.4.2 -/
 theorem exists_set_singleton_intersect {I U:Type} {X: I → Set U} (h: Set.PairwiseDisjoint .univ X)
