@@ -1,0 +1,303 @@
+exclude = ["Analysis.Misc", "Analysis.MeasureTheory"]
+docstrings_as_text = true
+landing_page = "Analysis"
+
+[order_children]
+"Analysis" = [
+  "Analysis.Section_2_1",
+  "Analysis.Section_2_2",
+  "Analysis.Section_2_3",
+  "Analysis.Section_2_epilogue",
+  "Analysis.Section_3_1",
+  "Analysis.Section_3_2",
+  "Analysis.Section_3_3",
+  "Analysis.Section_3_4",
+  "Analysis.Section_3_5",
+  "Analysis.Section_3_6",
+  "Analysis.Section_3_epilogue",
+  "Analysis.Section_4_1",
+  "Analysis.Section_4_2",
+  "Analysis.Section_4_3",
+  "Analysis.Section_4_4",
+  "Analysis.Section_5_1",
+  "Analysis.Section_5_2",
+  "Analysis.Section_5_3",
+  "Analysis.Section_5_4",
+  "Analysis.Section_5_5",
+  "Analysis.Section_5_6",
+  "Analysis.Section_5_epilogue",
+  "Analysis.Section_6_1",
+  "Analysis.Section_6_2",
+  "Analysis.Section_6_3",
+  "Analysis.Section_6_4",
+  "Analysis.Section_6_5",
+  "Analysis.Section_6_6",
+  "Analysis.Section_6_7",
+  "Analysis.Section_6_epilogue",
+  "Analysis.Section_7_1",
+  "Analysis.Section_7_2",
+  "Analysis.Section_7_3",
+  "Analysis.Section_7_4",
+  "Analysis.Section_7_5",
+  "Analysis.Section_8_1",
+  "Analysis.Section_8_2",
+  "Analysis.Section_8_3",
+  "Analysis.Section_8_4",
+  "Analysis.Section_8_5",
+  "Analysis.Section_9_1",
+  "Analysis.Section_9_2",
+  "Analysis.Section_9_3",
+  "Analysis.Section_9_4",
+  "Analysis.Section_9_5",
+  "Analysis.Section_9_6",
+  "Analysis.Section_9_7",
+  "Analysis.Section_9_8",
+  "Analysis.Section_9_9",
+  "Analysis.Section_9_10",
+  "Analysis.Section_10_1",
+  "Analysis.Section_10_2",
+  "Analysis.Section_10_3",
+  "Analysis.Section_10_4",
+  "Analysis.Section_10_5",
+  "Analysis.Section_11_1",
+  "Analysis.Section_11_2",
+  "Analysis.Section_11_3",
+  "Analysis.Section_11_4",
+  "Analysis.Section_11_5",
+  "Analysis.Section_11_6",
+  "Analysis.Section_11_7",
+  "Analysis.Section_11_8",
+  "Analysis.Section_11_9",
+  "Analysis.Section_11_10",
+  "Analysis.Appendix_A_1",
+  "Analysis.Appendix_A_2",
+  "Analysis.Appendix_A_3",
+  "Analysis.Appendix_A_4",
+  "Analysis.Appendix_A_5",
+  "Analysis.Appendix_A_6",
+  "Analysis.Appendix_A_7",
+  "Analysis.Appendix_B_1",
+  "Analysis.Appendix_B_2",
+]
+
+[modules."Analysis.Section_2_1"]
+title = "2.1. The Peano Axioms"
+
+[modules."Analysis.Section_2_2"]
+title = "2.2. Addition"
+
+[modules."Analysis.Section_2_3"]
+title = "2.3. Multiplication"
+
+[modules."Analysis.Section_2_epilogue"]
+title = "2. (epilogue) Equivalence of naturals"
+
+[modules."Analysis.Section_3_1"]
+title = "3.1. Fundamentals"
+
+[modules."Analysis.Section_3_2"]
+title = "3.2. Russell's paradox"
+
+[modules."Analysis.Section_3_3"]
+title = "3.3. Functions"
+
+[modules."Analysis.Section_3_4"]
+title = "3.4. Images and inverse images"
+
+[modules."Analysis.Section_3_5"]
+title = "3.5. Cartesian products"
+
+[modules."Analysis.Section_3_6"]
+title = "3.6. Cardinality of sets"
+
+[modules."Analysis.Section_3_epilogue"]
+title = "3. (epilogue) Connections with ZFSet"
+
+[modules."Analysis.Section_4_1"]
+title = "4.1. The integers"
+
+[modules."Analysis.Section_4_2"]
+title = "4.2. The rationals"
+
+[modules."Analysis.Section_4_3"]
+title = "4.3. Absolute value and exponentiation"
+
+[modules."Analysis.Section_4_4"]
+title = "4.4. Gaps in the rational numbers"
+
+[modules."Analysis.Section_5_1"]
+title = "5.1. Cauchy sequences"
+
+[modules."Analysis.Section_5_2"]
+title = "5.2. Equivalent Cauchy sequences"
+
+[modules."Analysis.Section_5_3"]
+title = "5.3. The construction of the real numbers"
+
+[modules."Analysis.Section_5_4"]
+title = "5.4. Ordering the reals"
+
+[modules."Analysis.Section_5_5"]
+title = "5.5. The least upper bound property"
+
+[modules."Analysis.Section_5_6"]
+title = "5.6. Real exponentiation, part I"
+
+[modules."Analysis.Section_5_epilogue"]
+title = "5. (epilogue) Equivalence of reals"
+
+[modules."Analysis.Section_6_1"]
+title = "6.1. Convergence and limit laws"
+
+[modules."Analysis.Section_6_2"]
+title = "6.2. The extended real number system"
+
+[modules."Analysis.Section_6_3"]
+title = "6.3. Suprema and Infima of sequences"
+
+[modules."Analysis.Section_6_4"]
+title = "6.4. Limsup, Liminf, and limit points"
+
+[modules."Analysis.Section_6_5"]
+title = "6.5. Some standard limits"
+
+[modules."Analysis.Section_6_6"]
+title = "6.6. Subsequences"
+
+[modules."Analysis.Section_6_7"]
+title = "6.7. Real exponentiation, part II"
+
+[modules."Analysis.Section_6_epilogue"]
+title = "6. (epilogue) Connections with Mathlib limits"
+
+[modules."Analysis.Section_7_1"]
+title = "7.1. Finite series"
+
+[modules."Analysis.Section_7_2"]
+title = "7.2. Infinite series"
+
+[modules."Analysis.Section_7_3"]
+title = "7.3. Sums of non-negative numbers"
+
+[modules."Analysis.Section_7_4"]
+title = "7.4. Rearrangement of series"
+
+[modules."Analysis.Section_7_5"]
+title = "7.5. The root and ratio tests"
+
+[modules."Analysis.Section_8_1"]
+title = "8.1. Countability"
+
+[modules."Analysis.Section_8_2"]
+title = "8.2. Summation on infinite sets"
+
+[modules."Analysis.Section_8_3"]
+title = "8.3. Uncountable sets"
+
+[modules."Analysis.Section_8_4"]
+title = "8.4. The axiom of choice"
+
+[modules."Analysis.Section_8_5"]
+title = "8.5. Ordered sets"
+
+[modules."Analysis.Section_9_1"]
+title = "9.1. Subsets of the real line"
+
+[modules."Analysis.Section_9_2"]
+title = "9.2. The algebra of real-valued functions"
+
+[modules."Analysis.Section_9_3"]
+title = "9.3. Limiting values of functions"
+
+[modules."Analysis.Section_9_4"]
+title = "9.4. Continuous functions"
+
+[modules."Analysis.Section_9_5"]
+title = "9.5. Limits from the left and right"
+
+[modules."Analysis.Section_9_6"]
+title = "9.6. The maximum principle"
+
+[modules."Analysis.Section_9_7"]
+title = "9.7. The intermediate value theorem"
+
+[modules."Analysis.Section_9_8"]
+title = "9.8. Monotone functions"
+
+[modules."Analysis.Section_9_9"]
+title = "9.9. Uniform continuity"
+
+[modules."Analysis.Section_9_10"]
+title = "9.10. Limits at infinity"
+
+[modules."Analysis.Section_10_1"]
+title = "10.1. Basic definitions"
+
+[modules."Analysis.Section_10_2"]
+title = "10.2. Local maxima, local minima, and derivatives"
+
+[modules."Analysis.Section_10_3"]
+title = "10.3. Monotone functions and derivatives"
+
+[modules."Analysis.Section_10_4"]
+title = "10.4. The inverse function theorem"
+
+[modules."Analysis.Section_10_5"]
+title = "10.5. L'Hôpital's rule"
+
+[modules."Analysis.Section_11_1"]
+title = "11.1. Partitions"
+
+[modules."Analysis.Section_11_2"]
+title = "11.2. Piecewise constant functions"
+
+[modules."Analysis.Section_11_3"]
+title = "11.3. Upper and lower Riemann integrals"
+
+[modules."Analysis.Section_11_4"]
+title = "11.4. Basic properties of the Riemann integral"
+
+[modules."Analysis.Section_11_5"]
+title = "11.5. Riemann integrability of continuous functions"
+
+[modules."Analysis.Section_11_6"]
+title = "11.6. Riemann integrability of monotone functions"
+
+[modules."Analysis.Section_11_7"]
+title = "11.7. A non-Riemann integrable function"
+
+[modules."Analysis.Section_11_8"]
+title = "11.8. The Riemann-Stieltjes integral"
+
+[modules."Analysis.Section_11_9"]
+title = "11.9. The two fundamental theorems of calculus"
+
+[modules."Analysis.Section_11_10"]
+title = "11.10. Consequences of the fundamental theorem of calculus"
+
+[modules."Analysis.Appendix_A_1"]
+title = "A.1. Mathematical statements"
+
+[modules."Analysis.Appendix_A_2"]
+title = "A.2. Implication"
+
+[modules."Analysis.Appendix_A_3"]
+title = "A.3. The structure of proofs"
+
+[modules."Analysis.Appendix_A_4"]
+title = "A.4. Variables and quantifiers"
+
+[modules."Analysis.Appendix_A_5"]
+title = "A.5. Nested quantifiers"
+
+[modules."Analysis.Appendix_A_6"]
+title = "A.6. Some examples of proofs and quantifiers"
+
+[modules."Analysis.Appendix_A_7"]
+title = "A.7. Equality"
+
+[modules."Analysis.Appendix_B_1"]
+title = "B.1. The decimal representation of natural numbers"
+
+[modules."Analysis.Appendix_B_2"]
+title = "B.2. The decimal representation of real numbers"
