@@ -92,7 +92,7 @@ private lemma UnsignedSimpleFunction.toRealSimple {d:ℕ} {g: EuclideanSpace' d 
     -- Need: (c'_i * indicator'(E_i)(x) : EReal) = c_i * EReal.indicator(E_i)(x)
     by_cases hx : x ∈ E i
     · -- x ∈ E i: both sides equal c_i (resp. c_i.toReal cast)
-      simp only [hc'_def, Set.indicator'_of_mem hx, mul_one,
+      simp only [hc'_def, Set.indicator', Set.indicator_of_mem hx, mul_one,
         EReal.indicator, Real.EReal_fun]
       -- Goal: ((c i).toReal : EReal) = c i
       have hci_ne_bot : c i ≠ ⊥ :=
@@ -102,16 +102,16 @@ private lemma UnsignedSimpleFunction.toRealSimple {d:ℕ} {g: EuclideanSpace' d 
         apply hfin x
         rw [heq]; simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
         apply eq_top_iff.mpr
-        have : c i * EReal.indicator (E i) x = ⊤ := by
-          simp only [hci_top, EReal.indicator, Real.EReal_fun, Set.indicator'_of_mem hx]
-          simp
-        rw [← this]
-        apply Finset.single_le_sum (f := fun j => c j * EReal.indicator (E j) x)
-          (fun j _ => mul_nonneg (hcond j).2 (by
-            simp only [EReal.indicator, Real.EReal_fun]
-            by_cases hxj : x ∈ E j
-            · simp [Set.indicator'_of_mem hxj]
-            · simp [Set.indicator'_of_notMem hxj])) (Finset.mem_univ i)
+        have htop : c i * EReal.indicator (E i) x = ⊤ := by
+          simp [hci_top, EReal.indicator, Real.EReal_fun, Set.indicator', Set.indicator_of_mem hx]
+        calc ⊤ = c i * EReal.indicator (E i) x := htop.symm
+          _ ≤ ∑ j, c j * EReal.indicator (E j) x :=
+            Finset.single_le_sum (f := fun j => c j * EReal.indicator (E j) x)
+              (fun j _ => mul_nonneg (hcond j).2 (by
+                simp only [EReal.indicator, Real.EReal_fun]
+                by_cases hxj : x ∈ E j
+                · simp [Set.indicator'_of_mem hxj]
+                · simp [Set.indicator'_of_notMem hxj])) (Finset.mem_univ i)
       rw [show (1 : ℝ).toEReal = (1 : EReal) from rfl, mul_one]
       exact EReal.coe_toReal hci_ne_top hci_ne_bot
     · -- x ∉ E i: both sides are 0
@@ -1047,7 +1047,7 @@ private lemma Box.scaled_indicator_approx_continuous {d:ℕ} (B : Box d) (c : �
     -- Pointwise bound: |diff(x)| ≤ |c| and diff = 0 outside U
     have hdiff_bound : ∀ x, ‖diff x‖ ≤ |c| := by
       intro x
-      simp only [diff, hdiff_def, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+      simp only [diff, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
       have hφ_bdd := hφ_range x
       rw [show c * B.toSet.indicator' x - c * φ x = c * (B.toSet.indicator' x - φ x) by ring]
       rw [norm_mul, Real.norm_eq_abs]
@@ -1062,7 +1062,7 @@ private lemma Box.scaled_indicator_approx_continuous {d:ℕ} (B : Box d) (c : �
         · rw [Set.indicator'_of_notMem hxB]; linarith [hφ_bdd.1]
     have hdiff_support : ∀ x, x ∉ U → diff x = 0 := by
       intro x hxU
-      simp only [diff, hdiff_def, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+      simp only [diff, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
       rw [Set.indicator'_of_notMem (fun h => hxU (hB_sub_U h)), mul_zero,
         hφ_zero' x hxU, mul_zero, sub_self]
     -- Measurability
@@ -1099,7 +1099,7 @@ private lemma Box.scaled_indicator_approx_continuous {d:ℕ} (B : Box d) (c : �
       by_cases hxK : x ∈ K
       · -- On K: diff = 0
         have hdx : diff x = 0 := by
-          simp only [diff, hdiff_def, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+          simp only [diff, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
           have h1 := hφ_one hxK; simp only [Pi.one_apply] at h1
           rw [Set.indicator'_of_mem (hK_sub hxK), mul_one, h1, mul_one, sub_self]
         rw [hdx, norm_zero]
@@ -1158,15 +1158,15 @@ private lemma Box.scaled_indicator_approx_continuous {d:ℕ} (B : Box d) (c : �
           _ = (Real.toEReal |c|) * Lebesgue_measure U := h_integ
           _ < ⊤ := by
               apply Ne.lt_top
-              rw [EReal.mul_ne_top]
-              exact ⟨Or.inl (EReal.coe_ne_bot _),
-                Or.inl (le_of_lt (EReal.coe_pos.mpr hc_abs_pos)),
-                Or.inl (EReal.coe_ne_top _),
-                Or.inr (ne_of_lt hU_fin)⟩
+              exact (EReal.mul_ne_top (↑|c|) (Lebesgue_measure U)).mpr
+                ⟨Or.inl (EReal.coe_ne_bot _),
+                 Or.inl (le_of_lt (EReal.coe_pos.mpr hc_abs_pos)),
+                 Or.inl (EReal.coe_ne_top _),
+                 Or.inr (ne_of_lt hU_fin)⟩
     -- g = (c • B.toSet.indicator') - diff, so g is AI
     have hg_ai : RealAbsolutelyIntegrable g := by
       have : g = c • B.toSet.indicator' - diff := by
-        ext x; simp [diff, hdiff_def, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+        ext x; simp [diff, hg_def, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
       rw [this]
       exact hcB_ai.sub hdiff_ai
     refine ⟨g, ?_, ?_, hg_ai, ?_⟩
@@ -1229,7 +1229,7 @@ private lemma Box.scaled_indicator_approx_continuous {d:ℕ} (B : Box d) (c : �
 
 -- Helper: a step function can be approximated by a continuous compactly supported function
 private lemma RealStepFunction.approx_by_continuous_compact_aux {d:ℕ}
-    {h : EuclideanSpace' d → ℝ} (hh : RealStepFunction h) (hh_ai : RealAbsolutelyIntegrable h)
+    {h : EuclideanSpace' d → ℝ} (hh : RealStepFunction h) (_hh_ai : RealAbsolutelyIntegrable h)
     (δ : ℝ) (hδ : 0 < δ) :
     ∃ (g : EuclideanSpace' d → ℝ), Continuous g ∧ CompactlySupported g ∧
       RealAbsolutelyIntegrable g ∧ PreL1.norm (h - g) ≤ δ := by

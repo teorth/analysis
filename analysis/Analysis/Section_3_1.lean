@@ -211,7 +211,7 @@ instance SetTheory.Set.instInsert : Insert Object Set where
 
 @[simp]
 theorem SetTheory.Set.mem_insert (a b: Object) (X: Set) : a ∈ insert b X ↔ a = b ∨ a ∈ X := by
-  simp [instInsert]
+  simp only [insert, Insert.insert, mem_union, mem_singleton]
 
 /-- Axiom 3.3(b) (pair).  Note: in some applications one may have to cast {a,b}
     to Set. -/
@@ -620,11 +620,11 @@ lemma SetTheory.Object.ofnat_eq' {n:ℕ} : (ofNat(n):Object) = (n:Object) := rfl
 
 @[simp]
 lemma SetTheory.Object.ofnat_eq'' {n:Nat} : ((n:ℕ):Object) = (n: Object) := by
-  simp [instNatCast, Nat.cast, Set.instNatCast]
+  simp [Nat.cast, NatCast.natCast, Equiv.apply_symm_apply]
 
 @[simp]
 lemma SetTheory.Object.ofnat_eq''' {n:ℕ} {hn} : ((⟨(n:Object), hn⟩: nat): ℕ) = n := by
-  simp [instNatCast, Nat.cast, Set.instNatCast]
+  simp [Nat.cast, NatCast.natCast, Equiv.symm_apply_apply]
 
 lemma SetTheory.Set.nat_coe_eq {n:ℕ} : (n:Nat) = OfNat.ofNat n := rfl
 

@@ -164,7 +164,7 @@ lemma f_fixed {a:ZMod N} {ha: a ∉ B} {b:B} (hb: f ha b = b): 2 * b.val = a + (
   grind
 
 
-noncomputable def z2_vact {a:ZMod N} (ha: a ∉ B) : AddAction (ZMod 2) B :=
+@[implicit_reducible] noncomputable def z2_vact {a:ZMod N} (ha: a ∉ B) : AddAction (ZMod 2) B :=
 {
   vadd i b := if i=1 then f ha b else b
   zero_vadd b := by
@@ -172,8 +172,7 @@ noncomputable def z2_vact {a:ZMod N} (ha: a ∉ B) : AddAction (ZMod 2) B :=
     simp
   add_vadd i j b := by
     change (if i + j = 1 then f ha b else b) = if i = 1 then f ha (if j = 1 then f ha b else b) else (if j = 1 then f ha b else b)
-    fin_cases i <;> fin_cases j <;> simp
-    exact (f_inv ha b).symm
+    fin_cases i <;> fin_cases j <;> dsimp only <;> first | rfl | exact (f_inv ha b).symm
 }
 
 /-- If there is one fixed point, there is another. -/
@@ -187,7 +186,7 @@ lemma f_second_fixed {a:ZMod N} {ha: a ∉ B} {b:B} (hb: f ha b = b) : ∃ c:B, 
   replace := calc
     N * 2 = ∑ a, Fintype.card (action.fixedBy { x // x ∈ B } a) := this.symm
     _ = Fintype.card (action.fixedBy { x // x ∈ B } 0) + Fintype.card S := by
-      convert Fin.sum_univ_two _
+      exact Fin.sum_univ_two _
     _ = B.card + Fintype.card S := by simp
   replace : Even (Fintype.card S) := by
     apply (Nat.even_add.mp ?_).mp heven
@@ -197,7 +196,8 @@ lemma f_second_fixed {a:ZMod N} {ha: a ∉ B} {b:B} (hb: f ha b = b) : ∃ c:B, 
     change (if (1: ZMod 2) = 1 then f ha b else b) = b
     simp [hb]
   have c1 : Fintype.card S ≥ 1 := by
-    simp; use b; simp [hs]
+    haveI : Nonempty ↑S := ⟨⟨b, hs⟩⟩
+    exact Fintype.card_pos
   replace c1 : Fintype.card S ≥ 2 := by grind
   have c2 : S ≠ {b} := by
     contrapose! c1

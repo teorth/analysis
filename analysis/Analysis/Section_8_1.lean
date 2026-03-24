@@ -300,14 +300,12 @@ theorem Rat.countablyInfinite : CountablyInfinite ℚ := by
   replace := AtMostCountable.image this f
   have h : f '' .univ = .univ := by
     sorry
-  simp [h, AtMostCountable.equiv (EqualCard.univ _), AtMostCountable] at this
-  have hfin : ¬ Finite ℚ := by
-    by_contra!
-    replace : Finite (.univ : Set ℕ) := by
-      apply @Finite.Set.finite_of_finite_image ℕ ℚ _ (↑·); intro _ _ _ _; simp
-    rw [Set.finite_coe_iff, Set.finite_univ_iff,←not_infinite_iff_finite] at this
-    apply this; infer_instance
-  tauto
+  rcases this with h1 | h2
+  · have h1' : CountablyInfinite (Set.univ : Set ℚ) := h ▸ h1
+    rwa [CountablyInfinite.equiv (EqualCard.univ _)] at h1'
+  · have h2' : Finite (Set.univ : Set ℚ) := h ▸ h2
+    rw [Set.finite_coe_iff, Set.finite_univ_iff] at h2'
+    exact absurd h2' (not_finite_iff_infinite.mpr inferInstance)
 
 /-- Exercise 8.1.1 -/
 example (X: Type) : Infinite X ↔ ∃ Y : Set X, Y ≠ .univ ∧ EqualCard Y X := by

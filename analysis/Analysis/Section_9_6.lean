@@ -48,12 +48,13 @@ example : ¬ BddOn (fun x:ℝ ↦ 1/x) (.Ioo 0 1) := by sorry
 theorem why_7_6_3 {n: ℕ → ℕ} (hn: StrictMono n) (j:ℕ) : n j ≥ j := by sorry
 
 /-- Lemma 9.6.3 -/
-theorem BddOn.of_continuous_on_compact {a b:ℝ} (h:a < b) {f:ℝ → ℝ} (hf: ContinuousOn f (.Icc a b) ) :
+theorem BddOn.of_continuous_on_compact {a b:ℝ} (_h:a < b) {f:ℝ → ℝ} (hf: ContinuousOn f (.Icc a b) ) :
   BddOn f (.Icc a b) := by
   -- This proof is written to follow the structure of the original text.
-  by_contra! hunbound; simp [BddOn] at hunbound
+  by_contra! hunbound; simp at hunbound
   set x := fun (n:ℕ) ↦ (hunbound n).choose
-  have hx (n:ℕ) : a ≤ x n ∧ x n ≤ b ∧ n < |f (x n)| := (hunbound n).choose_spec
+  have hx (n:ℕ) : a ≤ x n ∧ x n ≤ b ∧ n < |f (x n)| := by
+    obtain ⟨⟨h1, h2⟩, h3⟩ := (hunbound n).choose_spec; exact ⟨h1, h2, h3⟩
   set X := Set.Icc a b
   observe hXclosed : IsClosed X
   observe hXbounded : Bornology.IsBounded X

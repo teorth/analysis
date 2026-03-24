@@ -47,7 +47,7 @@ theorem EReal.neg_of_real (x:Real) : -(x:EReal) = (-x:ℝ) := rfl
 /-- Definition 6.2.3 (Ordering of extended reals) -/
 theorem EReal.le_iff (x y:EReal) :
     x ≤ y ↔ (∃ (x' y':Real), x = x' ∧ y = y' ∧ x' ≤ y') ∨ y = ⊤ ∨ x = ⊥ := by
-  obtain ⟨ x', rfl ⟩ | rfl | rfl := EReal.def x <;> obtain ⟨ y', rfl ⟩ | rfl | rfl := EReal.def y <;> simp
+  obtain ⟨ x', rfl ⟩ | rfl | rfl := EReal.def x <;> obtain ⟨ y', rfl ⟩ | rfl | rfl := EReal.def y <;> simp <;> tauto
 
 /-- Definition 6.2.3 (Ordering of extended reals) -/
 theorem EReal.lt_iff (x y:EReal) : x < y ↔ x ≤ y ∧ x ≠ y := lt_iff_le_and_ne
@@ -59,11 +59,11 @@ example : (3:EReal) ≤ (5:EReal) := by rw [le_iff]; left; use (3:ℝ), (5:ℝ);
 
 
 /-- Examples 6.2.4 -/
-example : (3:EReal) < ⊤ := by simp [lt_iff]; exact real_neq_infty 3
+example : (3:EReal) < ⊤ := by rw [lt_iff]; exact ⟨le_top, real_neq_infty 3⟩
 
 
 /-- Examples 6.2.4 -/
-example : (⊥:EReal) < ⊤ := by simp
+example : (⊥:EReal) < ⊤ := bot_lt_top
 
 
 /-- Examples 6.2.4 -/
@@ -111,12 +111,12 @@ theorem EReal.sup_of_bounded_nonempty {E: Set ℝ} (hbound: BddAbove E) (hnon: E
 /-- Definition 6.2.6 -/
 theorem EReal.sup_of_unbounded_nonempty {E: Set ℝ} (hunbound: ¬ BddAbove E) (hnon: E.Nonempty) :
     sSup ((fun (x:ℝ) ↦ (x:EReal)) '' E) = ⊤ := by
-  rw [sSup_eq_top]
+  erw [sSup_eq_top]
   intro b hb
   obtain ⟨ y, rfl ⟩ | rfl | rfl := EReal.def b
   . simp; contrapose! hunbound; exact ⟨ y, hunbound ⟩
-  . simp at hb
-  simpa
+  . exact absurd hb (lt_irrefl _)
+  exact ⟨↑hnon.choose, Set.mem_image_of_mem _ hnon.choose_spec, bot_lt_coe _⟩
 
 /-- Definition 6.2.6 -/
 theorem EReal.sup_of_empty : sSup (∅:Set EReal) = ⊥ := sSup_empty
@@ -131,9 +131,6 @@ theorem EReal.inf_eq_neg_sup (E: Set EReal) : sInf E = - sSup (-E) := by
   simp_rw [←isGLB_iff_sInf_eq, isGLB_iff_le_iff, EReal.le_neg]
   intro b
   simp [lowerBounds]
-  constructor
-  . intro h a ha; specialize h (-a) (by simp [ha]); grind [neg_le_neg_iff]
-  grind [EReal.le_neg_of_le_neg]
 
 /-- Example 6.2.7 -/
 abbrev Example_6_2_7 : Set EReal := { x | ∃ n:ℕ, x = -((n+1):EReal)} ∪ {⊥}

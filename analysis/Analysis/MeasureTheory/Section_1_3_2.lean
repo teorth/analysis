@@ -1,4 +1,5 @@
 import Analysis.MeasureTheory.Section_1_3_1
+import Mathlib.Algebra.Order.Floor.Semifield
 
 /-!
 # Introduction to Measure Theory, Section 1.3.2: Measurable functions
@@ -211,8 +212,7 @@ private lemma limsupSet_LebesgueMeasurable {g : ℕ → EuclideanSpace' d → ER
 
 -- This is the main technical work of the proof
 private lemma iii_imp_v : stmt_iii f → stmt_v f := by
-  intro ⟨g, hg_simple, hg_ae_conv⟩
-  intro t
+  intro ⟨g, hg_simple, hg_ae_conv⟩ t
   -- The null set where convergence fails
   let N := {x | ¬Filter.atTop.Tendsto (fun n ↦ g n x) (nhds (f x))}
   have hN_null : IsNull N := hg_ae_conv
@@ -262,7 +262,7 @@ private lemma iii_imp_v : stmt_iii f → stmt_v f := by
         use 0
         intro N
         -- Since f x = ⊤ and f x > t, we have t < ⊤
-        have ht_lt_top' : t < ⊤ := by rw [← hfx_top]; exact hfx
+        have ht_lt_top' : t < ⊤ := lt_of_lt_of_eq hfx hfx_top
         -- Therefore t + 1 < ⊤ (since 1 is finite)
         have h_t1_lt_top : t + 1 < ⊤ := EReal.add_lt_top (ne_top_of_lt ht_lt_top') (EReal.coe_ne_top 1)
         -- Show g n x > t + 1 for some n ≥ N using that g n → ⊤
@@ -452,15 +452,14 @@ private lemma v_imp_vi : stmt_v f → stmt_vi f := by
   · -- t = ⊤: {f ≥ ⊤} = {f = ⊤} = ⋂_{n ∈ ℕ} {f > n}
     have h_eq : {x | f x ≥ ⊤} = ⋂ (n : ℕ), {x | f x > n} := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_iInter, ge_iff_le, top_le_iff]
+      simp only [Set.mem_setOf_eq, Set.mem_iInter, ge_iff_le]
       constructor
       · intro hfx n
-        simp only [gt_iff_lt]
-        rw [hfx]; exact EReal.coe_lt_top n
+        simp only [gt_iff_lt, top_le_iff.mp hfx]
+        apply EReal.coe_lt_top
       · intro hfx
-        exact EReal.eq_top_of_forall_nat_lt hfx
-    rw [h_eq]
-    exact LebesgueMeasurable.countable_inter (fun n => hv _)
+        exact top_le_iff.mpr (EReal.eq_top_of_forall_nat_lt hfx)
+    exact h_eq ▸ LebesgueMeasurable.countable_inter (fun n => hv _)
   · -- t is finite: use {f ≥ t} = ⋂_{n≥1} {f > t - 1/(n+1)}
     -- Since t < ⊤ and ⊥ < t, we know t is a real number
     induction t using EReal.rec with
@@ -959,7 +958,7 @@ private lemma floor_approx_iSup_eq (r : ℝ) (hr : r ≥ 0) :
     have h3 : r ≤ f N + ε := by linarith
     calc (r : EReal) ≤ (f N + ε : ℝ) := EReal.coe_le_coe_iff.mpr h3
          _ = (f N : EReal) + (ε : EReal) := by rw [← EReal.coe_add]
-         _ ≤ (⨆ n : ℕ, (f n : EReal)) + ε := add_le_add_right h_le_iSup ε
+         _ ≤ (⨆ n : ℕ, (f n : EReal)) + ε := add_le_add_left h_le_iSup ε
   · -- Lower bound: iSup ≤ r
     apply iSup_le
     intro n
@@ -994,7 +993,7 @@ private lemma mul_pow2_div_pow2_eq (n : ℕ) :
   have h2n_ne_top : ((2^n : ℕ) : EReal) ≠ ⊤ := EReal.coe_ne_top _
   have h2n_ne_zero : ((2^n : ℕ) : EReal) ≠ 0 := by
     simp only [ne_eq, Nat.cast_eq_zero]; exact h2n_ne
-  rw [show ((n * 2^n : ℕ) : EReal) = ((n : ℕ) : EReal) * ((2^n : ℕ) : EReal) by push_cast; ring]
+  rw [show ((n * 2^n : ℕ) : EReal) = ((n : ℕ) : EReal) * ((2^n : ℕ) : EReal) by push_cast; ring_nf]
   rw [mul_div_assoc, EReal.div_self h2n_ne_bot h2n_ne_top h2n_ne_zero, mul_one]
 
 -- Helper: Extract equality from EReal division equality with 2^n denominator
@@ -1075,8 +1074,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             rw [hbot] at h_min_ge; exact not_le.mpr EReal.bot_lt_zero h_min_ge
-          · exfalso; have h1 := min_le_right (f x) ↑n; rw [htop] at h1
-            exact not_le.mpr (EReal.coe_lt_top n) h1
+          · grind
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             exact not_le.mpr hneg (EReal.toReal_nonneg h_min_ge)
@@ -1090,8 +1088,8 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
             have h_coe := EReal.coe_eq_coe_iff.mp hval'
             have h_floor : ⌊(min (f x) ↑n).toReal * 2 ^ n⌋₊ = n * 2^n := by
               field_simp at h_coe
-              have h_coe' : (⌊(min (f x) ↑n).toReal * 2 ^ n⌋₊ : ℝ) = (n : ℝ) * 2^n := h_coe
-              rw [show (n : ℝ) * 2^n = ((n * 2^n : ℕ) : ℝ) by simp [Nat.cast_mul, Nat.cast_pow]] at h_coe'
+              have h_coe' : (⌊(min (f x) ↑n).toReal * 2 ^ n⌋₊ : ℝ) = ((n * 2^n : ℕ) : ℝ) := by
+                push_cast; linarith
               exact Nat.cast_injective h_coe'
             have h_min_nonneg : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             have h_prod_nonneg := mul_nonneg (EReal.toReal_nonneg h_min_nonneg) (le_of_lt h2n_pos)
@@ -1135,7 +1133,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
             -- Goal: ↑↑(n * 2 ^ n) / ↑(2 ^ n) = ↑n
             -- Use EReal.coe_natCast to normalize coercions
             simp only [← EReal.coe_natCast, ← EReal.coe_div, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat]
-            congr 1; field_simp
+            grind
       rw [h_eq]
       exact ball_leb.inter (hvi n)
     · -- k < n * 2^n: level set is {‖x‖ ≤ n} ∩ {f x ≥ k/2^n} ∩ {f x < (k+1)/2^n}
@@ -1154,8 +1152,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             rw [hbot] at h_min_ge; exact not_le.mpr EReal.bot_lt_zero h_min_ge
-          · exfalso; have h1 := min_le_right (f x) ↑n; rw [htop] at h1
-            exact not_le.mpr (EReal.coe_lt_top n) h1
+          · exact absurd (htop ▸ min_le_right (f x) (↑n : EReal)) (not_le.mpr (EReal.coe_lt_top n))
           · exfalso
             have h_min_ge : min (f x) ↑n ≥ 0 := le_min (hf x) (EReal.coe_nonneg.mpr (Nat.cast_nonneg n))
             exact not_le.mpr hneg (EReal.toReal_nonneg h_min_ge)
@@ -1511,7 +1508,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
         field_simp
         ring_nf
         rw [← h_pow]
-        ring
+        push_cast; ring
       obtain ⟨k, hk⟩ := h_lhs_mul
       -- k / 2^n ≤ t_m ≤ t_n, so k / 2^n ≤ floor(t_n * 2^n) / 2^n
       have h_k_le_tn : (k : ℝ) / 2^n ≤ t_n := by
@@ -1572,13 +1569,13 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
           have hN_ne_top : ((N : ℕ) : EReal) ≠ ⊤ := EReal.coe_ne_top N
           have hN_nonneg : (0 : ℝ) ≤ N := Nat.cast_nonneg N
           have hN_toReal : ((N : ℕ) : EReal).toReal = N := EReal.toReal_coe N
-          simp only [approx_fn, h_norm, ite_true, hfx_top, min_eq_right le_top,
+          simp only [approx_fn, h_norm, ite_true, hfx_top, min_top_left,
                      hN_ne_bot, hN_ne_top, ite_false, hN_toReal, not_lt.mpr hN_nonneg]
           -- floor(N * 2^N) / 2^N = N
           have h_floor_eq : (⌊(N : ℝ) * 2^N⌋₊ : ℝ) / 2^N = N := by
-            have h_nat_mul : (N : ℝ) * (2 : ℝ)^N = ↑(N * 2^N) := by simp
+            have h_nat_mul : (N : ℝ) * (2 : ℝ)^N = ↑(N * 2^N) := by push_cast; ring
             rw [h_nat_mul, Nat.floor_natCast]
-            field_simp
+            field_simp; push_cast; ring
           simp only [← EReal.coe_div, EReal.coe_lt_coe_iff, h_floor_eq]
           calc b' ≤ Nat.ceil b' := Nat.le_ceil _
                _ < (Nat.ceil b' : ℝ) + 1 := lt_add_one _
@@ -1630,7 +1627,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
             field_simp
             ring_nf
             rw [← h_pow]
-            ring
+            push_cast; ring
           obtain ⟨k, hk⟩ := h_lhs_mul
           rw [hk]
           apply div_le_div_of_nonneg_right _ (le_of_lt h2N_pos)
@@ -2107,7 +2104,7 @@ lemma binaryDigit_first_diff {x y : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (hy : y 
       have hpos : 0 < |x - y| := abs_pos.mpr (sub_ne_zero.mpr hne)
       obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one hpos (by norm_num : (1:ℝ)/2 < 1)
       have := h_close n
-      have h1 : (1:ℝ) / 2^n = (1/2)^n := by field_simp
+      have h1 : (1:ℝ) / 2^n = (1/2)^n := by simp [div_eq_mul_inv]
       linarith
     exact absurd hxy_eq (ne_of_lt hxy)
   let k := Nat.find h_exists_diff
@@ -2346,7 +2343,8 @@ private lemma partial_sum_eq_floor {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (n :
     have h2n_ne : (2:ℝ)^n ≠ 0 := ne_of_gt h2n_pos
     have h_pow_succ : (2:ℝ)^(n+1) = 2 * 2^n := by ring
     rw [h_pow_succ]
-    have h_half_pow : (1/2:ℝ)^(n+1) = 1 / (2 * 2^n) := by rw [← h_pow_succ]; field_simp
+    have h_half_pow : (1/2:ℝ)^(n+1) = 1 / (2 * 2^n) := by
+      rw [← h_pow_succ]; simp [div_eq_mul_inv]
     rw [h_half_pow]
     have h_floor' : (⌊2 * 2^n * x⌋₊ : ℝ) = 2 * (⌊(2:ℝ)^n * x⌋₊ : ℝ) + (⌊2 * 2^n * x⌋₊ % 2 : ℕ) := by
       have h2eq : (2:ℝ) * 2^n * x = (2:ℝ)^(n+1) * x := by ring
@@ -2356,7 +2354,6 @@ private lemma partial_sum_eq_floor {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (n :
     have h2_2n_ne : (2:ℝ) * 2^n ≠ 0 := ne_of_gt h2_2n_pos
     rw [h_floor']
     field_simp
-    ring
 
 /-- Binary series is summable for x ∈ [0,1). -/
 private lemma binary_summable {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) :
@@ -2399,7 +2396,7 @@ lemma non_dyadic_eq_binary_sum {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (_hnd : 
     have h_gap : Filter.Tendsto (fun n : ℕ => (1:ℝ) / (2:ℝ)^n) Filter.atTop (nhds 0) := by
       have h1 : Filter.Tendsto (fun n : ℕ => ((1:ℝ)/2)^n) Filter.atTop (nhds 0) :=
         tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
-      convert h1 using 1; ext n; field_simp
+      convert h1 using 1; ext n; simp [div_eq_mul_inv]
     have h_between : ∀ n, x - (1:ℝ) / (2:ℝ)^n < (⌊(2:ℝ)^n * x⌋₊ : ℝ) / (2:ℝ)^n ∧
         (⌊(2:ℝ)^n * x⌋₊ : ℝ) / (2:ℝ)^n ≤ x := fun n => ⟨by linarith [h_upper n], h_lower n⟩
     apply Metric.tendsto_atTop.mpr
@@ -2466,7 +2463,7 @@ lemma mem_CantorSet_of_ternary_02 {y : ℝ} (d : ℕ → ℕ)
     simp only [Finset.mem_range] at hj
     rw [dif_pos hj]
     simp only [a]
-    field_simp
+    field_simp; ring_nf; simp
   have h_tail_nonneg : 0 ≤ ∑' j, (d (n + j) : ℝ) * (1/3:ℝ)^(n + j + 1) := by
     apply tsum_nonneg; intro j; positivity
   have h_tail_bound : ∑' j, (d (n + j) : ℝ) * (1/3:ℝ)^(n + j + 1) ≤ (1/3:ℝ)^n := by
@@ -2493,11 +2490,11 @@ lemma mem_CantorSet_of_ternary_02 {y : ℝ} (d : ℕ → ℕ)
             _ = (2:ℝ) * (1/3:ℝ)^(n + 1) * (1 - 1/3)⁻¹ := by rw [h1]
             _ = (1/3:ℝ)^n := by field_simp; ring
   rw [h_split, h_partial]
-  have h_one_third_pow : (1/3:ℝ)^n = 1 / 3^n := by field_simp
+  have h_one_third_pow : (1/3:ℝ)^n = 1 / 3^n := by simp [div_eq_mul_inv]
   constructor
   · linarith
   · rw [← h_one_third_pow]
-    exact add_le_add_left h_tail_bound _
+    exact add_le_add_right h_tail_bound _
 
 /-- Existence of a binary-to-ternary function: g(x) = ∑ 2bⱼ 3^{-j}. -/
 lemma binaryToTernary_exists : ∃ g : ℝ → ℝ, BinaryToTernaryProperties g := by
@@ -2813,14 +2810,10 @@ lemma f_lifted_zero_set_measurable : LebesgueMeasurable {x : EuclideanSpace' 1 |
   · apply IsOpen.measurable
     have h_open : IsOpen (Set.Icc (0:ℝ) 1)ᶜ := isOpen_compl_iff.mpr isClosed_Icc
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_
-        intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -2871,14 +2864,10 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
   apply LebesgueMeasurable.union
   · apply IsOpen.measurable
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_
-        intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -2886,14 +2875,10 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
     exact e.isOpenMap (Set.Iio 0) isOpen_Iio
   · apply IsOpen.measurable
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_
-        intro _; simpa using (continuous_id : Continuous fun x : ℝ => x)
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -2948,13 +2933,10 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
       le_csSup_of_le h_bdd_above h_zero_in_S (le_refl 0),
       csSup_le (Set.nonempty_of_mem h_zero_in_S) (fun x hx => hx.1.2)⟩
     have hf_cont : Continuous (fun x : ℝ => Real.equiv_EuclideanSpace' x) := by
-      have h : Continuous fun x : ℝ => (fun _ : Fin 1 => x) := by
-        refine continuous_pi ?_; intro _; exact continuous_id
-      simpa [Real.equiv_EuclideanSpace', EuclideanSpace'.equiv_Real] using h
+      show Continuous (fun x : ℝ => WithLp.toLp 2 (fun _ : Fin 1 => x))
+      exact continuous_induced_rng.mpr (continuous_pi (fun _ => continuous_id))
     have hg_cont : Continuous (fun x : EuclideanSpace' 1 => EuclideanSpace'.equiv_Real x) := by
-      have : Continuous fun x : EuclideanSpace' 1 => x ⟨0, by decide⟩ :=
-        continuous_apply (⟨0, by decide⟩ : Fin 1)
-      simpa [EuclideanSpace'.equiv_Real] using this
+      exact PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) ⟨0, by decide⟩
     let e : ℝ ≃ₜ EuclideanSpace' 1 :=
       { toEquiv := Real.equiv_EuclideanSpace'
         continuous_toFun := hf_cont
@@ -3184,7 +3166,7 @@ example : ∃ (f: EuclideanSpace' 1 → EReal) (_hf: UnsignedMeasurable f) (E: S
           constructor
           · rintro ⟨r, hr, rfl⟩; simp [hr]
           · intro hx; exact ⟨_, hx, EuclideanSpace'.equiv_Real.symm_apply_apply x⟩
-        exact this ▸ IsClosed.preimage (continuous_apply _) isClosed_Icc
+        exact this ▸ IsClosed.preimage (PiLp.continuous_apply 2 (fun _ : Fin 1 => ℝ) _) isClosed_Icc
       have h_diff_null : IsNull (Icc' \ A') := by
         apply Countable.Lebesgue_measure Nat.one_pos
         have : Icc' \ A' = Real.equiv_EuclideanSpace' '' (Set.Icc 0 1 \ A) := by

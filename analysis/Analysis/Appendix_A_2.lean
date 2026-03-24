@@ -37,7 +37,7 @@ example : (-2:ℤ) = 2 → (-2:ℤ)^2 = 4 := example_A_2_1 (-2)
 #check _root_.not_imp
 
 example : ¬ ((2+2=4) → (4+4)=2) := by
-  rw [_root_.not_imp]
+  rw [Classical.not_imp]
   constructor
   . norm_num
   norm_num

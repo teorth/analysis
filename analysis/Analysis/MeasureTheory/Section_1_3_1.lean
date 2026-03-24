@@ -20,6 +20,13 @@ def Real.complex_fun {X:Type*} (f: X → ℝ) : X → ℂ := fun x ↦ Complex.o
 def Real.EReal_fun {X:Type*} (f: X → ℝ) : X → EReal := fun x ↦ Real.toEReal (f x)
 
 noncomputable def EReal.indicator {X:Type*} (A: Set X) : X → EReal := Real.EReal_fun A.indicator'
+
+theorem EReal.indicator_of_mem {X:Type*} {A: Set X} {x:X} (h: x ∈ A) : EReal.indicator A x = 1 := by
+  simp [EReal.indicator, Real.EReal_fun, Set.indicator'_of_mem h]
+
+theorem EReal.indicator_of_notMem {X:Type*} {A: Set X} {x:X} (h: x ∉ A) : EReal.indicator A x = 0 := by
+  simp [EReal.indicator, Real.EReal_fun, Set.indicator'_of_notMem h]
+
 noncomputable def Complex.indicator {X:Type*} (A: Set X) : X → ℂ := Real.complex_fun A.indicator'
 
 /-- Definition 1.3.2 -/

@@ -35,7 +35,7 @@ example : ∃ ε > 0, ∀ x, 0 < x ∧ x < ε → sin x > x / 2 := by
   simp [hderiv] at this
   obtain ⟨ y, ⟨ hy1, hy2 ⟩, hy3 ⟩ := this
   suffices hcosy : cos y > 1/2
-  . rw [hy3, gt_iff_lt, ←(mul_lt_mul_left hpos)] at hcosy
+  . rw [hy3, gt_iff_lt, ←(mul_lt_mul_iff_right₀ hpos)] at hcosy
     rw [gt_iff_lt]
     convert hcosy using 1
     . ring
@@ -66,7 +66,7 @@ example : ∃ ε > 0, ∀ x, 0 < x ∧ x < ε → sin x > x / 2 := by
   have ybound : y < π/3 := by linarith
   have hcosy := cos_lt_cos_of_nonneg_of_le_pi (le_of_lt hy1) (by linarith) ybound
   simp only [cos_pi_div_three, ←gt_iff_lt] at hcosy
-  rw [hy3, gt_iff_lt, ←(mul_lt_mul_left hpos)] at hcosy
+  rw [hy3, gt_iff_lt, ←(mul_lt_mul_iff_right₀ hpos)] at hcosy
   rw [gt_iff_lt]
   convert hcosy using 1
   . ring

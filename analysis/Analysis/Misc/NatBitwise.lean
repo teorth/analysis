@@ -27,8 +27,8 @@ lemma testBit_iff_mem_bitIndices (n i : ℕ) :
   constructor
   · intro h
     induction n using Nat.binaryRec generalizing i with
-    | z => simp at h
-    | f b n ih =>
+    | zero => simp at h
+    | bit b n ih =>
       cases b
       · simp only [Nat.bit_false, Nat.bitIndices_two_mul, List.mem_map]
         rcases Nat.eq_or_lt_of_le (Nat.zero_le i) with rfl | hpos
@@ -45,8 +45,8 @@ lemma testBit_iff_mem_bitIndices (n i : ℕ) :
           exact ⟨i - 1, ih _ h, hi_succ.symm⟩
   · intro h
     induction n using Nat.binaryRec generalizing i with
-    | z => simp at h
-    | f b n ih =>
+    | zero => simp at h
+    | bit b n ih =>
       cases b
       · simp only [Nat.bit_false, Nat.bitIndices_two_mul, List.mem_map] at h
         obtain ⟨j, hj, rfl⟩ := h

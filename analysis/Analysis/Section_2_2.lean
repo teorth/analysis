@@ -106,8 +106,7 @@ theorem Nat.add_left_cancel (a b c:Nat) (habc: a + b = a + c) : b = c := by
   revert a; apply induction
   . intro hbc
     rwa [zero_add, zero_add] at hbc
-  intro a ih
-  intro hbc
+  intro a ih hbc
   rw [succ_add, succ_add] at hbc
   replace hbc := succ_cancel hbc
   exact ih hbc
@@ -390,7 +389,7 @@ example (a b c d e:Nat) (hab: a ≤ b) (hbc: b < c) (hcd: c ≤ d)
 /-- (Not from textbook) Nat has the structure of an ordered monoid. This allows for tactics
 such as `gcongr` to be applicable to the Chapter 2 natural numbers. -/
 instance Nat.isOrderedAddMonoid : IsOrderedAddMonoid Nat where
-  add_le_add_left a b hab c := (add_le_add_left a b c).mp hab
+  add_le_add_left a b hab c := (Nat.add_le_add_right a b c).mp hab
 
 /-- This illustration of the `gcongr` tactic is not from the
     textbook. -/

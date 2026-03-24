@@ -1,6 +1,8 @@
 import Mathlib.Tactic
 import Mathlib.Algebra.Group.InjSurj
 import Mathlib.Order.Defs.PartialOrder
+import Mathlib.Algebra.Order.Module.Defs
+
 
 /-! A framework to formalize units (such as length, time, mass, velocity, etc.) in Lean.
 -/
@@ -27,7 +29,7 @@ class UnitsSystem where
   addCommGroup: AddCommGroup Dimensions
 
 /- The additive group structure of `Dimensions` needs to be explicitly registered as an instance. -/
-attribute [instance] UnitsSystem.addCommGroup
+attribute [implicit_reducible, instance] UnitsSystem.addCommGroup
 
 namespace UnitsSystem
 
@@ -126,7 +128,9 @@ we currently are not implementing this. -/
 theorem Scalar.neZero_iff {d:Dimensions} (q:Scalar d) : NeZero q ↔ q.val ≠ 0 := by simp [_root_.neZero_iff, ←val_inj]
 
 @[simp, norm_cast]
-theorem Scalar.toFormal_zero {d:Dimensions} : ((0:Scalar d):Formal) = 0 := by simp [toFormal]
+theorem Scalar.toFormal_zero {d:Dimensions} : ((0:Scalar d):Formal) = 0 := by
+  simp only [toFormal, AddMonoidAlgebra.single, val_zero, Finsupp.single_zero]
+  rfl
 
 /-- In the next few lines of code we give `Scalar d` the structure of a real vector space,
 which is of course compatible with the real vector space structure on `Formal`. -/
@@ -139,7 +143,8 @@ theorem Scalar.val_add {d:Dimensions} (q₁ q₂:Scalar d) : (q₁ + q₂).val =
 /-- Note how the `simp` lemma is in the direction of pushing casts inward. -/
 @[simp,norm_cast]
 theorem Scalar.toFormal_add {d:Dimensions} (q₁ q₂:Scalar d) : ((q₁ + q₂:Scalar d):Formal) = (q₁:Formal) + (q₂:Formal) := by
-  simp [toFormal]
+  simp only [toFormal, val_add, Finsupp.single_add]
+  rfl
 
 instance Scalar.instNeg {d:Dimensions} : Neg (Scalar d) where
   neg q := ⟨-q.val⟩
@@ -153,7 +158,7 @@ instance Scalar.instNeZero_neg {d:Dimensions} (q:Scalar d) [h:NeZero q] : NeZero
 
 @[simp,norm_cast]
 theorem Scalar.toFormal_neg {d:Dimensions} (q:Scalar d) : ((-q:Scalar d):Formal) = -(q:Formal) := by
-  simp [toFormal]
+  simp only [toFormal, val_neg, Finsupp.single_neg]; rfl
 
 instance Scalar.instSub {d:Dimensions} : Sub (Scalar d) where
   sub q₁ q₂ := ⟨q₁.val - q₂.val⟩
@@ -163,7 +168,7 @@ theorem Scalar.val_sub {d:Dimensions} (q₁ q₂ : Scalar d) : (q₁ - q₂).val
 
 @[simp,norm_cast]
 theorem Scalar.toFormal_sub {d:Dimensions} (q₁ q₂ :Scalar d) : ((q₁ - q₂ :Scalar d):Formal) = (q₁:Formal) - q₂ := by
-  simp [toFormal]
+  simp only [toFormal, val_sub, Finsupp.single_sub]; rfl
 
 instance Scalar.instSMul {α} {d:Dimensions} [SMul α ℝ] : SMul α (Scalar d) where
   smul c q := ⟨c • q.val⟩
@@ -238,7 +243,6 @@ theorem Scalar.toFormal_smul {d:Dimensions} (c:ℝ) (q:Scalar d)
 theorem Formal.smul_eq_mul (c:ℝ) (x:Formal) : c • x = (c:Formal) * x := by
   ext n
   simp [Scalar.toFormal]
-  rw [Finsupp.smul_apply, AddMonoidAlgebra.single_zero_mul_apply, _root_.smul_eq_mul]
 
 @[simp]
 theorem Formal.smul_eq_mul' (c:ℕ) (x:Formal) : c • x = (c:Formal) * x := by
@@ -246,7 +250,7 @@ theorem Formal.smul_eq_mul' (c:ℕ) (x:Formal) : c • x = (c:Formal) * x := by
 
 @[simp]
 theorem Formal.smul_eq_mul'' (c:ℤ) (x:Formal) : c • x = (c:Formal) * x := by
-  simp
+  exact zsmul_eq_mul x c
 
 @[norm_cast,simp]
 theorem Scalar.coe_mul (r s:ℝ) : ((r*s:ℝ):Scalar 0) = r • (s:Scalar 0) := by
@@ -409,9 +413,15 @@ noncomputable instance Scalar.instLinearOrder (d:Dimensions) : LinearOrder (Scal
 theorem Scalar.val_lt {d:Dimensions} (x y:Scalar d) :
   x < y ↔ x.val < y.val := by simp only [lt_iff_not_ge, val_le]
 
-noncomputable instance Scalar.instOrderedSMul (d:Dimensions) : OrderedSMul ℝ (Scalar d) where
-  smul_lt_smul_of_pos := by simp [val_lt]; intros; gcongr
-  lt_of_smul_lt_smul_of_pos := by simp [val_lt]; intro _ _ _ _ h2; rwa [←mul_lt_mul_iff_of_pos_left h2]
+noncomputable instance Scalar.instPosSMulStrictMono (d:Dimensions) : PosSMulStrictMono ℝ (Scalar d) where
+  smul_lt_smul_of_pos_left {_a} ha {_b₁ _b₂} hb := by
+    simp only [val_lt, val_smul, smul_eq_mul] at *; exact mul_lt_mul_of_pos_left hb ha
+
+noncomputable instance Scalar.instSMulPosStrictMono (d:Dimensions) : SMulPosStrictMono ℝ (Scalar d) where
+  smul_lt_smul_of_pos_right {_b} hb {_a₁ _a₂} ha := by
+    simp only [val_lt, val_smul, smul_eq_mul] at *; exact mul_lt_mul_of_pos_right ha hb
+
+noncomputable instance Scalar.instIsStrictOrderedModule (d:Dimensions) : IsStrictOrderedModule ℝ (Scalar d) where
 
 -- TODO: add in some `gcongr` lemmas for this order
 

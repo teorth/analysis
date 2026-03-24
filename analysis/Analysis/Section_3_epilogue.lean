@@ -43,7 +43,7 @@ the natural numbers. -/
 noncomputable def ZFSet.nat_equiv : ℕ ≃ omega.{u} := Equiv.ofBijective (fun n => ⟨mk (ofNat.{u} n),mk_mem_iff.mpr (Mem.mk _ (ULift.up n))⟩) (by
   constructor
   · intro _ _; simp [eq]; apply eq_of_ofNat_equiv_ofNat
-  · intro ⟨x,hx⟩; rw [←mk_out x, omega, mk_mem_iff] at hx; obtain ⟨n,hn⟩ := hx
+  · intro ⟨x,hx⟩; rw [←mk_out x, omega] at hx; erw [mk_mem_iff] at hx; obtain ⟨n,hn⟩ := hx
     simp [mk_func, PSet.omega] at *; use n.down; rw [←mk_out x, eq]; exact hn.symm
   )
 
@@ -94,6 +94,6 @@ noncomputable instance ZFSet.inst_SetTheory : Chapter3.SetTheory.{u + 1,u + 1} w
       · rintro ⟨y,hy,rfl⟩; simp_all [(huniq _ hy).choose_spec]
       · intro hf; specialize hsub hf; rw [mem_prod] at hsub; obtain ⟨y,hy,x,_,rfl⟩ := hsub
         use y,hy; simp_all [←(huniq _ hy).choose_eq hf]
-    · rintro ⟨f,rfl⟩; simp; constructor <;> intro _ _ <;> aesop
+    · rintro ⟨f,rfl⟩; simp; constructor <;> intro _ _ <;> aesop (add safe [SetLike.coe_mem])
   union := sUnion
   union_axiom _ _ := by simp [And.comm]

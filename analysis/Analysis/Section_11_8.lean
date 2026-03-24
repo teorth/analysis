@@ -96,9 +96,9 @@ theorem jump_of_continuous {X:Set ℝ} {f: ℝ → ℝ} {x₀:ℝ}
   rw [mem_nhds_iff_exists_Ioo_subset] at h
   choose l u hx₀ hX using h; simp at hx₀
   have hl : ∃ ε>0, .Ioc (x₀-ε) x₀ ⊆ X :=
-    ⟨ x₀-l, by grind, Set.Subset.trans (by grind) hX ⟩
+    ⟨ x₀-l, by linarith, Set.Subset.trans (by intro x ⟨h1, h2⟩; exact ⟨by linarith, by linarith⟩) hX ⟩
   have hu : ∃ ε>0, .Ico x₀ (x₀+ε) ⊆ X :=
-    ⟨ u-x₀, by grind, Set.Subset.trans (by grind) hX ⟩
+    ⟨ u-x₀, by linarith, Set.Subset.trans (by intro x ⟨h1, h2⟩; exact ⟨by linarith, by linarith⟩) hX ⟩
   simp [jump, left_lim_of_continuous hl hf, right_lim_of_continuous hu hf]
 
 /-- Right limits exist for monotone functions -/
@@ -154,10 +154,10 @@ notation3:max α"["I"]ₗ" => α_length α I
 
 theorem α_length_of_empty (α: ℝ → ℝ) {I: BoundedInterval} (hI: (I:Set ℝ) = ∅) : α[I]ₗ = 0 :=
   match I with
-  | Icc _ _ => by simp [Set.Icc_eq_empty_iff] at *; grind
-  | Ico a b => by simp [Set.Ico_eq_empty_iff] at *; grind
-  | Ioc a b => by simp [Set.Ioc_eq_empty_iff] at *; grind
-  | Ioo _ _ => by simp [Set.Ioo_eq_empty_iff] at *; grind
+  | Icc _ _ => by simp [Set.Icc_eq_empty_iff] at *; simp [*]
+  | Ico a b => by simp [Set.Ico_eq_empty_iff] at *; intro h; have := le_antisymm hI h; subst this; simp
+  | Ioc a b => by simp [Set.Ioc_eq_empty_iff] at *; intro h; have := le_antisymm hI h; subst this; simp
+  | Ioo _ _ => by simp [Set.Ioo_eq_empty_iff] at *; simp [*]
 
 @[simp]
 theorem α_length_of_pt {α: ℝ → ℝ} (a:ℝ) : α[Icc a a]ₗ = jump α a := by simp [α_length, jump]
@@ -182,7 +182,7 @@ theorem α_length_of_cts {α:ℝ → ℝ} {I: BoundedInterval} {a b: ℝ}
   | Icc _ _ => grind
   | Ico _ _ => grind
   | Ioc _ _ => grind
-  | Ioo _ _ => grind
+  | Ioo _ _ => simp [α_length, ha_right, hb_left]; intro h; have := le_antisymm h (by linarith); subst this; simp
 
 /-- Example 11.8.2-/
 example : (fun x ↦ x^2)[Icc 2 3]ₗ = 5 := by

@@ -81,11 +81,8 @@ theorem Int.eq_diff (n:Int) : ∃ a b, n = a —— b := by apply n.ind _; intro
 instance Int.instAdd : Add Int where
   add := Quotient.lift₂ (fun ⟨ a, b ⟩ ⟨ c, d ⟩ ↦ (a+c) —— (b+d) ) (by
     intro ⟨ a, b ⟩ ⟨ c, d ⟩ ⟨ a', b' ⟩ ⟨ c', d' ⟩ h1 h2
-    simp [Setoid.r] at *
-    calc
-      _ = (a+b') + (c+d') := by abel
-      _ = (a'+b) + (c'+d) := by rw [h1,h2]
-      _ = _ := by abel)
+    simp [eq] at *
+    omega)
 
 /-- Definition 4.1.2 (Definition of addition) -/
 theorem Int.add_eq (a b c d:ℕ) : a —— b + c —— d = (a+c)——(b+d) := Quotient.lift₂_mk _ _ _ _
@@ -115,8 +112,8 @@ theorem Int.mul_congr {a b c d a' b' c' d' : ℕ} (h1: a —— b = a' —— b'
 
 instance Int.instMul : Mul Int where
   mul := Quotient.lift₂ (fun ⟨ a, b ⟩ ⟨ c, d ⟩ ↦ (a * c + b * d) —— (a * d + b * c)) (by
-    intro ⟨ a, b ⟩ ⟨ c, d ⟩ ⟨ a', b' ⟩ ⟨ c', d' ⟩ h1 h2; simp at h1 h2
-    convert mul_congr _ _ <;> simpa
+    intro ⟨ a, b ⟩ ⟨ c, d ⟩ ⟨ a', b' ⟩ ⟨ c', d' ⟩ h1 h2
+    exact mul_congr (Quotient.eq.mpr h1) (Quotient.eq.mpr h2)
     )
 
 /-- Definition 4.1.2 (Multiplication of integers) -/

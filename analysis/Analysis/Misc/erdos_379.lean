@@ -92,7 +92,8 @@ theorem erdos_379 : Filter.atTop.limsup (fun n ↦ (S n:ENat)) = ⊤ := by
   simp; intro N; rw [iSup₂_eq_top]; intro r hr; lift r to ℕ using (by order)
   have ⟨ p, hp, hp' ⟩ := exists_infinite_primes (max N (2^(r+1)+1))
   use 2^((p^(r+2)).totient), ?_
-  . have := key_cor hp' (r := r+2) ?_ ?_ <;> simp at * <;> linarith
+  . have := key_cor hp' (r := r+2) ?_ ?_ <;> simp at *
+    all_goals first | linarith | (rw [ENat.coe_lt_coe]; omega)
   trans p; order
   have := hp'.one_lt
   have := (p-1).lt_two_pow_self

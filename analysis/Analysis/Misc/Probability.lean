@@ -81,7 +81,7 @@ class ExampleProb {A:Type*} [BooleanAlgebra A] (ℙ: FinitelyAdditive A) where
   prob_EG : ℙ (E \ G) = 0.4
   prob_G : ℙ Gᶜ = 0.3
 
-def ExampleProb.map {Ω: ExampleProb ℙ} {f: BoundedLatticeHom A A'} (hf: f.preserves ℙ ℙ') : ExampleProb ℙ' where
+@[implicit_reducible] def ExampleProb.map {Ω: ExampleProb ℙ} {f: BoundedLatticeHom A A'} (hf: f.preserves ℙ ℙ') : ExampleProb ℙ' where
   E := f Ω.E
   F := f Ω.F
   G := f Ω.G

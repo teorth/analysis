@@ -67,7 +67,8 @@ example : IsLUB (.Icc 0 1) (1 : Real) := by sorry
 example : ¬∃ M, IsLUB (∅: Set Real) M := by sorry
 
 /-- Proposition 5.5.8 (Uniqueness of least upper bound)-/
-theorem Real.LUB_unique {E: Set Real} {M M': Real} (h1: IsLUB E M) (h2: IsLUB E M') : M = M' := by grind [Real.isLUB_def]
+theorem Real.LUB_unique {E: Set Real} {M M': Real} (h1: IsLUB E M) (h2: IsLUB E M') : M = M' := by
+  grind [Real.isLUB_def]
 
 /-- definition of "bounded above", using Mathlib notation -/
 theorem Real.bddAbove_def (E: Set Real) : BddAbove E ↔ ∃ M, M ∈ upperBounds E := Set.nonempty_def
@@ -181,7 +182,8 @@ theorem Real.LUB_exist {E: Set Real} (hE: Set.Nonempty E) (hbound: BddAbove E): 
     simp [←LIM_sub claim3 hb, S, this]
   rw [isLUB_def, upperBound_def]
   split_ands
-  . intros; apply LIM_of_ge claim3; grind [upperBound_def]
+  . intro x hx; apply LIM_of_ge claim3; intro n
+    exact (upperBound_def E (a n)).mp (hm1 n) x hx
   intro y hy
   have claim5 (n:ℕ) : y ≥ (a-b) n := by contrapose! hm2; use n; apply upperBound_upper _ hy; order
   rw [claim4]; apply LIM_of_le _ claim5; solve_by_elim [Sequence.IsCauchy.sub]

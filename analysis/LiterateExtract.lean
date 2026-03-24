@@ -11,7 +11,7 @@ import MD4Lean
 open Lean Elab Frontend
 open Lean.Elab.Command hiding Context
 open SubVerso Examples Module
-open SubVerso.Highlighting (Highlighted highlight highlightMany)
+open SubVerso.Highlighting (Highlighted highlight highlightMany highlightFrontendResult)
 
 def helpText : String :=
 "Extract a module's highlighted representation as JSON
@@ -96,7 +96,7 @@ where
   | .missing => none
 
   wholeFileInfo : SourceInfo → SourceInfo
-    | .original l l' t _ => .original l l' t contents.endPos
+    | .original l l' t _ => .original l l' t contents.rawEndPos
     | i => i
 
 structure ModuleItem' extends ModuleItem where
@@ -133,31 +133,16 @@ unsafe def go (suppressedNamespaces : Array Name) (mod : String) (out : IO.FS.St
     let cmdPos := parserState.pos
     let cmdSt ← IO.mkRef {commandState, parserState, cmdPos}
 
-    processCommands pctx cmdSt
+    let res ← Compat.Frontend.processCommands headerStx pctx cmdSt
 
-    -- The EOI parser uses a constant `"".toSubstring` for its leading and trailing info, which gets
-    -- in the way of `updateLeading`. This can lead to missing comments from the end of the file.
-    -- This fixup replaces it with an empty substring that's actually at the end of the input, which
-    -- fixes this.
-    let cmdStx := (← cmdSt.get).commands.map fun cmd =>
-      if cmd.isOfKind ``Lean.Parser.Command.eoi then
-        let s := {contents.toSubstring with startPos := contents.endPos, stopPos := contents.endPos}
-        .node .none ``Lean.Parser.Command.eoi #[.atom (.original s contents.endPos s contents.endPos) ""]
-      else cmd
+    let msgs := Array.flatten (res.items.map (Compat.messageLogArray ·.messages))
 
-    let infos := (← cmdSt.get).commandState.infoState.trees
-    let msgs := Compat.messageLogArray (← cmdSt.get).commandState.messages
+    let res := res.updateLeading contents
 
-
-    let .node _ _ cmds := mkNullNode (#[headerStx] ++ cmdStx) |>.updateLeading |> wholeFile contents
-      | panic! "updateLeading created non-node"
-
-    let infos := infos.toArray.map some
-    let infos := #[none] ++ infos
-
-    let hls ← (Frontend.runCommandElabM <| liftTermElabM <| highlightMany cmds msgs infos (suppressNamespaces := suppressedNamespaces.toList)) pctx cmdSt
+    let hls ← (Frontend.runCommandElabM <| liftTermElabM <| highlightFrontendResult res (suppressNamespaces := suppressedNamespaces.toList)) pctx cmdSt
 
     let env := (← cmdSt.get).commandState.env
+    let cmds := res.syntax
     let getTerms := cmds.mapM fun (stx : Syntax) => show FrontendM _ from do
       runCommandElabM <| elabCommand stx
       let tms := allTerms stx
@@ -207,6 +192,10 @@ structure Config where
   mod : String
   outFile : Option String := none
 
+private def readNamespaces (file : String) : IO (Array Name) := do
+  let contents ← IO.FS.readFile file
+  return contents.split (·.isWhitespace) |>.filter (!·.isEmpty) |>.map (·.toName) |>.toArray
+
 def Config.fromArgs (args : List String) : IO Config := go #[] args
 where
   go (nss : Array Name) : List String → IO Config
@@ -214,17 +203,15 @@ where
       if let ns :: more := more then
         go (nss.push ns.toName) more
       else
-        throw <| .userError "No namespace given after --suppress-namespace"
-    | "--suppress-namespaces" :: more => do
-      if let file :: more := more then
-        let contents ← IO.FS.readFile file
-        let nss' := contents.split (·.isWhitespace) |>.filter (!·.isEmpty) |>.map (·.toName)
-        go (nss ++ nss') more
-      else
-        throw <| .userError "No namespace file given after --suppress-namespaces"
+        throw <| IO.userError "No namespace given after --suppress-namespace"
+    | "--suppress-namespaces" :: file :: more' => do
+        let nss' ← readNamespaces file
+        go (nss ++ nss') more'
+    | "--suppress-namespaces" :: [] =>
+        throw <| IO.userError "No namespace file given after --suppress-namespaces"
     | [mod] => pure {suppressedNamespaces := nss, mod}
     | [mod, outFile] => pure {suppressedNamespaces := nss, mod, outFile := some outFile}
-    | other => throw <| .userError s!"Didn't understand remaining arguments: {other}"
+    | other => throw <| IO.userError s!"Didn't understand remaining arguments: {other}"
 
 unsafe def main (args : List String) : IO UInt32 := do
   try

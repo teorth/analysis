@@ -60,13 +60,15 @@ theorem Sequence.lim_of_power_decay {k:ℕ} :
   have hpow (n:ℕ): (a^(n+1)).Convergent ∧ lim (a^(n+1)) = (lim a)^(n+1) := by
     induction' n with n ih
     . simp [ha', -dite_pow]
-    rw [pow_succ]; convert lim_mul ih.1 ha'; grind
+    rw [pow_succ]; convert lim_mul ih.1 ha' using 1; rw [ih.2]; grind
   have hlim : (lim a)^(k+1) = 0 := by
     rw [←(hpow k).2]; convert lim_harmonic.2; ext; rfl
-    simp only [HPow.hPow, Pow.pow, a]; split_ifs with h <;> simp
-    rw [←Real.rpow_natCast,←Real.rpow_mul (by positivity)]
-    convert Real.rpow_one _; field_simp
-  simp [lim_eq, ha', pow_eq_zero hlim]
+    simp only [HPow.hPow, Pow.pow, a]; split_ifs with h
+    · simp
+      rw [←Real.rpow_natCast,←Real.rpow_mul (by positivity)]
+      convert Real.rpow_one _; field_simp; push_cast; ring
+    · simp
+  simp [lim_eq, ha', eq_zero_of_pow_eq_zero hlim]
 
 /-- Lemma 6.5.2 / Exercise 6.5.2 -/
 theorem Sequence.lim_of_geometric {x:ℝ} (hx: |x| < 1) : ((fun (n:ℕ) ↦ x^n):Sequence).TendsTo 0 := by
