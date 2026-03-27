@@ -35,9 +35,22 @@ jobs:
           restore-keys: lake-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
       - name: Build project
         run: lake build
+      - name: Build doc-gen
+        run: lake -R -Kenv=dev build Analysis:docs
       - name: Build book
         id: build-site
-        run: echo "path=$(lake query :literateHtml)" >> "$GITHUB_OUTPUT"
+        run: |
+          SITE_PATH="$(lake query :literateHtml)"
+          echo "Generated site at: $SITE_PATH"
+          echo "path=$SITE_PATH" >> "$GITHUB_OUTPUT"
+          mkdir -p _site
+          cp -r "$SITE_PATH/." _site
+      - name: Copy docs to site
+        run: cp -r .lake/build/doc _site/docs
+      - name: Remove unnecessary Lake files from docs
+        run: |
+          find _site/docs -name "*.trace" -delete
+          find _site/docs -name "*.hash" -delete
       - name: Save Lake cache
         if: always()
         uses: actions/cache/save@v4
@@ -47,7 +60,7 @@ jobs:
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ steps.build-site.outputs.path }}
+          path: _site
   deploy:
     # Add a dependency to the build job
     needs: build
