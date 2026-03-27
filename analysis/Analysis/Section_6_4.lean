@@ -131,7 +131,7 @@ noncomputable abbrev Example_6_4_10 : Sequence := (fun (n:ℕ) ↦ (n+1:ℝ))
 
 example (n:ℕ) : Example_6_4_10.upperseq n = ⊤ := by sorry
 
-example : Example_6_4_9.limsup = ⊤ := by sorry
+example : Example_6_4_10.limsup = ⊤ := by sorry
 
 example (n:ℕ) : Example_6_4_9.lowerseq n = n+1 := by sorry
 
