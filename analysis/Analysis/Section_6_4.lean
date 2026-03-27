@@ -133,9 +133,9 @@ example (n:ℕ) : Example_6_4_10.upperseq n = ⊤ := by sorry
 
 example : Example_6_4_10.limsup = ⊤ := by sorry
 
-example (n:ℕ) : Example_6_4_9.lowerseq n = n+1 := by sorry
+example (n:ℕ) : Example_6_4_10.lowerseq n = n+1 := by sorry
 
-example : Example_6_4_9.liminf = ⊤ := by sorry
+example : Example_6_4_10.liminf = ⊤ := by sorry
 
 /-- Proposition 6.4.12(a) -/
 theorem Sequence.gt_limsup_bounds {a:Sequence} {x:EReal} (h: x > a.limsup) :
