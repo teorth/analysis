@@ -112,4 +112,6 @@ In order to align the formalization with Mathlib conventions, a small number of 
     Sequences are indexed to start from zero rather than from one, as Mathlib has much more support for the 0-based natural numbers ℕ than the 1-based natural numbers.
 
     Many operations that are left undefined in the text, such as division by zero, or taking the formal limit of a non-Cauchy sequence, are instead assigned a "junk" value (e.g., 0) to make the operation totally defined. This is because Lean has better support for total functions than partial functions (indiscriminate use of the latter can lead into "dependent type hell" in which even very basic manipulations require quite subtle and delicate proofs). See for instance [this blog post](https://xenaproject.wordpress.com/2020/07/05/division-by-zero-in-type-theory-a-faq/) by Kevin Buzzard for more discussion.
+
+[*Generated documentation*](docs/) is available for the project and its dependencies.
 -/
