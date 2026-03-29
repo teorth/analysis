@@ -4,8 +4,8 @@ from urllib.parse import urlparse, unquote
 import urllib
 from http import HTTPStatus
 
-BOOK_SITE = os.path.abspath('./book/_site')
-DOCS_SITE = os.path.abspath('./analysis/.lake/build/doc')
+BOOK_SITE = os.path.abspath('./.lake/build/literate-html')
+DOCS_SITE = os.path.abspath('./.lake/build/doc')
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
     # Avoid spurious error messages from /favicon.ico

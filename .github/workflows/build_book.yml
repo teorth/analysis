@@ -11,73 +11,56 @@ concurrency:
   group: ${{ github.ref }}  # Group runs by the ref (branch or PR)
   cancel-in-progress: true  # Cancel any ongoing runs in the same group
 
-defaults:
-  run:
-    working-directory: ./book
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install elan
-        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
-      # The build directories for analysis/ and book/ are cached separately, because they
-      # use disjoint sets of build dependencies. There's no need to rebuild both completely
-      # when only one has a version bump.
-      - name: Restore cache if available
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            ./analysis/.lake
-          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('analysis/lean-toolchain') }}-${{ hashFiles('analysis/lake-manifest.json') }}-${{ github.sha }}
-          restore-keys: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('analysis/lean-toolchain') }}-${{ hashFiles('analysis/lake-manifest.json') }}
-      - name: Restore book cache if available
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            ./book/.lake
-          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('book/lean-toolchain') }}-${{ hashFiles('book/lake-manifest.json') }}-${{ github.sha }}
-          restore-keys: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('book/lean-toolchain') }}-${{ hashFiles('book/lake-manifest.json') }}
 
-      # Getting the mathlib cache is only useful when mathlib gets updated, but will save a lot of time in that case.
-      - name: Get Mathlib cache
-        run: ~/.elan/bin/lake exe cache get || true
-        working-directory: ./analysis
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+          test: false
+          use-mathlib-cache: true
+          use-github-cache: false
+      # We manage the Lake cache ourselves rather than using
+      # lean-action's built-in caching because lean-action saves the
+      # cache before we generate the site. As a result, Verso and its
+      # HTML artifacts would never be cached.
+      - name: Restore Lake cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake
+          key: lake-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: lake-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
+      - name: Build project
+        run: lake build
       - name: Build doc-gen
-        run: ~/.elan/bin/lake -R -Kenv=dev build Analysis:docs
-        working-directory: ./analysis
-      - name: Build metadata of project
-        run: ~/.elan/bin/lake build
-        working-directory: ./analysis
+        run: lake -R -Kenv=dev build Analysis:docs
       - name: Build book
+        id: build-site
         run: |
-          ~/.elan/bin/lake exe analysis-book 
-      - name: Copy docs to analysis-book
-        run: |
-          cp -r ../analysis/.lake/build/doc _site/docs
-      - name: Remove unnecessary lake files from documentation in `_site/docs`
+          SITE_PATH="$(lake query :literateHtml)"
+          echo "Generated site at: $SITE_PATH"
+          echo "path=$SITE_PATH" >> "$GITHUB_OUTPUT"
+          mkdir -p _site
+          cp -r "$SITE_PATH/." _site
+      - name: Copy docs to site
+        run: cp -r .lake/build/doc _site/docs
+      - name: Remove unnecessary Lake files from docs
         run: |
           find _site/docs -name "*.trace" -delete
           find _site/docs -name "*.hash" -delete
-      # The cache for analysis/ is saved here, rather than before building the book, because
-      # building the book generates JSON files full of literate program artifacts in analysis/.lake
-      - name: Save cache
+      - name: Save Lake cache
+        if: always()
         uses: actions/cache/save@v4
         with:
-          path: |
-            ./analysis/.lake
-          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('analysis/lean-toolchain') }}-${{ hashFiles('analysis/lake-manifest.json') }}-${{ github.sha }}
-      - name: Save book cache
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ./book/.lake
-          key: lake-${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('book/lean-toolchain') }}-${{ hashFiles('book/lake-manifest.json') }}-${{ github.sha }}
+          path: .lake
+          key: lake-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './book/_site'
+          path: _site
   deploy:
     # Add a dependency to the build job
     needs: build
