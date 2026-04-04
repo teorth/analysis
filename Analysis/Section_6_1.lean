@@ -399,11 +399,33 @@ theorem Sequence.add_coe (a b: ℕ → ℝ) : (a:Sequence) + (b:Sequence) = (fun
     in applications. -/
 theorem Sequence.tendsTo_add {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) :
   (a+b).TendsTo (L+M) := by
-  sorry
+  intro ε hε
+  obtain ⟨N₁, hN₁, ha'⟩ := ha (ε/2) (by linarith)
+  obtain ⟨N₂, hN₂, hb'⟩ := hb (ε/2) (by linarith)
+  refine ⟨max N₁ N₂, ?_, ?_⟩
+  · show max N₁ N₂ ≥ min a.m b.m; omega
+  intro n hn
+  have hn' : n ≥ max N₁ N₂ := by simp at hn; omega
+  have ha'' := ha' n (by simp; omega)
+  have hb'' := hb' n (by simp; omega)
+  rw [Sequence.from_eval _ (show n ≥ N₁ from by omega)] at ha''
+  rw [Sequence.from_eval _ (show n ≥ N₂ from by omega)] at hb''
+  have hfrom := Sequence.from_eval (a + b) hn'
+  rw [Real.Close]
+  rw [show ((a + b).from (max N₁ N₂)) n = (a + b) n from hfrom]
+  simp
+  rw [Real.Close] at ha'' hb''
+  rw [Real.dist_eq] at ha'' hb'' ⊢
+  calc |a.seq n + b.seq n - (L + M)|
+      = |(a.seq n - L) + (b.seq n - M)| := by ring_nf
+      _ ≤ |a.seq n - L| + |b.seq n - M| := abs_add_le _ _
+      _ ≤ ε / 2 + ε / 2 := add_le_add ha'' hb''
+      _ = ε := by ring
 
 theorem Sequence.lim_add {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) :
   (a + b).Convergent ∧ lim (a + b) = lim a + lim b := by
-  sorry
+  rw [← Sequence.lim_eq]
+  exact Sequence.tendsTo_add (Sequence.lim_def ha) (Sequence.lim_def hb)
 
 instance Sequence.inst_mul : Mul Sequence where
   mul a b := {
@@ -448,11 +470,33 @@ theorem Sequence.smul_coe (c:ℝ) (a:ℕ → ℝ) : (c • (a:Sequence)) = (fun 
     in applications. -/
 theorem Sequence.tendsTo_smul (c:ℝ) {a:Sequence} {L:ℝ} (ha: a.TendsTo L) :
     (c • a).TendsTo (c * L) := by
-  sorry
+  by_cases hc : c = 0
+  · subst hc; simp
+    intro ε hε; refine ⟨a.m, le_refl _, ?_⟩
+    intro n hn; simp [dist_self]; linarith
+  intro ε hε
+  obtain ⟨N, hN, ha'⟩ := ha (ε / |c|) (by positivity)
+  refine ⟨N, ?_, ?_⟩
+  · show N ≥ a.m; exact hN
+  intro n hn
+  have hn' : n ≥ N := by simp at hn; omega
+  have ha'' := ha' n (by simp; omega)
+  rw [Sequence.from_eval _ (show n ≥ N from hn')] at ha''
+  rw [Real.Close]
+  rw [show ((c • a).from N) n = (c • a) n
+    from Sequence.from_eval _ hn']
+  simp
+  rw [Real.Close] at ha''
+  rw [Real.dist_eq] at ha'' ⊢
+  have hrw : c * a.seq n - c * L = c * (a.seq n - L) := by ring
+  rw [hrw, abs_mul]
+  have := mul_le_mul_of_nonneg_left ha'' (abs_nonneg c)
+  linarith [mul_div_cancel₀ ε (abs_ne_zero.mpr hc)]
 
 theorem Sequence.lim_smul (c:ℝ) {a:Sequence} (ha: a.Convergent) :
     (c • a).Convergent ∧ lim (c • a) = c * lim a := by
-  sorry
+  rw [← Sequence.lim_eq]
+  exact Sequence.tendsTo_smul c (Sequence.lim_def ha)
 
 instance Sequence.inst_sub : Sub Sequence where
   sub a b := {
@@ -472,11 +516,36 @@ theorem Sequence.sub_coe (a b: ℕ → ℝ) : (a:Sequence) - (b:Sequence) = (fun
     in applications. -/
 theorem Sequence.tendsTo_sub {a b:Sequence} {L M:ℝ} (ha: a.TendsTo L) (hb: b.TendsTo M) :
     (a - b).TendsTo (L - M) := by
-  sorry
+  intro ε hε
+  obtain ⟨N₁, hN₁, ha'⟩ := ha (ε/2) (by linarith)
+  obtain ⟨N₂, hN₂, hb'⟩ := hb (ε/2) (by linarith)
+  refine ⟨max N₁ N₂, ?_, ?_⟩
+  · show max N₁ N₂ ≥ min a.m b.m; omega
+  intro n hn
+  have hn' : n ≥ max N₁ N₂ := by simp at hn; omega
+  have ha'' := ha' n (by simp; omega)
+  have hb'' := hb' n (by simp; omega)
+  rw [Sequence.from_eval _ (show n ≥ N₁ from by omega)] at ha''
+  rw [Sequence.from_eval _ (show n ≥ N₂ from by omega)] at hb''
+  rw [Real.Close]
+  rw [show ((a - b).from (max N₁ N₂)) n = (a - b) n
+    from Sequence.from_eval _ hn']
+  simp
+  rw [Real.Close] at ha'' hb''
+  rw [Real.dist_eq] at ha'' hb'' ⊢
+  have hrw : a.seq n - b.seq n + M - L =
+      (a.seq n - L) + (M - b.seq n) := by ring
+  rw [hrw]
+  calc |(a.seq n - L) + (M - b.seq n)|
+      ≤ |a.seq n - L| + |M - b.seq n| := abs_add_le _ _
+      _ ≤ ε / 2 + ε / 2 :=
+          add_le_add ha'' (by rwa [abs_sub_comm])
+      _ = ε := by ring
 
 theorem Sequence.LIM_sub {a b:Sequence} (ha: a.Convergent) (hb: b.Convergent) :
     (a - b).Convergent ∧ lim (a - b) = lim a - lim b := by
-  sorry
+  rw [← Sequence.lim_eq]
+  exact Sequence.tendsTo_sub (Sequence.lim_def ha) (Sequence.lim_def hb)
 
 noncomputable instance Sequence.inst_inv : Inv Sequence where
   inv a := {

@@ -18,7 +18,11 @@ Main constructions and results of this section:
 
 namespace Chapter6
 
-theorem Sequence.lim_of_const (c:ℝ) :  ((fun (_:ℕ) ↦ c):Sequence).TendsTo c := by sorry
+theorem Sequence.lim_of_const (c:ℝ) :  ((fun (_:ℕ) ↦ c):Sequence).TendsTo c := by
+  intro ε hε
+  refine ⟨0, le_refl _, ?_⟩
+  intro n hn
+  grind [dist_self]
 
 instance Sequence.inst_pow: Pow Sequence ℕ where
   pow a k := {
