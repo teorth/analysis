@@ -328,10 +328,22 @@ example : ∃ (X:Type) (h₀: LE X), (∀ x:X, x ≤ x) ∧ (∀ x y z:X, x ≤ 
 
 example : ∃ (X:Type) (h₀: LE X), (∀ x y:X, x ≤ y → y ≤ x → x = y) ∧ (∀ x y z:X, x ≤ y → y ≤ z → x ≤ z) ∧ ¬ (∀ x:X, x ≤ x) := by sorry
 
-/-- Exercise 8.5.3 -/
-example : ∃ (h₀: PartialOrder PNat), h₀.le = (fun x y ↦ ∃ n, y = n * x) := by sorry
+/-- Exercise 8.5.3: The divisibility ordering on PNat. -/
+@[reducible] def PNat.divOrder : PartialOrder PNat where
+  le x y := ∃ n : PNat, y = n * x
+  lt x y := (∃ n : PNat, y = n * x) ∧ ¬∃ n : PNat, x = n * y
+  le_refl := by sorry
+  le_antisymm := by sorry
+  le_trans := by sorry
+  lt_iff_le_not_ge := fun _ _ ↦ Iff.rfl
 
-example : ¬ ∃ (h₀: LinearOrder PNat), h₀.le = (fun x y ↦ ∃ n, y = n * x) := by sorry
+theorem PNat.divOrder_exists :
+    ∃ (h₀ : PartialOrder PNat), h₀.le = (fun x y ↦ ∃ n, y = n * x) :=
+  ⟨PNat.divOrder, rfl⟩
+
+theorem PNat.divOrder_not_linear :
+    ¬∃ (h₀ : LinearOrder PNat), h₀.le = (fun x y ↦ ∃ n, y = n * x) := by
+  sorry
 
 /-- Exercise 8.5.4 -/
 example : ¬ ∃ x : {x:ℝ| x > 0}, IsMin x := by sorry
@@ -383,5 +395,143 @@ instance Lex'.linearOrder {X Y:Type} [LinearOrder X] [LinearOrder Y] : LinearOrd
 instance Lex'.WellFoundedLT {X Y:Type} [LinearOrder X] [WellFoundedLT X] [LinearOrder Y] [WellFoundedLT Y]:
   WellFoundedLT (Lex' (X × Y)) := by sorry
 
+
+/-- Exercise 8.5.15 -/
+theorem inj_trichotomy {X Y : Type}
+    (h : ¬∃ f : X → Y, Function.Injective f) :
+    ∃ g : Y → X, Function.Injective g := by sorry
+
+/-- Exercise 8.5.16: The set of partial orderings on X, ordered by "coarser than",
+is itself a partial order. -/
+instance PartialOrder.coarserOrder (X : Type) : PartialOrder (PartialOrder X) where
+  le p1 p2 := ∀ x y : X, p1.le x y → p2.le x y
+  le_refl := by simp
+  le_trans p1 p2 p3 h12 h23 := fun x y h => h23 x y (h12 x y h)
+  le_antisymm p1 p2 h12 h21 := by ext x y; exact ⟨h12 x y, h21 x y⟩
+
+/-- The divisibility ordering on PNat is coarser than the usual ordering. -/
+example : PNat.divOrder ≤ (inferInstance : PartialOrder PNat) := by
+  intro x y h
+  obtain ⟨n, rfl⟩ := h
+  show x ≤ n * x
+  exact Nat.le_mul_of_pos_left x n.pos
+
+/-- The discrete ordering (x ≤ y ↔ x = y) is the unique minimal element. -/
+@[reducible] def PartialOrder.discrete (X : Type) : PartialOrder X where
+  le x y := x = y
+  le_refl := fun _ ↦ rfl
+  le_antisymm := fun _ _ h _ ↦ h
+  le_trans := fun _ _ _ h1 h2 ↦ h1.trans h2
+
+theorem PartialOrder.discrete_isBot (X : Type) (p : PartialOrder X) :
+    PartialOrder.discrete X ≤ p := by sorry
+
+theorem PartialOrder.discrete_isMin (X : Type) :
+    @IsMin (PartialOrder X) (coarserOrder X).toPreorder.toLE
+      (PartialOrder.discrete X) := by sorry
+
+theorem PartialOrder.discrete_unique_min (X : Type) (p : PartialOrder X)
+    (h : @IsMin (PartialOrder X) (coarserOrder X).toPreorder.toLE p) :
+    p = discrete X := by sorry
+
+/-- A partial ordering is maximal in the coarser order iff it is total. -/
+theorem PartialOrder.isMax_iff_isTotal (X : Type) (p : PartialOrder X) :
+    @IsMax (PartialOrder X) (coarserOrder X).toPreorder.toLE p ↔
+    @IsTotal X p := by sorry
+
+/-- Any partial ordering extends to a total ordering (by Zorn's lemma). -/
+theorem PartialOrder.extends_to_total (X : Type) (p : PartialOrder X) :
+    ∃ q : PartialOrder X, p ≤ q ∧ @IsTotal X q := by sorry
+
+/-- Exercise 8.5.17: Use Zorn's lemma to reprove Exercise 8.4.2 -/
+theorem exists_set_singleton_intersect' {I U : Type} {X : I → Set U}
+    (h : Set.PairwiseDisjoint .univ X) (hne : ∀ α, Nonempty (X α)) :
+    ∃ Y : Set U, ∀ α, Nat.card (Y ∩ X α : Set U) = 1 := by sorry
+
+/-- Exercise 8.5.18 -/
+theorem hausdorff_of_zorns_lemma {X : Type} [PartialOrder X] :
+    ∃ M : Set X, Maximal (fun (S : Set X) => IsTotal S) M := by sorry
+
+theorem zorns_lemma_of_hausdorff {X : Type} [PartialOrder X] [Nonempty X]
+    (hhausdorff : ∃ M : Set X, Maximal (fun (S : Set X) => IsTotal S) M)
+    (hchain : ∀ Y : Set X, IsTotal Y ∧ Y.Nonempty → ∃ x, IsUpperBound Y x) :
+    ∃ x : X, IsMax x := by sorry
+
+/-- Exercise 8.5.19: A well-ordered subset of X: a subset with a linear order and
+well-foundedness. -/
+structure WellOrderedSubset (X : Type) where
+  carrier : Set X
+  ord : LinearOrder carrier
+  wf : @WellFoundedLT carrier ord.toLT
+
+/-- (W, ≤) is an initial segment of (W', ≤') if W ⊆ W', the orderings agree on W,
+and W = \{y ∈ W' : y <' x\} for some x ∈ W'. -/
+def WellOrderedSubset.IsInitialSegment {X : Type}
+    (W W' : WellOrderedSubset X) : Prop :=
+  ∃ x : W'.carrier,
+    W.carrier = Subtype.val '' {z : W'.carrier | W'.ord.lt z x} ∧
+    ∀ (a b : W.carrier) (ha : a.1 ∈ W'.carrier) (hb : b.1 ∈ W'.carrier),
+      W.ord.le a b ↔ W'.ord.le ⟨a, ha⟩ ⟨b, hb⟩
+
+theorem WellOrderedSubset.IsInitialSegment.subset {X : Type}
+    {W W' : WellOrderedSubset X} (h : W.IsInitialSegment W') :
+    W.carrier ⊂ W'.carrier := by sorry
+
+/-- The ordering on well-ordered subsets: equal or initial segment. -/
+instance WellOrderedSubset.instPartialOrder (X : Type) :
+    PartialOrder (WellOrderedSubset X) where
+  le W W' := W = W' ∨ W.IsInitialSegment W'
+  le_refl := fun W ↦ Or.inl rfl
+  le_antisymm := by
+    intro W W' h1 h2
+    rcases h1 with rfl | h1
+    · rfl
+    rcases h2 with rfl | h2
+    · rfl
+    exact (h1.subset.asymm h2.subset).elim
+  le_trans := by sorry
+
+/-- The empty well-ordered subset. -/
+def WellOrderedSubset.empty (X : Type) : WellOrderedSubset X where
+  carrier := ∅
+  ord := { PartialOrder.discrete (∅ : Set X) with
+    le_total := fun ⟨_, h⟩ ↦ h.elim
+    toDecidableLE := fun ⟨_, h⟩ ↦ h.elim }
+  wf := ⟨⟨fun ⟨_, h⟩ ↦ h.elim⟩⟩
+
+theorem WellOrderedSubset.empty_isMin (X : Type) :
+    @IsMin (WellOrderedSubset X) (instPartialOrder X).toPreorder.toLE
+      (empty X) := by sorry
+
+/-- The maximal elements are precisely the well-orderings of all of X. -/
+theorem WellOrderedSubset.isMax_iff_full (X : Type) (W : WellOrderedSubset X) :
+    @IsMax (WellOrderedSubset X) (instPartialOrder X).toPreorder.toLE W ↔
+    W.carrier = Set.univ := by sorry
+
+/-- The well-ordering principle: every set has a well-ordering. -/
+theorem well_ordering_principle (X : Type) :
+    ∃ (l : LinearOrder X), @WellFoundedLT X l.toLT := by sorry
+
+/-- Well-ordering principle implies axiom of choice. Well-order the disjoint union
+`Σ i, X i`, then pick the minimum of each fiber. -/
+theorem axiom_of_choice_of_well_ordering
+    (hwo : ∀ T : Type, ∃ (l : LinearOrder T), @WellFoundedLT T l.toLT)
+    {I : Type} {X : I → Type} (hne : ∀ i, Nonempty (X i)) :
+    Nonempty (∀ i, X i) := by sorry
+
+/-- Exercise 8.5.20 -/
+theorem maximal_disjoint_subcollection {X : Type} (Ω : Set (Set X)) (hne : ∅ ∉ Ω) :
+    ∃ Ω' ⊆ Ω, Ω'.Pairwise Disjoint ∧
+      (∀ C ∈ Ω, ∃ A ∈ Ω', (C ∩ A).Nonempty) := by sorry
+
+/-- The maximal disjoint subcollection property implies Exercise 8.4.2, hence is
+equivalent to the axiom of choice. -/
+theorem exists_set_singleton_intersect_of_maximal_disjoint
+    (hmds : ∀ (X : Type) (Ω : Set (Set X)), ∅ ∉ Ω →
+      ∃ Ω' ⊆ Ω, Ω'.Pairwise Disjoint ∧
+        (∀ C ∈ Ω, ∃ A ∈ Ω', (C ∩ A).Nonempty))
+    {I U : Type} {X : I → Set U}
+    (h : Set.PairwiseDisjoint .univ X) (hne : ∀ α, Nonempty (X α)) :
+    ∃ Y : Set U, ∀ α, Nat.card (Y ∩ X α : Set U) = 1 := by sorry
 
 end Chapter8
