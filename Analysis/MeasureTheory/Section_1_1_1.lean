@@ -299,7 +299,7 @@ def witness_upperBound_lowerBounds {X : Set ℝ} (y : ℝ) (hy : y ∈ X)
 
 /-- Show x < b when b = sSup X and b ∉ X -/
 theorem lt_sSup_of_ne_sSup {X : Set ℝ} {x b : ℝ} (_hBddAbove : BddAbove X) (_hb : b = sSup X)
-    (hb_notin : b ∉ X) (hx : x ∈ X) (hx_le_b : x ≤ b) : x < b := by  
+    (hb_notin : b ∉ X) (hx : x ∈ X) (hx_le_b : x ≤ b) : x < b := by
   by_contra! h;  exact hb_notin (hx_le_b.antisymm h ▸ hx)
 
 /-- Show a < x when a = sInf X and a ∉ X -/
