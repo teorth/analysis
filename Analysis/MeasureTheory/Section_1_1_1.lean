@@ -288,27 +288,35 @@ def witness_upperBound_lowerBounds {X : Set ℝ} (y : ℝ) (hy : y ∈ X)
   intro u hu; simp [lowerBounds] at hu; exact hu hy
 
 /-- If x < sSup X, then there exists z ∈ X with x < z -/
-theorem exists_gt_of_lt_csSup {X : Set ℝ} (hBddAbove : BddAbove X) (hNonempty : X.Nonempty)
-    (hLowerBound : ∃ y ∈ X, y ∈ lowerBounds (upperBounds X)) (x : ℝ) (hx : x < sSup X) :
+theorem exists_gt_of_lt_csSup_OLD {X : Set ℝ} (hBddAbove : BddAbove X) (hNonempty : X.Nonempty)
+(x : ℝ) (hx : x < sSup X) :
     ∃ z ∈ X, x < z := by
   by_contra! h
-  have : sSup X ≤ x := by
-    rw [← csInf_upperBounds_eq_csSup hBddAbove hNonempty]
-    exact csInf_le
-      (by obtain ⟨y, hy, _⟩ := hLowerBound; exact ⟨y, witness_lowerBound_upperBounds y hy⟩)
-      (fun z hz => h z hz)
+  --we are going to show that x < sSup X and its opposite
+  --sSup X ≤ x to get a contradiction that linarith can find
+  have not_hx: sSup X ≤ x := by
+    rw [←csInf_upperBounds_eq_csSup hBddAbove hNonempty]
+    obtain ⟨y,hy⟩ : ∃ y : ℝ, y ∈ X := (Set.nonempty_def).mp hNonempty
+    have yLowerBound : y ∈ lowerBounds (upperBounds X) :=
+      witness_lowerBound_upperBounds y hy
+    apply csInf_le ⟨y,yLowerBound⟩ (fun z hz => h z hz)
   linarith
 
+
+
 /-- If sInf X < x, then there exists w ∈ X with w ≤ x -/
-theorem exists_le_of_lt_csInf {X : Set ℝ} (hBddBelow : BddBelow X) (hNonempty : X.Nonempty)
-    (hUpperBound : ∃ y ∈ X, y ∈ upperBounds (lowerBounds X)) (x : ℝ) (hx : sInf X < x) :
+theorem exists_le_of_lt_csInf_OLD {X : Set ℝ} (hBddBelow : BddBelow X) (hNonempty : X.Nonempty)
+    (x : ℝ) (hx : sInf X < x) :
     ∃ w ∈ X, w ≤ x := by
   by_contra! h
-  have : x ≤ sInf X := by
+    --we are going to show that sInf X <  x and its opposite
+    --"x ≤ sInf X" to get a contradiction that linarith can find
+  have not_hx: x ≤ sInf X := by
     rw [← csSup_lowerBounds_eq_csInf hBddBelow hNonempty]
-    exact le_csSup
-      (by obtain ⟨y, hy, _⟩ := hUpperBound; exact ⟨y, witness_upperBound_lowerBounds y hy⟩)
-      (fun u hu => le_of_lt (h u hu))
+    obtain ⟨y,hy⟩ : ∃ y : ℝ, y ∈ X := (Set.nonempty_def).mp hNonempty
+    have yUpperBound : y ∈ upperBounds (lowerBounds X) :=
+       witness_upperBound_lowerBounds y hy
+    apply le_csSup ⟨y,yUpperBound⟩ (fun z hz => le_of_lt (h z hz))
   linarith
 
 /-- Show x < b when b = sSup X and b ∉ X -/
@@ -378,8 +386,8 @@ theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
             exact ⟨csInf_le hBddBelow hx, lt_sSup_of_ne_sSup hBddAbove rfl hb hx (le_csSup hBddAbove hx)⟩
           · intro hx; simp [Set.mem_Ico] at hx
             have hb_eq : b = sSup X := rfl
-            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup hBddAbove hNonempty
-              ⟨a, ha, witness_lowerBound_upperBounds a ha⟩ x (by rw [←hb_eq]; exact hx.2)
+            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup_OLD hBddAbove hNonempty x
+              (by rw [←hb_eq]; exact hx.2)
             exact mem_of_mem_Icc_ordConnected hOrdConn ha hz ⟨hx.1, le_of_lt hxz⟩
       · by_cases hb : b ∈ X
         · -- Case: a ∉ X ∧ b ∈ X → use Ioc a b
@@ -390,8 +398,8 @@ theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
             by_cases hx_eq_b : x = b
             · rw [hx_eq_b]; exact hb
             · have ha_eq : a = sInf X := rfl
-              obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf hBddBelow hNonempty
-                ⟨b, hb, witness_upperBound_lowerBounds b hb⟩ x (by rw [←ha_eq]; exact hx.1)
+              obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf_OLD hBddBelow hNonempty x
+                (by rw [←ha_eq]; exact hx.1)
               exact mem_of_mem_Icc_ordConnected hOrdConn hw hb ⟨hwx, hx.2⟩
         · -- Case: a ∉ X ∧ b ∉ X → use Ioo a b
           use Ioo a b; simp [set_Ioo]; ext x; constructor
@@ -400,13 +408,9 @@ theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
               lt_sSup_of_ne_sSup hBddAbove rfl hb hx (le_csSup hBddAbove hx)⟩
           · intro hx; simp [Set.mem_Ioo] at hx
             have ha_eq : a = sInf X := rfl; have hb_eq : b = sSup X := rfl
-            have h_lower : ∃ y ∈ X, y ∈ lowerBounds (upperBounds X) := by
-              obtain ⟨y, hy⟩ := hNonempty; exact ⟨y, hy, witness_lowerBound_upperBounds y hy⟩
-            have h_upper : ∃ y ∈ X, y ∈ upperBounds (lowerBounds X) := by
-              obtain ⟨y, hy⟩ := hNonempty; exact ⟨y, hy, witness_upperBound_lowerBounds y hy⟩
-            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup hBddAbove hNonempty h_lower x
+            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup_OLD hBddAbove hNonempty x
               (by rw [←hb_eq]; exact hx.2)
-            obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf hBddBelow hNonempty h_upper x
+            obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf_OLD hBddBelow hNonempty x
               (by rw [←ha_eq]; exact hx.1)
             exact mem_of_mem_Icc_ordConnected hOrdConn hw hz ⟨hwx, le_of_lt hxz⟩
   · -- Trivial direction: if X = I for some BoundedInterval I, then X is bounded and order-connected
