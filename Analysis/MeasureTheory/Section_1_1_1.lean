@@ -288,7 +288,7 @@ def witness_upperBound_lowerBounds {X : Set ℝ} (y : ℝ) (hy : y ∈ X)
   intro u hu; simp [lowerBounds] at hu; exact hu hy
 
 /-- If x < sSup X, then there exists z ∈ X with x < z -/
-theorem exists_gt_of_lt_csSup_OLD {X : Set ℝ} (hBddAbove : BddAbove X) (hNonempty : X.Nonempty)
+theorem exists_gt_of_lt_csSup{X : Set ℝ} (hBddAbove : BddAbove X) (hNonempty : X.Nonempty)
 (x : ℝ) (hx : x < sSup X) :
     ∃ z ∈ X, x < z := by
   by_contra! h
@@ -305,7 +305,7 @@ theorem exists_gt_of_lt_csSup_OLD {X : Set ℝ} (hBddAbove : BddAbove X) (hNonem
 
 
 /-- If sInf X < x, then there exists w ∈ X with w ≤ x -/
-theorem exists_le_of_lt_csInf_OLD {X : Set ℝ} (hBddBelow : BddBelow X) (hNonempty : X.Nonempty)
+theorem exists_le_of_lt_csInf {X : Set ℝ} (hBddBelow : BddBelow X) (hNonempty : X.Nonempty)
     (x : ℝ) (hx : sInf X < x) :
     ∃ w ∈ X, w ≤ x := by
   by_contra! h
@@ -386,7 +386,7 @@ theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
             exact ⟨csInf_le hBddBelow hx, lt_sSup_of_ne_sSup hBddAbove rfl hb hx (le_csSup hBddAbove hx)⟩
           · intro hx; simp [Set.mem_Ico] at hx
             have hb_eq : b = sSup X := rfl
-            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup_OLD hBddAbove hNonempty x
+            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup hBddAbove hNonempty x
               (by rw [←hb_eq]; exact hx.2)
             exact mem_of_mem_Icc_ordConnected hOrdConn ha hz ⟨hx.1, le_of_lt hxz⟩
       · by_cases hb : b ∈ X
@@ -398,7 +398,7 @@ theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
             by_cases hx_eq_b : x = b
             · rw [hx_eq_b]; exact hb
             · have ha_eq : a = sInf X := rfl
-              obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf_OLD hBddBelow hNonempty x
+              obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf hBddBelow hNonempty x
                 (by rw [←ha_eq]; exact hx.1)
               exact mem_of_mem_Icc_ordConnected hOrdConn hw hb ⟨hwx, hx.2⟩
         · -- Case: a ∉ X ∧ b ∉ X → use Ioo a b
@@ -408,9 +408,9 @@ theorem BoundedInterval.ordConnected_iff (X:Set ℝ) :
               lt_sSup_of_ne_sSup hBddAbove rfl hb hx (le_csSup hBddAbove hx)⟩
           · intro hx; simp [Set.mem_Ioo] at hx
             have ha_eq : a = sInf X := rfl; have hb_eq : b = sSup X := rfl
-            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup_OLD hBddAbove hNonempty x
+            obtain ⟨z, hz, hxz⟩ := exists_gt_of_lt_csSup hBddAbove hNonempty x
               (by rw [←hb_eq]; exact hx.2)
-            obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf_OLD hBddBelow hNonempty x
+            obtain ⟨w, hw, hwx⟩ := exists_le_of_lt_csInf hBddBelow hNonempty x
               (by rw [←ha_eq]; exact hx.1)
             exact mem_of_mem_Icc_ordConnected hOrdConn hw hz ⟨hwx, le_of_lt hxz⟩
   · -- Trivial direction: if X = I for some BoundedInterval I, then X is bounded and order-connected
