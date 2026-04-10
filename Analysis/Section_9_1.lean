@@ -53,7 +53,7 @@ example {a b: EReal} (h: a ≥ b) : Set.Ioc a b = ∅ := by
 example {a b: EReal} (h: a ≥ b) : Set.Ioo a b = ∅ := by
   sorry
 
-example {a b: EReal} (h: a = b) : Set.Icc a a = {a} := by
+example {a b: EReal} (h: a = b) : Set.Icc a b = {a} := by
   sorry
 
 /-- Definition 9.1.5.  Note that a slightly different `Real.adherent` was defined in Chapter 6.4 -/
@@ -89,19 +89,19 @@ theorem closure_def' (X:Set ℝ) (x :ℝ) : x ∈ closure X ↔ AdherentPt x X :
 theorem AdherentPt_def (x:ℝ) (X:Set ℝ) : AdherentPt x X = ClusterPt x (.principal X) := by
   rw [←closure_def', mem_closure_iff_clusterPt]
 
-/-- Lemma 9.1.11 / Exercise 9.1.2 -/
+/-- Lemma 9.1.11 / Exercise 9.1.1 -/
 theorem subset_closure (X:Set ℝ): X ⊆ closure X := by sorry
 
-/-- Lemma 9.1.11 / Exercise 9.1.2 -/
+/-- Lemma 9.1.11 / Exercise 9.1.1 -/
 theorem closure_union (X Y:Set ℝ): closure (X ∪ Y) = closure X ∪ closure Y := by sorry
 
-/-- Lemma 9.1.11 / Exercise 9.1.2 -/
+/-- Lemma 9.1.11 / Exercise 9.1.1 -/
 theorem closure_inter (X Y:Set ℝ): closure (X ∩ Y) ⊆ closure X ∩ closure Y := by sorry
 
-/-- Lemma 9.1.11 / Exercise 9.1.2 -/
+/-- Lemma 9.1.11 / Exercise 9.1.1 -/
 theorem closure_subset {X Y:Set ℝ} (h: X ⊆ Y): closure X ⊆ closure Y := by sorry
 
-/-- Exercise 9.1.1 -/
+/-- Exercise 9.1.6 -/
 theorem closure_of_subset_closure {X Y:Set ℝ} (h: X ⊆ Y) (h' : Y ⊆ closure X): closure Y = closure X := by sorry
 
 /-- Lemma 9.1.12 -/
@@ -146,22 +146,22 @@ theorem closure_of_Iic {a:ℝ} : closure (.Iic a) = .Iic a := by
 
 theorem closure_of_R : closure (.univ: Set ℝ) = .univ := by sorry
 
-/-- Lemma 9.1.13 / Exercise 9.1.3 -/
+/-- Lemma 9.1.13 / Exercise 9.1.2 -/
 theorem closure_of_N :
   closure ((fun n:ℕ ↦ (n:ℝ)) '' .univ) = ((fun n:ℕ ↦ (n:ℝ)) '' .univ) := by
     sorry
 
-/-- Lemma 9.1.13 / Exercise 9.1.3 -/
+/-- Lemma 9.1.13 / Exercise 9.1.2 -/
 theorem closure_of_Z :
   closure ((fun n:ℤ ↦ (n:ℝ)) '' .univ) = ((fun n:ℤ ↦ (n:ℝ)) '' .univ) := by
     sorry
 
-/-- Lemma 9.1.13 / Exercise 9.1.3 -/
+/-- Lemma 9.1.13 / Exercise 9.1.2 -/
 theorem closure_of_Q :
   closure ((fun n:ℚ ↦ (n:ℝ)) '' .univ) = .univ := by
     sorry
 
-/-- Lemma 9.1.14 / Exercise 9.1.5 -/
+/-- Lemma 9.1.14 / Exercise 9.1.4-/
 theorem limit_of_AdherentPt (X: Set ℝ) (x:ℝ) :
   AdherentPt x X ↔ ∃ a : ℕ → ℝ, (∀ n, a n ∈ X) ∧ Filter.atTop.Tendsto a (nhds x) := by
     sorry
@@ -304,16 +304,16 @@ theorem Icc_bounded (a b:ℝ) : Bornology.IsBounded (.Icc a b) := by sorry
 theorem Ici_unbounded (a: ℝ) : ¬ Bornology.IsBounded (.Ici a) := by sorry
 
 /-- Example 9.1.23 -/
-theorem N_unbounded (a: ℝ) : ¬ Bornology.IsBounded ((fun n:ℕ ↦ (n:ℝ)) '' .univ) := by sorry
+theorem N_unbounded : ¬ Bornology.IsBounded ((fun n:ℕ ↦ (n:ℝ)) '' .univ) := by sorry
 
 /-- Example 9.1.23 -/
-theorem Z_unbounded (a: ℝ) : ¬ Bornology.IsBounded ((fun n:ℤ ↦ (n:ℝ)) '' .univ) := by sorry
+theorem Z_unbounded : ¬ Bornology.IsBounded ((fun n:ℤ ↦ (n:ℝ)) '' .univ) := by sorry
 
 /-- Example 9.1.23 -/
-theorem Q_unbounded (a: ℝ) : ¬ Bornology.IsBounded ((fun n:ℚ ↦ (n:ℝ)) '' .univ) := by sorry
+theorem Q_unbounded : ¬ Bornology.IsBounded ((fun n:ℚ ↦ (n:ℝ)) '' .univ) := by sorry
 
 /-- Example 9.1.23 -/
-theorem R_unbounded (a: ℝ) : ¬ Bornology.IsBounded (.univ: Set ℝ) := by sorry
+theorem R_unbounded : ¬ Bornology.IsBounded (.univ: Set ℝ) := by sorry
 
 /-- Theorem 9.1.24 / Exercise 9.1.13 (Heine-Borel theorem for the line)-/
 theorem Heine_Borel (X: Set ℝ) :
@@ -322,11 +322,11 @@ theorem Heine_Borel (X: Set ℝ) :
     ∧ ∃ L ∈ X, Filter.atTop.Tendsto (fun j ↦ a (n j)) (nhds L)) := by
   sorry
 
-/-- Exercise 9.1.4 -/
+/-- Exercise 9.1.3 -/
 example : ∃ (X Y:Set ℝ), closure (X ∩ Y) ≠ closure X ∩ closure Y := by
   sorry
 
-/-- Exercise 9.1.6 -/
+/-- Exercise 9.1.5 -/
 example (X:Set ℝ) : IsClosed (closure X) := by
   sorry
 
