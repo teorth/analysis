@@ -19,8 +19,6 @@ The Lean toolchain version is pinned in `lean-toolchain`. Mathlib is pinned in `
 - **Line length.** Follow Mathlib convention: 100 characters max.
 - **Sorry warnings.** The project suppresses sorry warnings (`-Dwarn.sorry=false` in `lakefile.lean`) by design.
 
-[#476]: https://github.com/teorth/analysis/pull/476
-
 ## Adding a section
 
 1. Add the relevant file to `Analysis/`
