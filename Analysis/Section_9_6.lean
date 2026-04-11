@@ -63,7 +63,7 @@ theorem BddOn.of_continuous_on_compact {a b:ℝ} (_h:a < b) {f:ℝ → ℝ} (hf:
   have why (j:ℕ) : n j ≥ j := why_7_6_3 hn j
   replace hf := hf.continuousWithinAt hLX
   rw [ContinuousWithinAt.iff] at hf
-  replace hf := hf.comp (AdherentPt.of_mem hLX) (fun j ↦ haX (n j)) hconv
+  replace hf := hf.comp (fun j ↦ haX (n j)) hconv
   apply Metric.isBounded_range_of_tendsto at hf
   rw [isBounded_def] at hf; choose M hpos hM using hf
   choose j hj using exists_nat_gt M

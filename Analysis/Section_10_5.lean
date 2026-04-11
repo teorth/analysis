@@ -93,7 +93,6 @@ theorem _root_.Filter.Tendsto.of_div' {a b L:ℝ} (hab: a < b) {f g f' g': ℝ �
     simp_rw [hy']; apply hderiv.comp
     solve_by_elim [tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within,
     Filter.Eventually.of_forall]
-  simp [←closure_def', closure_Ioc (show a ≠ b by grind)]; grind
 
 
 end Chapter10

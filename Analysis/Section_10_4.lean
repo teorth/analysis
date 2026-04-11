@@ -61,14 +61,7 @@ theorem inverse_function_theorem {X Y: Set ℝ} {f: ℝ → ℝ} {g:ℝ → ℝ}
   (hf: HasDerivWithinAt f f'x₀ X x₀) (hg: ContinuousWithinAt g Y y₀) :
     HasDerivWithinAt g (1/f'x₀) Y y₀ := by
     -- This proof is written to follow the structure of the original text.
-    have had : AdherentPt y₀ (Y \ {y₀}) := by
-      simp [←AdherentPt_def, limit_of_AdherentPt] at *
-      choose x hx hconv using hcluster; use f ∘ x
-      split_ands; grind
-      rw [←hfx₀]
-      apply hconv.comp_of_continuous hx₀ _ (fun n ↦ (hx n).1)
-      exact ContinuousWithinAt.of_differentiableWithinAt (DifferentiableWithinAt.of_hasDeriv hf)
-    rw [HasDerivWithinAt.iff, ←Convergesto.iff, Convergesto.iff_conv _ _ had]
+    rw [HasDerivWithinAt.iff, ←Convergesto.iff, Convergesto.iff_conv _ _]
     intro y hy hconv
     set x : ℕ → ℝ := fun n ↦ g (y n)
     have hy' : ∀ n, y n ∈ Y := by aesop
@@ -76,9 +69,8 @@ theorem inverse_function_theorem {X Y: Set ℝ} {f: ℝ → ℝ} {g:ℝ → ℝ}
     have hx : ∀ n, x n ∈ X \ {x₀}:= by
       sorry
     replace hconv := hconv.comp_of_continuous hy₀ hg hy'
-    have had' : AdherentPt x₀ (X \ {x₀}) := by rwa [AdherentPt_def]
     have hgy₀ : g y₀ = x₀ := by aesop
-    rw [HasDerivWithinAt.iff, ←Convergesto.iff, Convergesto.iff_conv _ _ had'] at hf
+    rw [HasDerivWithinAt.iff, ←Convergesto.iff, Convergesto.iff_conv _ _] at hf
     convert (hf _ hx _).inv₀ _ using 2 with n <;> grind
 
 /-- Exercise 10.4.1(a) -/
