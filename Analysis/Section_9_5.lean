@@ -64,7 +64,7 @@ theorem right_limit.conv {X: Set ℝ} {f: ℝ → ℝ} {x₀:ℝ} (had: Adherent
   (hconv: Filter.atTop.Tendsto a (nhds x₀)) :
   Filter.atTop.Tendsto (fun n ↦ f (a n)) (nhds (right_limit X f x₀)) := by
   choose L hL using h
-  apply Convergesto.comp had _ ha hconv
+  apply Convergesto.comp _ ha hconv
   rwa [Convergesto.iff, (eq had hL).2]
 
 theorem left_limit.conv {X: Set ℝ} {f: ℝ → ℝ} {x₀:ℝ} (had: AdherentPt x₀ (X ∩ .Iio x₀))
@@ -73,7 +73,7 @@ theorem left_limit.conv {X: Set ℝ} {f: ℝ → ℝ} {x₀:ℝ} (had: AdherentP
   (hconv: Filter.atTop.Tendsto a (nhds x₀)) :
   Filter.atTop.Tendsto (fun n ↦ f (a n)) (nhds (left_limit X f x₀)) := by
   choose L hL using h
-  apply Convergesto.comp had _ ha hconv
+  apply Convergesto.comp _ ha hconv
   rwa [Convergesto.iff, (eq had hL).2]
 
 /-- Proposition 9.5.3 -/

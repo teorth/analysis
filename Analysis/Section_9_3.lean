@@ -27,7 +27,9 @@ our functions defined on all of {lean}`ℝ` (with the understanding that they ar
 outside of the domain `X` of interest).
 -/
 
-/-- Definition 9.3.1 -/
+/-- Definition 9.3.1
+Note the books uses ≤ instead of <, but < matches mathlib's definition of neighborhood.
+-/
 abbrev Real.CloseFn (ε:ℝ) (X:Set ℝ) (f: ℝ → ℝ) (L:ℝ) : Prop :=
   ∀ x ∈ X, |f x - L| < ε
 
@@ -37,11 +39,15 @@ abbrev Real.CloseNear (ε:ℝ) (X:Set ℝ) (f: ℝ → ℝ) (L:ℝ) (x₀:ℝ) :
 
 namespace Chapter9
 
-/-- Example 9.3.2 -/
-example : (5:ℝ).CloseFn (.Icc 1 3) (fun x ↦ x^2) 4 := by sorry
+/-- Example 9.3.2
+Slight change from the book to accomodate the change to {lean}`Real.CloseFn`
+-/
+example : (5.1:ℝ).CloseFn (.Icc 1 3) (fun x ↦ x^2) 4 := by sorry
 
-/-- Example 9.3.2 -/
-example : (0.41:ℝ).CloseFn (.Icc 1.9 2.1) (fun x ↦ x^2) 4 := by sorry
+/-- Example 9.3.2
+Slight change from the book to accomodate the change to {lean}`Real.CloseFn`
+-/
+example : (0.42:ℝ).CloseFn (.Icc 1.9 2.1) (fun x ↦ x^2) 4 := by sorry
 
 /-- Example 9.3.4 -/
 example: ¬(0.1:ℝ).CloseFn (.Icc 1 3) (fun x ↦ x^2) 4 := by
@@ -88,91 +94,93 @@ example: Convergesto (.Icc 1 3) (fun x ↦ x^2) 4 2 := by
   sorry
 
 /-- Proposition 9.3.9 / Exercise 9.3.1 -/
-theorem Convergesto.iff_conv {E:Set ℝ} (f: ℝ → ℝ) (L:ℝ) {x₀:ℝ} (h: AdherentPt x₀ E) :
+theorem Convergesto.iff_conv {E:Set ℝ} (f: ℝ → ℝ) (L:ℝ) {x₀:ℝ} :
   Convergesto E f L x₀ ↔ ∀ a:ℕ → ℝ, (∀ n:ℕ, a n ∈ E) →
   Filter.atTop.Tendsto a (nhds x₀) →
   Filter.atTop.Tendsto (fun n ↦ f (a n)) (nhds L) := by
   sorry
 
-theorem Convergesto.comp {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) (hf: Convergesto E f L x₀) {a:ℕ → ℝ} (ha: ∀ n:ℕ, a n ∈ E) (hconv: Filter.atTop.Tendsto a (nhds x₀)) :
+theorem Convergesto.comp {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (hf: Convergesto E f L x₀) {a:ℕ → ℝ}
+  (ha: ∀ n:ℕ, a n ∈ E) (hconv: Filter.atTop.Tendsto a (nhds x₀)) :
   Filter.atTop.Tendsto (fun n ↦ f (a n)) (nhds L) := by
-  rw [iff_conv f L h] at hf; solve_by_elim
+  rw [iff_conv f L] at hf; solve_by_elim
 
--- Remark 9.3.11 may possibly be inaccurate, in that one may be able to safely delete the hypothesis `AdherentPt x₀ E` in the above theorems.  This is something that formalization might be able to clarify!  If so, the hypothesis may also be deletable in several of the theorems below.
+-- Remark 9.3.11 is not quite true in Lean: the hypothesis `AdherentPt x₀ E` is safely removed
+-- from most theorems (with the exception of Convergesto.uniq).
 
 /-- Corollary 9.3.13 -/
 theorem Convergesto.uniq {E:Set ℝ} {f: ℝ → ℝ} {L L':ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
   (hf: Convergesto E f L x₀) (hf': Convergesto E f L' x₀) : L = L' := by
   -- This proof is written to follow the structure of the original text.
   let ⟨ a, ha, hconv ⟩ := (limit_of_AdherentPt _ _).mp h
-  exact tendsto_nhds_unique (hf.comp h ha hconv) (hf'.comp h ha hconv)
+  exact tendsto_nhds_unique (hf.comp ha hconv) (hf'.comp ha hconv)
 
 /-- Proposition 9.3.14 (Limit laws for functions) -/
-theorem Convergesto.add {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
+theorem Convergesto.add {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ}
   (hf: Convergesto E f L x₀) (hg: Convergesto E g M x₀) :
   Convergesto E (f + g) (L + M) x₀ := by
     -- This proof is written to follow the structure of the original text.
-    rw [iff_conv _ _ h] at hf hg ⊢
+    rw [iff_conv _ _] at hf hg ⊢
     intro a ha hconv; specialize hf a ha hconv; specialize hg a ha hconv
     convert hf.add hg using 1
 
 /-- Proposition 9.3.14 (Limit laws for functions) / Exercise 9.3.2 -/
-theorem Convergesto.sub {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
+theorem Convergesto.sub {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ}
   (hf: Convergesto E f L x₀) (hg: Convergesto E g M x₀) :
   Convergesto E (f - g) (L - M) x₀ := by
     sorry
 
 /-- Proposition 9.3.14 (Limit laws for functions) / Exercise 9.3.2 -/
-theorem Convergesto.max {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
+theorem Convergesto.max {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ}
   (hf: Convergesto E f L x₀) (hg: Convergesto E g M x₀) :
   Convergesto E (max f g) (max L M) x₀ := by
     sorry
 
 /-- Proposition 9.3.14 (Limit laws for functions) / Exercise 9.3.2 -/
-theorem Convergesto.min {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
+theorem Convergesto.min {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ}
   (hf: Convergesto E f L x₀) (hg: Convergesto E g M x₀) :
   Convergesto E (min f g) (min L M) x₀ := by
     sorry
 
 /-- Proposition 9.3.14 (Limit laws for functions) / Exercise 9.3.2 -/
-theorem Convergesto.smul {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
+theorem Convergesto.smul {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ}
   (hf: Convergesto E f L x₀) (c:ℝ) :
   Convergesto E (c • f) (c * L) x₀ := by
     sorry
 
 /-- Proposition 9.3.14 (Limit laws for functions) / Exercise 9.3.2 -/
-theorem Convergesto.mul {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
+theorem Convergesto.mul {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ}
   (hf: Convergesto E f L x₀) (hg: Convergesto E g M x₀) :
   Convergesto E (f * g) (L * M) x₀ := by
     sorry
 
 /-- Proposition 9.3.14 (Limit laws for functions) / Exercise 9.3.2.  The hypothesis in the book that g is non-vanishing on E can be dropped. -/
-theorem Convergesto.div {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) (hM: M ≠ 0)
+theorem Convergesto.div {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (hM: M ≠ 0)
   (hf: Convergesto E f L x₀) (hg: Convergesto E g M x₀) :
   Convergesto E (f / g) (L / M) x₀ := by
     sorry
 
-theorem Convergesto.const {E:Set ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) (c:ℝ)
-  : Convergesto E (fun x ↦ c) c x₀ := by
+theorem Convergesto.const (E:Set ℝ) (x₀:ℝ) (c:ℝ)
+  : Convergesto E (fun _ ↦ c) c x₀ := by
   sorry
 
-theorem Convergesto.id {E:Set ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
+theorem Convergesto.id (E:Set ℝ) (x₀:ℝ)
   : Convergesto E (fun x ↦ x) x₀ x₀ := by
   sorry
 
-theorem Convergesto.sq {E:Set ℝ} {x₀:ℝ} (h: AdherentPt x₀ E)
-  : Convergesto E (fun x ↦ x^2) x₀ (x₀^2) := by
+theorem Convergesto.sq (E:Set ℝ) (x₀:ℝ)
+  : Convergesto E (fun x ↦ x^2) (x₀^2) x₀ := by
   sorry
 
-theorem Convergesto.linear {E:Set ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) (c:ℝ)
-  : Convergesto E (fun x ↦ c * x) x₀ (c * x₀) := by
+theorem Convergesto.linear (E:Set ℝ) (x₀:ℝ) (c:ℝ)
+  : Convergesto E (fun x ↦ c * x) (c * x₀) x₀ := by
   sorry
 
-theorem Convergesto.quadratic {E:Set ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) (c d:ℝ)
-  : Convergesto E (fun x ↦ x^2 + c * x + d) x₀ (x₀^2 + c * x₀ + d) := by
+theorem Convergesto.quadratic (E:Set ℝ) (x₀:ℝ) (c d:ℝ)
+  : Convergesto E (fun x ↦ x^2 + c * x + d) (x₀^2 + c * x₀ + d) x₀ := by
   sorry
 
-theorem Convergesto.restrict {X Y:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (h: AdherentPt x₀ X) (hf: Convergesto X f L x₀) (hY: Y ⊆ X) : Convergesto Y f L x₀ := by
+theorem Convergesto.restrict {X Y:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (hf: Convergesto X f L x₀) (hY: Y ⊆ X) : Convergesto Y f L x₀ := by
   sorry
 
 theorem Real.sign_def (x:ℝ) : Real.sign x = if x < 0 then -1 else if x > 0 then 1 else 0 := rfl
@@ -193,7 +201,7 @@ theorem Convergesto.f_9_3_17_remove : Convergesto (.univ \ {0}) f_9_3_17 0 0 := 
 theorem Convergesto.f_9_3_17_all : ¬ ∃ L, Convergesto .univ f_9_3_17 L 0 := by sorry
 
 /-- Proposition 9.3.18 / Exercise 9.3.3 -/
-theorem Convergesto.local {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (h: AdherentPt x₀ E) {δ:ℝ} (hδ: δ > 0) :
+theorem Convergesto.local {E:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} {δ:ℝ} (hδ: δ > 0) :
   Convergesto E f L x₀ ↔ Convergesto (E ∩ .Ioo (x₀-δ) (x₀+δ)) f L x₀ := by
     sorry
 
@@ -216,7 +224,7 @@ example : ¬ ∃ L, Convergesto .univ f_9_3_21 L 0 := by sorry
 /- Exercise 9.3.4: State a definition of limit superior and limit inferior for functions, and prove an analogue of Proposition 9.3.9 for those definitions. -/
 
 /-- Exercise 9.3.5 (Continuous version of squeeze test) -/
-theorem Convergesto.squeeze {E:Set ℝ} {f g h: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (had: AdherentPt x₀ E)
+theorem Convergesto.squeeze {E:Set ℝ} {f g h: ℝ → ℝ} {L:ℝ} {x₀:ℝ}
   (hfg: ∀ x ∈ E, f x ≤ g x) (hgh: ∀ x ∈ E, g x ≤ h x)
   (hf: Convergesto E f L x₀) (hh: Convergesto E h L x₀) :
   Convergesto E g L x₀ := by
