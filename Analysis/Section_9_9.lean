@@ -201,7 +201,7 @@ theorem UniformContinuousOn.of_continuousOn {a b:ℝ} {f:ℝ → ℝ}
   observe hbounded : Bornology.IsBounded (.Icc a b)
   have ⟨ j, hj, ⟨ L, hL, hconv⟩ ⟩ := (Heine_Borel (.Icc a b)).mp ⟨ hclosed, hbounded ⟩ _ hxmem
   replace hcont := ContinuousOn.continuousWithinAt hcont hL
-  have hconv' := hconv.comp_of_continuous hL hcont (fun k ↦ hxmem (j k))
+  have hconv' := hconv.comp_of_continuous hcont (fun k ↦ hxmem (j k))
   rw [Sequence.equiv_iff] at hequiv
   replace hequiv : atTop.Tendsto (fun k ↦ x (n (j k)) - y (n (j k))) (nhds 0) := by
     observe hj' : atTop.Tendsto j .atTop
@@ -212,7 +212,7 @@ theorem UniformContinuousOn.of_continuousOn {a b:ℝ} {f:ℝ → ℝ}
     convert hconv.sub hequiv with k
     . abel
     simp
-  replace hyconv := hyconv.comp_of_continuous hL hcont (fun k ↦ hymem (j k))
+  replace hyconv := hyconv.comp_of_continuous hcont (fun k ↦ hymem (j k))
   have : atTop.Tendsto (fun k ↦ f (x (n (j k))) - f (y (n (j k)))) (nhds 0) := by
     convert hconv'.sub hyconv; simp
   sorry

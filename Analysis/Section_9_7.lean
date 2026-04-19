@@ -54,7 +54,7 @@ theorem intermediate_value {a b:ℝ} (hab: a < b) {f:ℝ → ℝ} (hf: Continuou
         . exact tendsto_const_nhds
         . exact fun n ↦ le_of_lt (hx2 n)
         exact fun n ↦ le_csSup hE_bdd (hx1 n)
-      replace := this.comp_of_continuous hc (hf.continuousWithinAt hc) (fun n ↦ hE (hx1 n))
+      replace := this.comp_of_continuous (hf.continuousWithinAt hc) (fun n ↦ hE (hx1 n))
       have hfxny (n:ℕ) : f (x n) ≤ y := by specialize hx1 n; simp [E] at hx1; grind
       exact le_of_tendsto' this hfxny
     have hne : c < b := by grind

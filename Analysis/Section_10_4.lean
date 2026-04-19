@@ -68,7 +68,7 @@ theorem inverse_function_theorem {X Y: Set ℝ} {f: ℝ → ℝ} {g:ℝ → ℝ}
     have hy₀: y₀ ∈ Y := by aesop
     have hx : ∀ n, x n ∈ X \ {x₀}:= by
       sorry
-    replace hconv := hconv.comp_of_continuous hy₀ hg hy'
+    replace hconv := hconv.comp_of_continuous hg hy'
     have hgy₀ : g y₀ = x₀ := by aesop
     rw [HasDerivWithinAt.iff, ←Convergesto.iff, Convergesto.iff_conv _ _] at hf
     convert (hf _ hx _).inv₀ _ using 2 with n <;> grind
