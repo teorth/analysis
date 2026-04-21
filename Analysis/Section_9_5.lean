@@ -85,7 +85,7 @@ theorem ContinuousAt.iff_eq_left_right_limit {X: Set ℝ} {f: ℝ → ℝ} {x₀
   . sorry
   intro ⟨ ⟨ hre, hright⟩, ⟨ hle, lheft ⟩ ⟩
   set L := f x₀
-  have := (ContinuousWithinAt.tfae X f h).out 0 2
+  have := (ContinuousWithinAt.tfae X f x₀).out 0 2
   rw [this]
   intro ε hε
   apply right_limit.eq' at hre

@@ -73,7 +73,7 @@ theorem deriv_of_integ {a b:ℝ} (hab: a < b) {f:ℝ → ℝ} (hf: IntegrableOn 
   HasDerivWithinAt (fun x => integ f (Icc a x)) (f x₀) (.Icc a b) x₀ := by
   -- This proof is written to follow the structure of the original text.
   rw [HasDerivWithinAt.iff_approx_linear]
-  simp [(ContinuousWithinAt.tfae _ f hx₀).out 0 2] at hcts
+  simp [(ContinuousWithinAt.tfae _ f x₀).out 0 2] at hcts
   peel hcts with ε hε δ hδ hconv; intro y hy hyδ
   obtain hx₀y | rfl | hx₀y := lt_trichotomy x₀ y
   . have := ((hf.join (join_Icc_Ioc hy.1 hy.2)).1.join (join_Icc_Ioc hx₀.1 (le_of_lt hx₀y))).2

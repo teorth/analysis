@@ -109,7 +109,7 @@ theorem IsMaxOn.of_continuous_on_compact {a b:ℝ} (h:a < b) {f:ℝ → ℝ} (hf
   use xmax, hmax
   have hn_lower (j:ℕ) : n j ≥ j := why_7_6_3 hn j
   have hconv' : Filter.atTop.Tendsto (fun j ↦ f (x (n j))) (nhds (f xmax)) :=
-    hconv.comp_of_continuous hmax (hf.continuousWithinAt hmax) (fun j ↦ hx (n j))
+    hconv.comp_of_continuous (hf.continuousWithinAt hmax) (fun j ↦ hx (n j))
   have hlower (j:ℕ) : m - 1/(j+1:ℝ) < f (x (n j)) := by
     apply lt_of_le_of_lt _ (hfx (n j)); gcongr; grind
   have hupper (j:ℕ) : f (x (n j)) ≤ m := by apply claim1; simp [Set.mem_image, E]; use x (n j), hx (n j)
