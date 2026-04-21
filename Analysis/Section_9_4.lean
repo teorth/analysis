@@ -79,35 +79,35 @@ theorem _root_.Filter.Tendsto.comp_of_continuous {X:Set ℝ} {f: ℝ → ℝ} {x
 theorem ContinuousWithinAt.add {X:Set ℝ} (f g: ℝ → ℝ) {x₀:ℝ} (h : x₀ ∈ X)
   (hf: ContinuousWithinAt f X x₀) (hg: ContinuousWithinAt g X x₀) :
   ContinuousWithinAt (f + g) X x₀ := by
-  rw [iff] at hf hg ⊢; convert hf.add (AdherentPt.of_mem h) hg using 1
+  rw [iff] at hf hg ⊢; convert hf.add hg using 1
 
 
 theorem ContinuousWithinAt.sub {X:Set ℝ} (f g: ℝ → ℝ) {x₀:ℝ} (h : x₀ ∈ X)
   (hf: ContinuousWithinAt f X x₀) (hg: ContinuousWithinAt g X x₀) :
   ContinuousWithinAt (f - g) X x₀ := by
-  rw [iff] at hf hg ⊢; convert hf.sub (AdherentPt.of_mem h) hg using 1
+  rw [iff] at hf hg ⊢; convert hf.sub hg using 1
 
 theorem ContinuousWithinAt.max {X:Set ℝ} (f g: ℝ → ℝ) {x₀:ℝ} (h : x₀ ∈ X)
   (hf: ContinuousWithinAt f X x₀) (hg: ContinuousWithinAt g X x₀) :
   ContinuousWithinAt (max f g) X x₀ := by
-  rw [iff] at hf hg ⊢; convert hf.max (AdherentPt.of_mem h) hg using 1
+  rw [iff] at hf hg ⊢; convert hf.max hg using 1
 
 
 theorem ContinuousWithinAt.min {X:Set ℝ} (f g: ℝ → ℝ) {x₀:ℝ} (h : x₀ ∈ X)
   (hf: ContinuousWithinAt f X x₀) (hg: ContinuousWithinAt g X x₀) :
   ContinuousWithinAt (min f g) X x₀ := by
-  rw [iff] at hf hg ⊢; convert hf.min (AdherentPt.of_mem h) hg using 1
+  rw [iff] at hf hg ⊢; convert hf.min hg using 1
 
 
 theorem ContinuousWithinAt.mul' {X:Set ℝ} (f g: ℝ → ℝ) {x₀:ℝ} (h : x₀ ∈ X)
   (hf: ContinuousWithinAt f X x₀) (hg: ContinuousWithinAt g X x₀) :
   ContinuousWithinAt (f * g) X x₀ := by
-  rw [iff] at hf hg ⊢; convert hf.mul (AdherentPt.of_mem h) hg using 1
+  rw [iff] at hf hg ⊢; convert hf.mul hg using 1
 
 theorem ContinuousWithinAt.div' {X:Set ℝ} (f g: ℝ → ℝ) {x₀:ℝ} (h : x₀ ∈ X) (hM: g x₀ ≠ 0)
   (hf: ContinuousWithinAt f X x₀) (hg: ContinuousWithinAt g X x₀) :
   ContinuousWithinAt (f / g) X x₀ := by
-  rw [iff] at hf hg ⊢; convert hf.div (AdherentPt.of_mem h) hM hg using 1
+  rw [iff] at hf hg ⊢; convert hf.div hM hg using 1
 
 /-- Proposition 9.4.10 / Exercise 9.4.3  -/
 theorem Continuous.exp {a:ℝ} (ha: a>0) : Continuous (fun x:ℝ ↦ a ^ x) := by
