@@ -14,12 +14,12 @@ so.
 
 Main constructions and results of this section:
 
-- Definition of the "Chapter 2" natural numbers, `Chapter2.Nat`, abbreviated as {name}`Nat` within the
-  Chapter2 namespace. (In the book, the natural numbers are treated in a purely axiomatic
+- Definition of the "Chapter 2" natural numbers, `Chapter2.Nat`,abbreviated as {name}`Nat` within
+  the Chapter2 namespace. (In the book, the natural numbers are treated in a purely axiomatic
   fashion, as a type that obeys the Peano axioms; but here we take advantage of Lean's native
-  inductive types to explicitly construct a version of the natural numbers that obey those
-  axioms.  One could also proceed more axiomatically, as is done in Section 3 for set theory:
-  see the epilogue to this chapter.)
+  inductive types to explicitly construct a version of the natural numbers that obey those axioms.
+  One could also proceed more axiomatically, as is done in Section 3 for set theory: see the
+  epilogue to this chapter.)
 - Establishment of the Peano axioms for `Chapter2.Nat`.
 - Recursive definitions for `Chapter2.Nat`.
 
@@ -50,11 +50,9 @@ postfix:100 "++" => Nat.succ
 #check (fun n ↦ n++)
 
 
-/--
-  Definition 2.1.3 (Definition of the numerals 0, 1, 2, etc.). Note: to avoid ambiguity, one may
-  need to use explicit casts such as {lean}`(0:Nat)`, {lean}`(1:Nat)`, etc. to refer to this chapter's version
-  of the natural numbers.
--/
+/-- Definition 2.1.3 (Definition of the numerals 0, 1, 2, etc.). Note: to avoid ambiguity, one may
+  need to use explicit casts such as {lean}`(0:Nat)`, {lean}`(1:Nat)`, etc. to refer to this
+  chapter's version of the natural numbers.  -/
 instance Nat.instOfNat {n:_root_.Nat} : OfNat Nat n where
   ofNat := _root_.Nat.rec 0 (fun _ n ↦ n++) n
 
@@ -115,10 +113,8 @@ theorem Nat.six_ne_two : (6:Nat) ≠ 2 := by
 theorem Nat.six_ne_two' : (6:Nat) ≠ 2 := by
   decide
 
-/--
-  Axiom 2.5 (Principle of mathematical induction). The {tactic}`induction` (or {tactic}`induction'`) tactic in
-  Mathlib serves as a substitute for this axiom.
--/
+/-- Axiom 2.5 (Principle of mathematical induction). The {tactic}`induction` (or
+  {tactic}`induction'`) tactic in Mathlib serves as a substitute for this axiom.  -/
 theorem Nat.induction (P : Nat → Prop) (hbase : P 0) (hind : ∀ n, P n → P (n++)) :
     ∀ n, P n := by
   intro n
