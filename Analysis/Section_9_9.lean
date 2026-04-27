@@ -78,7 +78,10 @@ example : ¬ UniformContinuousOn (fun x:ℝ ↦ 1/x) (Set.Icc 0 2) := by
 
 end Chapter9
 
-/-- Definition 9.9.5.  This is similar but not identical to `Real.close_seq` from Section 6.1. -/
+/--
+Definition 9.9.5.  This is similar but not identical to {name}`Real.CloseSeq` from
+Section 6.1.
+-/
 abbrev Real.CloseSeqs (ε:ℝ) (a b: Chapter6.Sequence) : Prop :=
   (a.m = b.m) ∧ ∀ n ≥ a.m, ε.Close (a n) (b n)
 

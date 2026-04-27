@@ -843,7 +843,10 @@ lemma to_PiecewiseConstantOn {I: BoundedInterval} (g: PiecewiseConstantFunction 
   use ⟨g, hg_agrees⟩
   exact PiecewiseConstantOn.integral_eq g.f ⟨g, hg_agrees⟩ g hg_agrees
 
-/-- Helper: Apply `PiecewiseConstantOn.integral_mono` between two {name}`PiecewiseConstantFunction`s via {name}`PiecewiseConstantOn` -/
+/--
+Helper: Apply {name}`PiecewiseConstantFunction.integral_mono` between two
+{name}`PiecewiseConstantFunction`s via {name}`PiecewiseConstantOn`.
+-/
 lemma integral_mono' {I: BoundedInterval}
     (g h: PiecewiseConstantFunction I) (h_pointwise: ∀ x ∈ I.toSet, g.f x ≤ h.f x) :
     g.integral ≤ h.integral := by
