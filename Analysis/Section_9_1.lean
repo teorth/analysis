@@ -56,7 +56,10 @@ example {a b: EReal} (h: a ≥ b) : Set.Ioo a b = ∅ := by
 example {a b: EReal} (h: a = b) : Set.Icc a b = {a} := by
   sorry
 
-/-- Definition 9.1.5.  Note that a slightly different `Real.adherent` was defined in Chapter 6.4 -/
+/--
+Definition 9.1.5.  Note that a slightly different {name}`Real.Adherent` was defined in
+Chapter 6.4
+-/
 abbrev Real.adherent' (ε:ℝ) (x:ℝ) (X: Set ℝ) := ∃ y ∈ X, |x - y| ≤ ε
 
 /-- Example 9.1.7 -/
