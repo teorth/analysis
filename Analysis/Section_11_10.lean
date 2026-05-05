@@ -110,7 +110,31 @@ theorem RS_integ_eq_integ_of_mul_deriv
     rw [←this.2] at hh
     replace : lower_integral (h * α') (Icc a b) = integ (h * α') (Icc a b) := this.1.2
     have why : lower_integral (h * α') (Icc a b) ≤ lower_integral (f * α') (Icc a b) := by
-      sorry
+      have hh_int : IntegrableOn h (Icc a b) := (integ_of_piecewise_const hhconst).1
+      have hh_bdd : BddOn h (Icc a b) := hh_int.1
+      have hprod_bdd : BddOn (h * α') (Icc a b) := by
+        rcases hh_bdd with ⟨M1, hM1⟩; rcases hα'.1 with ⟨M2, hM2⟩
+        refine ⟨M1 * M2, fun x hx => ?_⟩
+        have hM1_nonneg : 0 ≤ M1 := (abs_nonneg _).trans (hM1 x hx)
+        rw [Pi.mul_apply, abs_mul]
+        exact mul_le_mul (hM1 x hx) (hM2 x hx) (abs_nonneg _) hM1_nonneg
+      apply le_of_forall_sub_le
+      intro η hη
+      have hgt := gt_of_lt_lower_integral hprod_bdd
+        (show lower_integral (h * α') (Icc a b) - η < lower_integral (h * α') (Icc a b) by linarith)
+      rcases hgt with ⟨g, hg_min, hg_pc, hg_int⟩
+      -- hg_min : MinorizesOn g (h * α'),  i.e. g ≤ h * α'
+      -- hg_int : lower_integral (h * α') - η < integ g
+      have hg_min_f : MinorizesOn g (f * α') (Icc a b) := by
+        intro y hy
+        have hg_val : g y ≤ (h * α') y := hg_min y hy
+        have hh_le : h y ≤ f y := hhminor y hy
+        have hα'_nonneg_y : 0 ≤ α' y := hα'_nonneg y hy
+        have hmul : (h * α') y ≤ (f * α') y := mul_le_mul_of_nonneg_right hh_le hα'_nonneg_y
+        linarith
+      have hle := integ_le_lower_integral hfα'_bound hg_min_f hg_pc
+      -- hle : integ g ≤ lower_integral (f * α')
+      linarith
     linarith
   have h2 : upper_integral (f * α') (Icc a b) ≤ RS_integ f (Icc a b) α := by
     apply le_of_forall_pos_le_add; intro ε hε
@@ -119,7 +143,31 @@ theorem RS_integ_eq_integ_of_mul_deriv
     have := hhconst.RS_integ_eq_integ_of_mul_deriv hα_diff hαcont hα'
     rw [←this.2] at hh
     have why : upper_integral (f * α') (Icc a b) ≤ upper_integral (h * α') (Icc a b) := by
-      sorry
+      have hh_int : IntegrableOn h (Icc a b) := (integ_of_piecewise_const hhconst).1
+      have hh_bdd : BddOn h (Icc a b) := hh_int.1
+      have hprod_bdd : BddOn (h * α') (Icc a b) := by
+        rcases hh_bdd with ⟨M1, hM1⟩; rcases hα'.1 with ⟨M2, hM2⟩
+        refine ⟨M1 * M2, fun x hx => ?_⟩
+        have hM1_nonneg : 0 ≤ M1 := (abs_nonneg _).trans (hM1 x hx)
+        rw [Pi.mul_apply, abs_mul]
+        exact mul_le_mul (hM1 x hx) (hM2 x hx) (abs_nonneg _) hM1_nonneg
+      apply le_of_forall_pos_le_add
+      intro η hη
+      have hlt := lt_of_gt_upper_integral hprod_bdd
+        (show upper_integral (h * α') (Icc a b) < upper_integral (h * α') (Icc a b) + η by linarith)
+      rcases hlt with ⟨g, hg_maj, hg_pc, hg_int⟩
+      -- hg_maj : MajorizesOn g (h * α'),  i.e. g ≥ h * α'
+      -- hg_int : integ g < upper_integral (h * α') + η
+      have hg_maj_f : MajorizesOn g (f * α') (Icc a b) := by
+        intro y hy
+        have hg_val : (h * α') y ≤ g y := hg_maj y hy
+        have hh_ge : f y ≤ h y := hhmajor y hy
+        have hα'_nonneg_y : 0 ≤ α' y := hα'_nonneg y hy
+        have hmul : (f * α') y ≤ (h * α') y := mul_le_mul_of_nonneg_right hh_ge hα'_nonneg_y
+        linarith
+      have hle := upper_integral_le_integ hfα'_bound hg_maj_f hg_pc
+      -- hle : upper_integral (f * α') ≤ integ g
+      linarith
     linarith
   have h3 : lower_integral (f * α') (Icc a b) ≤
     upper_integral (f * α') (Icc a b) := lower_integral_le_upper hfα'_bound
@@ -183,7 +231,14 @@ theorem RS_integ_of_comp {a b:ℝ} (hab: a < b) {φ f: ℝ → ℝ}
   -- This proof is adapted from the structure of the original text.
   have hf_bdd := hf.1
   have hfφ_bdd : BddOn (f ∘ φ) (Icc a b) := by
-    sorry
+    obtain ⟨M, hM⟩ := hf_bdd
+    refine ⟨M, ?_⟩
+    intro x hx
+    simp [Set.mem_Icc] at hx ⊢
+    rcases hx with ⟨hax, hxb⟩
+    have hφx_Icc : φ x ∈ Set.Icc (φ a) (φ b) := ⟨hφ_mono hax, hφ_mono hxb⟩
+    have hfx := hM (φ x) hφx_Icc
+    simpa [Function.comp_apply] using hfx
   have heq : lower_integral f (Icc (φ a) (φ b)) = upper_integral f (Icc (φ a) (φ b)) := hf.2
   have hupper : upper_RS_integral (f ∘ φ) (Icc a b) φ ≤ upper_integral f (Icc (φ a) (φ b)) := by
     apply le_of_forall_pos_le_add
