@@ -171,7 +171,7 @@ theorem EReal.mem_ge_inf (E: Set EReal) {x:EReal} (hx: x ∈ E) : sInf E ≤ x :
 theorem EReal.sup_le_upper (E: Set EReal) {M:EReal} (hM: M ∈ upperBounds E) : sSup E ≤ M := by sorry
 
 /-- Theorem 6.2.11 (c) / Exercise 6.2.2 -/
-theorem EReal.inf_ge_upper (E: Set EReal) {M:EReal} (hM: M ∈ lowerBounds E) : sInf E ≥ M := by sorry
+theorem EReal.inf_ge_lower (E: Set EReal) {M:EReal} (hM: M ∈ lowerBounds E) : sInf E ≥ M := by sorry
 
 #check isLUB_iff_sSup_eq
 #check isGLB_iff_sInf_eq
