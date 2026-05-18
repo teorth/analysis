@@ -21,10 +21,10 @@ open Chapter6 Filter
 
 namespace Chapter9
 
-example : ContinuousOn (fun x:ℝ ↦ 1/x) (.Icc 0 2) := by
+example : ContinuousOn (fun x:ℝ ↦ 1/x) (.Ioo 0 2) := by
   sorry
 
-example : ¬ BddOn (fun x:ℝ ↦ 1/x) (.Icc 0 2) := by
+example : ¬ BddOn (fun x:ℝ ↦ 1/x) (.Ioo 0 2) := by
   sorry
 
 /-- Example 9.9.1 -/
