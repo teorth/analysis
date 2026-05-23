@@ -28,12 +28,12 @@ theorem derivative_of_antitone (X:Set ℝ) {x₀:ℝ} (hx₀: ClusterPt x₀ (.p
   sorry
 
 /-- Proposition 10.3.3 / Exercise 10.3.4 -/
-theorem strictMono_of_positive_derivative {a b:ℝ} (hab: a < b) {f:ℝ → ℝ}
+theorem strictMono_of_positive_derivative {a b:ℝ} {f:ℝ → ℝ}
   (hderiv: DifferentiableOn ℝ f (.Icc a b)) (hpos: ∀ x ∈ Set.Ioo a b, derivWithin f (.Icc a b) x > 0) :
     StrictMonoOn f (.Icc a b) := by
   sorry
 
-theorem strictAnti_of_negative_derivative {a b:ℝ} (hab: a < b) {f:ℝ → ℝ}
+theorem strictAnti_of_negative_derivative {a b:ℝ} {f:ℝ → ℝ}
   (hderiv: DifferentiableOn ℝ f (.Icc a b)) (hneg: ∀ x ∈ Set.Ioo a b, derivWithin f (.Icc a b) x < 0) :
     StrictAntiOn f (.Icc a b) := by
   sorry
