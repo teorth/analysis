@@ -246,7 +246,7 @@ theorem Real.pow_of_equivR (x:Real) (n:ℕ) : equivR (x^n) = (equivR x)^n := by
 theorem Real.zpow_of_equivR (x:Real) (n:ℤ) : equivR (x^n) = (equivR x)^n := by
   sorry
 
-theorem Real.ratPow_of_equivR (x:Real) (q:ℚ) : equivR (x^q) = (equivR x)^(q:ℝ) := by
+theorem Real.ratPow_of_equivR (x:Real) (q:ℚ) (hx : x > 0): equivR (x^q) = (equivR x)^(q:ℝ) := by
   sorry
 
 
