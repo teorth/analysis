@@ -119,7 +119,7 @@ example : Example_6_4_8.liminf = ⊥ := by sorry
 noncomputable abbrev Example_6_4_9 : Sequence :=
   (fun (n:ℕ) ↦ if Even n then (n+1:ℝ)⁻¹ else -(n+1:ℝ)⁻¹)
 
-example (n:ℕ) : Example_6_4_9.upperseq n = if Even n then (n+1:ℝ)⁻¹ else -(n+2:ℝ)⁻¹ := by sorry
+example (n:ℕ) : Example_6_4_9.upperseq n = if Even n then (n+1:ℝ)⁻¹ else (n+2:ℝ)⁻¹ := by sorry
 
 example : Example_6_4_9.limsup = 0 := by sorry
 
@@ -131,11 +131,11 @@ noncomputable abbrev Example_6_4_10 : Sequence := (fun (n:ℕ) ↦ (n+1:ℝ))
 
 example (n:ℕ) : Example_6_4_10.upperseq n = ⊤ := by sorry
 
-example : Example_6_4_9.limsup = ⊤ := by sorry
+example : Example_6_4_10.limsup = ⊤ := by sorry
 
-example (n:ℕ) : Example_6_4_9.lowerseq n = n+1 := by sorry
+example (n:ℕ) : Example_6_4_10.lowerseq n = n+1 := by sorry
 
-example : Example_6_4_9.liminf = ⊤ := by sorry
+example : Example_6_4_10.liminf = ⊤ := by sorry
 
 /-- Proposition 6.4.12(a) -/
 theorem Sequence.gt_limsup_bounds {a:Sequence} {x:EReal} (h: x > a.limsup) :
