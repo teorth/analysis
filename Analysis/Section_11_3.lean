@@ -151,12 +151,12 @@ noncomputable abbrev lower_riemann_sum (f:ℝ → ℝ) {I: BoundedInterval} (P: 
 
 /-- Lemma 11.3.11 / Exercise 11.3.4 -/
 theorem upper_riemann_sum_le {f g: ℝ → ℝ} {I:BoundedInterval} (P: Partition I)
-  (hf: BddOn f I) (hgf: MajorizesOn g f I) (hg: PiecewiseConstantOn g I) :
+  (hgf: MajorizesOn g f I) (hg: PiecewiseConstantWith g P) :
   upper_riemann_sum f P ≤ integ g I := by
    sorry
 
 theorem lower_riemann_sum_ge {f h: ℝ → ℝ} {I:BoundedInterval} (P: Partition I)
-  (hf: BddOn f I) (hfh: MinorizesOn h f I) (hg: PiecewiseConstantOn h I) :
+  (hfh: MinorizesOn h f I) (hg: PiecewiseConstantWith h P) :
   integ h I ≤ lower_riemann_sum f P := by
    sorry
 
@@ -184,7 +184,7 @@ theorem MajorizesOn.trans {f g h: ℝ → ℝ} {I: BoundedInterval}
 
 /-- Exercise 11.3.1 -/
 theorem MajorizesOn.anti_symm {f g: ℝ → ℝ} {I: BoundedInterval}:
-  ∀ x ∈ (I:Set ℝ), f x = g x ↔ MajorizesOn f g I ∧ MajorizesOn g f I := by
+  (∀ x ∈ (I:Set ℝ), f x = g x) ↔ MajorizesOn f g I ∧ MajorizesOn g f I := by
   sorry
 
 /-- Exercise 11.3.2 -/
