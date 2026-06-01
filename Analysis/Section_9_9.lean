@@ -73,7 +73,7 @@ theorem ContinuousOn.ofUniformContinuousOn {X:Set ℝ} (f: ℝ → ℝ) (hf: Uni
   ContinuousOn f X := by
   sorry
 
-example : ¬ UniformContinuousOn (fun x:ℝ ↦ 1/x) (Set.Icc 0 2) := by
+example : ¬ UniformContinuousOn (fun x:ℝ ↦ 1/x) (Set.Ioo 0 2) := by
   sorry
 
 end Chapter9
