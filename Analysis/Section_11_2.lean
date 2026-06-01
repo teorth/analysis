@@ -157,7 +157,7 @@ theorem PiecewiseConstantOn.smul {f: ℝ → ℝ} {I: BoundedInterval}
 
 /-- Lemma 11.2.8 / Exercise 11.2.2.  I believe the hypothesis that {name}`g` does not vanish is not needed. -/
 theorem PiecewiseConstantOn.div {f g: ℝ → ℝ} {I: BoundedInterval}
-  (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn f I) : PiecewiseConstantOn (f / g) I := by
+  (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) : PiecewiseConstantOn (f / g) I := by
   sorry
 
 /-- Definition 11.2.9 (Piecewise constant integral I)-/
@@ -226,7 +226,7 @@ theorem PiecewiseConstantOn.integ_congr {f g:ℝ → ℝ} {I: BoundedInterval}
   rw [←PiecewiseConstantWith.congr h]; exact hf.choose_spec
 
 /-- Example 11.2.15 -/
-example : PiecewiseConstantOn.integ f_11_2_4 (Icc 1 6) = 10 := by
+example : PiecewiseConstantOn.integ f_11_2_12 (Icc 1 4) = 10 := by
   sorry
 
 /-- Theorem 11.2.16 (a) (Laws of integration) / Exercise 11.2.4 -/
