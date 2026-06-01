@@ -226,7 +226,7 @@ theorem PiecewiseConstantOn.integ_congr {f g:ℝ → ℝ} {I: BoundedInterval}
   rw [←PiecewiseConstantWith.congr h]; exact hf.choose_spec
 
 /-- Example 11.2.15 -/
-example : PiecewiseConstantOn.integ f_11_2_4 (Icc 1 6) = 10 := by
+example : PiecewiseConstantOn.integ f_11_2_12 (Icc 1 4) = 10 := by
   sorry
 
 /-- Theorem 11.2.16 (a) (Laws of integration) / Exercise 11.2.4 -/
