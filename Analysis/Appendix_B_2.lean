@@ -1,5 +1,9 @@
 import Mathlib.Tactic
 import Analysis.Appendix_B_1
+import Mathlib.Tactic.Push
+
+-- Tag rpow lemmas for push/pull
+attribute [push] NNReal.rpow_add NNReal.rpow_neg NNReal.rpow_mul NNReal.rpow_sub NNReal.rpow_add_one NNReal.rpow_natCast
 
 /-!
 # Analysis I, Appendix B.2: The decimal representation of real numbers
@@ -61,7 +65,7 @@ theorem NNRealDecimal.surj (x:NNReal) : ∃ d:NNRealDecimal, x = d := by
     rw [ha n]; calc
       _ = s n * (10:NNReal)^(-n:ℝ) + a n * 10^(-n-1:ℝ) := by
         simp [add_mul]; ring_nf; congr 1
-        rw [mul_assoc, ←rpow_add_one]; ring_nf; norm_num
+        rw [mul_assoc]; pull (disch := norm_num) _ ^ _; congr 1; ring
       _ = s 0 + (∑ i ∈ .range n, a i * (10:NNReal)^(-i-1:ℝ) + a n * 10^(-n-1:ℝ)) := by grind
       _ = _ := by congr; symm; apply Finset.sum_range_succ
   have := (d.toNNReal_conv.tendsto_sum_tsum_nat).const_add (s 0:NNReal)
@@ -96,14 +100,14 @@ theorem NNRealDecimal.not_inj : (1:NNReal) = (mk 1 fun _ ↦ 0) ∧ (1:NNReal) =
     . simp
     rw [Finset.sum_range_succ, hn, Nat.cast_add, Nat.cast_one, neg_add']
     have : (10:NNReal)^(-n:ℝ) = 10^(-n-1:ℝ) * 10 := by
-      rw [←rpow_add_one]; simp; norm_num
+      pull (disch := norm_num) _ ^ _; congr 1; ring
     simp [this, ←coe_inj]
     rw [NNReal.coe_sub, NNReal.coe_sub]
     . suffices h : ∀ c a : ℝ, c = 9 → 1 - a * 10 + c * a = 1 - a by apply h; norm_cast
       grind
     . apply rpow_le_one_of_one_le_of_nonpos; norm_num; linarith
-    rw [←rpow_add_one]
-    apply rpow_le_one_of_one_le_of_nonpos; norm_num; linarith; norm_num
+    pull (disch := norm_num) _ ^ _
+    apply rpow_le_one_of_one_le_of_nonpos; norm_num; linarith
   convert Filter.Tendsto.const_sub (f := fun n:ℕ ↦ (10:NNReal)^(-n:ℝ)) (c := 0) 1 _; simp
   convert tendsto_pow_atTop_nhds_zero_of_lt_one (show (1/10:NNReal) < 1 by bound) with n
   rw [←rpow_natCast, one_div, inv_rpow, rpow_neg]

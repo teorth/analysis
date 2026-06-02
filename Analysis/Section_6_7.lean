@@ -1,6 +1,10 @@
 import Mathlib.Tactic
 import Analysis.Section_5_epilogue
 import Analysis.Section_6_6
+import Mathlib.Tactic.Push
+
+-- Tag rpow lemmas for push/pull
+attribute [push] Real.rpow_add Real.rpow_neg Real.rpow_mul Real.rpow_sub Real.rpow_natCast
 
 /-!
 # Analysis I, Section 6.7: Real exponentiation, part II
@@ -56,25 +60,25 @@ lemma ratPow_continuous {x α:ℝ} (hx: x > 0) {q: ℕ → ℚ}
   . replace : x^(q m:ℝ) ≤ x^(q n:ℝ) := by rw [rpow_le_rpow_left_iff h]; norm_cast
     rw [abs_of_nonneg (by linarith)]
     calc
-      _ = x^(q m:ℝ) * (x^(q n - q m:ℝ) - 1) := by ring_nf; rw [←rpow_add (by linarith)]; ring_nf
+      _ = x^(q m:ℝ) * (x^(q n - q m:ℝ) - 1) := by ring_nf; pull (disch := positivity) _ ^ _; ring_nf
       _ ≤ x^M * (x^(1/(K+1:ℝ)) - 1) := by
         gcongr <;> try exact h'
         . rw [sub_nonneg]; apply one_le_rpow h'; norm_cast; linarith
         . specialize hbound m; simp_all [abs_le']
         grind [abs_le']
       _ ≤ x^M * (ε * x^(-M)) := by gcongr; grind [abs_le']
-      _ = ε := by rw [mul_comm, mul_assoc, ←rpow_add]; simp; linarith
+      _ = ε := by rw [mul_comm, mul_assoc]; pull (disch := positivity) _ ^ _; simp
   replace : x^(q n:ℝ) ≤ x^(q m:ℝ) := by rw [rpow_le_rpow_left_iff h]; norm_cast; linarith
   rw [abs_of_nonpos (by linarith)]
   calc
-    _ = x^(q n:ℝ) * (x^(q m - q n:ℝ) - 1) := by ring_nf; rw [←rpow_add]; ring_nf; positivity
+    _ = x^(q n:ℝ) * (x^(q m - q n:ℝ) - 1) := by ring_nf; pull (disch := positivity) _ ^ _; ring_nf
     _ ≤ x^M * (x^(1/(K+1:ℝ)) - 1) := by
       gcongr <;> try exact h'
       . rw [sub_nonneg]; apply one_le_rpow h'; norm_cast; linarith
       . specialize hbound n; simp_all [abs_le']
       grind [abs_le']
     _ ≤ x^M * (ε * x^(-M)) := by gcongr; simp_all [abs_le']
-    _ = ε := by rw [mul_comm, mul_assoc, ←rpow_add]; simp; positivity
+    _ = ε := by rw [mul_comm, mul_assoc]; pull (disch := positivity) _ ^ _; simp
 
 
 lemma ratPow_lim_uniq {x α:ℝ} (hx: x > 0) {q q': ℕ → ℚ}
@@ -89,7 +93,7 @@ lemma ratPow_lim_uniq {x α:ℝ} (hx: x > 0) {q q': ℕ → ℚ}
     convert (lim_mul (b := (fun n ↦ x^(r n:ℝ):Sequence)) (ratPow_continuous hx hq') this.1).2
     . rw [mul_coe]
       rcongr _ n
-      rw [←rpow_add (by linarith)]
+      pull (disch := positivity) _ ^ _
       simp [r]
     exact this.2.symm
   intro ε hε
@@ -115,7 +119,7 @@ lemma ratPow_lim_uniq {x α:ℝ} (hx: x > 0) {q q': ℕ → ℚ}
   . simp; linarith
   have h5 : x ^ (r n.toNat:ℝ) ≤ x^(K + 1:ℝ)⁻¹ := by gcongr; linarith; simp_all [r]
   have h6 : (x^(K + 1:ℝ)⁻¹)⁻¹ ≤ x ^ (r n.toNat:ℝ) := by
-    rw [←rpow_neg (by linarith)]
+    pull (disch := positivity) _ ^ _
     gcongr; linarith
     simp [r]; linarith
   split_ands <;> linarith
@@ -160,7 +164,7 @@ theorem Real.ratPow_add {x:ℝ} (hx: x > 0) (q r:ℝ) : rpow x (q+r) = rpow x q 
   have h1 := ratPow_continuous hx hq'
   have h2 := ratPow_continuous hx hr'
   rw [rpow_eq_lim_ratPow hx hq', rpow_eq_lim_ratPow hx hr', rpow_eq_lim_ratPow hx hq'r', ←(lim_mul h1 h2).2, mul_coe]
-  rcongr n; rw [←rpow_add]; simp; linarith
+  rcongr n; pull (disch := positivity) _ ^ _; norm_cast
 
 
 /-- Proposition 6.7.3(b) / Exercise 6.7.1 -/
