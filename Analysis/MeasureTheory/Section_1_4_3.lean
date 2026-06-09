@@ -139,7 +139,8 @@ theorem FinitelyAdditiveMeasure.finite_subadditivity {X:Type*} {B: ConcreteBoole
   μ.measure (⋃ j ∈ I, E j) ≤ ∑ j ∈ I, μ.measure (E j) := by sorry
 
 /-- Exercise 1.4.20(iv) -/
-theorem FinitelyAdditiveMeasure.mes_union_add_mes_inter {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) (E F : Set X) :
+theorem FinitelyAdditiveMeasure.mes_union_add_mes_inter {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) {E F : Set X}
+    (hE: B.measurable E) (hF: B.measurable F) :
   μ.measure (E ∪ F) + μ.measure (E ∩ F) = μ.measure E + μ.measure F := by sorry
 
 open Classical in
