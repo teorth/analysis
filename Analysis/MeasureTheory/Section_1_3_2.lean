@@ -3257,8 +3257,8 @@ theorem RealMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → ℝ}:
       RealMeasurable f,
       ∃ (g: ℕ → EuclideanSpace' d → ℝ), (∀ n, RealSimpleFunction (g n)) ∧ (PointwiseAeConvergesTo g f),
       UnsignedMeasurable (EReal.pos_fun f) ∧ UnsignedMeasurable (EReal.neg_fun f),
-      ∀ U: Set ℝ, IsOpen U → MeasurableSet (f⁻¹' U),
-      ∀ K: Set ℝ, IsClosed K → MeasurableSet (f⁻¹' K)
+      ∀ U: Set ℝ, IsOpen U → LebesgueMeasurable (f⁻¹' U),
+      ∀ K: Set ℝ, IsClosed K → LebesgueMeasurable (f⁻¹' K)
     ].TFAE
   := by sorry
 
@@ -3268,8 +3268,8 @@ theorem ComplexMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → ℂ}:
       ∃ (g: ℕ → EuclideanSpace' d → ℂ), (∀ n, ComplexSimpleFunction (g n)) ∧ (PointwiseAeConvergesTo g f),
       RealMeasurable (Complex.re_fun f) ∧ RealMeasurable (Complex.im_fun f),
       UnsignedMeasurable (EReal.pos_fun (Complex.re_fun f)) ∧ UnsignedMeasurable (EReal.neg_fun (Complex.im_fun f)) ∧ UnsignedMeasurable (EReal.pos_fun (Complex.im_fun f)) ∧ UnsignedMeasurable (EReal.neg_fun (Complex.re_fun f)),
-      ∀ U: Set ℂ, IsOpen U → MeasurableSet (f⁻¹' U),
-      ∀ K: Set ℂ, IsClosed K → MeasurableSet (f⁻¹' K)
+      ∀ U: Set ℂ, IsOpen U → LebesgueMeasurable (f⁻¹' U),
+      ∀ K: Set ℂ, IsClosed K → LebesgueMeasurable (f⁻¹' K)
     ].TFAE
   := by sorry
 
