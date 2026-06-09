@@ -147,7 +147,7 @@ theorem integ_of_bdd_antitone {I:BoundedInterval} {f:ℝ → ℝ} (hbound: BddOn
 /-- Proposition 11.6.4 (Integral test) -/
 theorem summable_iff_integ_of_antitone {f:ℝ → ℝ} (hnon: ∀ x ≥ 0, f x ≥ 0)
   (hf: AntitoneOn f (.Ici 0)) :
-  Summable f ↔ ∃ M, ∀ N ≥ 0, integ f (Icc 0 N) ≤ M := by
+  Summable (fun n:ℕ ↦ f n) ↔ ∃ M, ∀ N ≥ 0, integ f (Icc 0 N) ≤ M := by
   sorry
 
 -- Exercise 11.6.2: Formulate a reasonable notion of a piecewise monotone function, and then

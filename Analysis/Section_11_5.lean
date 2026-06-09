@@ -219,7 +219,7 @@ theorem integ_of_bdd_piecewise_cts {I: BoundedInterval} {f:ℝ → ℝ}
   sorry
 
 /-- Exercise 11.5.2 -/
-theorem integ_zero {a b:ℝ} (hab: a ≤ b) (f: ℝ → ℝ) (hf: ContinuousOn f (Icc a b))
+theorem integ_zero {a b:ℝ} (hab: a < b) (f: ℝ → ℝ) (hf: ContinuousOn f (Icc a b))
   (hnonneg: MajorizesOn f (fun _ ↦ 0) (Icc a b)) (hinteg : integ f (Icc a b) = 0) :
   ∀ x ∈ Icc a b, f x = 0 := by
     sorry
