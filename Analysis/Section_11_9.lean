@@ -103,7 +103,7 @@ theorem DifferentiableOn.of_F_11_9_2 {x:ℝ} (hx: ¬ ∃ r:ℚ, x = r) (hx': x �
   exact ⟨_, this⟩
 
 /-- Exercise 11.9.1 -/
-theorem DifferentiableOn.of_F_11_9_2' {q:ℚ} (hq: (q:ℝ) ∈ Set.Icc 0 1) : ¬ DifferentiableWithinAt ℝ F_11_9_2 (.Icc 0 1) q := by sorry
+theorem DifferentiableOn.of_F_11_9_2' {q:ℚ} (hq: (q:ℝ) ∈ Set.Ioo 0 1) : ¬ DifferentiableWithinAt ℝ F_11_9_2 (.Icc 0 1) q := by sorry
 
 /-- Definition 11.9.3.  We drop the requirement that x be a limit point as this makes
     the Lean arguments slightly cleaner -/
