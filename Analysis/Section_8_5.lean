@@ -368,10 +368,10 @@ def OrderIdeals.iso {X: Type} [PartialOrder X] : X ≃o OrderIdeals X := {
   }
 
 /-- Exercise 8.5.7 -/
-example {Y:Type} [PartialOrder Y] {x y:Y} (hx: IsMin x) (hy: IsMin y) : x = y := by
+example {Y:Type} [LinearOrder Y] {x y:Y} (hx: IsMin x) (hy: IsMin y) : x = y := by
   sorry
 
-example {Y:Type} [PartialOrder Y] {x y:Y} (hx: IsMax x) (hy: IsMax y) : x = y := by
+example {Y:Type} [LinearOrder Y] {x y:Y} (hx: IsMax x) (hy: IsMax y) : x = y := by
  sorry
 
 /-- Exercise 8.5.9 -/
