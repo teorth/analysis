@@ -2164,7 +2164,8 @@ example : set_dist (Ico 0 1).toSet (Icc 1 2).toSet = 0 := by
       exact dist_nonneg
 
 /-- Exercise 1.2.4 -/
-theorem dist_of_disj_compact_pos {d:ℕ} (E F: Set (EuclideanSpace' d)) (hE: IsCompact E) (hF: IsCompact F) (hdisj: E ∩ F = ∅) :
+theorem dist_of_disj_compact_pos {d:ℕ} (E F: Set (EuclideanSpace' d)) (hEn: E.Nonempty) (hFn: F.Nonempty)
+    (hE: IsCompact E) (hF: IsCompact F) (hdisj: E ∩ F = ∅) :
     set_dist E F > 0 := by
   sorry
 
