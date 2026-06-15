@@ -769,7 +769,7 @@ theorem PiecewiseConstantOn.smul {I: BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (
 
 /-- Exercise 1.1.21 (a) (Linearity of the piecewise constant integral) -/
 -- The integral is linear: integral(c * f) = c * integral(f).
-theorem PiecewiseConstantFunction.integral_smul {I:BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (h: PiecewiseConstantOn f I) : (h.smul c).integral = h.integral := by sorry
+theorem PiecewiseConstantFunction.integral_smul {I:BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (h: PiecewiseConstantOn f I) : (h.smul c).integral = c • h.integral := by sorry
 
 /-- Exercise 1.1.21 (a) (Linearity of the piecewise constant integral) -/
 -- The sum of two piecewise constant functions is piecewise constant.
