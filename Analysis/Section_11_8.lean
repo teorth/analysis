@@ -250,7 +250,7 @@ noncomputable abbrev P_11_8_6 : Partition (Icc 1 3) :=
   (⊥: Partition (Ico 1 2)).join (⊥ : Partition (Icc 2 3))
   (join_Ico_Icc (by norm_num) (by norm_num) )
 
-theorem f_11_8_6_RS_integ : PiecewiseConstantWith.RS_integ f_11_8_6 P_11_8_6 (fun x ↦ x) = 22 := by
+theorem f_11_8_6_RS_integ : PiecewiseConstantWith.RS_integ f_11_8_6 P_11_8_6 (fun x ↦ x^2) = 22 := by
   sorry
 
 /-- Example 11.8.7 -/
@@ -468,7 +468,7 @@ theorem RS_integ_of_uniform_cts {I: BoundedInterval} {f:ℝ → ℝ} (hf: Unifor
   sorry
 
 /-- Exercise 11.8.5 -/
-theorem RS_integ_with_sign (f:ℝ → ℝ) (hf: ContinuousOn f (.Icc (-1) 1)) : RS_IntegrableOn f (Icc (-1) 1) Real.sign ∧ RS_integ f (Icc (-1) 1) (fun x ↦ -Real.sign x) = 2 * f 0 := by
+theorem RS_integ_with_sign (f:ℝ → ℝ) (hf: ContinuousOn f (.Icc (-1) 1)) : RS_IntegrableOn f (Icc (-1) 1) Real.sign ∧ RS_integ f (Icc (-1) 1) Real.sign = 2 * f 0 := by
   sorry
 
 /-- Analogue of Lemma 11.3.7 -/
