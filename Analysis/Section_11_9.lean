@@ -229,7 +229,7 @@ theorem antideriv_eq_antideriv_add_const {I:BoundedInterval} {f F G : ℝ → �
     sorry
 
 /-- Exercise 11.9.3 -/
-example {a b x₀:ℝ} (hab: a < b) (hx₀: x₀ ∈ Icc a b) {f: ℝ → ℝ} (hf: MonotoneOn f (Icc a b)) :
+example {a b x₀:ℝ} (hab: a < b) (hx₀: x₀ ∈ Ioo a b) {f: ℝ → ℝ} (hf: MonotoneOn f (Icc a b)) :
   DifferentiableWithinAt ℝ (fun x => integ f (Icc a x)) (Icc a b) x₀ ↔
   ContinuousWithinAt f (Icc a b) x₀ := by
   sorry
