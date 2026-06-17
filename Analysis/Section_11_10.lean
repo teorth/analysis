@@ -221,7 +221,7 @@ theorem integ_of_comp {a b:ℝ} (hab: a < b) {φ f: ℝ → ℝ}
 /-- Exercise 11.10.3-/
 example {a b:ℝ} (hab: a < b) {f: ℝ → ℝ} (hf: IntegrableOn f (Icc a b)) :
   IntegrableOn (fun x ↦ f (-x)) (Icc (-b) (-a)) ∧
-  integ (fun x ↦ f (-x)) (Icc (-b) (-a)) = -integ f (Icc a b) := by
+  integ (fun x ↦ f (-x)) (Icc (-b) (-a)) = integ f (Icc a b) := by
   sorry
 
 /- Exercise 11.10.4: state and prove a version of `integ_of_comp` in which `φ` is `Antitone` rather than `Monotone`. -/
