@@ -117,10 +117,8 @@ instance ConcreteSigmaAlgebra.instCompleteLattice {X:Type*} : CompleteLattice (C
     le_inf := sorry
     le_top := sorry
     bot_le := sorry
-    le_sSup := sorry
-    sSup_le := sorry
-    sInf_le := sorry
-    le_sInf := sorry
+    isLUB_sSup := sorry
+    isGLB_sInf := sorry
   }
 
 theorem ConcreteSigmaAlgebra.generated_by_le {X:Type*} (F: Set (Set X)) : ConcreteBooleanAlgebra.generated_by F ≤ (ConcreteSigmaAlgebra.generated_by F).toConcreteBooleanAlgebra := by sorry

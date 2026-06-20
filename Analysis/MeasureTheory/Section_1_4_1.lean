@@ -254,10 +254,8 @@ instance ConcreteBooleanAlgebra.instCompleteLattice {X:Type*} : CompleteLattice 
     le_inf := sorry
     le_top := sorry
     bot_le := sorry
-    le_sSup := sorry
-    sSup_le := sorry
-    sInf_le := sorry
-    le_sInf := sorry
+    isLUB_sSup := sorry
+    isGLB_sInf := sorry
   }
 
 /-- Example 1.4.11 -/
