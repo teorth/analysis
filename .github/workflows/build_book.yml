@@ -33,6 +33,16 @@ jobs:
           path: .lake
           key: lake-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ github.sha }}
           restore-keys: lake-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
+      - name: Remove corrupt cached packages
+        run: |
+          if [ -d .lake/packages ]; then
+            find .lake/packages -mindepth 1 -maxdepth 1 -type d | while read -r package; do
+              if ! git -C "$package" rev-parse HEAD >/dev/null 2>&1; then
+                echo "Removing corrupt cached package: $package"
+                rm -rf "$package"
+              fi
+            done
+          fi
       - name: Build project
         run: lake build
       - name: Build doc-gen
@@ -52,7 +62,7 @@ jobs:
           find _site/docs -name "*.trace" -delete
           find _site/docs -name "*.hash" -delete
       - name: Save Lake cache
-        if: always()
+        if: success()
         uses: actions/cache/save@v4
         with:
           path: .lake
