@@ -1,6 +1,10 @@
 import Analysis.MeasureTheory.Section_1_2_0
 import Analysis.Misc.«Real-EReal-ENNReal»
 import Analysis.Misc.Combinatorics
+import Mathlib.Tactic.Push
+
+-- Tag zpow lemmas for push/pull
+attribute [push] zpow_add₀ zpow_sub₀ zpow_neg
 
 /-!
 # Introduction to Measure Theory, Section 1.2.1: Properties of Lebesgue outer measure
@@ -4499,9 +4503,7 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
       have h2m_pos : (0:ℝ) < 2^m := zpow_pos (by norm_num : (0:ℝ) < 2) m
       have h_mn_pos : 0 < m - n := Int.sub_pos_of_lt hn
       have h_zpow_eq : (2:ℝ)^(m-n) * 2^n = 2^m := by
-        rw [← zpow_add₀ (by norm_num : (2:ℝ) ≠ 0)]
-        congr 1
-        omega
+        pull (disch := norm_num) _ ^ _; congr 1; omega
       -- hi says: if a_i/2^n ≤ b_i/2^m then (a_i+1)/2^n < (b_i+1)/2^m
       -- Case 1: a_i/2^n > b_i/2^m (the hypothesis of hi fails)
       -- Case 2: a_i/2^n ≤ b_i/2^m but (a_i+1)/2^n < (b_i+1)/2^m (hi applies)
@@ -4519,12 +4521,12 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
             simp only [div_mul_cancel₀ _ (ne_of_gt h2m_pos)] at h1
             calc (b i : ℝ) < (a i : ℝ) / 2^n * 2^m := h1
               _ = (a i : ℝ) * (2^m / 2^n) := by ring
-              _ = (a i : ℝ) * 2^(m-n) := by rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+              _ = (a i : ℝ) * 2^(m-n) := by pull (disch := norm_num) _ ^ _; rfl
           have hhi : (a i : ℝ) * 2^(m-n) < (b i : ℝ) + 1 := by
             have h1 : (a i : ℝ) / 2^n * 2^m < ((b i : ℝ) + 1) / 2^m * 2^m := by nlinarith
             simp only [div_mul_cancel₀ _ (ne_of_gt h2m_pos)] at h1
             calc (a i : ℝ) * 2^(m-n) = (a i : ℝ) * (2^m / 2^n) := by
-                    rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+                    pull (disch := norm_num) _ ^ _; rfl
               _ = (a i : ℝ) / 2^n * 2^m := by ring
               _ < (b i : ℝ) + 1 := h1
           -- a_i * 2^(m-n) is an integer in (b_i, b_i+1), contradiction
@@ -4554,12 +4556,12 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
             simp only [div_mul_cancel₀ _ (ne_of_gt h2m_pos)] at h1
             calc (b i : ℝ) < ((a i : ℝ) + 1) / 2^n * 2^m := h1
               _ = ((a i : ℝ) + 1) * (2^m / 2^n) := by ring
-              _ = ((a i : ℝ) + 1) * 2^(m-n) := by rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+              _ = ((a i : ℝ) + 1) * 2^(m-n) := by pull (disch := norm_num) _ ^ _; rfl
           have hhi : ((a i : ℝ) + 1) * 2^(m-n) < (b i : ℝ) + 1 := by
             have h1 : ((a i : ℝ) + 1) / 2^n * 2^m < ((b i : ℝ) + 1) / 2^m * 2^m := by nlinarith
             simp only [div_mul_cancel₀ _ (ne_of_gt h2m_pos)] at h1
             calc ((a i : ℝ) + 1) * 2^(m-n) = ((a i : ℝ) + 1) * (2^m / 2^n) := by
-                    rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+                    pull (disch := norm_num) _ ^ _; rfl
               _ = ((a i : ℝ) + 1) / 2^n * 2^m := by ring
               _ < (b i : ℝ) + 1 := h1
           -- (a_i+1) * 2^(m-n) is an integer in (b_i, b_i+1), contradiction
@@ -4617,12 +4619,12 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
             simp only [div_mul_cancel₀ _ (ne_of_gt h2n_pos)] at h1
             calc (a i : ℝ) < (b i : ℝ) / 2^m * 2^n := h1
               _ = (b i : ℝ) * (2^n / 2^m) := by ring
-              _ = (b i : ℝ) * 2^(n-m) := by rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+              _ = (b i : ℝ) * 2^(n-m) := by pull (disch := norm_num) _ ^ _; rfl
           have hhi : (b i : ℝ) * 2^(n-m) < (a i : ℝ) + 1 := by
             have h1 : (b i : ℝ) / 2^m * 2^n < ((a i : ℝ) + 1) / 2^n * 2^n := by nlinarith
             simp only [div_mul_cancel₀ _ (ne_of_gt h2n_pos)] at h1
             calc (b i : ℝ) * 2^(n-m) = (b i : ℝ) * (2^n / 2^m) := by
-                    rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+                    pull (disch := norm_num) _ ^ _; rfl
               _ = (b i : ℝ) / 2^m * 2^n := by ring
               _ < (a i : ℝ) + 1 := h1
           -- b_i * 2^(n-m) is an integer in (a_i, a_i+1), contradiction
@@ -4652,12 +4654,12 @@ lemma nesting {d:ℕ} {n m : ℤ} {a : Fin d → ℤ} {b : Fin d → ℤ} :
             simp only [div_mul_cancel₀ _ (ne_of_gt h2n_pos)] at h1
             calc (a i : ℝ) < ((b i : ℝ) + 1) / 2^m * 2^n := h1
               _ = ((b i : ℝ) + 1) * (2^n / 2^m) := by ring
-              _ = ((b i : ℝ) + 1) * 2^(n-m) := by rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+              _ = ((b i : ℝ) + 1) * 2^(n-m) := by pull (disch := norm_num) _ ^ _; rfl
           have hhi : ((b i : ℝ) + 1) * 2^(n-m) < (a i : ℝ) + 1 := by
             have h1 : ((b i : ℝ) + 1) / 2^m * 2^n < ((a i : ℝ) + 1) / 2^n * 2^n := by nlinarith
             simp only [div_mul_cancel₀ _ (ne_of_gt h2n_pos)] at h1
             calc ((b i : ℝ) + 1) * 2^(n-m) = ((b i : ℝ) + 1) * (2^n / 2^m) := by
-                    rw [← zpow_sub₀ (by norm_num : (2:ℝ) ≠ 0)]
+                    pull (disch := norm_num) _ ^ _; rfl
               _ = ((b i : ℝ) + 1) / 2^m * 2^n := by ring
               _ < (a i : ℝ) + 1 := h1
           -- (b_i+1) * 2^(n-m) is an integer in (a_i, a_i+1), contradiction
