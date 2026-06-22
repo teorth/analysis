@@ -1767,6 +1767,7 @@ theorem Lebesgue_measure.prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace' d₁)}
 theorem Lebesgue_measure.unique {d:ℕ} (m: Set (EuclideanSpace' d) → EReal)
   (h_empty: m ∅ = 0) (h_pos: ∀ E, 0 ≤ m E)
   (h_add: ∀ E: ℕ → Set (EuclideanSpace' d), (Set.univ.PairwiseDisjoint E) → (∀ n, LebesgueMeasurable (E n)) → m (⋃ n, E n) = ∑' n, m (E n))
+  (h_transl: ∀ (x : EuclideanSpace' d) (E : Set (EuclideanSpace' d)), m (E + {x}) = m E)
   (hnorm: m (Box.unit_cube d) = 1)
   : ∀ E, LebesgueMeasurable E → m E = Lebesgue_measure E := by sorry
 
