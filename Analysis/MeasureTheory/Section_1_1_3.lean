@@ -1054,7 +1054,7 @@ theorem RiemannIntegrableOn.smul {I: BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (
 
 /-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/
 -- The integral of a scalar multiple: integral(c * f) = c * integral(f).
-theorem riemann_integral_smul {I:BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (h: RiemannIntegrableOn f I) : riemannIntegral (c • f) = c • (riemannIntegral f) := by sorry
+theorem riemann_integral_smul {I:BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (h: RiemannIntegrableOn f I) : riemannIntegral (c • f) I = c • (riemannIntegral f I) := by sorry
 
 /-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/
 -- The sum of two Riemann integrable functions is Riemann integrable.
