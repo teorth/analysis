@@ -135,26 +135,23 @@ theorem mono_of_continuous_inj {a b:ℝ} (h: a < b) {f:ℝ → ℝ}
   sorry
 
 /-- Exercise 9.8.4 -/
-def MonotoneOn.exist_inverse_without_continuity {a b:ℝ} (h: a < b) {f: ℝ → ℝ} (hmono: StrictMonoOn f (.Icc a b)) :
-  Decidable ( f '' (.Icc a b) = .Icc (f a) (f b) ∧
+theorem MonotoneOn.exist_inverse_without_continuity {a b:ℝ} (h: a < b) {f: ℝ → ℝ} (hcont: ContinuousOn f (.Icc a b))
+    (hmono: StrictMonoOn f (.Icc a b)) :
+  f '' (.Icc a b) = .Icc (f a) (f b) ∧
   ∃ finv: ℝ → ℝ, ContinuousOn finv (.Icc (f a) (f b)) ∧ StrictMonoOn finv (.Icc (f a) (f b)) ∧
   finv '' (.Icc (f a) (f b)) = .Icc a b ∧
   (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
-  ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y )
-   := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
+  ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y := by
   sorry
 
 /-- Exercise 9.8.4 -/
-def MonotoneOn.exist_inverse_without_strictmono {a b:ℝ} (h: a < b) (f: ℝ → ℝ)
-  (hcont: ContinuousOn f (.Icc a b)) (hmono: MonotoneOn f (.Icc a b)) :
-  Decidable ( f '' (.Icc a b) = .Icc (f a) (f b) ∧
+theorem MonotoneOn.exist_inverse_without_strictmono {a b:ℝ} (h: a < b) (f: ℝ → ℝ)
+    (hcont: ContinuousOn f (.Icc a b)) (hmono: StrictMonoOn f (.Icc a b)) :
+  f '' (.Icc a b) = .Icc (f a) (f b) ∧
   ∃ finv: ℝ → ℝ, ContinuousOn finv (.Icc (f a) (f b)) ∧ StrictMonoOn finv (.Icc (f a) (f b)) ∧
   finv '' (.Icc (f a) (f b)) = .Icc a b ∧
   (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
-  ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y )
-   := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
+  ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y := by
   sorry
 
 
