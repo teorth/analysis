@@ -72,6 +72,10 @@ example : ¬ Example_6_4_4.LimitPoint 0 := by sorry
 theorem Sequence.limit_point_of_limit {a:Sequence} {x:ℝ} (h: a.TendsTo x) : a.LimitPoint x := by
   sorry
 
+/-- Proposition 6.4.5 / Exercise 6.4.1 -/
+theorem Sequence.limit_point_of_limit_unique {a:Sequence} {x y:ℝ} (h: a.TendsTo x) (hy: a.LimitPoint y) : x = y := by
+  sorry
+
 /--
   A technical issue uncovered by the formalization: the upper and lower sequences of a real
   sequence take values in the extended reals rather than the reals, so the definitions need to be
