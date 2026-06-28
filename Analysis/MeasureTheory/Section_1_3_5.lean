@@ -1518,7 +1518,7 @@ theorem PointwiseAeConvergesTo.locallyUniformlyConverges_outside_small {d:ℕ} {
   (hf: ∀ n, ComplexMeasurable (f n))
   (hfg: PointwiseAeConvergesTo f g)
   (ε : ℝ) (hε : 0 < ε) :
-  ∃ (E: Set (EuclideanSpace' d)), MeasurableSet E ∧
+  ∃ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E ∧
     Lebesgue_measure E ≤ ε ∧
     LocallyUniformlyConvergesToOn f g Eᶜ := by sorry
 
@@ -1526,7 +1526,7 @@ theorem PointwiseAeConvergesTo.locallyUniformlyConverges_outside_small {d:ℕ} {
 example : ∃ (d:ℕ) (f : ℕ → EuclideanSpace' d → ℝ) (g : EuclideanSpace' d → ℝ),
     (∀ n, RealMeasurable (f n)) ∧
     PointwiseAeConvergesTo f g ∧
-    ∀ (E: Set (EuclideanSpace' d)), MeasurableSet E ∧
+    ∀ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E ∧
       Lebesgue_measure E = 0 →
       ¬ LocallyUniformlyConvergesToOn f g Eᶜ := by sorry
 
@@ -1535,7 +1535,7 @@ example : ∃ (d:ℕ) (f : ℕ → EuclideanSpace' d → ℝ) (g : EuclideanSpac
     (∀ n, RealMeasurable (f n)) ∧
     PointwiseAeConvergesTo f g ∧
     ∃ (ε : ℝ) (hε : 0 < ε),
-      ∀ (E: Set (EuclideanSpace' d)), MeasurableSet E ∧
+      ∀ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E ∧
         Lebesgue_measure E ≤ ε →
         ¬ UniformlyConvergesToOn f g Eᶜ := by sorry
 
@@ -1544,9 +1544,10 @@ theorem PointwiseAeConvergesTo.uniformlyConverges_outside_small {d:ℕ} {f : ℕ
   (hf: ∀ n, ComplexMeasurable (f n))
   (hfg: PointwiseAeConvergesTo f g)
   (S: Set (EuclideanSpace' d))
+  (hSm: LebesgueMeasurable S)
   (hS: Lebesgue_measure S < ⊤)
   (ε : ℝ) (hε : 0 < ε) :
-  ∃ (E: Set (EuclideanSpace' d)), MeasurableSet E ∧
+  ∃ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E ∧
     Lebesgue_measure E ≤ ε ∧
     UniformlyConvergesToOn f g (Sᶜ ∪ E) := by sorry
 
@@ -1554,30 +1555,30 @@ theorem PointwiseAeConvergesTo.uniformlyConverges_outside_small {d:ℕ} {f : ℕ
 theorem ComplexAbsolutelyIntegrable.approx_by_continuous_outside_small {d:ℕ} {f : EuclideanSpace' d → ℂ}
   (hf: ComplexAbsolutelyIntegrable f)
   (ε : ℝ) (hε : 0 < ε) :
-  ∃ (g : EuclideanSpace' d → ℂ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ MeasurableSet E ∧
+  ∃ (g : EuclideanSpace' d → ℂ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ LebesgueMeasurable E ∧
       Lebesgue_measure E ≤ ε ∧
       ∀ x ∉ E, g x = f x := by sorry
 
 /-- Lusin's theorem does not make the original function continuous outside of E -/
 example : ∃ (d:ℕ) (f : EuclideanSpace' d → ℝ),
     RealMeasurable f ∧
-    ∀ (E: Set (EuclideanSpace' d)), MeasurableSet E → Lebesgue_measure E ≤ 1 → ¬ ContinuousOn f Eᶜ := by sorry
+    ∀ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E → Lebesgue_measure E ≤ 1 → ¬ ContinuousOn f Eᶜ := by sorry
 
 def LocallyComplexAbsolutelyIntegrable {d:ℕ} (f: EuclideanSpace' d → ℂ) : Prop :=
-  ∀ (S: Set (EuclideanSpace' d)), MeasurableSet S ∧ Bornology.IsBounded S → ComplexAbsolutelyIntegrableOn f S
+  ∀ (S: Set (EuclideanSpace' d)), LebesgueMeasurable S ∧ Bornology.IsBounded S → ComplexAbsolutelyIntegrableOn f S
 
 /-- Exercise 1.3.23 (Lusin's theorem only requires local absolute integrability )-/
 theorem LocallyComplexAbsolutelyIntegrable.approx_by_continuous_outside_small {d:ℕ} {f : EuclideanSpace' d → ℂ}
   (hf: LocallyComplexAbsolutelyIntegrable f)
   (ε : ℝ) (hε : 0 < ε) :
-  ∃ (g : EuclideanSpace' d → ℂ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ MeasurableSet E ∧
+  ∃ (g : EuclideanSpace' d → ℂ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ LebesgueMeasurable E ∧
       Lebesgue_measure E ≤ ε ∧
       ∀ x ∉ E, g x = f x := by sorry
 
 theorem ComplexMeasurable.approx_by_continuous_outside_small {d:ℕ} {f : EuclideanSpace' d → ℂ}
   (hf: ComplexMeasurable f)
   (ε : ℝ) (hε : 0 < ε) :
-  ∃ (g : EuclideanSpace' d → ℂ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ MeasurableSet E ∧
+  ∃ (g : EuclideanSpace' d → ℂ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ LebesgueMeasurable E ∧
       Lebesgue_measure E ≤ ε ∧
       ∀ x ∉ E, g x = f x := by sorry
 
@@ -1590,7 +1591,7 @@ theorem ComplexMeasurable.iff_pointwiseae_of_continuous {d:ℕ} {f : EuclideanSp
 theorem UnsignedMeasurable.approx_by_continuous_outside_small {d:ℕ} {f : EuclideanSpace' d → EReal}
   (hf: UnsignedMeasurable f) (hfin: AlmostAlways (fun x ↦ f x < ⊤))
   (ε : ℝ) (hε : 0 < ε) :
-  ∃ (g : EuclideanSpace' d → ℝ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ MeasurableSet E ∧
+  ∃ (g : EuclideanSpace' d → ℝ) (E: Set (EuclideanSpace' d)), ContinuousOn g Eᶜ ∧ LebesgueMeasurable E ∧
       Lebesgue_measure E ≤ ε ∧
       ∀ x ∉ E, g x = f x := by sorry
 
@@ -1606,6 +1607,6 @@ def BoundedOn {X Y:Type*} [PseudoMetricSpace Y] (f: X → Y) (S: Set X) : Prop :
 theorem ComplexAbsolutelyIntegrable.almost_bounded {d:ℕ} {f : EuclideanSpace' d → ℂ}
   (hf: ComplexAbsolutelyIntegrable f)
   (ε : ℝ) (hε : 0 < ε) :
-  ∃ (E: Set (EuclideanSpace' d)), MeasurableSet E ∧
+  ∃ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E ∧
     Lebesgue_measure E ≤ ε ∧
     BoundedOn f Eᶜ := by sorry
