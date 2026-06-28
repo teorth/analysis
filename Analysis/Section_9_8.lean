@@ -135,23 +135,26 @@ theorem mono_of_continuous_inj {a b:ℝ} (h: a < b) {f:ℝ → ℝ}
   sorry
 
 /-- Exercise 9.8.4 -/
-theorem MonotoneOn.exist_inverse_without_continuity {a b:ℝ} (h: a < b) {f: ℝ → ℝ} (hcont: ContinuousOn f (.Icc a b))
-    (hmono: StrictMonoOn f (.Icc a b)) :
-  f '' (.Icc a b) = .Icc (f a) (f b) ∧
-  ∃ finv: ℝ → ℝ, ContinuousOn finv (.Icc (f a) (f b)) ∧ StrictMonoOn finv (.Icc (f a) (f b)) ∧
-  finv '' (.Icc (f a) (f b)) = .Icc a b ∧
-  (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
-  ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y := by
+def MonotoneOn.exist_inverse_without_continuity :
+    Decidable (∀ (a b : ℝ) (_ : a < b) (f : ℝ → ℝ) (_ : StrictMonoOn f (Icc a b)),
+      f '' (Icc a b) = Icc (f a) (f b) ∧
+      ∃ finv : ℝ → ℝ, ContinuousOn finv (Icc (f a) (f b)) ∧ StrictMonoOn finv (Icc (f a) (f b)) ∧
+        finv '' (Icc (f a) (f b)) = Icc a b ∧
+        (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
+        ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y) := by
+  -- apply isFalse: strict mono alone doesn't guarantee a continuous inverse
   sorry
 
 /-- Exercise 9.8.4 -/
-theorem MonotoneOn.exist_inverse_without_strictmono {a b:ℝ} (h: a < b) (f: ℝ → ℝ)
-    (hcont: ContinuousOn f (.Icc a b)) (hmono: StrictMonoOn f (.Icc a b)) :
-  f '' (.Icc a b) = .Icc (f a) (f b) ∧
-  ∃ finv: ℝ → ℝ, ContinuousOn finv (.Icc (f a) (f b)) ∧ StrictMonoOn finv (.Icc (f a) (f b)) ∧
-  finv '' (.Icc (f a) (f b)) = .Icc a b ∧
-  (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
-  ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y := by
+def MonotoneOn.exist_inverse_without_strictmono :
+    Decidable (∀ (a b : ℝ) (_ : a < b) (f : ℝ → ℝ) (_ : ContinuousOn f (Icc a b))
+        (_ : MonotoneOn f (Icc a b)),
+      f '' (Icc a b) = Icc (f a) (f b) ∧
+      ∃ finv : ℝ → ℝ, ContinuousOn finv (Icc (f a) (f b)) ∧ StrictMonoOn finv (Icc (f a) (f b)) ∧
+        finv '' (Icc (f a) (f b)) = Icc a b ∧
+        (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
+        ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y) := by
+  -- apply isFalse: e.g. a constant monotone f on [a,b] has no strict inverse
   sorry
 
 
