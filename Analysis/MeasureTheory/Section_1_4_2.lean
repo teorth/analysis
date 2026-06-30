@@ -198,9 +198,8 @@ theorem BorelSigmaAlgebra.slice_snd {d₁ d₂:ℕ} {E : Set (EuclideanSpace' (d
   by sorry
 
 /-- Exercise 1.4.18(ii) -/
-example (d₁ d₂ :ℕ) (E : Set (EuclideanSpace' (d₁+d₂)))
-  (hE: LebesgueMeasurable E)
-  (x₂ : EuclideanSpace' d₂ ) :
+example : ∃ (d₁ d₂ : ℕ) (E : Set (EuclideanSpace' (d₁+d₂))) (x₂ : EuclideanSpace' d₂),
+  LebesgueMeasurable E ∧
   ¬ LebesgueMeasurable { x₁ | (EuclideanSpace'.prod_equiv d₁ d₂).symm ⟨ x₁, x₂ ⟩ ∈ E } := by sorry
 
 /-- Exercise 1.4.19 -/
