@@ -259,7 +259,7 @@ instance ConcreteBooleanAlgebra.instCompleteLattice {X:Type*} : CompleteLattice 
   }
 
 /-- Example 1.4.11 -/
-instance ConcreteBooleanAlgebra.eq_generated_by_iff {X:Type*} (F: Set (Set X)) : ∃ (B : ConcreteBooleanAlgebra X), B.measurableSets = F ↔ (ConcreteBooleanAlgebra.generated_by F).measurableSets = F := by sorry
+instance ConcreteBooleanAlgebra.eq_generated_by_iff {X:Type*} (F: Set (Set X)) : (∃ (B : ConcreteBooleanAlgebra X), B.measurableSets = F) ↔ (ConcreteBooleanAlgebra.generated_by F).measurableSets = F := by sorry
 
 /-- Exercise 1.4.7 (Generation by boxes) -/
 instance EuclideanSpace'.elementary_boolean_algebra_generated_by_boxes (d:ℕ) : EuclideanSpace'.elementary_boolean_algebra d =
