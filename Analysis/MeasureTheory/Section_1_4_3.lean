@@ -294,7 +294,7 @@ theorem Measure.downwards_mono_counter : ∃ (X:Type) (M: MeasurableSpace X) (μ
 
 /-- Exercise 1.4.24 (i) (Dominated convergence for sets) -/
 theorem Measure.measurable_of_lim {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, Measurable (E n))
-  {E' : Set X} (hlim : PointwiseConvergesTo E E') : Measurable E := by sorry
+  {E' : Set X} (hlim : PointwiseConvergesTo E E') : Measurable E' := by sorry
 
 /-- Exercise 1.4.24 (ii) (Dominated convergence for sets) -/
 theorem Measure.measure_of_lim {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, Measurable (E n))
