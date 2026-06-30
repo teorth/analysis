@@ -104,14 +104,14 @@ def IsNull.lt_lebesgue_boolean_algebra (d:ℕ) :
 /-- Exercise 1.4.2 (Restriction) -/
 def ConcreteBooleanAlgebra.restrict {X:Type*} (B: ConcreteBooleanAlgebra X) (A:Set X) : ConcreteBooleanAlgebra A :=
   {
-    measurable := fun E => ∃ E' : Set X, B.measurable E ∧ E = E' ∩ A
+    measurable := fun E => ∃ E' : Set X, B.measurable E' ∧ E = Subtype.val ⁻¹' E'
     empty_mem := by sorry
     compl_mem := by sorry
     union_mem := by sorry
   }
 
 def ConcreteBooleanAlgebra.restrict_iff {X:Type*} {B: ConcreteBooleanAlgebra X} {A:Set X} (h: B.measurable A) (E: Set A) :
-  (B.restrict A).measurable E ↔ B.measurable A :=
+  (B.restrict A).measurable E ↔ B.measurable (Subtype.val '' E) :=
   by sorry
 
 /-- Remark 1.4.2: {name}`ConcreteBooleanAlgebra`s are {name}`BooleanAlgebra`s -/
