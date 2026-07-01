@@ -166,7 +166,7 @@ noncomputable abbrev SetTheory.Set.curry_equiv {X Y Z:Set} : (X → Y → Z) ≃
   right_inv _ := by simp
 
 /-- Definition 3.5.6.  The indexing set {name}`I` plays the role of $`{ i : 1 ≤ i ≤ n }` in the text.
-    See Exercise 3.5.10 below for some connections betweeen this concept and the preceding notion
+    See Exercise 3.5.10 below for some connections between this concept and the preceding notion
     of Cartesian product and ordered pair.  -/
 abbrev SetTheory.Set.tuple {I:Set} {X: I → Set} (x: ∀ i, X i) : Object :=
   ((fun i ↦ ⟨ x i, by rw [mem_iUnion]; use i; exact (x i).property ⟩):I → iUnion I X)
