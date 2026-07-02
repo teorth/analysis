@@ -1544,6 +1544,7 @@ theorem PointwiseAeConvergesTo.uniformlyConverges_outside_small {d:ℕ} {f : ℕ
   (hf: ∀ n, ComplexMeasurable (f n))
   (hfg: PointwiseAeConvergesTo f g)
   (S: Set (EuclideanSpace' d))
+  (hSm: LebesgueMeasurable S)
   (hS: Lebesgue_measure S < ⊤)
   (ε : ℝ) (hε : 0 < ε) :
   ∃ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E ∧
@@ -1564,7 +1565,7 @@ example : ∃ (d:ℕ) (f : EuclideanSpace' d → ℝ),
     ∀ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E → Lebesgue_measure E ≤ 1 → ¬ ContinuousOn f Eᶜ := by sorry
 
 def LocallyComplexAbsolutelyIntegrable {d:ℕ} (f: EuclideanSpace' d → ℂ) : Prop :=
-  ∀ (S: Set (EuclideanSpace' d)), MeasurableSet S ∧ Bornology.IsBounded S → ComplexAbsolutelyIntegrableOn f S
+  ∀ (S: Set (EuclideanSpace' d)), LebesgueMeasurable S ∧ Bornology.IsBounded S → ComplexAbsolutelyIntegrableOn f S
 
 /-- Exercise 1.3.23 (Lusin's theorem only requires local absolute integrability )-/
 theorem LocallyComplexAbsolutelyIntegrable.approx_by_continuous_outside_small {d:ℕ} {f : EuclideanSpace' d → ℂ}
