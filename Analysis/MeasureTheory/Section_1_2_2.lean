@@ -1674,7 +1674,7 @@ example {d:ℕ} (E: Set (EuclideanSpace' d)) : ∃ (F: Set (EuclideanSpace' d)),
 theorem Lebesgue_measure.eq {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E): Lebesgue_measure E = sSup { M | ∃ K, K ⊆ E ∧ IsCompact K ∧ M = Lebesgue_measure K} := by
   sorry
 
-/-- Exercise 1.2.16 (Criteria for measurability)-/
+/-- Exercise 1.2.16 (Criteria for finite measure)-/
 theorem LebesgueMeasurable.finite_TFAE {d:ℕ} (E: Set (EuclideanSpace' d)) :
     [
       LebesgueMeasurable E ∧ Lebesgue_measure E < ⊤,
