@@ -99,7 +99,7 @@ instance ConcreteSigmaAlgebra.instInfSet {X:Type*} : InfSet (ConcreteSigmaAlgebr
 def ConcreteSigmaAlgebra.generated_by {X:Type*} (F: Set (Set X)) : ConcreteSigmaAlgebra X :=
   sInf { B | ∀ E ∈ F, B.measurable E }
 
-/-- Definition 1.4.10 (Generation of algebras) -/
+/-- Definition 1.4.14 (Generation of σ-algebras) -/
 instance ConcreteSigmaAlgebra.instSupSet {X:Type*} : SupSet (ConcreteSigmaAlgebra X) :=
   {
       sSup S := ConcreteSigmaAlgebra.generated_by (⋃ B ∈ S, B.measurableSets)
@@ -144,7 +144,7 @@ theorem BorelSigmaAlgebra.generated_by_closed (d:ℕ) : BorelSigmaAlgebra (Eucli
 /-- Exercise 1.4.14 (iii) -/
 theorem BorelSigmaAlgebra.generated_by_compact (d:ℕ) : BorelSigmaAlgebra (EuclideanSpace' d) = ConcreteSigmaAlgebra.generated_by { K : Set (EuclideanSpace' d) | IsCompact K } := by sorry
 
-/-- Exercise 1.4.15 (iv) -/
+/-- Exercise 1.4.14 (iv) -/
 theorem BorelSigmaAlgebra.generated_by_open_balls (d:ℕ) : BorelSigmaAlgebra (EuclideanSpace' d) = ConcreteSigmaAlgebra.generated_by { B : Set (EuclideanSpace' d) | ∃ x₀ r, B = Metric.ball x₀ r } := by sorry
 
 /-- Exercise 1.4.14 (v) -/
