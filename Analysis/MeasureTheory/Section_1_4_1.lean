@@ -217,7 +217,7 @@ def JordanMeasurable.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (Jord
 def LebesgueMeasurable.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (LebesgueMeasurable.boolean_algebra d).isAtomic :=
   by sorry
 
-/-- Exercise 1.4.6 (Null algebra not atomic) -/
+/-- Exercise 1.4.5 (Null algebra not atomic) -/
 def IsNull.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (IsNull.boolean_algebra d).isAtomic :=
   by sorry
 
