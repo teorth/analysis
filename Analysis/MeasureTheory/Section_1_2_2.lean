@@ -205,8 +205,12 @@ private lemma IsClosed.measurable_of_bounded {d:ℕ} {E: Set (EuclideanSpace' d)
             intro hxi
             exact (hQ_sub hxi).2 hxE
           -- By compactness: set_dist E F_t > 0 (t is nonempty, so F_t is nonempty)
+          have ht_ne : t.Nonempty := Finset.nonempty_iff_ne_empty.mpr ht_empty
+          obtain ⟨i, hi⟩ := ht_ne
+          have hF_nonempty : F_t.Nonempty :=
+            (Box.toSet_nonempty_of_IsDyadic (hQ_dyadic i)).mono (Set.subset_biUnion_of_mem hi)
           have h_sep : set_dist E F_t > 0 :=
-            dist_of_disj_compact_pos E F_t hE_compact hF_compact hE_F_disj
+            dist_of_disj_compact_pos E F_t hE_nonempty hF_nonempty hE_compact hF_compact hE_F_disj
           -- By separation: m*(E ∪ F_t) = m*(E) + m*(F_t)
           have h_add : Lebesgue_outer_measure (E ∪ F_t) =
                        Lebesgue_outer_measure E + Lebesgue_outer_measure F_t :=
@@ -1026,7 +1030,7 @@ private lemma Lebesgue_measure.countable_union_compact {d:ℕ} (hd : 0 < d)
             have h_nonempty_union : (⋃ n ∈ Finset.range N, E n).Nonempty :=
               Set.nonempty_iff_ne_empty.mpr h_empty_union
             have h_sep : set_dist (⋃ n ∈ Finset.range N, E n) (E N) > 0 :=
-              dist_of_disj_compact_pos _ _ hcompact_finite (hcompact N) h_disj_parts
+              dist_of_disj_compact_pos _ _ h_nonempty_union h_nonempty_N hcompact_finite (hcompact N) h_disj_parts
             have h_add := Lebesgue_outer_measure.union_of_separated hd h_sep
             -- h_add : Lebesgue_outer_measure (...) = Lebesgue_outer_measure (...) + Lebesgue_outer_measure (E N)
             -- Since Lebesgue_measure = Lebesgue_outer_measure, we can use this directly
