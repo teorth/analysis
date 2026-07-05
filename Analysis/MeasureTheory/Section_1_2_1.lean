@@ -4790,6 +4790,10 @@ lemma dyadicCubeInteriorNonempty {d:ℕ} (n:ℤ) (a: Fin d → ℤ) :
     exact Set.nonempty_Ioo.mpr (div_lt_div_of_pos_right (by linarith) (zpow_pos (by norm_num) _))
   )).preimage (PiLp.homeomorph 2 (fun _ : Fin d => ℝ)).surjective
 
+lemma Box.toSet_nonempty_of_IsDyadic {d : ℕ} {B : Box d} (hB : B.IsDyadic) : B.toSet.Nonempty := by
+  obtain ⟨n, ⟨a, rfl⟩⟩ := hB
+  exact (dyadicCubeInteriorNonempty n a).mono (interior_subset (s := (DyadicCube n a).toSet))
+
 /-- At the same scale, dyadic cubes with different indices cannot have one contained in the other
     (since containment would imply empty interior for one). -/
 lemma dyadicCubeNoProperContainmentSameScale {d:ℕ} {n:ℤ} {a b : Fin d → ℤ}
