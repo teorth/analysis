@@ -3160,9 +3160,9 @@ example {d:ℕ} {hd: 0 < d} : ∃ (S:Type) (E: S → Set (EuclideanSpace' d)), �
   rw [h_cube, h_sum]
   simp
 
--- ========================================================================
---  Start of Helpers for remark 1.2.8 -/
--- ========================================================================
+/- ========================================================================
+   Start of Helpers for remark 1.2.8
+   ======================================================================== -/
 
 /-- The distance on {lean}`EuclideanSpace' 1` equals the distance in ℝ via {name}`EuclideanSpace'.equiv_Real` -/
 lemma EuclideanSpace'_dist_eq_Real_dist (x y : EuclideanSpace' 1) :
@@ -3552,9 +3552,9 @@ lemma U_lebesgue_le (ε : ℝ) (hε : 0 < ε) :
     _ ≤ ((2 * ε : ℝ) : EReal) := h_sum_bound
 
 end Remark_1_2_8
--- ========================================================================
---  End of Helpers for remark 1.2.8 -/
--- ========================================================================
+/- ========================================================================
+   End of Helpers for remark 1.2.8
+   ======================================================================== -/
 
 /-- Remark 1.2.8: There exists a bounded open set that is not Jordan measurable.
     Proof sketch: Take U = ⋃\_\{n\} (q\_n - ε/2^\{n+1\}, q\_n + ε/2^\{n+1\}) where \{q\_n\} enumerates ℚ ∩ \[0,1\].
