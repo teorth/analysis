@@ -175,7 +175,7 @@ theorem Series.ratio_ineq {c:ℤ → ℝ} (m:ℤ) (hpos: ∀ n ≥ m, c n > 0) :
       . apply (continuous_const_rpow (by positivity)).tendsto'; simp
       exact tendsto_inv_atTop_zero.comp tendsto_intCast_atTop_atTop
 
-/-- Corollary 7.5.3 (Ratio test)-/
+/-- Corollary 7.5.3 (Ratio test, convergence). -/
 theorem Series.ratio_test_pos {s : Series} (hnon: ∀ n ≥ s.m, s.seq n ≠ 0)
   (h : atTop.limsup (fun n ↦ ((|s.seq (n+1)| / |s.seq n|:ℝ):EReal)) < 1) : s.absConverges := by
     apply Series.root_test_pos (lt_of_le_of_lt _ h)
@@ -183,7 +183,7 @@ theorem Series.ratio_test_pos {s : Series} (hnon: ∀ n ≥ s.m, s.seq n ≠ 0)
     convert hnon using 1 with n
     simp
 
-/-- Corollary 7.5.3 (Ratio test)-/
+/-- Corollary 7.5.3 (Ratio test, divergence). -/
 theorem Series.ratio_test_neg {s : Series} (hnon: ∀ n ≥ s.m, s.seq n ≠ 0)
   (h : atTop.liminf (fun n ↦ ((|s.seq (n+1)| / |s.seq n|:ℝ):EReal)) > 1) : s.diverges := by
     apply Series.root_test_neg (lt_of_lt_of_le h _)

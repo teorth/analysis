@@ -318,7 +318,7 @@ theorem Q_unbounded : ¬ Bornology.IsBounded ((fun n:ℚ ↦ (n:ℝ)) '' .univ) 
 /-- Example 9.1.23 -/
 theorem R_unbounded : ¬ Bornology.IsBounded (.univ: Set ℝ) := by sorry
 
-/-- Theorem 9.1.24 / Exercise 9.1.13 (Heine-Borel theorem for the line)-/
+/-- Theorem 9.1.24 / Exercise 9.1.13 (Heine-Borel theorem for the line). -/
 theorem Heine_Borel (X: Set ℝ) :
   IsClosed X ∧ Bornology.IsBounded X ↔ ∀ a : ℕ → ℝ, (∀ n, a n ∈ X) →
   (∃ n : ℕ → ℕ, StrictMono n

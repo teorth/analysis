@@ -239,7 +239,7 @@ theorem Partition.sum_of_α_length  {I: BoundedInterval} (P: Partition I) (α: �
   ∑ J ∈ P.intervals, α[J]ₗ = α[I]ₗ := by
   sorry
 
-/-- Definition 11.8.5 (Piecewise constant RS integral)-/
+/-- Definition 11.8.5 (Piecewise constant RS integral). -/
 noncomputable abbrev PiecewiseConstantWith.RS_integ (f:ℝ → ℝ) {I: BoundedInterval} (P: Partition I) (α: ℝ → ℝ)   :
   ℝ := ∑ J ∈ P.intervals, constant_value_on f (J:Set ℝ) * α[J]ₗ
 
@@ -341,7 +341,7 @@ theorem PiecewiseConstantOn.RS_integ_of_join {I J K: BoundedInterval} (hIJK: K.j
   RS_integ f K α = RS_integ f I α + RS_integ f J α := by
   sorry
 
-/-- Analogue of Definition 11.3.2 (Upper and lower Riemann integrals )-/
+/-- Analogue of Definition 11.3.2 (Upper and lower Riemann integrals ). -/
 noncomputable abbrev upper_RS_integral (f:ℝ → ℝ) (I: BoundedInterval) (α: ℝ → ℝ): ℝ :=
   sInf ((PiecewiseConstantOn.RS_integ · I α) '' {g | MajorizesOn g f I ∧ PiecewiseConstantOn g I})
 

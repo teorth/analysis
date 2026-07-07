@@ -267,7 +267,7 @@ theorem finite_series_of_finite_series {XX YY:Type*} (X: Finset XX) (Y: Finset Y
       . sorry
       sorry
 
-/-- Corollary 7.1.14 (Fubini's theorem for finite series)-/
+/-- Corollary 7.1.14 (Fubini's theorem for finite series). -/
 theorem finite_series_refl {XX YY:Type*} (X: Finset XX) (Y: Finset YY) (f: XX × YY → ℝ) :
     ∑ z ∈ X.product Y, f z = ∑ z ∈ Y.product X, f (z.2, z.1) := by
   set h : Y.product X → X.product Y :=

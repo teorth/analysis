@@ -25,7 +25,7 @@ Main constructions and results of this section:
 namespace Chapter11
 open Chapter9 Chapter10 BoundedInterval
 
-/-- Theorem 11.9.1 (First Fundamental Theorem of Calculus)-/
+/-- Theorem 11.9.1 (First Fundamental Theorem of Calculus). -/
 theorem cts_of_integ {a b:ℝ} {f:ℝ → ℝ} (hf: IntegrableOn f (Icc a b)) :
   ContinuousOn (fun x => integ f (Icc a x)) (.Icc a b) := by
   -- This proof is written to follow the structure of the original text.

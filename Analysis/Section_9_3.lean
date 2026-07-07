@@ -65,7 +65,7 @@ example: ¬(0.1:ℝ).CloseFn (.Icc 1 3) (fun x ↦ x^2) 9 := by
 example: (0.1:ℝ).CloseNear (.Icc 1 3) (fun x ↦ x^2) 9 3 := by
   sorry
 
-/-- Definition 9.3.6 (Convergence of functions at a point)-/
+/-- Definition 9.3.6 (Convergence of functions at a point). -/
 abbrev Convergesto (X:Set ℝ) (f: ℝ → ℝ) (L:ℝ) (x₀:ℝ) : Prop := ∀ ε > (0:ℝ), ε.CloseNear X f L x₀
 
 /-- Connection with Mathlib filter convergence concepts -/

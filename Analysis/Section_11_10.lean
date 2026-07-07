@@ -175,7 +175,7 @@ theorem PiecewiseConstantOn.RS_integ_of_comp {a b:ℝ} (hab: a < b) {φ f:ℝ �
     exact this h1.2
   ext; apply (P.exists_unique _ h3).unique <;> simp [J.property, K.property, mem_iff, h1, h2]
 
-/-- Proposition 11.10.6 (Change of variables formula II)-/
+/-- Proposition 11.10.6 (Change of variables formula II). -/
 theorem RS_integ_of_comp {a b:ℝ} (hab: a < b) {φ f: ℝ → ℝ}
   (hφ_cont: Continuous φ) (hφ_mono: Monotone φ) (hf: IntegrableOn f (Icc (φ a) (φ b))) :
   RS_IntegrableOn (f ∘ φ) (Icc a b) φ ∧
@@ -205,7 +205,7 @@ theorem RS_integ_of_comp {a b:ℝ} (hab: a < b) {φ f: ℝ → ℝ}
     lower_RS_integral_le_upper hfφ_bdd hφ_mono
   refine ⟨ ⟨ hfφ_bdd, ?_ ⟩, ?_ ⟩ <;> linarith
 
-/-- Proposition 11.10.7 (Change of variables formula III)-/
+/-- Proposition 11.10.7 (Change of variables formula III). -/
 theorem integ_of_comp {a b:ℝ} (hab: a < b) {φ f: ℝ → ℝ}
   (hφ_diff: DifferentiableOn ℝ φ (Icc a b))
   (hφ_cont: Continuous φ) (hφ_mono: Monotone φ)

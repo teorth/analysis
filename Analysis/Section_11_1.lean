@@ -411,7 +411,7 @@ example : ∃ P P' : Partition (Icc 1 4),
   P' ≤ P := by
   sorry
 
-/-- Definition 11.1.16 (Common refinement)-/
+/-- Definition 11.1.16 (Common refinement). -/
 noncomputable instance Partition.instMax (I: BoundedInterval) : Max (Partition I) where
   max P P' := {
     intervals := Finset.image₂ (fun J K ↦ J ∩ K) P.intervals P'.intervals
