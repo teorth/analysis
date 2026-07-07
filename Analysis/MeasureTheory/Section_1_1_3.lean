@@ -313,7 +313,7 @@ lemma riemann_integral_eq_iff_of_integrable {f:ℝ → ℝ} {I: BoundedInterval}
     rw [hRe]
     exact riemann_integral_of_integrable h
 
-/-- Definition 1.1.15 (Riemann integrability)-/
+/-- Definition 1.1.15 (Riemann integrability). -/
 -- ε-δ characterization: Riemann sums converge to R iff for all ε > 0, there exists δ > 0 such that partitions with norm ≤ δ have Riemann sums within ε of R.
 lemma riemann_integral_eq_iff {f:ℝ → ℝ} {I: BoundedInterval} (R:ℝ): riemann_integral_eq f I R ↔ ∀ ε>0, ∃ δ>0, ∀ n, ∀ P: TaggedPartition I n, P.norm ≤ δ → |P.RiemannSum f - R| ≤ ε := by
   -- Show equivalence between filter convergence and ε-δ definition.
@@ -1048,19 +1048,19 @@ lemma RiemannIntegrableOn.piecewise_continuous {f:ℝ → ℝ} {I: BoundedInterv
  (T: Finset BoundedInterval)  (hdisjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet)
  (hcover : I.toSet = ⋃ J ∈ T, J.toSet) (hcont: ∀ J ∈ T, ContinuousOn f J.toSet) : RiemannIntegrableOn f I := by sorry
 
-/-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/
+/-- Exercise 1.1.24 (a) (scalar multiple, integrability). -/
 -- A scalar multiple of a Riemann integrable function is Riemann integrable.
 theorem RiemannIntegrableOn.smul {I: BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (h: RiemannIntegrableOn f I) : RiemannIntegrableOn (c • f) I := by sorry
 
-/-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/
+/-- Exercise 1.1.24 (a) (scalar multiple, integral). -/
 -- The integral of a scalar multiple: integral(c * f) = c * integral(f).
 theorem riemann_integral_smul {I:BoundedInterval} (c:ℝ) {f: ℝ → ℝ} (h: RiemannIntegrableOn f I) : riemannIntegral (c • f) I = c • (riemannIntegral f I) := by sorry
 
-/-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/
+/-- Exercise 1.1.24 (a) (sum, integrability). -/
 -- The sum of two Riemann integrable functions is Riemann integrable.
 theorem RiemannIntegrableOn.add {I: BoundedInterval} {f g: ℝ → ℝ} (hf: RiemannIntegrableOn f I) (hg: RiemannIntegrableOn g I) : RiemannIntegrableOn (f + g) I := by sorry
 
-/-- Exercise 1.1.24 (a) (Linearity of the piecewise constant integral) -/
+/-- Exercise 1.1.24 (a) (sum, integral). -/
 -- The integral of a sum: integral(f + g) = integral(f) + integral(g).
 theorem riemann_integral_add {I: BoundedInterval} {f g: ℝ → ℝ} (hf: RiemannIntegrableOn f I) (hg: RiemannIntegrableOn g I) : riemannIntegral (f+g) I = riemannIntegral f I + riemannIntegral g I := by sorry
 
