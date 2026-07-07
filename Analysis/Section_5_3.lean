@@ -116,7 +116,7 @@ theorem Real.LIM_eq_LIM {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Se
   intro h; apply Quotient.sound
   rwa [dif_pos ha, dif_pos hb, CauchySequence.equiv_iff]
 
-/--Lemma 5.3.6 (Sum of Cauchy sequences is Cauchy)-/
+/-- Lemma 5.3.6 (Sum of Cauchy sequences is Cauchy). -/
 theorem Sequence.IsCauchy.add {a b:ℕ → ℚ}  (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
     (a + b:Sequence).IsCauchy := by
   -- This proof is written to follow the structure of the original text.
@@ -132,7 +132,7 @@ theorem Sequence.IsCauchy.add {a b:ℕ → ℚ}  (ha: (a:Sequence).IsCauchy) (hb
   convert Section_4_3.add_close h1 h2
   linarith
 
-/--Lemma 5.3.7 (Sum of equivalent sequences is equivalent)-/
+/-- Lemma 5.3.7 (Sum of equivalent sequences is equivalent, left). -/
 theorem Sequence.add_equiv_left {a a':ℕ → ℚ} (b:ℕ → ℚ) (haa': Equiv a a') :
     Equiv (a + b) (a' + b) := by
   -- This proof is written to follow the structure of the original text.
@@ -146,11 +146,11 @@ theorem Sequence.add_equiv_left {a a':ℕ → ℚ} (b:ℕ → ℚ) (haa': Equiv 
   convert Section_4_3.add_close haa' (Section_4_3.close_refl (b n.toNat))
   simp
 
-/--Lemma 5.3.7 (Sum of equivalent sequences is equivalent)-/
+/-- Lemma 5.3.7 (Sum of equivalent sequences is equivalent, right). -/
 theorem Sequence.add_equiv_right {b b':ℕ → ℚ} (a:ℕ → ℚ) (hbb': Equiv b b') :
     Equiv (a + b) (a + b') := by simp_rw [add_comm]; exact add_equiv_left _ hbb'
 
-/--Lemma 5.3.7 (Sum of equivalent sequences is equivalent)-/
+/-- Lemma 5.3.7 (Sum of equivalent sequences is equivalent). -/
 theorem Sequence.add_equiv {a b a' b':ℕ → ℚ} (haa': Equiv a a')
   (hbb': Equiv b b') :
     Equiv (a + b) (a' + b') :=
@@ -180,16 +180,16 @@ theorem Sequence.IsCauchy.mul {a b:ℕ → ℚ}  (ha: (a:Sequence).IsCauchy) (hb
     (a * b:Sequence).IsCauchy := by
   sorry
 
-/-- Proposition 5.3.10 (Product of equivalent sequences is equivalent) / Exercise 5.3.2 -/
+/-- Proposition 5.3.10 (Product of equivalent sequences is equivalent, left) / Exercise 5.3.2. -/
 theorem Sequence.mul_equiv_left {a a':ℕ → ℚ} (b:ℕ → ℚ) (hb : (b:Sequence).IsCauchy) (haa': Equiv a a') :
   Equiv (a * b) (a' * b) := by
   sorry
 
-/--Proposition 5.3.10 (Product of equivalent sequences is equivalent) / Exercise 5.3.2 -/
+/-- Proposition 5.3.10 (Product of equivalent sequences is equivalent, right) / Exercise 5.3.2. -/
 theorem Sequence.mul_equiv_right {b b':ℕ → ℚ} (a:ℕ → ℚ)  (ha : (a:Sequence).IsCauchy)  (hbb': Equiv b b') :
   Equiv (a * b) (a * b') := by simp_rw [mul_comm]; exact mul_equiv_left a ha hbb'
 
-/--Proposition 5.3.10 (Product of equivalent sequences is equivalent) / Exercise 5.3.2 -/
+/-- Proposition 5.3.10 (Product of equivalent sequences is equivalent) / Exercise 5.3.2. -/
 theorem Sequence.mul_equiv
   {a b a' b':ℕ → ℚ}
   (ha : (a:Sequence).IsCauchy)
