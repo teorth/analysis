@@ -133,7 +133,7 @@ example (X: Set) : (X: Object) = SetTheory.set_to_object X := rfl
 theorem SetTheory.Set.coe_eq {X Y:Set} (h: (X: Object) = (Y: Object)) : X = Y :=
   set_to_object.inj' h
 
-/-- Axiom 3.1 (Sets are objects, coe_iff). -/
+/-- Axiom 3.1 (Sets are objects, iff lemma). -/
 @[simp]
 theorem SetTheory.Set.coe_eq_iff (X Y:Set) : (X: Object) = (Y: Object) ↔  X = Y :=
   ⟨ coe_eq, by rintro rfl; rfl ⟩
@@ -142,7 +142,7 @@ theorem SetTheory.Set.coe_eq_iff (X Y:Set) : (X: Object) = (Y: Object) ↔  X = 
 @[ext]
 theorem SetTheory.Set.ext {X Y:Set} (h: ∀ x, x ∈ X ↔ x ∈ Y) : X = Y := extensionality _ _ h
 
-/-- Axiom 3.2 (Equality of sets, ext_iff). -/
+-- Axiom 3.2 (Equality of sets, ext_iff)
 #check SetTheory.Set.ext_iff
 
 instance SetTheory.Set.instEmpty : EmptyCollection Set where
