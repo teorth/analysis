@@ -323,7 +323,7 @@ theorem SetTheory.Set.pair_union_pair (a b c:Object) :
     ({a,b}:Set) ∪ {b,c} = {a,b,c} := by
   ext; simp only [mem_union, mem_pair, mem_triple]; tauto
 
-/-- Definition 3.1.14.   -/
+/-- Definition 3.1.14 (Subset). -/
 instance SetTheory.Set.instSubset : HasSubset Set where
   Subset X Y := ∀ x, x ∈ X → x ∈ Y
 
@@ -331,7 +331,7 @@ instance SetTheory.Set.instSubset : HasSubset Set where
 example (X Y: Set) : X ⊆ Y ↔ ∀ x, x ∈ X → x ∈ Y := by rfl
 
 /--
-  Definition 3.1.14.
+  Definition 3.1.14 (Strict subset).
   Note that the strict subset operation in Mathlib is denoted {kw (of := «term_⊂_»)}`⊂` rather than `⊊`.
 -/
 instance SetTheory.Set.instSSubset : HasSSubset Set where
@@ -340,13 +340,8 @@ instance SetTheory.Set.instSSubset : HasSSubset Set where
 /-- Now we can use {kw (of := «term_⊂_»)}`⊂` for a strict subset relationship between two {name}`Set`s. -/
 example (X Y: Set) : X ⊂ Y ↔ X ⊆ Y ∧ X ≠ Y := by rfl
 
-/-- Definition 3.1.14. -/
 theorem SetTheory.Set.subset_def (X Y:Set) : X ⊆ Y ↔ ∀ x, x ∈ X → x ∈ Y := by rfl
 
-/--
-  Definition 3.1.14.
-  Note that the strict subset operation in Mathlib is denoted {kw (of := «term_⊂_»)}`⊂` rather than `⊊`.
--/
 theorem SetTheory.Set.ssubset_def (X Y:Set) : X ⊂ Y ↔ (X ⊆ Y ∧ X ≠ Y) := by rfl
 
 /-- Remark 3.1.15 -/
@@ -705,7 +700,7 @@ example : ({1, 2, 4}:Set) ∩ {2,3,4} = {2, 4} := by
   -- you can use the `aesop` tactic which does this automatically.
   aesop
 
-/-- Example 3.1.24 -/
+/-- Example 3.1.25 -/
 
 example : ({1, 2}:Set) ∩ {3,4} = ∅ := by
   rw [eq_empty_iff_forall_notMem]
@@ -720,7 +715,7 @@ example : ¬ Disjoint ({1, 2, 3}:Set) {2,3,4} := by
 
 example : Disjoint (∅:Set) ∅ := by sorry
 
-/-- Definition 3.1.26 example -/
+/-- Example 3.1.28 (Difference sets). -/
 
 example : ({1, 2, 3, 4}:Set) \ {2,4,6} = {1, 3} := by
   apply ext; aesop
