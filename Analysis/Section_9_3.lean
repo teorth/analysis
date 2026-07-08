@@ -16,7 +16,7 @@ doing so.
 Main constructions and results of this section:
 
 - Limits of continuous functions
-- Connection with Mathilb's filter convergence concepts
+- Connection with Mathlib's filter convergence concepts
 - Limit laws for functions
 
 Technical point: in the text, the functions `f` studied are defined only on subsets `X` of {lean}`ℝ`, and
