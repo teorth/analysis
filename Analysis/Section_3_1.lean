@@ -488,10 +488,10 @@ theorem SetTheory.Set.mem_sdiff (x:Object) (X Y:Set) : x ∈ (X \ Y) ↔ (x ∈ 
 /-- Proposition 3.1.27(d) / Exercise 3.1.6 -/
 theorem SetTheory.Set.inter_comm (A B:Set) : A ∩ B = B ∩ A := by sorry
 
-/-- Proposition 3.1.27(b) -/
+/-- Proposition 3.1.27(b) (Subset absorption). -/
 theorem SetTheory.Set.subset_union {A X: Set} (hAX: A ⊆ X) : A ∪ X = X := by sorry
 
-/-- Proposition 3.1.27(b) -/
+/-- Proposition 3.1.27(b) (Union absorption). -/
 theorem SetTheory.Set.union_subset {A X: Set} (hAX: A ⊆ X) : X ∪ A = X := by sorry
 
 /-- Proposition 3.1.27(c) -/
@@ -502,26 +502,26 @@ theorem SetTheory.Set.inter_self (A:Set) : A ∩ A = A := by
 /-- Proposition 3.1.27(e) -/
 theorem SetTheory.Set.inter_assoc (A B C:Set) : (A ∩ B) ∩ C = A ∩ (B ∩ C) := by sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Intersection distributes over union). -/
 theorem  SetTheory.Set.inter_union_distrib_left (A B C:Set) :
     A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) := by
   sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Union distributes over intersection). -/
 theorem  SetTheory.Set.union_inter_distrib_left (A B C:Set) :
     A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) := by
   sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Partition of a superset). -/
 theorem SetTheory.Set.union_compl {A X:Set} (hAX: A ⊆ X) : A ∪ (X \ A) = X := by sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Disjoint intersection with complement). -/
 theorem SetTheory.Set.inter_compl {A X:Set} : A ∩ (X \ A) = ∅ := by sorry
 
-/-- Proposition 3.1.27(g) -/
+/-- Proposition 3.1.27(g) (Complement of a union). -/
 theorem SetTheory.Set.compl_union {A B X:Set} : X \ (A ∪ B) = (X \ A) ∩ (X \ B) := by sorry
 
-/-- Proposition 3.1.27(g) -/
+/-- Proposition 3.1.27(g) (Complement of an intersection). -/
 theorem SetTheory.Set.compl_inter {A B X:Set} : X \ (A ∩ B) = (X \ A) ∪ (X \ B) := by sorry
 
 /-- Not from textbook: sets form a distributive lattice. -/
