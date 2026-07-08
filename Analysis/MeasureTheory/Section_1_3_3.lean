@@ -340,6 +340,6 @@ theorem UnsignedLebesgueIntegral.ae_finite {d:ℕ} {f: EuclideanSpace' d → ERe
 
 theorem UnsignedLebesgueIntegral.ae_finite_no_converse : ∃ (d:ℕ) (f: EuclideanSpace' d → EReal) (hf: UnsignedMeasurable f) (hfin: AlmostAlways (fun x ↦ f x < ⊤)), UnsignedLebesgueIntegral f = ⊤ := by sorry
 
-/-- Exercise 1.3.18 (ii) -/
+/-- Exercise 1.3.18 (iii) -/
 theorem UnsignedLebesgueIntegral.eq_zero_aeZero {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) :
      hf.integ = 0 ↔ AlmostAlways (fun x ↦ f x = 0) := by sorry
