@@ -289,53 +289,53 @@ theorem PiecewiseConstantOn.RS_integ_smul {f: ℝ → ℝ} {I: BoundedInterval} 
    := by
   sorry
 
-/-- Theorem 11.8.8 (c) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (c) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_sub {f g: ℝ → ℝ} {I: BoundedInterval}
   {α:ℝ → ℝ} (hα: Monotone α)
   (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) :
   RS_integ (f - g) I α = RS_integ f I α - RS_integ g I α := by
   sorry
 
-/-- Theorem 11.8.8 (d) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (d) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_of_nonneg {f: ℝ → ℝ} {I: BoundedInterval}
   {α:ℝ → ℝ} (hα: Monotone α)
   (h: ∀ x ∈ I, 0 ≤ f x) (hf: PiecewiseConstantOn f I) :
   0 ≤ RS_integ f I α := by
   sorry
 
-/-- Theorem 11.8.8 (e) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (e) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_mono {f g: ℝ → ℝ} {I: BoundedInterval}
   {α:ℝ → ℝ} (hα: Monotone α)
   (h: ∀ x ∈ I, f x ≤ g x) (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) :
   RS_integ f I α ≤ RS_integ g I α := by
   sorry
 
-/-- Theorem 11.8.8 (f) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (f) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_const (c: ℝ) (I: BoundedInterval) {α:ℝ → ℝ} (hα: Monotone α) :
   RS_integ (fun _ ↦ c) I α = c * α[I]ₗ := by
   sorry
 
-/-- Theorem 11.8.8 (f) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (f) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_const' {f:ℝ → ℝ} {I: BoundedInterval}
   {α:ℝ → ℝ} (hα: Monotone α) (h: ConstantOn f I) :
   RS_integ f I α = (constant_value_on f I) * α[I]ₗ := by
   sorry
 
 open Classical in
-/-- Theorem 11.8.8 (g) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (g) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_of_extend {I J: BoundedInterval} (hIJ: I ⊆ J)
   {f: ℝ → ℝ} (h: PiecewiseConstantOn f I) {α:ℝ → ℝ} (hα: Monotone α):
   PiecewiseConstantOn (fun x ↦ if x ∈ I then f x else 0) J := by
   sorry
 
 open Classical in
-/-- Theorem 11.8.8 (g) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (g) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_of_extend {I J: BoundedInterval} (hIJ: I ⊆ J)
   {f: ℝ → ℝ} (h: PiecewiseConstantOn f I) {α:ℝ → ℝ} (hα: Monotone α):
   RS_integ (fun x ↦ if x ∈ I then f x else 0) J α = RS_integ f I α := by
   sorry
 
-/-- Theorem 11.8.8 (h) (Laws of RS integration) / Exercise 11.8.8 -/
+/-- Theorem 11.8.8 (h) (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_of_join {I J K: BoundedInterval} (hIJK: K.joins' I J)
   {f: ℝ → ℝ} (h: PiecewiseConstantOn f K) {α:ℝ → ℝ} (hα: Monotone α):
   RS_integ f K α = RS_integ f I α + RS_integ f J α := by
