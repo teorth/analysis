@@ -122,18 +122,18 @@ instance SetTheory.objects_mem_sets : Membership Object Set where
 -- Now we can use the `∈` notation between our `Object` and `Set`.
 example (X: Set) (x: Object) : x ∈ X ↔ SetTheory.mem x X := by rfl
 
-/-- Axiom 3.1 (Sets are objects)-/
+/-- Axiom 3.1 (Sets are objects, coercion). -/
 instance SetTheory.sets_are_objects : Coe Set Object where
   coe X := set_to_object X
 
 -- Now we can treat a `Set` as an `Object` when needed.
 example (X: Set) : (X: Object) = SetTheory.set_to_object X := rfl
 
-/-- Axiom 3.1 (Sets are objects)-/
+/-- Axiom 3.1 (Sets are objects, injectivity). -/
 theorem SetTheory.Set.coe_eq {X Y:Set} (h: (X: Object) = (Y: Object)) : X = Y :=
   set_to_object.inj' h
 
-/-- Axiom 3.1 (Sets are objects)-/
+/-- Axiom 3.1 (Sets are objects, coe_iff). -/
 @[simp]
 theorem SetTheory.Set.coe_eq_iff (X Y:Set) : (X: Object) = (Y: Object) ↔  X = Y :=
   ⟨ coe_eq, by rintro rfl; rfl ⟩
@@ -142,7 +142,7 @@ theorem SetTheory.Set.coe_eq_iff (X Y:Set) : (X: Object) = (Y: Object) ↔  X = 
 @[ext]
 theorem SetTheory.Set.ext {X Y:Set} (h: ∀ x, x ∈ X ↔ x ∈ Y) : X = Y := extensionality _ _ h
 
-/- Axiom 3.2 (Equality of sets)-/
+/-- Axiom 3.2 (Equality of sets, ext_iff). -/
 #check SetTheory.Set.ext_iff
 
 instance SetTheory.Set.instEmpty : EmptyCollection Set where
@@ -204,7 +204,7 @@ instance SetTheory.Set.instUnion : Union Set where
 -- Now we can use the `X ∪ Y` notation for a union of two `Set`s.
 example (X Y: Set) : X ∪ Y = SetTheory.union_pair X Y := rfl
 
-/-- Axiom 3.4 (Pairwise union)-/
+/-- Axiom 3.4 (Pairwise union). -/
 @[simp]
 theorem SetTheory.Set.mem_union (x:Object) (X Y:Set) : x ∈ (X ∪ Y) ↔ (x ∈ X ∨ x ∈ Y) :=
   union_pair_axiom X Y x
