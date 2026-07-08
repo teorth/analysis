@@ -122,7 +122,7 @@ theorem _root_.ContinuousWithinAt.of_differentiableWithinAt {X: Set ℝ} {x₀ :
   ContinuousWithinAt f X x₀ := by
   sorry
 
-/-Definition 10.1.11 (Differentiability on a domain)-/
+/-- Definition 10.1.11 (Differentiability on a domain). -/
 #check DifferentiableOn.eq_1
 
 /-- Corollary 10.1.12 -/
