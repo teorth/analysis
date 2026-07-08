@@ -109,7 +109,7 @@ example : CountablyInfinite (.univ \ {0}: Set ℕ) := by sorry
 example : CountablyInfinite ((fun n:ℕ ↦ 2*n) '' .univ) := by sorry
 
 
-/-- Proposition 8.1.4 (Well ordering principle / Exercise 8.1.2 -/
+/-- Proposition 8.1.4 (Well ordering principle) / Exercise 8.1.2 -/
 theorem Nat.exists_unique_min {X : Set ℕ} (hX : X.Nonempty) :
   ∃! m ∈ X, ∀ n ∈ X, m ≤ n := by
   sorry
