@@ -160,7 +160,7 @@ example : -(3 —— 5) = 5 —— 3 := rfl
 abbrev Int.IsPos (x:Int) : Prop := ∃ (n:ℕ), n > 0 ∧ x = n
 abbrev Int.IsNeg (x:Int) : Prop := ∃ (n:ℕ), n > 0 ∧ x = -n
 
-/-- Lemma 4.1.5 (trichotomy of integers )-/
+/-- Lemma 4.1.5 (trichotomy of integers). -/
 theorem Int.trichotomous (x:Int) : x = 0 ∨ x.IsPos ∨ x.IsNeg := by
   -- This proof is slightly modified from that in the original text.
   obtain ⟨ a, b, rfl ⟩ := eq_diff x
@@ -173,16 +173,16 @@ theorem Int.trichotomous (x:Int) : x = 0 ∨ x.IsPos ∨ x.IsNeg := by
   right; left; refine ⟨ c+1, by linarith, ?_ ⟩
   simp_rw [natCast_eq, eq]; abel
 
-/-- Lemma 4.1.5 (trichotomy of integers)-/
+/-- Lemma 4.1.5 (zero is not positive). -/
 theorem Int.not_pos_zero (x:Int) : x = 0 ∧ x.IsPos → False := by
   rintro ⟨ rfl, ⟨ n, _, _ ⟩ ⟩; simp_all [←natCast_ofNat]
 
-/-- Lemma 4.1.5 (trichotomy of integers)-/
+/-- Lemma 4.1.5 (zero is not negative). -/
 theorem Int.not_neg_zero (x:Int) : x = 0 ∧ x.IsNeg → False := by
   rintro ⟨ rfl, ⟨ n, _, hn ⟩ ⟩; simp_rw [←natCast_ofNat, natCast_eq, neg_eq, eq] at hn
   linarith
 
-/-- Lemma 4.1.5 (trichotomy of integers)-/
+/-- Lemma 4.1.5 (positive and negative are disjoint). -/
 theorem Int.not_pos_neg (x:Int) : x.IsPos ∧ x.IsNeg → False := by
   rintro ⟨ ⟨ n, _, rfl ⟩, ⟨ m, _, hm ⟩ ⟩; simp_rw [natCast_eq, neg_eq, eq] at hm
   linarith
