@@ -125,37 +125,37 @@ theorem PiecewiseConstantWith.mono {f:ℝ → ℝ} {I: BoundedInterval} {P P': P
   (hP: PiecewiseConstantWith f P) : PiecewiseConstantWith f P' := by
   sorry
 
-/-- Lemma 11.2.8 / Exercise 11.2.2 -/
+/-- Lemma 11.2.8 / Exercise 11.2.2 (add). -/
 theorem PiecewiseConstantOn.add {f g: ℝ → ℝ} {I: BoundedInterval}
   (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) : PiecewiseConstantOn (f + g) I := by
   sorry
 
-/-- Lemma 11.2.8 / Exercise 11.2.2 -/
+/-- Lemma 11.2.8 / Exercise 11.2.2 (sub). -/
 theorem PiecewiseConstantOn.sub {f g: ℝ → ℝ} {I: BoundedInterval}
   (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) : PiecewiseConstantOn (f - g) I := by
   sorry
 
-/-- Lemma 11.2.8 / Exercise 11.2.2 -/
+/-- Lemma 11.2.8 / Exercise 11.2.2 (max). -/
 theorem PiecewiseConstantOn.max {f g: ℝ → ℝ} {I: BoundedInterval}
   (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) : PiecewiseConstantOn (max f g) I := by
   sorry
 
-/-- Lemma 11.2.8 / Exercise 11.2.2 -/
+/-- Lemma 11.2.8 / Exercise 11.2.2 (min). -/
 theorem PiecewiseConstantOn.min {f g: ℝ → ℝ} {I: BoundedInterval}
   (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) : PiecewiseConstantOn (min f g) I := by
   sorry
 
-/-- Lemma 11.2.8 / Exercise 11.2.2 -/
+/-- Lemma 11.2.8 / Exercise 11.2.2 (mul). -/
 theorem PiecewiseConstantOn.mul {f g: ℝ → ℝ} {I: BoundedInterval}
   (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) : PiecewiseConstantOn (f * g) I := by
   sorry
 
-/-- Lemma 11.2.8 / Exercise 11.2.2 -/
+/-- Lemma 11.2.8 / Exercise 11.2.2 (smul). -/
 theorem PiecewiseConstantOn.smul {f: ℝ → ℝ} {I: BoundedInterval}
   (c:ℝ) (hf: PiecewiseConstantOn f I) : PiecewiseConstantOn (c • f) I := by
   sorry
 
-/-- Lemma 11.2.8 / Exercise 11.2.2. -/
+/-- Lemma 11.2.8 / Exercise 11.2.2 (div). -/
 theorem PiecewiseConstantOn.div {f g: ℝ → ℝ} {I: BoundedInterval}
   (hf: PiecewiseConstantOn f I) (hg: PiecewiseConstantOn g I) (hg_ne : ∀ x ∈ I.toSet, g x ≠ 0) :
   PiecewiseConstantOn (f / g) I := by
