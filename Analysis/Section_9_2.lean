@@ -20,7 +20,7 @@ namespace Chapter9
 open Classical in
 noncomputable abbrev function_example : ℝ → ℝ := fun x ↦ if x ∈ ((fun y:ℚ ↦ (y:ℝ)) '' .univ) then 1 else 0
 
-/-- Definition 9.2.1 (Arithmetic operations on functions)-/
+/-- Definition 9.2.1 (Arithmetic operations on functions). -/
 theorem add_func_eval (f g: ℝ → ℝ) (x: ℝ) : (f + g) x = f x + g x := rfl
 
 theorem sub_func_eval (f g: ℝ → ℝ) (x: ℝ) : (f - g) x = f x - g x := rfl
