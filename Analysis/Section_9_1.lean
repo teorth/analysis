@@ -72,14 +72,14 @@ example : (0.5:ℝ).adherent' 1.1 {1,2,3} := by sorry
 
 namespace Chapter9
 
-/-- Definition 9.1.-/
+/-- Definition 9.1.8 (Adherent points). -/
 abbrev AdherentPt (x:ℝ) (X:Set ℝ) := ∀ ε > (0:ℝ), ε.adherent' x X
 
 example : AdherentPt 1 (.Ioo 0 1) := by sorry
 
 example : ¬ AdherentPt 2 (.Ioo 0 1) := by sorry
 
-/-- Definition 9.1.10 (Closure).  Here we identify this definition with the Mathilb version. -/
+/-- Definition 9.1.10 (Closure).  Here we identify this definition with the Mathlib version. -/
 theorem closure_def (X:Set ℝ) : closure X = { x | AdherentPt x X } := by
   ext; simp [Real.mem_closure_iff, AdherentPt, Real.adherent']
   constructor <;> intro h ε hε
@@ -230,7 +230,7 @@ abbrev LimitPt (x:ℝ) (X: Set ℝ) := AdherentPt x (X \ {x})
 theorem LimitPt.iff_AccPt (x:ℝ) (X: Set ℝ) : LimitPt x X ↔ AccPt x (.principal X) := by
   rw [accPt_principal_iff_clusterPt,←AdherentPt_def]
 
-/-- Definition 9.1.18 (Isolated points) -/
+/-- Definition 9.1.19 (Isolated points). -/
 abbrev IsolatedPt (x:ℝ) (X: Set ℝ) := x ∈ X ∧ ∃ ε>0, ∀ y ∈ X \ {x}, |x-y| > ε
 
 /-- Example 9.1.19 -/
