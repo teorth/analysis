@@ -66,7 +66,7 @@ example : IsLUB (.Icc 0 1) (1 : Real) := by sorry
 /-- Example 5.5.7 -/
 example : ¬∃ M, IsLUB (∅: Set Real) M := by sorry
 
-/-- Proposition 5.5.8 (Uniqueness of least upper bound)-/
+/-- Proposition 5.5.8 (Uniqueness of least upper bound). -/
 theorem Real.LUB_unique {E: Set Real} {M M': Real} (h1: IsLUB E M) (h2: IsLUB E M') : M = M' := by
   grind [Real.isLUB_def]
 
@@ -162,7 +162,7 @@ lemma Real.LUB_claim2 {E : Set Real} (N:ℕ) {a b: ℕ → ℚ}
     have bound3 : 1/((n+1):ℚ) ≤ 1/(N+1) := by gcongr
     linarith
 
-/-- Theorem 5.5.9 (Existence of least upper bound)-/
+/-- Theorem 5.5.9 (Existence of least upper bound). -/
 theorem Real.LUB_exist {E: Set Real} (hE: Set.Nonempty E) (hbound: BddAbove E): ∃ S, IsLUB E S := by
   -- This proof is written to follow the structure of the original text.
   set x₀ := hE.some
@@ -222,19 +222,19 @@ theorem ExtendedReal.finite_eq_coe {X: ExtendedReal} (hX: X.IsFinite) :
   simp
 
 open Classical in
-/-- Definition 5.5.10 (Supremum)-/
+/-- Definition 5.5.10 (Supremum). -/
 noncomputable abbrev ExtendedReal.sup (E: Set Real) : ExtendedReal :=
   if h1:E.Nonempty then (if h2:BddAbove E then ((Real.LUB_exist h1 h2).choose:Real) else ⊤) else ⊥
 
-/-- Definition 5.5.10 (Supremum)-/
+/-- Definition 5.5.10 (Supremum of empty set). -/
 theorem ExtendedReal.sup_of_empty : sup ∅ = ⊥ := by simp [sup]
 
-/-- Definition 5.5.10 (Supremum)-/
+/-- Definition 5.5.10 (Supremum of unbounded set). -/
 theorem ExtendedReal.sup_of_unbounded {E: Set Real} (hb: ¬ BddAbove E) : sup E = ⊤ := by
   have hE : E.Nonempty := by contrapose! hb; simp [hb]
   simp [sup, hE, hb]
 
-/-- Definition 5.5.10 (Supremum)-/
+/-- Definition 5.5.10 (Supremum of bounded set). -/
 theorem ExtendedReal.sup_of_bounded {E: Set Real} (hnon: E.Nonempty) (hb: BddAbove E) :
     IsLUB E (sup E) := by
   simp [hnon, hb, sup]; exact (Real.LUB_exist hnon hb).choose_spec
