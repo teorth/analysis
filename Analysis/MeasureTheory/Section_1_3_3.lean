@@ -144,7 +144,7 @@ theorem LowerUnsignedLebesgueIntegral.integral_eq_integral_of_aeEqual {d:ℕ} {f
 theorem LowerUnsignedLebesgueIntegral.superadditive {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg: UnsignedMeasurable g) :
     LowerUnsignedLebesgueIntegral (f + g) ≥ LowerUnsignedLebesgueIntegral f + LowerUnsignedLebesgueIntegral g := by sorry
 
-/-- Exercise 1.3.10(vi) (Subadditivity of upper integral)-/
+/-- Exercise 1.3.10(vi) (Subadditivity of upper integral). -/
 theorem UpperUnsignedLebesgueIntegral.subadditive {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg: UnsignedMeasurable g) :
     UpperUnsignedLebesgueIntegral (f + g) ≤ UpperUnsignedLebesgueIntegral f + UpperUnsignedLebesgueIntegral g := by sorry
 
@@ -153,14 +153,14 @@ theorem LowerUnsignedLebesgueIntegral.eq_add {d:ℕ} {f: EuclideanSpace' d → E
     LowerUnsignedLebesgueIntegral f = LowerUnsignedLebesgueIntegral (f * Real.toEReal ∘ E.indicator') +
       LowerUnsignedLebesgueIntegral (f * Real.toEReal ∘ Eᶜ.indicator') := by sorry
 
-/-- Exercise 1.3.10(viii) (Vertical truncation)-/
+/-- Exercise 1.3.10(viii) (Vertical truncation). -/
 theorem LowerUnsignedLebesgueIntegral.eq_lim_vert_trunc {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) : Filter.atTop.Tendsto (fun n:ℕ ↦ LowerUnsignedLebesgueIntegral (fun x ↦ min (f x) n)) (nhds (LowerUnsignedLebesgueIntegral f)) := by sorry
 
 def UpperUnsignedLebesgueIntegral.eq_lim_vert_trunc : Decidable (∀ (d:ℕ) (f: EuclideanSpace' d → EReal) (hf: UnsignedMeasurable f), Filter.atTop.Tendsto (fun n:ℕ ↦ UpperUnsignedLebesgueIntegral (fun x ↦ min (f x) n)) (nhds (UpperUnsignedLebesgueIntegral f))) := by
   -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
   sorry
 
-/-- Exercise 1.3.10(ix) (Horizontal truncation)-/
+/-- Exercise 1.3.10(ix) (Horizontal truncation). -/
 theorem LowerUnsignedLebesgueIntegral.eq_lim_horiz_trunc {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) : Filter.atTop.Tendsto (fun n:ℕ ↦ LowerUnsignedLebesgueIntegral (f * Real.toEReal ∘ (Metric.ball 0 n).indicator')) (nhds (LowerUnsignedLebesgueIntegral f)) := by sorry
 
 def UpperUnsignedLebesgueIntegral.eq_lim_horiz_trunc : Decidable (∀ (d:ℕ) (f: EuclideanSpace' d → EReal) (hf: UnsignedMeasurable f), Filter.atTop.Tendsto (fun n:ℕ ↦ UpperUnsignedLebesgueIntegral (f * Real.toEReal ∘ (Metric.ball 0 n).indicator')) (nhds (UpperUnsignedLebesgueIntegral f))) := by
@@ -241,7 +241,7 @@ lemma LowerUnsignedLebesgueIntegral.add_of_finiteSupport {d : ℕ}
   · -- ≥ direction: direct from superadditivity
     exact LowerUnsignedLebesgueIntegral.superadditive hf hg
 
-/-- Corollary 1.3.14 (Finite additivity of Lebesgue integral )-/
+/-- Corollary 1.3.14 (Finite additivity of Lebesgue integral ). -/
 theorem LowerUnsignedLebesgueIntegral.add {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg: UnsignedMeasurable g)
     (hfg: UnsignedMeasurable (f + g)) :
     LowerUnsignedLebesgueIntegral (f + g) = LowerUnsignedLebesgueIntegral f + LowerUnsignedLebesgueIntegral g := by
@@ -295,7 +295,7 @@ theorem LowerUnsignedLebesgueIntegral.add {d:ℕ} {f g: EuclideanSpace' d → ER
   · -- ≥: from superadditivity
     exact LowerUnsignedLebesgueIntegral.superadditive hf hg
 
-/-- Exercise 1.3.12 (Upper Lebesgue integral and outer measure)-/
+/-- Exercise 1.3.12 (Upper Lebesgue integral and outer measure). -/
 theorem UpperUnsignedLebesgueIntegral.eq_outer_measure_integral {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E) :
     UpperUnsignedLebesgueIntegral (Real.toEReal ∘ E.indicator') = Lebesgue_outer_measure E := by sorry
 
@@ -305,7 +305,7 @@ theorem LowerUnsignedLebesgueIntegral.not_additive : ∃ (d:ℕ) (f g: Euclidean
 theorem UpperUnsignedLebesgueIntegral.not_additive : ∃ (d:ℕ) (f g: EuclideanSpace' d → EReal) (hf: Unsigned f) (hg: Unsigned g), (UpperUnsignedLebesgueIntegral (f + g) ≠ UpperUnsignedLebesgueIntegral f + UpperUnsignedLebesgueIntegral g) := by
     sorry
 
-/-- Exercise 1.3.13 (Area interpretation of integral)-/
+/-- Exercise 1.3.13 (Area interpretation of integral). -/
 theorem LowerUnsignedLebesgueIntegral.eq_area {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) :
     LowerUnsignedLebesgueIntegral f = Lebesgue_measure { p | ∃ x, ∃ t:ℝ, EuclideanSpace'.prod_equiv d 1 p = ⟨ x, t ⟩ ∧ 0 ≤ t ∧ t ≤ f x } := by sorry
 
@@ -317,15 +317,15 @@ theorem UnsignedLebesgueIntegral.unique {d:ℕ} (integ: (EuclideanSpace' d → E
   (hhoriz: ∀ f (hf: UnsignedMeasurable f), Filter.atTop.Tendsto (fun n:ℕ ↦ integ (f * Real.toEReal ∘ (Metric.ball 0 n).indicator')) (nhds (integ f)))
   : ∀ f, UnsignedMeasurable f → integ f = UnsignedLebesgueIntegral f := by sorry
 
-/-- Exercise 1.3.15 (Translation invariance)-/
+/-- Exercise 1.3.15 (Translation invariance). -/
 theorem UnsignedLebesgueIntegral.trans {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (a: EuclideanSpace' d) :
     UnsignedLebesgueIntegral (fun x ↦ f (x + a)) = hf.integ := by sorry
 
-/-- Exercise 1.3.16 (Linear change of variables)-/
+/-- Exercise 1.3.16 (Linear change of variables). -/
 theorem UnsignedLebesgueIntegral.comp_linear {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (A: EuclideanSpace' d →ₗ[ℝ] EuclideanSpace' d) (hA: A.det ≠ 0) :
     UnsignedLebesgueIntegral (fun x ↦ f (A x)) = |A.det|⁻¹ * hf.integ := by sorry
 
-/-- Exercise 1.3.17 (Compatibility with the Riemann integral)-/
+/-- Exercise 1.3.17 (Compatibility with the Riemann integral). -/
 theorem RiemannIntegral.eq_UnsignedLebesgueIntegral {I: BoundedInterval} {f: ℝ → ℝ} (hf: RiemannIntegrableOn f I) :
     (riemannIntegral f I : EReal) = UnsignedLebesgueIntegral (Real.toEReal ∘ (fun x ↦ (f x) * (I.toSet.indicator' x)) ∘ EuclideanSpace'.equiv_Real) := by sorry
 

@@ -154,7 +154,7 @@ theorem BorelSigmaAlgebra.generated_by_boxes (d:ℕ) : BorelSigmaAlgebra (Euclid
 theorem BorelSigmaAlgebra.generated_by_elementary (d:ℕ) : BorelSigmaAlgebra (EuclideanSpace' d) = ConcreteSigmaAlgebra.generated_by { E : Set (EuclideanSpace' d) | IsElementary E }  := by sorry
 
 open Ordinal in
-/-- Exercise 1.4.15 (Recursive definition of generated sigma-algebra)-/
+/-- Exercise 1.4.15 (Recursive definition of generated sigma-algebra). -/
 def ConcreteSigmaAlgebra.generated_by_eq {X:Type*} (F: Set (Set X)) :
   (ConcreteSigmaAlgebra.generated_by F).measurableSets =
   ⋃ α < ω₁,

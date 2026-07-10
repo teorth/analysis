@@ -353,7 +353,7 @@ theorem LebesgueMeasurable.nonmeasurable : ∃ E : Set (EuclideanSpace' 1), E �
     exact ⟨r, VitaliSet_subset_unit_interval hr, rfl⟩
   · exact VitaliSet.nonmeasurable
 
-/-- Exercise 1.2.26 (Outer measure is not finitely additive)-/
+/-- Exercise 1.2.26 (Outer measure is not finitely additive). -/
 example : ∃ E F : Set (EuclideanSpace' 1), E ∩ F = ∅ ∧ Bornology.IsBounded E ∧ Bornology.IsBounded F ∧ Lebesgue_outer_measure (E ∪ F) ≠ Lebesgue_outer_measure E + Lebesgue_outer_measure F := by
   sorry
 

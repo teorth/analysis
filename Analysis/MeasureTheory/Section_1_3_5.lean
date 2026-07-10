@@ -1513,7 +1513,7 @@ example : PointwiseConvergesTo (fun n (x:EuclideanSpace' 1) ↦ if x.toReal > 0 
 
 example : ¬ LocallyUniformlyConvergesTo (fun n (x:EuclideanSpace' 1) ↦ if x.toReal > 0 then 1 / (n * x.toReal) else 0) (fun x ↦ 0) := by sorry
 
-/-- Theorem 1.3.26 (Egorov's theorem)-/
+/-- Theorem 1.3.26 (Egorov's theorem). -/
 theorem PointwiseAeConvergesTo.locallyUniformlyConverges_outside_small {d:ℕ} {f : ℕ → EuclideanSpace' d → ℂ} {g : EuclideanSpace' d → ℂ}
   (hf: ∀ n, ComplexMeasurable (f n))
   (hfg: PointwiseAeConvergesTo f g)
@@ -1567,7 +1567,7 @@ example : ∃ (d:ℕ) (f : EuclideanSpace' d → ℝ),
 def LocallyComplexAbsolutelyIntegrable {d:ℕ} (f: EuclideanSpace' d → ℂ) : Prop :=
   ∀ (S: Set (EuclideanSpace' d)), LebesgueMeasurable S ∧ Bornology.IsBounded S → ComplexAbsolutelyIntegrableOn f S
 
-/-- Exercise 1.3.23 (Lusin's theorem only requires local absolute integrability )-/
+/-- Exercise 1.3.23 (Lusin's theorem only requires local absolute integrability ). -/
 theorem LocallyComplexAbsolutelyIntegrable.approx_by_continuous_outside_small {d:ℕ} {f : EuclideanSpace' d → ℂ}
   (hf: LocallyComplexAbsolutelyIntegrable f)
   (ε : ℝ) (hε : 0 < ε) :

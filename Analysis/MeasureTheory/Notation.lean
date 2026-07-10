@@ -232,7 +232,7 @@ theorem ENNReal.tsum_of_tsum' (x: ℕ → ℕ → ENNReal) : ∑' p:ℕ × ℕ, 
 
 #check ENNReal.tsum_comm
 
-/-- Exercise 0.0.2 (Tonelli's theorem for series over arbitrary sets)-/
+/-- Exercise 0.0.2 (Tonelli's theorem for series over arbitrary sets). -/
 example {A B:Type*} (x: A → B → ENNReal) : ∑' p:A × B, x p.1 p.2 = ∑' a, ∑' b, x a b := by
   simpa using ENNReal.tsum_prod (f := x)
 
@@ -247,7 +247,7 @@ noncomputable instance EReal.inst_posPart : PosPart EReal where
 noncomputable instance EReal.inst_negPart : NegPart EReal where
   negPart := fun x ↦ if x ≤ 0 then -x else 0
 
-/-- Axiom 0.0.4 (Axiom of choice)-/
+/-- Axiom 0.0.4 (Axiom of choice). -/
 noncomputable def Set.choose {A: Type*} {E: A → Type*} (hE: ∀ n, Nonempty (E n)) :
 ∀ n, E n := fun n ↦ (hE n).some
 
