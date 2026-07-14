@@ -191,7 +191,7 @@ theorem α_length_of_cts {α:ℝ → ℝ} {I: BoundedInterval} {a b: ℝ}
   | Ioc _ _ => grind
   | Ioo _ _ => simp [α_length, ha_right, hb_left]; intro h; have := le_antisymm h (by linarith); subst this; simp
 
-/-- Example 11.8.2-/
+/-- Example 11.8.2 -/
 example : (fun x ↦ x^2)[Icc 2 3]ₗ = 5 := by
   sorry
 
@@ -201,7 +201,7 @@ example : (fun x ↦ x^2)[Icc 2 2]ₗ = 0 := by
 example : (fun x ↦ x^2)[Ioo 2 2]ₗ = 0 := by
   sorry
 
-/-- Example 11.8.3-/
+/-- Example 11.8.3 -/
 @[simp]
 theorem α_len_of_id (I: BoundedInterval) : (fun x ↦ x)[I]ₗ = |I|ₗ := by
   sorry
