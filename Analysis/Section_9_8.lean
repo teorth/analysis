@@ -134,7 +134,7 @@ theorem mono_of_continuous_inj {a b:ℝ} (h: a < b) {f:ℝ → ℝ}
   StrictMonoOn f (.Icc a b) ∨ StrictAntiOn f (.Icc a b) := by
   sorry
 
-/-- Exercise 9.8.4 -/
+/-- Exercise 9.8.4 (without continuity) -/
 def MonotoneOn.exist_inverse_without_continuity :
     Decidable (∀ (a b : ℝ) (_ : a < b) (f : ℝ → ℝ) (_ : StrictMonoOn f (.Icc a b)),
       f '' (.Icc a b) = .Icc (f a) (f b) ∧
@@ -145,7 +145,7 @@ def MonotoneOn.exist_inverse_without_continuity :
   -- apply isFalse: strict mono alone doesn't guarantee a continuous inverse
   sorry
 
-/-- Exercise 9.8.4 -/
+/-- Exercise 9.8.4 (without strict monotonicity) -/
 def MonotoneOn.exist_inverse_without_strictmono :
     Decidable (∀ (a b : ℝ) (_ : a < b) (f : ℝ → ℝ) (_ : ContinuousOn f (.Icc a b))
         (_ : MonotoneOn f (.Icc a b)),
