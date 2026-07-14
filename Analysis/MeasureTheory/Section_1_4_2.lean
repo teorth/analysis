@@ -181,7 +181,7 @@ theorem BorelSigmaAlgebra.prod {d₁ d₂:ℕ} {E : Set (EuclideanSpace' d₁)} 
   :=
   by sorry
 
-/-- Exercise 1.4.18(i) -/
+/-- Exercise 1.4.18(i) (slice along first factor). -/
 theorem BorelSigmaAlgebra.slice_fst {d₁ d₂:ℕ} {E : Set (EuclideanSpace' (d₁+d₂))}
   (hE: (BorelSigmaAlgebra (EuclideanSpace' (d₁+d₂))).measurable E)
   (x₂ : EuclideanSpace' d₂ ) :
@@ -189,7 +189,7 @@ theorem BorelSigmaAlgebra.slice_fst {d₁ d₂:ℕ} {E : Set (EuclideanSpace' (d
   :=
   by sorry
 
-/-- Exercise 1.4.18(i) -/
+/-- Exercise 1.4.18(i) (slice along second factor). -/
 theorem BorelSigmaAlgebra.slice_snd {d₁ d₂:ℕ} {E : Set (EuclideanSpace' (d₁+d₂))}
   (hE: (BorelSigmaAlgebra (EuclideanSpace' (d₁+d₂))).measurable E)
   (x₁ : EuclideanSpace' d₁ ) :
