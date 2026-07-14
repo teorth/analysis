@@ -104,7 +104,7 @@ theorem closure_inter (X Y:Set ℝ): closure (X ∩ Y) ⊆ closure X ∩ closure
 /-- Lemma 9.1.11 / Exercise 9.1.1 -/
 theorem closure_subset {X Y:Set ℝ} (h: X ⊆ Y): closure X ⊆ closure Y := by sorry
 
-/-- Exercise 9.1.6 -/
+/-- Lemma 9.1.11 / Exercise 9.1.1 -/
 theorem closure_of_subset_closure {X Y:Set ℝ} (h: X ⊆ Y) (h' : Y ⊆ closure X): closure Y = closure X := by sorry
 
 /-- Lemma 9.1.12 -/
