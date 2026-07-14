@@ -165,7 +165,7 @@ def FinitelyAdditiveMeasure.isCountablyAdditive.toCountablyAdditive {X:Type*} {B
     measure_countable_additive := h.2
   }
 
-/-- Example 1.4.28-/
+/-- Example 1.4.28 -/
 theorem FinitelyAdditiveMeasure.lebesgue_isCountablyAdditive (d:ℕ) : (FinitelyAdditiveMeasure.lebesgue d).isCountablyAdditive :=
   by sorry
 
@@ -178,11 +178,11 @@ def CountablyAdditiveMeasure.restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra 
     measure_countable_additive := by sorry
   }
 
-/-- Example 1.4.29-/
+/-- Example 1.4.29 (Dirac measure) -/
 theorem FinitelyAdditiveMeasure.dirac_isCountablyAdditive {X:Type*} (x₀:X) (B: ConcreteBooleanAlgebra X) : (FinitelyAdditiveMeasure.dirac x₀ B).isCountablyAdditive :=
   by sorry
 
-/-- Example 1.4.29-/
+/-- Example 1.4.29 (Counting measure) -/
 theorem FinitelyAdditiveMeasure.counting_isCountablyAdditive {X:Type*} : (FinitelyAdditiveMeasure.counting X).isCountablyAdditive :=
   by sorry
 
