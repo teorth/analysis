@@ -29,7 +29,7 @@ theorem ContinuousWithinAt.iff (X:Set ℝ) (f: ℝ → ℝ)  (x₀:ℝ) :
 #check continuousOn_univ
 #check continuousWithinAt_univ
 
-/-- Example 9.4.2 --/
+/-- Example 9.4.2. -/
 example (c x₀:ℝ) : ContinuousWithinAt (fun x ↦ c) .univ x₀ := by sorry
 
 example (c x₀:ℝ) : ContinuousAt (fun x ↦ c) x₀ := by sorry
@@ -38,18 +38,18 @@ example (c:ℝ) : ContinuousOn (fun x:ℝ ↦ c) .univ := by sorry
 
 example (c:ℝ) : Continuous (fun x:ℝ ↦ c) := by sorry
 
-/-- Example 9.4.3 --/
+/-- Example 9.4.3. -/
 example : Continuous (fun x:ℝ ↦ x) := by sorry
 
-/-- Example 9.4.4 --/
+/-- Example 9.4.4. -/
 example {x₀:ℝ} (h: x₀ ≠ 0) : ContinuousAt Real.sign x₀ := by sorry
 
 example  :¬ ContinuousAt Real.sign 0 := by sorry
 
-/-- Example 9.4.5 --/
+/-- Example 9.4.5. -/
 example (x₀:ℝ) : ¬ ContinuousAt f_9_3_21 x₀ := by sorry
 
-/-- Example 9.4.6 --/
+/-- Example 9.4.6. -/
 noncomputable abbrev f_9_4_6 (x:ℝ) : ℝ := if x ≥ 0 then 1 else 0
 
 example {x₀:ℝ} (h: x₀ ≠ 0) : ContinuousAt f_9_4_6 x₀ := by sorry
@@ -68,7 +68,7 @@ theorem ContinuousWithinAt.tfae (X:Set ℝ) (f: ℝ → ℝ) (x₀:ℝ) :
   ].TFAE := by
   sorry
 
-/-- Remark 9.4.8 --/
+/-- Remark 9.4.8. -/
 theorem _root_.Filter.Tendsto.comp_of_continuous {X:Set ℝ} {f: ℝ → ℝ} {x₀:ℝ}
   (h_cont: ContinuousWithinAt f X x₀) {a: ℕ → ℝ} (ha: ∀ n, a n ∈ X)
   (hconv: Filter.atTop.Tendsto a (nhds x₀)):
