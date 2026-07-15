@@ -215,7 +215,7 @@ instance Int.instCommRing : CommRing Int where
   zero_mul := by sorry
   mul_zero := by sorry
 
-/-- Definition of subtraction -/
+/-- Definition of subtraction (integers). -/
 theorem Int.sub_eq (a b:Int) : a - b = a + (-b) := by rfl
 
 theorem Int.sub_eq_formal_sub (a b:ℕ) : (a:Int) - (b:Int) = a —— b := by sorry
