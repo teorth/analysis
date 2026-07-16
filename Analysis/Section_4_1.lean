@@ -302,7 +302,7 @@ theorem Int.neg_one_mul (a:Int) : -1 * a = -a := by sorry
 /-- Exercise 4.1.8 -/
 theorem Int.no_induction : ∃ P: Int → Prop, (P 0 ∧ ∀ n, P n → P (n+1)) ∧ ¬ ∀ n, P n := by sorry
 
-/-- A nonnegative number squared is nonnegative. This is a special case of 4.1.9 that's useful for proving the general case. --/
+/-- A nonnegative number squared is nonnegative. This is a special case of 4.1.9 that's useful for proving the general case. -/
 lemma Int.sq_nonneg_of_pos (n:Int) (h: 0 ≤ n) : 0 ≤ n*n := by sorry
 
 /-- Exercise 4.1.9. The square of any integer is nonnegative. -/
