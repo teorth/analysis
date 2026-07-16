@@ -275,7 +275,7 @@ theorem Real.LIM_mono {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequ
   have := LIM_of_nonneg (a := b - a) (by intro n; simp [hmono n]) (Sequence.IsCauchy.sub hb ha)
   rw [←Real.LIM_sub hb ha] at this; linarith
 
-/-- Remark 5.4.11 --/
+/-- Remark 5.4.11 -/
 theorem Real.LIM_mono_fail :
     ∃ (a b:ℕ → ℚ), (a:Sequence).IsCauchy
     ∧ (b:Sequence).IsCauchy
