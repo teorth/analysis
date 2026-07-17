@@ -2,7 +2,7 @@
 
 # This script builds the project's Lean code.
 
-set -o pipefail # stop if any command fails
+set -e -o pipefail # stop if a command or pipeline fails
 
 lake exe cache get
 lake build
