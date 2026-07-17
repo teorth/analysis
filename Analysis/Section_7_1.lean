@@ -230,7 +230,7 @@ theorem finite_series_of_le' {X':Type*} (f g: X' → ℝ) (X: Finset X') (h: ∀
 theorem abs_finite_series_le' {X':Type*} (f: X' → ℝ) (X: Finset X') :
     |∑ x ∈ X, f x| ≤ ∑ x ∈ X, |f x| := by sorry
 
-/-- Lemma 7.1.13 --/
+/-- Lemma 7.1.13 -/
 theorem finite_series_of_finite_series {XX YY:Type*} (X: Finset XX) (Y: Finset YY)
   (f: XX × YY → ℝ) :
     ∑ x ∈ X, ∑ y ∈ Y, f (x, y) = ∑ z ∈ X.product Y, f z := by

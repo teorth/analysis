@@ -136,7 +136,7 @@ instance SetTheory.Set.inst_coe_of_fun {X Y:Set} : CoeOut (X → Y) Object where
 theorem SetTheory.Set.coe_of_fun_inj {X Y:Set} (f g:X → Y) : (f:Object) = (g:Object) ↔ f = g := by
   simp [coe_of_fun]
 
-/-- Axiom 3.11 (Power set axiom) --/
+/-- Axiom 3.11 (Power set axiom) -/
 @[simp]
 theorem SetTheory.Set.powerset_axiom {X Y:Set} (F:Object) :
     F ∈ (X ^ Y) ↔ ∃ f: Y → X, f = F := SetTheory.powerset_axiom X Y F
