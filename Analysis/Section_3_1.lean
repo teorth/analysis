@@ -122,18 +122,18 @@ instance SetTheory.objects_mem_sets : Membership Object Set where
 -- Now we can use the `∈` notation between our `Object` and `Set`.
 example (X: Set) (x: Object) : x ∈ X ↔ SetTheory.mem x X := by rfl
 
-/-- Axiom 3.1 (Sets are objects)-/
+/-- Axiom 3.1 (Sets are objects, coercion). -/
 instance SetTheory.sets_are_objects : Coe Set Object where
   coe X := set_to_object X
 
 -- Now we can treat a `Set` as an `Object` when needed.
 example (X: Set) : (X: Object) = SetTheory.set_to_object X := rfl
 
-/-- Axiom 3.1 (Sets are objects)-/
+/-- Axiom 3.1 (Sets are objects, injectivity). -/
 theorem SetTheory.Set.coe_eq {X Y:Set} (h: (X: Object) = (Y: Object)) : X = Y :=
   set_to_object.inj' h
 
-/-- Axiom 3.1 (Sets are objects)-/
+/-- Axiom 3.1 (Sets are objects, iff lemma). -/
 @[simp]
 theorem SetTheory.Set.coe_eq_iff (X Y:Set) : (X: Object) = (Y: Object) ↔  X = Y :=
   ⟨ coe_eq, by rintro rfl; rfl ⟩
@@ -142,7 +142,7 @@ theorem SetTheory.Set.coe_eq_iff (X Y:Set) : (X: Object) = (Y: Object) ↔  X = 
 @[ext]
 theorem SetTheory.Set.ext {X Y:Set} (h: ∀ x, x ∈ X ↔ x ∈ Y) : X = Y := extensionality _ _ h
 
-/- Axiom 3.2 (Equality of sets)-/
+-- Axiom 3.2 (Equality of sets, ext_iff)
 #check SetTheory.Set.ext_iff
 
 instance SetTheory.Set.instEmpty : EmptyCollection Set where
@@ -204,7 +204,7 @@ instance SetTheory.Set.instUnion : Union Set where
 -- Now we can use the `X ∪ Y` notation for a union of two `Set`s.
 example (X Y: Set) : X ∪ Y = SetTheory.union_pair X Y := rfl
 
-/-- Axiom 3.4 (Pairwise union)-/
+/-- Axiom 3.4 (Pairwise union). -/
 @[simp]
 theorem SetTheory.Set.mem_union (x:Object) (X Y:Set) : x ∈ (X ∪ Y) ↔ (x ∈ X ∨ x ∈ Y) :=
   union_pair_axiom X Y x
@@ -323,7 +323,7 @@ theorem SetTheory.Set.pair_union_pair (a b c:Object) :
     ({a,b}:Set) ∪ {b,c} = {a,b,c} := by
   ext; simp only [mem_union, mem_pair, mem_triple]; tauto
 
-/-- Definition 3.1.14.   -/
+/-- Definition 3.1.14 (Subset). -/
 instance SetTheory.Set.instSubset : HasSubset Set where
   Subset X Y := ∀ x, x ∈ X → x ∈ Y
 
@@ -331,7 +331,7 @@ instance SetTheory.Set.instSubset : HasSubset Set where
 example (X Y: Set) : X ⊆ Y ↔ ∀ x, x ∈ X → x ∈ Y := by rfl
 
 /--
-  Definition 3.1.14.
+  Definition 3.1.14 (Strict subset).
   Note that the strict subset operation in Mathlib is denoted {kw (of := «term_⊂_»)}`⊂` rather than `⊊`.
 -/
 instance SetTheory.Set.instSSubset : HasSSubset Set where
@@ -340,13 +340,8 @@ instance SetTheory.Set.instSSubset : HasSSubset Set where
 /-- Now we can use {kw (of := «term_⊂_»)}`⊂` for a strict subset relationship between two {name}`Set`s. -/
 example (X Y: Set) : X ⊂ Y ↔ X ⊆ Y ∧ X ≠ Y := by rfl
 
-/-- Definition 3.1.14. -/
 theorem SetTheory.Set.subset_def (X Y:Set) : X ⊆ Y ↔ ∀ x, x ∈ X → x ∈ Y := by rfl
 
-/--
-  Definition 3.1.14.
-  Note that the strict subset operation in Mathlib is denoted {kw (of := «term_⊂_»)}`⊂` rather than `⊊`.
--/
 theorem SetTheory.Set.ssubset_def (X Y:Set) : X ⊂ Y ↔ (X ⊆ Y ∧ X ≠ Y) := by rfl
 
 /-- Remark 3.1.15 -/
@@ -488,10 +483,10 @@ theorem SetTheory.Set.mem_sdiff (x:Object) (X Y:Set) : x ∈ (X \ Y) ↔ (x ∈ 
 /-- Proposition 3.1.27(d) / Exercise 3.1.6 -/
 theorem SetTheory.Set.inter_comm (A B:Set) : A ∩ B = B ∩ A := by sorry
 
-/-- Proposition 3.1.27(b) -/
+/-- Proposition 3.1.27(b) (Subset absorption). -/
 theorem SetTheory.Set.subset_union {A X: Set} (hAX: A ⊆ X) : A ∪ X = X := by sorry
 
-/-- Proposition 3.1.27(b) -/
+/-- Proposition 3.1.27(b) (Union absorption). -/
 theorem SetTheory.Set.union_subset {A X: Set} (hAX: A ⊆ X) : X ∪ A = X := by sorry
 
 /-- Proposition 3.1.27(c) -/
@@ -502,26 +497,26 @@ theorem SetTheory.Set.inter_self (A:Set) : A ∩ A = A := by
 /-- Proposition 3.1.27(e) -/
 theorem SetTheory.Set.inter_assoc (A B C:Set) : (A ∩ B) ∩ C = A ∩ (B ∩ C) := by sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Intersection distributes over union). -/
 theorem  SetTheory.Set.inter_union_distrib_left (A B C:Set) :
     A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) := by
   sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Union distributes over intersection). -/
 theorem  SetTheory.Set.union_inter_distrib_left (A B C:Set) :
     A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) := by
   sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Partition of a superset). -/
 theorem SetTheory.Set.union_compl {A X:Set} (hAX: A ⊆ X) : A ∪ (X \ A) = X := by sorry
 
-/-- Proposition 3.1.27(f) -/
+/-- Proposition 3.1.27(f) (Disjoint intersection with complement). -/
 theorem SetTheory.Set.inter_compl {A X:Set} : A ∩ (X \ A) = ∅ := by sorry
 
-/-- Proposition 3.1.27(g) -/
+/-- Proposition 3.1.27(g) (Complement of a union). -/
 theorem SetTheory.Set.compl_union {A B X:Set} : X \ (A ∪ B) = (X \ A) ∩ (X \ B) := by sorry
 
-/-- Proposition 3.1.27(g) -/
+/-- Proposition 3.1.27(g) (Complement of an intersection). -/
 theorem SetTheory.Set.compl_inter {A B X:Set} : X \ (A ∩ B) = (X \ A) ∪ (X \ B) := by sorry
 
 /-- Not from textbook: sets form a distributive lattice. -/
@@ -705,7 +700,7 @@ example : ({1, 2, 4}:Set) ∩ {2,3,4} = {2, 4} := by
   -- you can use the `aesop` tactic which does this automatically.
   aesop
 
-/-- Example 3.1.24 -/
+/-- Example 3.1.25 -/
 
 example : ({1, 2}:Set) ∩ {3,4} = ∅ := by
   rw [eq_empty_iff_forall_notMem]
@@ -720,7 +715,7 @@ example : ¬ Disjoint ({1, 2, 3}:Set) {2,3,4} := by
 
 example : Disjoint (∅:Set) ∅ := by sorry
 
-/-- Definition 3.1.26 example -/
+/-- Example 3.1.28 (Difference sets). -/
 
 example : ({1, 2, 3, 4}:Set) \ {2,4,6} = {1, 3} := by
   apply ext; aesop
