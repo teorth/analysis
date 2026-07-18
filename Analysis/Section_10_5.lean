@@ -20,7 +20,7 @@ Main constructions and results of this section:
 open Chapter9
 namespace Chapter10
 
-/-- Proposition 10.5.1 (L'Hôpital's rule, I) / Exercise 10.5.1-/
+/-- Proposition 10.5.1 (L'Hôpital's rule, I) / Exercise 10.5.1 -/
 theorem _root_.Filter.Tendsto.of_div {X: Set ℝ} {f g: ℝ → ℝ} {x₀ f'x₀ g'x₀:ℝ}
   (hfx₀: f x₀ = 0) (hgx₀: g x₀ = 0) (hg_non: g'x₀ ≠ 0)
   (hf'x₀: HasDerivWithinAt f f'x₀ X x₀) (hg'x₀: HasDerivWithinAt g g'x₀ X x₀) :

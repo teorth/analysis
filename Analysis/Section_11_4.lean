@@ -144,7 +144,7 @@ theorem IntegrableOn.max {I: BoundedInterval} {f g:ℝ → ℝ} (hf: IntegrableO
 
 
 
-/-- Theorem 11.4.5 / Exercise 11.4.3.  The objective here is to create a shorter proof than the one above.-/
+/-- Theorem 11.4.5 / Exercise 11.4.3.  The objective here is to create a shorter proof than the one above. -/
 theorem IntegrableOn.min {I: BoundedInterval} {f g:ℝ → ℝ} (hf: IntegrableOn f I) (hg: IntegrableOn g I) :
   IntegrableOn (f ⊓ g) I  := by
   sorry

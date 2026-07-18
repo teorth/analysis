@@ -126,7 +126,7 @@ instance Nat.addCommMonoid : AddCommMonoid Nat where
     textbook. -/
 example (a b c d:Nat) : (a+b)+(c+0+d) = (b+c)+(d+a) := by abel
 
-/-- Definition 2.2.7 (Positive natural numbers).-/
+/-- Definition 2.2.7 (Positive natural numbers). -/
 def Nat.IsPos (n:Nat) : Prop := n ≠ 0
 
 theorem Nat.isPos_iff (n:Nat) : n.IsPos ↔ n ≠ 0 := by rfl
@@ -269,7 +269,7 @@ theorem Nat.lt_iff_succ_le (a b:Nat) : a < b ↔ a++ ≤ b := by
 theorem Nat.lt_iff_add_pos (a b:Nat) : a < b ↔ ∃ d:Nat, d.IsPos ∧ b = a + d := by
   sorry
 
-/-- If a < b then a ̸= b,-/
+/-- If a < b then a ̸= b, -/
 theorem Nat.ne_of_lt (a b:Nat) : a < b → a ≠ b := by
   intro h; exact h.2
 

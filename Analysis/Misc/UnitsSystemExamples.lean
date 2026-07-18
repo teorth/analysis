@@ -27,6 +27,6 @@ theorem UnitsSystem.Scalar.right_distrib {d₁ d₂:Dimensions} (a b:Scalar d₁
 theorem UnitsSystem.Scalar.sq_add {d:Dimensions} (a b:Scalar d) : (a+b)**2 = a**2 + (2 • a * b).cast + b**2 := by
   simp [←toFormal_inj]; ring
 
-/-- An alternate proof based on working in coordinates-/
+/-- An alternate proof based on working in coordinates -/
 theorem UnitsSystem.Scalar.sq_add' {d:Dimensions} (a b:Scalar d) : (a+b)**2 = a**2 + (2 • a * b).cast + b**2 := by
   simp [←val_inj]; ring

@@ -172,7 +172,7 @@ example : ¬ IsStrictUpperBound (.Icc 1 2: Set ℝ) 2 := by sorry
 
 example : IsStrictUpperBound (.Icc 1 2: Set ℝ) 3 := by sorry
 
-/-- A convenient way to simplify the notion of having {name}`x₀` as a minimal element.-/
+/-- A convenient way to simplify the notion of having {name}`x₀` as a minimal element. -/
 theorem IsMin.iff_lowerbound {X:Type} [PartialOrder X] {Y: Set X} (hY: IsTotal Y) (x₀ : X) : (∃ hx₀ : x₀ ∈ Y, IsMin (⟨ x₀, hx₀ ⟩:Y)) ↔ x₀ ∈ Y ∧ ∀ x ∈ Y, x₀ ≤ x := by
   constructor
   . rintro ⟨ hx₀, hmin ⟩; simp [IsMin, hx₀] at *
@@ -189,7 +189,7 @@ theorem IsMin.iff_lowerbound' {X:Type} [PartialOrder X] {Y: Set X} (hY: IsTotal 
 /-- Exercise 8.5.11 -/
 example {X:Type} [PartialOrder X] {Y Y':Set X} (hY: IsTotal Y) (hY': IsTotal Y') (hY_well: WellFoundedLT Y) (hY'_well: WellFoundedLT Y') (hYY': IsTotal (Y ∪ Y': Set X)) : WellFoundedLT (Y ∪ Y': Set X) := by sorry
 
-/-- Lemma 8.5.14-/
+/-- Lemma 8.5.14 -/
 theorem WellFoundedLT.partialOrder {X:Type} [PartialOrder X] (x₀ : X) : ∃ Y : Set X, IsTotal Y ∧ WellFoundedLT Y ∧ (∃ hx₀ : x₀ ∈ Y, IsMin (⟨ x₀, hx₀ ⟩: Y)) ∧ ¬ ∃ x, IsStrictUpperBound Y x := by
   -- This proof is based on the original text with some technical simplifications.
 

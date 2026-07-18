@@ -472,7 +472,7 @@ theorem SetTheory.Set.direct_sum {X Y Z:Set} (f: Z → X) (g: Z → Y) :
 theorem SetTheory.Set.iProd_empty_iff {n:ℕ} {X: Fin n → Set} :
     iProd X = ∅ ↔ ∃ i, X i = ∅ := by sorry
 
-/-- Exercise 3.5.9-/
+/-- Exercise 3.5.9 -/
 theorem SetTheory.Set.iUnion_inter_iUnion {I J: Set} (A: I → Set) (B: J → Set) :
     (iUnion I A) ∩ (iUnion J B) = iUnion (I ×ˢ J) (fun p ↦ (A (fst p)) ∩ (B (snd p))) := by sorry
 
