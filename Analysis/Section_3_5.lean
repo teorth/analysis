@@ -439,13 +439,13 @@ theorem SetTheory.Set.diff_prod (A B C:Set) : (A \ B) ×ˢ C = (A ×ˢ C) \ (B �
 theorem SetTheory.Set.inter_of_prod (A B C D:Set) :
     (A ×ˢ B) ∩ (C ×ˢ D) = (A ∩ C) ×ˢ (B ∩ D) := by sorry
 
-/- Exercise 3.5.5 -/
+/-- Exercise 3.5.5 -/
 def SetTheory.Set.union_of_prod :
   Decidable (∀ (A B C D:Set), (A ×ˢ B) ∪ (C ×ˢ D) = (A ∪ C) ×ˢ (B ∪ D)) := by
   -- the first line of this construction should be `apply isTrue` or `apply isFalse`.
   sorry
 
-/- Exercise 3.5.5 -/
+/-- Exercise 3.5.5 -/
 def SetTheory.Set.diff_of_prod :
   Decidable (∀ (A B C D:Set), (A ×ˢ B) \ (C ×ˢ D) = (A \ C) ×ˢ (B \ D)) := by
   -- the first line of this construction should be `apply isTrue` or `apply isFalse`.
