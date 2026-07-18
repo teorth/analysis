@@ -51,12 +51,12 @@ example : f_9_2_2 ∘ g_9_2_2 = fun x ↦ 4*x^2 := by grind
 
 example : g_9_2_2 ∘ f_9_2_2 = fun x ↦ 2*x^2 := by grind
 
-/- Exercise 9.2.1.  -/
-
+/-- Exercise 9.2.1. -/
 def Exercise_9_2_1a : Decidable (∀ (f g h : ℝ → ℝ), (f+g) ∘ h = f ∘ h + g ∘ h) := by
   -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
   sorry
 
+/-- Exercise 9.2.1. -/
 def Exercise_9_2_1b : Decidable (∀ (f g h : ℝ → ℝ), f ∘ (g + h) = f ∘ g + f ∘ h) := by
   -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
   sorry
