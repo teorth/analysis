@@ -51,7 +51,7 @@ example : ∀ (x:ℝ), (x+1)^2 = x^2 + 2*x + 1 := by
 
 end VariableExample2
 
-/-- A dummy statement is in place here for this example.-/
+/-- A dummy statement is in place here for this example. -/
 example : 0 = 0 := by
   set x := 342
   have : x + 155 = 497 := by

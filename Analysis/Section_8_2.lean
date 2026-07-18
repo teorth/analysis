@@ -235,12 +235,12 @@ theorem AbsConvergent'.of_countable {X:Type} (hX:CountablyInfinite X) {f:X → �
     intro n; by_cases h: n ≥ 0 <;> simp [h]
   intro hf; rwa [AbsConvergent.iff hX f] at hf
 
-/-- Lemma 8.2.5 / Exercise 8.2.2-/
+/-- Lemma 8.2.5 / Exercise 8.2.2 -/
 theorem AbsConvergent'.countable_supp {X:Type} {f:X → ℝ} (hf: AbsConvergent' f) :
   AtMostCountable { x | f x ≠ 0 } := by
     sorry
 
-/-- Compare with Mathlib's {name}`Summable.subtype`-/
+/-- Compare with Mathlib's {name}`Summable.subtype` -/
 theorem AbsConvergent'.subtype {X:Type} {f:X → ℝ} (hf: AbsConvergent' f) (A: Set X) :
   AbsConvergent' (fun x:A ↦ f x) := by
   apply BddAbove.mono _ hf
@@ -365,7 +365,7 @@ theorem AbsConvergent'.iff_Summable {X:Type} (f:X → ℝ) : AbsConvergent' f �
       . exact inter_subset_right
       apply le_of_lt (lt_of_abs_lt (hS _ disjoint_sdiff_self_left))
 
-/-- Maybe suitable for porting to Mathlib?-/
+/-- Maybe suitable for porting to Mathlib? -/
 theorem Filter.Eventually.int_natCast_atTop (p: ℤ → Prop) :
   (∀ᶠ n in .atTop, p n) ↔ ∀ᶠ n:ℕ in .atTop, p ↑n := by
   refine ⟨ Eventually.natCast_atTop, ?_ ⟩
@@ -419,7 +419,7 @@ theorem Sum'.smul {X:Type} {f:X → ℝ} (hf: AbsConvergent' f) (c: ℝ) :
   AbsConvergent' (c • f) ∧ Sum' (c • f) = c * Sum' f := by
   sorry
 
-/-- This law is not explicitly stated in Proposition 8.2.6, but follows easily from parts (a) and (b).-/
+/-- This law is not explicitly stated in Proposition 8.2.6, but follows easily from parts (a) and (b). -/
 theorem Sum'.sub {X:Type} {f g:X → ℝ} (hf: AbsConvergent' f) (hg: AbsConvergent' g) :
   AbsConvergent' (f-g) ∧ Sum' (f - g) = Sum' f - Sum' g := by
   convert add hf (smul hg (-1)).1 using 2

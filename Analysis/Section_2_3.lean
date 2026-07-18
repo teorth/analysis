@@ -209,7 +209,7 @@ theorem Nat.pow_succ (m n: Nat) : (m:Nat) ^ n++ = m^n * m :=
 theorem Nat.pow_one (m: Nat) : m ^ (1:Nat) = m := by
   rw [←zero_succ, pow_succ]; simp
 
-/-- Exercise 2.3.4-/
+/-- Exercise 2.3.4 -/
 theorem Nat.sq_add_eq (a b: Nat) :
     (a + b) ^ (2 : Nat) = a ^ (2 : Nat) + 2 * a * b + b ^ (2 : Nat) := by
   sorry

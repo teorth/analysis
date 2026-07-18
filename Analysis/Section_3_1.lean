@@ -793,15 +793,15 @@ theorem SetTheory.Set.union_eq_partition (A B:Set) : A ∪ B = (A \ B) ∪ (A �
 theorem SetTheory.Set.specification_from_replacement {A:Set} {P: A → Prop} :
     ∃ B, B ⊆ A ∧ ∀ x, x.val ∈ B ↔ P x := by sorry
 
-/-- Exercise 3.1.12.-/
+/-- Exercise 3.1.12. -/
 theorem SetTheory.Set.subset_union_subset {A B A' B':Set} (hA'A: A' ⊆ A) (hB'B: B' ⊆ B) :
     A' ∪ B' ⊆ A ∪ B := by sorry
 
-/-- Exercise 3.1.12.-/
+/-- Exercise 3.1.12. -/
 theorem SetTheory.Set.subset_inter_subset {A B A' B':Set} (hA'A: A' ⊆ A) (hB'B: B' ⊆ B) :
     A' ∩ B' ⊆ A ∩ B := by sorry
 
-/-- Exercise 3.1.12.-/
+/-- Exercise 3.1.12. -/
 theorem SetTheory.Set.subset_diff_subset_counter :
     ∃ (A B A' B':Set), (A' ⊆ A) ∧ (B' ⊆ B) ∧ ¬ (A' \ B') ⊆ (A \ B) := by sorry
 
@@ -869,7 +869,7 @@ theorem SetTheory.Set.coe_subtype (X: Set) :  (X : _root_.Set Object) = X.toSubt
 theorem SetTheory.Set.coe_intersection (X Y: Set) :
     ((X ∩ Y:Set) : _root_.Set Object) = (X : _root_.Set Object) ∩ (Y : _root_.Set Object) := by sorry
 
-/-- Compatibility of set difference-/
+/-- Compatibility of set difference -/
 theorem SetTheory.Set.coe_diff (X Y: Set) :
     ((X \ Y:Set) : _root_.Set Object) = (X : _root_.Set Object) \ (Y : _root_.Set Object) := by sorry
 

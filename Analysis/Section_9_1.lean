@@ -164,7 +164,7 @@ theorem closure_of_Q :
   closure ((fun n:ℚ ↦ (n:ℝ)) '' .univ) = .univ := by
     sorry
 
-/-- Lemma 9.1.14 / Exercise 9.1.4-/
+/-- Lemma 9.1.14 / Exercise 9.1.4 -/
 theorem limit_of_AdherentPt (X: Set ℝ) (x:ℝ) :
   AdherentPt x X ↔ ∃ a : ℕ → ℝ, (∀ n, a n ∈ X) ∧ Filter.atTop.Tendsto a (nhds x) := by
     sorry
@@ -226,7 +226,7 @@ theorem isClosed_iff_limits_mem (X: Set ℝ) :
 /-- Definition 9.1.18 (Limit points) -/
 abbrev LimitPt (x:ℝ) (X: Set ℝ) := AdherentPt x (X \ {x})
 
-/-- Identification with Mathlib's {name}`AccPt`-/
+/-- Identification with Mathlib's {name}`AccPt` -/
 theorem LimitPt.iff_AccPt (x:ℝ) (X: Set ℝ) : LimitPt x X ↔ AccPt x (.principal X) := by
   rw [accPt_principal_iff_clusterPt,←AdherentPt_def]
 
@@ -290,7 +290,7 @@ theorem mem_Iio_isLimit {a x:ℝ} (hx: x ∈ Set.Iio a) : LimitPt x (.Iio a) := 
 theorem mem_R_isLimit {x:ℝ} : LimitPt x (.univ) := by
   sorry
 
-/-- Definition 9.1.22.  We use here Mathlib's {name}`Bornology.IsBounded`-/
+/-- Definition 9.1.22.  We use here Mathlib's {name}`Bornology.IsBounded` -/
 
 theorem isBounded_def (X: Set ℝ) : Bornology.IsBounded X ↔ ∃ M > 0, X ⊆ .Icc (-M) M := by
   simp [isBounded_iff_forall_norm_le]

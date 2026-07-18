@@ -12,7 +12,7 @@ theorem binom_eq {n k:ℕ} (hk: 1 ≤ k) : (n.choose k) * k = ((n-1).choose (k-1
     all_goals omega
   simp [choose_eq_zero_of_lt hn, choose_eq_zero_iff]; omega
 
-/-- $$`\binom\{n\}\{k\} \cdot k \cdot (k-1) = \binom\{n-2\}\{k-2\} \cdot (n-1) \cdot n`.-/
+/-- $$`\binom\{n\}\{k\} \cdot k \cdot (k-1) = \binom\{n-2\}\{k-2\} \cdot (n-1) \cdot n`. -/
 theorem binom_eq_2 {n k:ℕ} (hk: 2 ≤ k) : (n.choose k) * k * (k-1) = ((n-2).choose (k-2)) * (n-1) * n := calc
   _ = ((n-1).choose (k-1)) * n * (k-1) := by rw [binom_eq]; omega
   _ = ((n-1).choose (k-1)) * (k-1) * n := by ring
@@ -35,7 +35,7 @@ theorem lemma_2 {n k p r:ℕ} (hk: 2 ≤ k) (hn: k ≤ n)
   replace h3 : ¬p∣k-1 := by contrapose! h3; convert dvd_sub h1' h3 using 1; omega
   exact hp.prime.pow_dvd_of_dvd_mul_right _ h2 (hp.prime.pow_dvd_of_dvd_mul_right _ h3 h1)
 
-/-- If $$`n=2^\{\phi(p^R)\}$$ and $$p>2^\{r-1\}$$, then $$2^r \mid \binom\{n\}\{k\}$$ or $$p^R \mid \binom\{n\}\{k\}`.-/
+/-- If $$`n=2^\{\phi(p^R)\}$$ and $$p>2^\{r-1\}$$, then $$2^r \mid \binom\{n\}\{k\}$$ or $$p^R \mid \binom\{n\}\{k\}`. -/
 theorem key_prop {k n p r R:ℕ} (hn: n = 2^((p^R).totient))
   (hk: 1 ≤ k) (hkn: k < n) (hp: p.Prime) (hpr: p > 2^(r-1))
   (hr: 1 < r) (hr' : r ≤ (p^R).totient):
@@ -71,7 +71,7 @@ theorem S_ge {n r:ℕ} (hn: 1 < n) (h: ∀ k ∈ Finset.Ico 1 n, ∃ p, p.Prime 
     all_goals grind
   aesop
 
-/-- If $$p>2^\{r-1\}$$, then $$S(2^\{\phi(p^R)\}) \ge r$$.-/
+/-- If $$p>2^\{r-1\}$$, then $$S(2^\{\phi(p^R)\}) \ge r$$. -/
 theorem key_cor {p r:ℕ} (hp: p.Prime) (hpr: p > 2^(r-1)) (hr: 1 < r) :
   r ≤ S (2^((p^r).totient)) := by
   apply S_ge; simp; grind
@@ -86,7 +86,7 @@ theorem key_cor {p r:ℕ} (hp: p.Prime) (hpr: p > 2^(r-1)) (hr: 1 < r) :
   . use 2; simp_all [prime_two]
   use p
 
-/-- A positive resolution to Erdos problem \#379.-/
+/-- A positive resolution to Erdos problem \#379. -/
 theorem erdos_379 : Filter.atTop.limsup (fun n ↦ (S n:ENat)) = ⊤ := by
   rw [Filter.limsup_eq_iInf_iSup_of_nat]
   simp; intro N; rw [iSup₂_eq_top]; intro r hr; lift r to ℕ using (by order)

@@ -125,7 +125,7 @@ theorem RS_integ_eq_integ_of_mul_deriv
     upper_integral (f * α') (Icc a b) := lower_integral_le_upper hfα'_bound
   refine ⟨ ⟨ hfα'_bound, ?_ ⟩, ?_ ⟩ <;> linarith
 
-/-- Lemma 11.10.5 / Exercise 11.10.2-/
+/-- Lemma 11.10.5 / Exercise 11.10.2 -/
 theorem PiecewiseConstantOn.RS_integ_of_comp {a b:ℝ} (hab: a < b) {φ f:ℝ → ℝ}
   (hφ_cont: Continuous φ) (hφ_mono: Monotone φ) (hf: PiecewiseConstantOn f (Icc (φ a) (φ b))) :
   PiecewiseConstantOn (f ∘ φ) (Icc a b) ∧ RS_integ (f ∘ φ) (Icc a b) φ =
@@ -218,7 +218,7 @@ theorem integ_of_comp {a b:ℝ} (hab: a < b) {φ f: ℝ → ℝ}
  have h2 := RS_integ_eq_integ_of_mul_deriv hab hφ_mono hφ_diff hφ_cont hφ' h1.1
  refine ⟨ h2.1, by aesop ⟩
 
-/-- Exercise 11.10.3-/
+/-- Exercise 11.10.3 -/
 example {a b:ℝ} (hab: a < b) {f: ℝ → ℝ} (hf: IntegrableOn f (Icc a b)) :
   IntegrableOn (fun x ↦ f (-x)) (Icc (-b) (-a)) ∧
   integ (fun x ↦ f (-x)) (Icc (-b) (-a)) = integ f (Icc a b) := by

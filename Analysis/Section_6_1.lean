@@ -301,7 +301,7 @@ noncomputable abbrev lim (a:Sequence) : ℝ := if h: a.Convergent then h.choose 
 theorem Sequence.lim_def {a:Sequence} (h: a.Convergent) : a.TendsTo (lim a) := by
   simp [lim, h]; exact h.choose_spec
 
-/-- Definition 6.1.8-/
+/-- Definition 6.1.8 -/
 theorem Sequence.lim_eq {a:Sequence} {L:ℝ} :
 a.TendsTo L ↔ a.Convergent ∧ lim a = L := by
   constructor
@@ -349,7 +349,7 @@ example : ¬ ((fun n ↦ (-1:ℝ)^n):Sequence).IsCauchy := by sorry
 /-- Example 6.1.13 -/
 example : ¬ ((fun n ↦ (-1:ℝ)^n):Sequence).Convergent := by sorry
 
-/-- Proposition 6.1.15 / Exercise 6.1.6 (Formal limits are genuine limits)-/
+/-- Proposition 6.1.15 / Exercise 6.1.6 (Formal limits are genuine limits) -/
 theorem Sequence.lim_eq_LIM {a:ℕ → ℚ} (h: (a:Chapter5.Sequence).IsCauchy) :
     ((a:Chapter5.Sequence):Sequence).TendsTo (Chapter5.Real.equivR (Chapter5.LIM a)) := by sorry
 

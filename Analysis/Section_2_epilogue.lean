@@ -170,7 +170,7 @@ theorem Equiv.uniq {P Q : PeanoAxioms} (equiv1 equiv2 : PeanoAxioms.Equiv P Q) :
   ext n
   sorry
 
-/-- A sample result: recursion is well-defined on any structure obeying the Peano axioms-/
+/-- A sample result: recursion is well-defined on any structure obeying the Peano axioms -/
 theorem Nat.recurse_uniq {P : PeanoAxioms} (f: P.Nat → P.Nat → P.Nat) (c: P.Nat) :
     ∃! (a: P.Nat → P.Nat), a P.zero = c ∧ ∀ n, a (P.succ n) = f n (a n) := by
   sorry
