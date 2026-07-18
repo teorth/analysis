@@ -76,7 +76,7 @@ theorem _root_.Filter.Tendsto.comp_of_continuous {X:Set ℝ} {f: ℝ → ℝ} {x
   have := (ContinuousWithinAt.tfae X f x₀).out 0 1
   grind
 
-/- Proposition 9.4.9 -/
+/-- Proposition 9.4.9 -/
 theorem ContinuousWithinAt.add {X:Set ℝ} (f g: ℝ → ℝ) {x₀:ℝ}
   (hf: ContinuousWithinAt f X x₀) (hg: ContinuousWithinAt g X x₀) :
   ContinuousWithinAt (f + g) X x₀ := by
