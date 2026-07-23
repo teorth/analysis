@@ -14,7 +14,7 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(204)
             self.end_headers()
             return
-        elif self.path == '/':
+        elif self.path in ('/', '/analysis'):
             self.send_response(301)
             self.send_header('Location', '/analysis/')
             self.end_headers()
