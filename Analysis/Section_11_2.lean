@@ -279,7 +279,7 @@ theorem PiecewiseConstantOn.of_extend {I J: BoundedInterval} (hIJ: I ⊆ J)
   sorry
 
 open Classical in
-/-- Theorem 11.2.16 (g) (Laws of integration) / Exercise 11.2.4 -/
+/-- Theorem 11.2.16 (g') (Laws of integration) / Exercise 11.2.4 -/
 theorem PiecewiseConstantOn.integ_of_extend {I J: BoundedInterval} (hIJ: I ⊆ J)
   {f: ℝ → ℝ} (h: PiecewiseConstantOn f I) :
   integ (fun x ↦ if x ∈ I then f x else 0) J = integ f I := by
