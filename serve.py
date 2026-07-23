@@ -39,9 +39,9 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
         elif path.startswith('/analysis/'):
             rel_path = path[len('/analysis/'):]
             return os.path.join(BOOK_SITE, rel_path)
-        # Otherwise, serve nothing (could return a non-existent path)
+        # Otherwise, serve nothing (return a non-existent path → 404)
         else:
-            raise FileNotFoundError(f"File not found: {path}")
+            return os.path.join(BOOK_SITE, '.missing')
 
 
 if __name__ == '__main__':
