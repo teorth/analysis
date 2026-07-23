@@ -266,7 +266,7 @@ theorem PiecewiseConstantOn.integ_const (c: ℝ) (I: BoundedInterval) :
   integ (fun _ ↦ c) I = c * |I|ₗ := by
   sorry
 
-/-- Theorem 11.2.16 (f) (Laws of integration) / Exercise 11.2.4 -/
+/-- Theorem 11.2.16 (f') (Laws of integration) / Exercise 11.2.4 -/
 theorem PiecewiseConstantOn.integ_const' {f:ℝ → ℝ} {I: BoundedInterval} (h: ConstantOn f I) :
   integ f I = (constant_value_on f I) * |I|ₗ := by
   sorry
