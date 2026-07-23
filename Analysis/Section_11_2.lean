@@ -290,7 +290,7 @@ theorem PiecewiseConstantOn.of_join {I J K: BoundedInterval} (hIJK: K.joins I J)
   (f: ℝ → ℝ) : PiecewiseConstantOn f K ↔ PiecewiseConstantOn f I ∧ PiecewiseConstantOn f J := by
   sorry
 
-/-- Theorem 11.2.16 (h) (Laws of integration) / Exercise 11.2.4 -/
+/-- Theorem 11.2.16 (h') (Laws of integration) / Exercise 11.2.4 -/
 theorem PiecewiseConstantOn.integ_of_join {I J K: BoundedInterval} (hIJK: K.joins I J)
   {f: ℝ → ℝ} (h: PiecewiseConstantOn f K) :
   integ f K = integ f I + integ f J := by
