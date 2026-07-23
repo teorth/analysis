@@ -315,7 +315,7 @@ theorem PiecewiseConstantOn.RS_integ_const (c: ℝ) (I: BoundedInterval) {α:ℝ
   RS_integ (fun _ ↦ c) I α = c * α[I]ₗ := by
   sorry
 
-/-- Theorem 11.8.8 (f) (Laws of RS integration) / Exercise 11.8.3 -/
+/-- Theorem 11.8.8 (f') (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_const' {f:ℝ → ℝ} {I: BoundedInterval}
   {α:ℝ → ℝ} (hα: Monotone α) (h: ConstantOn f I) :
   RS_integ f I α = (constant_value_on f I) * α[I]ₗ := by
@@ -329,7 +329,7 @@ theorem PiecewiseConstantOn.RS_of_extend {I J: BoundedInterval} (hIJ: I ⊆ J)
   sorry
 
 open Classical in
-/-- Theorem 11.8.8 (g) (Laws of RS integration) / Exercise 11.8.3 -/
+/-- Theorem 11.8.8 (g') (Laws of RS integration) / Exercise 11.8.3 -/
 theorem PiecewiseConstantOn.RS_integ_of_extend {I J: BoundedInterval} (hIJ: I ⊆ J)
   {f: ℝ → ℝ} (h: PiecewiseConstantOn f I) {α:ℝ → ℝ} (hα: Monotone α):
   RS_integ (fun x ↦ if x ∈ I then f x else 0) J α = RS_integ f I α := by
