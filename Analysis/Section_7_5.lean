@@ -190,12 +190,12 @@ theorem Series.ratio_test_neg {s : Series} (hnon: ∀ n ≥ s.m, s.seq n ≠ 0)
     convert (ratio_ineq s.m _).1.trans (ratio_ineq s.m _).2.1 with n; rfl
     all_goals convert hnon using 1 with n; simp
 
-/-- Corollary 7.5.3 (Ratio test) / Exercise 7.5.3 -/
+/-- Corollary 7.5.3(i) (Ratio test inconclusive, diverges) / Exercise 7.5.3 -/
 theorem Series.ratio_test_inconclusive: ∃ s:Series, (∀ n ≥ s.m, s.seq n ≠ 0) ∧
   atTop.Tendsto (fun n ↦ |s.seq (n+1)| / |s.seq n|) (nhds 1) ∧ s.diverges := by
     sorry
 
-/-- Corollary 7.5.3 (Ratio test) / Exercise 7.5.3 -/
+/-- Corollary 7.5.3(ii) (Ratio test inconclusive, absConverges) / Exercise 7.5.3 -/
 theorem Series.ratio_test_inconclusive' : ∃ s:Series, (∀ n ≥ s.m, s.seq n ≠ 0) ∧
   atTop.Tendsto (fun n ↦ |s.seq (n+1)| / |s.seq n|) (nhds 1) ∧ s.absConverges := by
     sorry
