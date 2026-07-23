@@ -88,12 +88,12 @@ theorem Sequence.lim_of_roots {x:ℝ} (hx: x > 0) :
     ((fun (n:ℕ) ↦ x^(1/(n+1:ℝ))):Sequence).TendsTo 1 := by
   sorry
 
-/-- Exercise 6.5.1 -/
+/-- Exercise 6.5.1 (i) -/
 theorem Sequence.lim_of_rat_power_decay {q:ℚ} (hq: q > 0) :
     (fun (n:ℕ) ↦ 1/((n+1:ℝ)^(q:ℝ)):Sequence).TendsTo 0 := by
   sorry
 
-/-- Exercise 6.5.1 -/
+/-- Exercise 6.5.1 (ii) -/
 theorem Sequence.lim_of_rat_power_growth {q:ℚ} (hq: q > 0) :
     (fun (n:ℕ) ↦ ((n+1:ℝ)^(q:ℝ)):Sequence).Divergent := by
   sorry
