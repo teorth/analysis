@@ -215,7 +215,7 @@ open Classical in
 /-- Example 9.3.21 -/
 noncomputable abbrev f_9_3_21 : ℝ → ℝ := fun x ↦ if x ∈ (fun q:ℚ ↦ (q:ℝ)) '' .univ then 1 else 0
 
-example : Filter.atTop.Tendsto (fun (n:ℕ) ↦ f_9_3_21 (1/n:ℝ)) (nhds 1) := by sorry
+example : Filter.atTop.Tendsto (fun (n:ℕ) ↦ f_9_3_21 (1/(n:ℝ))) (nhds 1) := by sorry
 
 example : Filter.atTop.Tendsto (fun (n:ℕ) ↦ f_9_3_21 ((Real.sqrt 2)/n:ℝ)) (nhds 0) := by sorry
 
