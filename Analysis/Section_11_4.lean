@@ -60,14 +60,14 @@ theorem IntegrableOn.const' {I: BoundedInterval} {f:ℝ → ℝ} (hf: ConstantOn
 
 
 open Classical in
-/-- Theorem 11.4.1 (g)  / Exercise 11.4.1 -/
+/-- Theorem 11.4.1(g) / Exercise 11.4.1 -/
 theorem IntegrableOn.of_extend {I J: BoundedInterval} (hIJ: I ⊆ J)
   {f: ℝ → ℝ} (h: IntegrableOn f I) :
   IntegrableOn (fun x ↦ if x ∈ I then f x else 0) J := by
   sorry
 
 open Classical in
-/-- Theorem 11.4.1 (g)  / Exercise 11.4.1 -/
+/-- Theorem 11.4.1(g') / Exercise 11.4.1 -/
 theorem IntegrableOn.of_extend' {I J: BoundedInterval} (hIJ: I ⊆ J)
   {f: ℝ → ℝ} (h: IntegrableOn f I) :
   integ (fun x ↦ if x ∈ I then f x else 0) J = integ f I := by
