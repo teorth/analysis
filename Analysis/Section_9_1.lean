@@ -347,11 +347,11 @@ example {I:Type} (X: I → Set ℝ) (hX: ∀ i, IsClosed (X i)) :
   IsClosed (⋂ i, X i) := by
   sorry
 
-/-- Exercise 9.1.9 -/
+/-- Exercise 9.1.9 (i) -/
 example {X:Set ℝ} {x:ℝ} (hx: AdherentPt x X) : LimitPt x X ∨ IsolatedPt x X := by
   sorry
 
-/-- Exercise 9.1.9 -/
+/-- Exercise 9.1.9 (ii) -/
 example {X:Set ℝ} {x:ℝ} : ¬ (LimitPt x X ∧ IsolatedPt x X) := by
   sorry
 
