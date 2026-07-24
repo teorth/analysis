@@ -291,7 +291,7 @@ theorem SetTheory.Set.card_ssubset {X Y:Set} (hX: X.finite) (hY: Y ⊂ X) :
 theorem SetTheory.Set.card_image {X Y:Set} (hX: X.finite) (f: X → Y) :
     (image f X).finite ∧ (image f X).card ≤ X.card := by sorry
 
-/-- Proposition 3.6.14 (d) / Exercise 3.6.4 -/
+/-- Proposition 3.6.14 (d') / Exercise 3.6.4 -/
 theorem SetTheory.Set.card_image_inj {X Y:Set} (hX: X.finite) {f: X → Y}
   (hf: Function.Injective f) : (image f X).card = X.card := by sorry
 
