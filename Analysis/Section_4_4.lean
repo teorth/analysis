@@ -53,7 +53,7 @@ def Int.infinite_descent : Decidable (∃ a:ℕ → ℤ, ∀ n, a (n+1) < a n) :
   -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
   sorry
 
-/-- Exercise 4.4.2 (b) -/
+/-- Exercise 4.4.2 (b') -/
 def Rat.pos_infinite_descent : Decidable (∃ a:ℕ → {x: ℚ // 0 < x}, ∀ n, a (n+1) < a n) := by
   -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
   sorry
