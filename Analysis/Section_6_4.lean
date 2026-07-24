@@ -167,7 +167,7 @@ theorem Sequence.lt_limsup_bounds {a:Sequence} {x:EReal} (h: x < a.limsup) {N:�
   choose n hn hxn _ using exists_between_lt_sup hx
   grind
 
-/-- Proposition 6.4.12(b) -/
+/-- Proposition 6.4.12(b') -/
 theorem Sequence.gt_liminf_bounds {a:Sequence} {x:EReal} (h: x > a.liminf) {N:ℤ} (hN: N ≥ a.m) :
     ∃ n ≥ N, a n < x := by
   sorry
