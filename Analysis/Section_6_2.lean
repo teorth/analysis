@@ -83,7 +83,7 @@ theorem EReal.trichotomy (x y:EReal) : x < y ∨ x = y ∨ x > y := by sorry
 /-- Proposition 6.2.5(b') / Exercise 6.2.1 -/
 theorem EReal.not_lt_and_eq (x y:EReal) : ¬ (x < y ∧ x = y) := by sorry
 
-/-- Proposition 6.2.5(b) / Exercise 6.2.1 -/
+/-- Proposition 6.2.5(b'') / Exercise 6.2.1 -/
 theorem EReal.not_gt_and_eq (x y:EReal) : ¬ (x > y ∧ x = y) := by sorry
 
 /-- Proposition 6.2.5(b) / Exercise 6.2.1 -/
