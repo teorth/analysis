@@ -154,7 +154,7 @@ theorem Sequence.gt_limsup_bounds {a:Sequence} {x:EReal} (h: x > a.limsup) :
   convert lt_of_le_of_lt ((a.from N).le_sup hn') ha using 1
   grind
 
-/-- Proposition 6.4.12(a) -/
+/-- Proposition 6.4.12(a') -/
 theorem Sequence.lt_liminf_bounds {a:Sequence} {y:EReal} (h: y < a.liminf) :
     ∃ N ≥ a.m, ∀ n ≥ N, a n > y := by
   sorry
@@ -167,7 +167,7 @@ theorem Sequence.lt_limsup_bounds {a:Sequence} {x:EReal} (h: x < a.limsup) {N:�
   choose n hn hxn _ using exists_between_lt_sup hx
   grind
 
-/-- Proposition 6.4.12(b) -/
+/-- Proposition 6.4.12(b') -/
 theorem Sequence.gt_liminf_bounds {a:Sequence} {x:EReal} (h: x > a.liminf) {N:ℤ} (hN: N ≥ a.m) :
     ∃ n ≥ N, a n < x := by
   sorry
@@ -175,10 +175,10 @@ theorem Sequence.gt_liminf_bounds {a:Sequence} {x:EReal} (h: x > a.liminf) {N:�
 /-- Proposition 6.4.12(c) / Exercise 6.4.3 -/
 theorem Sequence.inf_le_liminf (a:Sequence) : a.inf ≤ a.liminf := by sorry
 
-/-- Proposition 6.4.12(c) / Exercise 6.4.3 -/
+/-- Proposition 6.4.12(c') / Exercise 6.4.3 -/
 theorem Sequence.liminf_le_limsup (a:Sequence) : a.liminf ≤ a.limsup := by sorry
 
-/-- Proposition 6.4.12(c) / Exercise 6.4.3 -/
+/-- Proposition 6.4.12(c'') / Exercise 6.4.3 -/
 theorem Sequence.limsup_le_sup (a:Sequence) : a.limsup ≤ a.sup := by sorry
 
 /-- Proposition 6.4.12(d) / Exercise 6.4.3 -/
@@ -191,7 +191,7 @@ theorem Sequence.limit_point_of_limsup {a:Sequence} {L_plus:ℝ} (h: a.limsup = 
     a.LimitPoint L_plus := by
   sorry
 
-/-- Proposition 6.4.12(e) / Exercise 6.4.3 -/
+/-- Proposition 6.4.12(e') / Exercise 6.4.3 -/
 theorem Sequence.limit_point_of_liminf {a:Sequence} {L_minus:ℝ} (h: a.liminf = L_minus) :
     a.LimitPoint L_minus := by
   sorry
