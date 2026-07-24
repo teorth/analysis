@@ -154,7 +154,7 @@ theorem Sequence.gt_limsup_bounds {a:Sequence} {x:EReal} (h: x > a.limsup) :
   convert lt_of_le_of_lt ((a.from N).le_sup hn') ha using 1
   grind
 
-/-- Proposition 6.4.12(a) -/
+/-- Proposition 6.4.12(a') -/
 theorem Sequence.lt_liminf_bounds {a:Sequence} {y:EReal} (h: y < a.liminf) :
     ∃ N ≥ a.m, ∀ n ≥ N, a n > y := by
   sorry
