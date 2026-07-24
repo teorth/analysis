@@ -283,7 +283,7 @@ theorem SetTheory.Set.card_union_disjoint {X Y:Set} (hX: X.finite) (hY: Y.finite
 theorem SetTheory.Set.card_subset {X Y:Set} (hX: X.finite) (hY: Y ⊆ X) :
     Y.finite ∧ Y.card ≤ X.card := by sorry
 
-/-- Proposition 3.6.14 (c) / Exercise 3.6.4 -/
+/-- Proposition 3.6.14 (c') / Exercise 3.6.4 -/
 theorem SetTheory.Set.card_ssubset {X Y:Set} (hX: X.finite) (hY: Y ⊂ X) :
     Y.card < X.card := by sorry
 
