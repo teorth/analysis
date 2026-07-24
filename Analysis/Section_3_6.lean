@@ -275,7 +275,7 @@ theorem SetTheory.Set.card_insert {X:Set} (hX: X.finite) {x:Object} (hx: x ∉ X
 theorem SetTheory.Set.card_union {X Y:Set} (hX: X.finite) (hY: Y.finite) :
     (X ∪ Y).finite ∧ (X ∪ Y).card ≤ X.card + Y.card := by sorry
 
-/-- Proposition 3.6.14 (b) / Exercise 3.6.4 -/
+/-- Proposition 3.6.14 (b') / Exercise 3.6.4 -/
 theorem SetTheory.Set.card_union_disjoint {X Y:Set} (hX: X.finite) (hY: Y.finite)
   (hdisj: Disjoint X Y) : (X ∪ Y).card = X.card + Y.card := by sorry
 
