@@ -191,7 +191,7 @@ theorem Sequence.limit_point_of_limsup {a:Sequence} {L_plus:ℝ} (h: a.limsup = 
     a.LimitPoint L_plus := by
   sorry
 
-/-- Proposition 6.4.12(e) / Exercise 6.4.3 -/
+/-- Proposition 6.4.12(e') / Exercise 6.4.3 -/
 theorem Sequence.limit_point_of_liminf {a:Sequence} {L_minus:ℝ} (h: a.liminf = L_minus) :
     a.LimitPoint L_minus := by
   sorry
