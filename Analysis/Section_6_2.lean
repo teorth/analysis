@@ -80,10 +80,10 @@ theorem EReal.refl (x:EReal) : x ≤ x := by sorry
 /-- Proposition 6.2.5(b) / Exercise 6.2.1 -/
 theorem EReal.trichotomy (x y:EReal) : x < y ∨ x = y ∨ x > y := by sorry
 
-/-- Proposition 6.2.5(b) / Exercise 6.2.1 -/
+/-- Proposition 6.2.5(b') / Exercise 6.2.1 -/
 theorem EReal.not_lt_and_eq (x y:EReal) : ¬ (x < y ∧ x = y) := by sorry
 
-/-- Proposition 6.2.5(b) / Exercise 6.2.1 -/
+/-- Proposition 6.2.5(b'') / Exercise 6.2.1 -/
 theorem EReal.not_gt_and_eq (x y:EReal) : ¬ (x > y ∧ x = y) := by sorry
 
 /-- Proposition 6.2.5(b) / Exercise 6.2.1 -/
@@ -164,7 +164,7 @@ example (E: Set EReal) : sSup E < sInf E ↔ E = ∅ := by sorry
 /-- Theorem 6.2.11 (a) / Exercise 6.2.2 -/
 theorem EReal.mem_le_sup (E: Set EReal) {x:EReal} (hx: x ∈ E) : x ≤ sSup E := by sorry
 
-/-- Theorem 6.2.11 (a) / Exercise 6.2.2 -/
+/-- Theorem 6.2.11 (a') / Exercise 6.2.2 -/
 theorem EReal.mem_ge_inf (E: Set EReal) {x:EReal} (hx: x ∈ E) : sInf E ≤ x := by sorry
 
 /-- Theorem 6.2.11 (b) / Exercise 6.2.2 -/
