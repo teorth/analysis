@@ -175,7 +175,7 @@ theorem Sequence.gt_liminf_bounds {a:Sequence} {x:EReal} (h: x > a.liminf) {N:�
 /-- Proposition 6.4.12(c) / Exercise 6.4.3 -/
 theorem Sequence.inf_le_liminf (a:Sequence) : a.inf ≤ a.liminf := by sorry
 
-/-- Proposition 6.4.12(c) / Exercise 6.4.3 -/
+/-- Proposition 6.4.12(c') / Exercise 6.4.3 -/
 theorem Sequence.liminf_le_limsup (a:Sequence) : a.liminf ≤ a.limsup := by sorry
 
 /-- Proposition 6.4.12(c) / Exercise 6.4.3 -/
