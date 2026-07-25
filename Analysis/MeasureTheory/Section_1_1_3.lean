@@ -1069,12 +1069,18 @@ theorem riemann_integral_add {I: BoundedInterval} {f g: ℝ → ℝ} (hf: Rieman
 theorem riemann_integral_mono {I: BoundedInterval} {f g: ℝ → ℝ} (hf: RiemannIntegrableOn f I) (hg: RiemannIntegrableOn g I) (hmono: ∀ x ∈ I.toSet, f x ≤ g x): riemannIntegral f I ≤ riemannIntegral g I := by sorry
 
 /-- Exercise 1.1.24 (c) (Indicator functions) -/
--- The indicator function of a Jordan measurable set is Riemann integrable.
-theorem RiemannIntegrableOn.indicator_of_elem (I: BoundedInterval) {E:Set ℝ} (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E) ) : RiemannIntegrableOn E.indicator' I := by sorry
+-- The indicator function of a Jordan measurable set is Riemann integrable on a nonempty closed interval.
+theorem RiemannIntegrableOn.indicator_of_elem {I: BoundedInterval} (hI: I = Icc I.a I.b)
+    (hnonempty : I.toSet.Nonempty) {E:Set ℝ}
+    (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E)) :
+    RiemannIntegrableOn E.indicator' I := by sorry
 
 /-- Exercise 1.1.24 (c) (Piecewise constant integral of indicator functions) -/
 -- The integral of an indicator function equals the measure of the set it indicates.
-theorem riemann_integral_of_elem {I: BoundedInterval} {E:Set ℝ} (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E) ) (hsub: E ⊆ I.toSet) : riemannIntegral E.indicator' I = hE.measure := by sorry
+theorem riemann_integral_of_elem {I: BoundedInterval} (hI: I = Icc I.a I.b)
+    (hnonempty : I.toSet.Nonempty) {E:Set ℝ}
+    (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E)) (hsub: E ⊆ I.toSet) :
+    riemannIntegral E.indicator' I = hE.measure := by sorry
 
 /-- Exercise 1.1.24 (Uniqueness) -/
 -- The Riemann integral is the unique integral satisfying linearity, monotonicity, and normalization on indicator functions.
