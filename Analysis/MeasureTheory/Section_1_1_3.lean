@@ -943,8 +943,11 @@ lemma lower_darboux_le_upper_darboux {f:ℝ → ℝ} {I: BoundedInterval} (hboun
       exact PiecewiseConstantFunction.integral_mono' g h h_pointwise
 
 /-- Definition 1.1.6 (Darboux integral) -/
--- A function is Darboux integrable if it is bounded and its lower and upper Darboux integrals coincide.
-noncomputable def DarbouxIntegrableOn (f:ℝ → ℝ) (I: BoundedInterval) : Prop := (I = Icc I.a I.b) ∧ ∃ M, ∀ x ∈ I, |f x| ≤ M ∧ LowerDarbouxIntegral f I = UpperDarbouxIntegral f I
+-- A function is Darboux integrable if it is bounded on a nonempty closed interval and its
+-- lower and upper Darboux integrals coincide. Nonemptiness matches {name}`RiemannIntegrableOn`.
+noncomputable def DarbouxIntegrableOn (f:ℝ → ℝ) (I: BoundedInterval) : Prop :=
+  (I = Icc I.a I.b) ∧ I.toSet.Nonempty ∧
+    (∃ M, ∀ x ∈ I, |f x| ≤ M) ∧ LowerDarbouxIntegral f I = UpperDarbouxIntegral f I
 
 /-- We give the Darboux integral the "junk" value of the lower Darboux integral when the function is not integrable. -/
 -- The Darboux integral: equals the common value if integrable, otherwise the lower Darboux integral.
