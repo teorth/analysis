@@ -208,7 +208,7 @@ theorem Series.absConverges_of_subseries {a:ℕ → ℝ} (ha: (a:Series).absConv
 
 /--
 {given -show}`n : ℕ`
-Exercise 7.4.2 : reprove Proposition 7.4.3 using Proposition 7.41, Proposition 7.2.14,
+Exercise 7.4.2 : reprove Proposition 7.4.3 using Proposition 7.4.1, Proposition 7.2.14,
 and expressing {lean}`a n` as the difference of {lean}`a n + |a n|` and {lean}`|a n|`.
 -/
 theorem Series.absConverges_of_permute' {a:ℕ → ℝ} (ha : (a:Series).absConverges)
