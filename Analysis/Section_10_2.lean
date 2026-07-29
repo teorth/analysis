@@ -61,13 +61,13 @@ theorem IsLocalMinOn.of_restrict {X Y:Set ℝ} (hXY: Y ⊆ X) (f:ℝ → ℝ) (x
   (h: IsLocalMinOn f X x₀) : IsLocalMinOn f Y x₀ := by
   sorry
 
-/-- Proposition 10.2.6 (Local extrema are stationary) / Exercise 10.2.1 -/
+/-- Proposition 10.2.6 (i) (Local extrema are stationary) / Exercise 10.2.1 -/
 theorem IsLocalMaxOn.deriv_eq_zero {a b:ℝ} {f:ℝ → ℝ} {x₀:ℝ}
   (hx₀: x₀ ∈ Set.Ioo a b) (h: IsLocalMaxOn f (.Ioo a b) x₀) {L:ℝ}
   (hderiv: HasDerivWithinAt f L (.Ioo a b) x₀) : L = 0 := by
   sorry
 
-/-- Proposition 10.2.6 (Local extrema are stationary) / Exercise 10.2.1 -/
+/-- Proposition 10.2.6 (ii) (Local extrema are stationary) / Exercise 10.2.1 -/
 theorem IsLocalMinOn.deriv_eq_zero {a b:ℝ} {f:ℝ → ℝ} {x₀:ℝ}
   (hx₀: x₀ ∈ Set.Ioo a b) (h: IsLocalMinOn f (.Ioo a b) x₀) {L:ℝ}
   (hderiv: HasDerivWithinAt f L (.Ioo a b) x₀) : L = 0 := by
@@ -84,7 +84,7 @@ theorem _root_.HasDerivWithinAt.exist_zero {a b:ℝ} (hab: a < b) {g:ℝ → ℝ
   (hgab: g a = g b) : ∃ x ∈ Set.Ioo a b, HasDerivWithinAt g 0 (.Ioo a b) x := by
   sorry
 
-/-- Corollary 10.2.9 (Mean value theorem ) / Exercise 10.2.5 -/
+/-- Corollary 10.2.9 (Mean value theorem) / Exercise 10.2.5 -/
 theorem _root_.HasDerivWithinAt.mean_value {a b:ℝ} (hab: a < b) {f:ℝ → ℝ}
   (hcont: ContinuousOn f (.Icc a b)) (hderiv: DifferentiableOn ℝ f (.Ioo a b)) :
   ∃ x ∈ Set.Ioo a b, HasDerivWithinAt f ((f b - f a) / (b - a)) (.Ioo a b) x := by
