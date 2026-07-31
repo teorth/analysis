@@ -300,17 +300,17 @@ theorem SetTheory.Set.union_assoc (A B C:Set) : (A ∪ B) ∪ C = A ∪ (B ∪ C
     rw [mem_union]; tauto
   sorry
 
-/-- Proposition 3.1.27(c) -/
+/-- Proposition 3.1.27(c) (Union idempotent). -/
 @[simp]
 theorem SetTheory.Set.union_self (A:Set) : A ∪ A = A := by
   sorry
 
-/-- Proposition 3.1.27(a) -/
+/-- Proposition 3.1.27(a) (Union with empty). -/
 @[simp]
 theorem SetTheory.Set.union_empty (A:Set) : A ∪ ∅ = A := by
   sorry
 
-/-- Proposition 3.1.27(a) -/
+/-- Proposition 3.1.27(a) (Empty with union). -/
 @[simp]
 theorem SetTheory.Set.empty_union (A:Set) : ∅ ∪ A = A := by
   sorry
@@ -489,7 +489,7 @@ theorem SetTheory.Set.subset_union {A X: Set} (hAX: A ⊆ X) : A ∪ X = X := by
 /-- Proposition 3.1.27(b) (Union absorption). -/
 theorem SetTheory.Set.union_subset {A X: Set} (hAX: A ⊆ X) : X ∪ A = X := by sorry
 
-/-- Proposition 3.1.27(c) -/
+/-- Proposition 3.1.27(c) (Intersection idempotent). -/
 @[simp]
 theorem SetTheory.Set.inter_self (A:Set) : A ∩ A = A := by
   sorry
