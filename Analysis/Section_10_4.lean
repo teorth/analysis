@@ -73,10 +73,10 @@ theorem inverse_function_theorem {X Y: Set ℝ} {f: ℝ → ℝ} {g:ℝ → ℝ}
     convert (hf _ hx _).inv₀ _ using 2 with n <;> grind
 
 /-- Exercise 10.4.1(a) -/
-example {n:ℕ} : ContinuousOn (fun x:ℝ ↦ x^(1/n:ℝ)) (.Ioi 0) := by sorry
+example {n:ℕ} : ContinuousOn (fun x:ℝ ↦ x^(1/(n:ℝ))) (.Ioi 0) := by sorry
 
 /-- Exercise 10.4.1(b) -/
-example {n:ℕ} {x:ℝ} (hx: x ∈ Set.Ioi 0) : HasDerivWithinAt (fun x:ℝ ↦ x^(1/n:ℝ))
+example {n:ℕ} {x:ℝ} (hx: x ∈ Set.Ioi 0) : HasDerivWithinAt (fun x:ℝ ↦ x^(1/(n:ℝ)))
   ((n:ℝ)⁻¹ * x^((n:ℝ)⁻¹-1)) (.Ioi 0) x := by sorry
 
 /-- Exercise 10.4.2(a) -/

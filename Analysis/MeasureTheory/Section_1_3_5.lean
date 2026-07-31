@@ -1549,7 +1549,7 @@ theorem PointwiseAeConvergesTo.uniformlyConverges_outside_small {d:ℕ} {f : ℕ
   (ε : ℝ) (hε : 0 < ε) :
   ∃ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E ∧
     Lebesgue_measure E ≤ ε ∧
-    UniformlyConvergesToOn f g (Sᶜ ∪ E) := by sorry
+    UniformlyConvergesToOn f g (S ∩ Eᶜ) := by sorry
 
 /-- Theorem 1.3.28 (Lusin's theorem) -/
 theorem ComplexAbsolutelyIntegrable.approx_by_continuous_outside_small {d:ℕ} {f : EuclideanSpace' d → ℂ}
@@ -1562,7 +1562,8 @@ theorem ComplexAbsolutelyIntegrable.approx_by_continuous_outside_small {d:ℕ} {
 /-- Lusin's theorem does not make the original function continuous outside of E -/
 example : ∃ (d:ℕ) (f : EuclideanSpace' d → ℝ),
     RealMeasurable f ∧
-    ∀ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E → Lebesgue_measure E ≤ 1 → ¬ ContinuousOn f Eᶜ := by sorry
+    ∀ (E: Set (EuclideanSpace' d)), LebesgueMeasurable E → Lebesgue_measure E ≤ 1 →
+      ¬ ∀ x ∈ Eᶜ, ContinuousAt f x := by sorry
 
 def LocallyComplexAbsolutelyIntegrable {d:ℕ} (f: EuclideanSpace' d → ℂ) : Prop :=
   ∀ (S: Set (EuclideanSpace' d)), LebesgueMeasurable S ∧ Bornology.IsBounded S → ComplexAbsolutelyIntegrableOn f S
