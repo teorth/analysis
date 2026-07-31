@@ -317,10 +317,10 @@ def Sequence.tendsTo_real_iff :
 /-- This definition is needed for Exercises 6.4.8 and 6.4.9. -/
 abbrev Sequence.ExtendedLimitPoint (a:Sequence) (x:EReal) : Prop := if x = ⊤ then ¬ a.BddAbove else if x = ⊥ then ¬ a.BddBelow else a.LimitPoint x.toReal
 
-/-- Exercise 6.4.8 -/
+/-- Exercise 6.4.8 (i) -/
 theorem Sequence.extended_limit_point_of_limsup (a:Sequence) : a.ExtendedLimitPoint a.limsup := by sorry
 
-/-- Exercise 6.4.8 -/
+/-- Exercise 6.4.8 (ii) -/
 theorem Sequence.extended_limit_point_of_liminf (a:Sequence) : a.ExtendedLimitPoint a.liminf := by sorry
 
 theorem Sequence.extended_limit_point_le_limsup {a:Sequence} {L:EReal} (h:a.ExtendedLimitPoint L): L ≤ a.limsup := by sorry

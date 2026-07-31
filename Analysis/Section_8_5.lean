@@ -123,12 +123,13 @@ example : ¬ WellFoundedLT ℤ := by sorry
 example : ¬ WellFoundedLT ℚ := by sorry
 example : ¬ WellFoundedLT ℝ := by sorry
 
-/-- Exercise 8.5.8 -/
+/-- Exercise 8.5.8 (i) -/
 theorem IsMax.ofFinite {X:Type} [LinearOrder X] [Finite X] [Nonempty X] : ∃ x:X, IsMax x := by sorry
 
+/-- Exercise 8.5.8 (ii) -/
 theorem IsMin.ofFinite {X:Type} [LinearOrder X] [Finite X] [Nonempty X] : ∃ x:X, IsMin x := by sorry
 
-/-- Exercise 8.5.8 -/
+/-- Exercise 8.5.8 (iii) -/
 theorem WellFoundedLT.ofFinite {X:Type} [LinearOrder X] [Finite X] : WellFoundedLT X := by sorry
 
 example {X:Type} [LinearOrder X] [WellFoundedLT X] (A: Set X) : WellFoundedLT A := by sorry
