@@ -300,7 +300,7 @@ theorem Scalar.toFormal_hMul {d₁ d₂:Dimensions} (q₁:Scalar d₁) (q₂:Sca
 not to do this, implementing an inversion relation instead. -/
 noncomputable def Scalar.pow {d:Dimensions} (q: Scalar d) (n:ℕ) : Scalar (n • d) := ⟨ q.val^n ⟩
 
-/-- {given -show}`n : ℕ, d` One cannot use the Mathlib classes {name}`Pow` or {name}`HPow` here because the output type {lean}`Scalar (n • d)` depends on the input {name}`n`.  As the symbol {kw (of := «term_^_»)}`^` is reserved for such classes, we use the symbol `**` instead.-/
+/-- {given -show}`n : ℕ, d` One cannot use the Mathlib classes {name}`Pow` or {name}`HPow` here because the output type {lean}`Scalar (n • d)` depends on the input {name}`n`.  As the symbol {kw (of := «term_^_»)}`^` is reserved for such classes, we use the symbol `**` instead. -/
 infix:80 "**" => Scalar.pow
 
 @[simp]
@@ -346,7 +346,7 @@ theorem Scalar.mul_inv {d₁ d₂:Dimensions} (q₁:Scalar d₁) (q₂:Scalar d�
 theorem Scalar.pow_inv {d:Dimensions} (q:Scalar d) (n:ℕ) : (q ** n).inv = (q.inv ** n).cast := by
   simp [←toFormal_inj, toFormal]
 
-/-- Multiplication and inversion combine to give division in the usual fashion.-/
+/-- Multiplication and inversion combine to give division in the usual fashion. -/
 noncomputable instance Scalar.instHDiv {d₁ d₂:Dimensions} : HDiv (Scalar d₁) (Scalar d₂) (Scalar (d₁ - d₂)) where
   hDiv q₁ q₂ := ⟨q₁.val / q₂.val⟩
 

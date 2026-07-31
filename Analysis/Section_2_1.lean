@@ -63,7 +63,7 @@ lemma Nat.zero_succ : 0++ = 1 := by rfl
 lemma Nat.one_succ : 1++ = 2 := by rfl
 #check (2:Nat)
 
-/-- Proposition 2.1.4 (3 is a natural number)-/
+/-- Proposition 2.1.4 (3 is a natural number) -/
 lemma Nat.two_succ : 2++ = 3 := by rfl
 #check (3:Nat)
 

@@ -89,7 +89,7 @@ example : ¬ IntegrableOn (fun x:ℝ ↦ 1/x) (Icc 0 1) := by sorry
 
 open PiecewiseConstantOn ConstantOn in
 set_option maxHeartbeats 300000 in
-/-- Proposition 11.5.3-/
+/-- Proposition 11.5.3 -/
 theorem integ_of_bdd_cts {I: BoundedInterval} {f:ℝ → ℝ} (hbound: BddOn f I)
   (hf: ContinuousOn f I) : IntegrableOn f I := by
   -- This proof is written to follow the structure of the original text.

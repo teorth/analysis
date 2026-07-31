@@ -117,7 +117,7 @@ example : (Example_6_3_9:Sequence).Convergent := by sorry
 /-- Example 6.3.9 -/
 example : lim (Example_6_3_9:Sequence) ≤ 4 := by sorry
 
-/-- Proposition 6.3.1-/
+/-- Proposition 6.3.1 -/
 theorem lim_of_exp {x:ℝ} (hpos: 0 < x) (hbound: x < 1) :
     ((fun (n:ℕ) ↦ x^n):Sequence).Convergent ∧ lim ((fun (n:ℕ) ↦ x^n):Sequence) = 0 := by
   -- This proof is written to follow the structure of the original text.

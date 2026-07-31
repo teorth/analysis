@@ -1024,7 +1024,7 @@ theorem RiemannIntegrableOn.realAbsolutelyIntegrable {I: BoundedInterval} {f: �
 theorem RiemannIntegral.eq_integ {I: BoundedInterval} {f: ℝ → ℝ} (hf: RiemannIntegrableOn f I) :
     riemannIntegral f I  = hf.realAbsolutelyIntegrable.integ := by sorry
 
-/-- Exercise 1.3.21 (Absolute summability is a special case of absolute integrability)-/
+/-- Exercise 1.3.21 (Absolute summability is a special case of absolute integrability) -/
 theorem AbsolutelySummable.realAbsolutelyIntegrable_iff {a: ℤ → ℝ} : ∑' n, |a n|.toEReal < ⊤ ↔ RealAbsolutelyIntegrable (fun x ↦ a ⌊EuclideanSpace'.equiv_Real x⌋) := by sorry
 
 theorem AbsolutelySummable.complexAbsolutelyIntegrable_iff {a: ℤ → ℂ} : ∑' n, ‖a n‖.toEReal < ⊤ ↔ ComplexAbsolutelyIntegrable (fun x ↦ a ⌊EuclideanSpace'.equiv_Real x⌋) := by sorry

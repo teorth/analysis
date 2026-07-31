@@ -173,12 +173,12 @@ theorem close_mul_mul' {ε δ x y z w:ℚ} (hxy: ε.Close x y) (hzw: δ.Close z 
     (ε*|z|+δ*|y|).Close (x * z) (y * w) := by
     sorry
 
-/-- Definition 4.3.9 (exponentiation).  Here we use the Mathlib definition.-/
+/-- Definition 4.3.9 (exponentiation).  Here we use the Mathlib definition. -/
 lemma pow_zero (x:ℚ) : x^0 = 1 := _root_.pow_zero x
 
 example : (0:ℚ)^0 = 1 := pow_zero 0
 
-/-- Definition 4.3.9 (exponentiation).  Here we use the Mathlib definition.-/
+/-- Definition 4.3.9 (exponentiation).  Here we use the Mathlib definition. -/
 lemma pow_succ (x:ℚ) (n:ℕ) : x^(n+1) = x^n * x := _root_.pow_succ x n
 
 /-- Proposition 4.3.10(a) (Properties of exponentiation, I) / Exercise 4.3.3 -/
