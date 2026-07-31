@@ -273,8 +273,7 @@ theorem Series.telescope {a:ℕ → ℝ} (ha: Filter.atTop.Tendsto a (nhds 0)) :
     ((fun n:ℕ ↦ a n - a (n+1)):Series).convergesTo (a 0) := by
   sorry
 
-/- Exercise 7.2.1  -/
-
+/-- Exercise 7.2.1 -/
 def Series.exercise_7_2_1_convergent :
   Decidable ( (mk' (m := 1) (fun n ↦ (-1:ℝ)^(n:ℤ))).converges ) := by
   -- The first line of this proof should be `apply isTrue` or `apply isFalse`.
