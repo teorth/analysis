@@ -671,16 +671,14 @@ lemma JordanMeasurable.measure_of_graph {d:ℕ} {B:Box d} {f: EuclideanSpace' d 
 lemma JordanMeasurable.undergraph {d:ℕ} {B:Box d} {f: EuclideanSpace' d → ℝ} (hf: ContinuousOn f B.toSet) : JordanMeasurable { p | ∃ x ∈ B.toSet, ∃ t:ℝ, EuclideanSpace'.prod_equiv d 1 p = ⟨ x, t ⟩ ∧ 0 ≤ t ∧ t ≤ f x } := by
   sorry
 
-/-- Exercise 1.1.8 -/
--- A triangle is Jordan measurable.
+/-- Exercise 1.1.8(i) (A triangle is Jordan measurable) -/
 lemma JordanMeasurable.triangle (T: Affine.Triangle ℝ (EuclideanSpace' 2)) : JordanMeasurable T.closedInterior := by
   sorry
 
 /-- The 2D wedge product (signed area parallelogram factor) of two vectors. -/
 abbrev EuclideanSpace'.plane_wedge (x y: EuclideanSpace' 2) := x 1 * y 0 - x 0 * y 1
 
-/-- Exercise 1.1.8 -/
--- The Jordan measure of a triangle equals half the absolute value of the wedge product of two edge vectors.
+/-- Exercise 1.1.8(ii) (Jordan measure of a triangle) -/
 lemma JordanMeasurable.measure_triangle (T: Affine.Triangle ℝ (EuclideanSpace' 2)) : (JordanMeasurable.triangle T).measure = |(T.points 1 - T.points 0).plane_wedge (T.points 2 - T.points 0)| / 2 := by
   sorry
 
