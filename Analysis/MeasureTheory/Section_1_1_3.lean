@@ -943,8 +943,11 @@ lemma lower_darboux_le_upper_darboux {f:ℝ → ℝ} {I: BoundedInterval} (hboun
       exact PiecewiseConstantFunction.integral_mono' g h h_pointwise
 
 /-- Definition 1.1.6 (Darboux integral) -/
--- A function is Darboux integrable if it is bounded and its lower and upper Darboux integrals coincide.
-noncomputable def DarbouxIntegrableOn (f:ℝ → ℝ) (I: BoundedInterval) : Prop := (I = Icc I.a I.b) ∧ ∃ M, ∀ x ∈ I, |f x| ≤ M ∧ LowerDarbouxIntegral f I = UpperDarbouxIntegral f I
+-- A function is Darboux integrable if it is bounded on a nonempty closed interval and its
+-- lower and upper Darboux integrals coincide. Nonemptiness matches {name}`RiemannIntegrableOn`.
+noncomputable def DarbouxIntegrableOn (f:ℝ → ℝ) (I: BoundedInterval) : Prop :=
+  (I = Icc I.a I.b) ∧ I.toSet.Nonempty ∧
+    (∃ M, ∀ x ∈ I, |f x| ≤ M) ∧ LowerDarbouxIntegral f I = UpperDarbouxIntegral f I
 
 /-- We give the Darboux integral the "junk" value of the lower Darboux integral when the function is not integrable. -/
 -- The Darboux integral: equals the common value if integrable, otherwise the lower Darboux integral.
@@ -1040,13 +1043,16 @@ lemma RiemannIntegrableOn.iff_darbouxIntegrable {f:ℝ → ℝ} {I: BoundedInter
 lemma riemann_integral_eq_darboux_integral {f:ℝ → ℝ} {I: BoundedInterval} (hf: RiemannIntegrableOn f I) : riemannIntegral f I = darbouxIntegral f I := by sorry
 
 /-- Exercise 1.1.23 -/
--- Any function continuous on a closed interval is Riemann integrable.
-lemma RiemannIntegrableOn.continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I = Icc I.a I.b) (hcont: ContinuousOn f I.toSet) : RiemannIntegrableOn f I := by sorry
+-- Any function continuous on a nonempty closed interval is Riemann integrable.
+lemma RiemannIntegrableOn.continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I = Icc I.a I.b)
+    (hnonempty : I.toSet.Nonempty) (hcont: ContinuousOn f I.toSet) : RiemannIntegrableOn f I := by sorry
 
 -- A function that is continuous on each piece of a partition is Riemann integrable on the whole interval.
 lemma RiemannIntegrableOn.piecewise_continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I = Icc I.a I.b)
- (T: Finset BoundedInterval)  (hdisjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet)
- (hcover : I.toSet = ⋃ J ∈ T, J.toSet) (hcont: ∀ J ∈ T, ContinuousOn f J.toSet) : RiemannIntegrableOn f I := by sorry
+    (hnonempty : I.toSet.Nonempty)
+    (T: Finset BoundedInterval)  (hdisjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet)
+    (hcover : I.toSet = ⋃ J ∈ T, J.toSet) (hcont: ∀ J ∈ T, ContinuousOn f J.toSet) :
+    RiemannIntegrableOn f I := by sorry
 
 /-- Exercise 1.1.24 (a) (scalar multiple, integrability). -/
 -- A scalar multiple of a Riemann integrable function is Riemann integrable.
@@ -1069,12 +1075,18 @@ theorem riemann_integral_add {I: BoundedInterval} {f g: ℝ → ℝ} (hf: Rieman
 theorem riemann_integral_mono {I: BoundedInterval} {f g: ℝ → ℝ} (hf: RiemannIntegrableOn f I) (hg: RiemannIntegrableOn g I) (hmono: ∀ x ∈ I.toSet, f x ≤ g x): riemannIntegral f I ≤ riemannIntegral g I := by sorry
 
 /-- Exercise 1.1.24 (c) (Indicator functions) -/
--- The indicator function of a Jordan measurable set is Riemann integrable.
-theorem RiemannIntegrableOn.indicator_of_elem (I: BoundedInterval) {E:Set ℝ} (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E) ) : RiemannIntegrableOn E.indicator' I := by sorry
+-- The indicator function of a Jordan measurable set is Riemann integrable on a nonempty closed interval.
+theorem RiemannIntegrableOn.indicator_of_elem {I: BoundedInterval} (hI: I = Icc I.a I.b)
+    (hnonempty : I.toSet.Nonempty) {E:Set ℝ}
+    (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E)) :
+    RiemannIntegrableOn E.indicator' I := by sorry
 
 /-- Exercise 1.1.24 (c) (Piecewise constant integral of indicator functions) -/
 -- The integral of an indicator function equals the measure of the set it indicates.
-theorem riemann_integral_of_elem {I: BoundedInterval} {E:Set ℝ} (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E) ) (hsub: E ⊆ I.toSet) : riemannIntegral E.indicator' I = hE.measure := by sorry
+theorem riemann_integral_of_elem {I: BoundedInterval} (hI: I = Icc I.a I.b)
+    (hnonempty : I.toSet.Nonempty) {E:Set ℝ}
+    (hE: JordanMeasurable (Real.equiv_EuclideanSpace' '' E)) (hsub: E ⊆ I.toSet) :
+    riemannIntegral E.indicator' I = hE.measure := by sorry
 
 /-- Exercise 1.1.24 (Uniqueness) -/
 -- The Riemann integral is the unique integral satisfying linearity, monotonicity, and normalization on indicator functions.
