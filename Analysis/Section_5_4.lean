@@ -371,7 +371,7 @@ theorem Real.max_add (x y z:Real) : max (x + z) (y + z) = max x y + z := by sorr
 /-- Exercise 5.4.9 (f) -/
 theorem Real.max_mul (x y :Real) {z:Real} (hz: z.IsPos) : max (x * z) (y * z) = max x y * z := by
   sorry
-/- Additional exercise: What happens if z is negative? -/
+/- Additional exercise (after 5.4.9 (f)): What happens if z is negative? -/
 
 /-- Exercise 5.4.9 (g) -/
 theorem Real.min_comm (x y:Real) : min x y = min y x := by sorry
