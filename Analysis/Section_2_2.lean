@@ -38,7 +38,7 @@ namespace Chapter2
 abbrev Nat.add (n m : Nat) : Nat := Nat.recurse (fun _ sum ↦ sum++) m n
 
 /-- This instance allows for the {kw (of := «term_+_»)}`+` notation to be used for natural number
-    addition.-/
+    addition. -/
 instance Nat.instAdd : Add Nat where add := add
 
 /-- Compare with Mathlib's {name}`Nat.zero_add`. -/
@@ -225,7 +225,7 @@ theorem Nat.succ_gt_self (n:Nat) : n++ > n := by
 
 /-- Proposition 2.2.12 (Basic properties of order for natural numbers) / Exercise 2.2.3
 
-(a) (Order is reflexive). Compare with Mathlib's {name}`Nat.le_refl`.-/
+(a) (Order is reflexive). Compare with Mathlib's {name}`Nat.le_refl`. -/
 theorem Nat.ge_refl (a:Nat) : a ≥ a := by
   sorry
 

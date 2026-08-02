@@ -120,7 +120,7 @@ lemma gt_of_lt_lower_integral {f:ℝ → ℝ} {I: BoundedInterval} (hf: BddOn f 
   simp at hY; peel hY; simp_all; tauto
 
 /-- Definition 11.3.4 (Riemann integral)
-As we permit junk values, the simplest definition for the Riemann integral is the upper integral.-/
+As we permit junk values, the simplest definition for the Riemann integral is the upper integral. -/
 noncomputable abbrev integ (f:ℝ → ℝ) (I: BoundedInterval) : ℝ := upper_integral f I
 
 theorem integ_congr {f g:ℝ → ℝ} {I: BoundedInterval} (h: Set.EqOn f g I) :

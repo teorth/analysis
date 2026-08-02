@@ -31,7 +31,7 @@ open Chapter7 Chapter7.Series Finset Function Filter
 
 /-- Definition 8.2.1 (Series on countable sets).  Note that with this definition, functions defined
 on finite sets will not be absolutely convergent; one should use {lit}`AbsConvergent'` instead for such
-cases.-/
+cases. -/
 abbrev AbsConvergent {X:Type} (f: X → ℝ) : Prop := ∃ g: ℕ → X, Bijective g ∧ (f ∘ g: Series).absConverges
 
 theorem AbsConvergent.mk {X: Type} {f:X → ℝ} {g:ℕ → X} (h: Bijective g) (hfg: (f ∘ g:Series).absConverges) : AbsConvergent f := by use g
@@ -434,7 +434,7 @@ theorem Sum'.of_disjoint_union {X:Type} {f:X → ℝ} (hf: AbsConvergent' f) {X�
   sorry
 
 /-- This technical claim, the analogue of {name}`tsum_univ`, is required due to the way Mathlib handles
-    sets.-/
+    sets. -/
 theorem Sum'.of_univ {X:Type} {f:X → ℝ} (hf: AbsConvergent' f) :
   Sum' (fun x: (.univ : Set X) ↦ f x) = Sum' f := by
   sorry

@@ -157,7 +157,7 @@ theorem IntegrableOn.abs {I: BoundedInterval} {f:ℝ → ℝ} (hf: IntegrableOn 
   ext x; obtain h | h := (show f x ≤ 0 ∨ f x ≥ 0 by grind) <;> simp [h]
 
 /-- Theorem 11.4.5 (Products preserve Riemann integrability).
-It is convenient to first establish the non-negative case.-/
+It is convenient to first establish the non-negative case. -/
 theorem integ_of_mul_nonneg {I: BoundedInterval} {f g:ℝ → ℝ} (hf: IntegrableOn f I) (hg: IntegrableOn g I)
   (hf_nonneg: MajorizesOn f 0 I) (hg_nonneg: MajorizesOn g 0 I) :
   IntegrableOn (f * g) I := by
