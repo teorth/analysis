@@ -83,8 +83,10 @@ theorem integ_of_uniform_cts {I: BoundedInterval} {f:ℝ → ℝ} (hf: UniformCo
 theorem integ_of_cts {a b:ℝ} {f:ℝ → ℝ} (hf: ContinuousOn f (Icc a b)) :
   IntegrableOn f (Icc a b) := integ_of_uniform_cts (UniformContinuousOn.of_continuousOn hf)
 
-example : ContinuousOn (fun x:ℝ ↦ 1/x) (Icc 0 1) := by sorry
+/-- Exercise 11.5.1 -/
+example : ¬ ContinuousOn (fun x:ℝ ↦ 1/x) (Icc 0 1) := by sorry
 
+/-- Exercise 11.5.1 -/
 example : ¬ IntegrableOn (fun x:ℝ ↦ 1/x) (Icc 0 1) := by sorry
 
 open PiecewiseConstantOn ConstantOn in
