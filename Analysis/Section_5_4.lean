@@ -329,23 +329,23 @@ theorem Real.floor_exist (x:Real) : ∃! n:ℤ, (n:Real) ≤ x ∧ x < (n:Real)+
 /-- Exercise 5.4.4 -/
 theorem Real.exist_inv_nat_le {x:Real} (hx: x.IsPos) : ∃ N:ℤ, N>0 ∧ (N:Real)⁻¹ < x := by sorry
 
-/-- Exercise 5.4.6 -/
+/-- Exercise 5.4.6 (a) -/
 theorem Real.dist_lt_iff (ε x y:Real) : |x-y| < ε ↔ y-ε < x ∧ x < y+ε := by sorry
 
-/-- Exercise 5.4.6 -/
+/-- Exercise 5.4.6 (b) -/
 theorem Real.dist_le_iff (ε x y:Real) : |x-y| ≤ ε ↔ y-ε ≤ x ∧ x ≤ y+ε := by sorry
 
-/-- Exercise 5.4.7 -/
+/-- Exercise 5.4.7 (a) -/
 theorem Real.le_add_eps_iff (x y:Real) : (∀ ε > 0, x ≤ y+ε) ↔ x ≤ y := by sorry
 
-/-- Exercise 5.4.7 -/
+/-- Exercise 5.4.7 (b) -/
 theorem Real.dist_le_eps_iff (x y:Real) : (∀ ε > 0, |x-y| ≤ ε) ↔ x = y := by sorry
 
-/-- Exercise 5.4.8 -/
+/-- Exercise 5.4.8 (a) -/
 theorem Real.LIM_of_le {x:Real} {a:ℕ → ℚ} (hcauchy: (a:Sequence).IsCauchy) (h: ∀ n, a n ≤ x) :
     LIM a ≤ x := by sorry
 
-/-- Exercise 5.4.8 -/
+/-- Exercise 5.4.8 (b) -/
 theorem Real.LIM_of_ge {x:Real} {a:ℕ → ℚ} (hcauchy: (a:Sequence).IsCauchy) (h: ∀ n, a n ≥ x) :
     LIM a ≥ x := by sorry
 
