@@ -87,7 +87,7 @@ end Chapter6
 abbrev Real.Steady (ε: ℝ) (a: Chapter6.Sequence) : Prop :=
   ∀ n ≥ a.m, ∀ m ≥ a.m, ε.Close (a n) (a m)
 
-/-- Definition 6.1.3 (ε-steady) -/
+/-- Definition 6.1.3 (ε-steady, def) -/
 lemma Real.steady_def (ε: ℝ) (a: Chapter6.Sequence) :
   ε.Steady a ↔ ∀ n ≥ a.m, ∀ m ≥ a.m, ε.Close (a n) (a m) := by rfl
 
@@ -95,7 +95,7 @@ lemma Real.steady_def (ε: ℝ) (a: Chapter6.Sequence) :
 abbrev Real.EventuallySteady (ε: ℝ) (a: Chapter6.Sequence) : Prop :=
   ∃ N ≥ a.m, ε.Steady (a.from N)
 
-/-- Definition 6.1.3 (Eventually ε-steady) -/
+/-- Definition 6.1.3 (Eventually ε-steady, def) -/
 lemma Real.eventuallySteady_def (ε: ℝ) (a: Chapter6.Sequence) :
   ε.EventuallySteady a ↔ ∃ N, (N ≥ a.m) ∧ ε.Steady (a.from N) := by rfl
 
@@ -113,7 +113,7 @@ namespace Chapter6
 /-- Definition 6.1.3 (Cauchy sequence) -/
 abbrev Sequence.IsCauchy (a:Sequence) : Prop := ∀ ε > (0:ℝ), ε.EventuallySteady a
 
-/-- Definition 6.1.3 (Cauchy sequence) -/
+/-- Definition 6.1.3 (Cauchy sequence, def) -/
 lemma Sequence.isCauchy_def (a:Sequence) :
   a.IsCauchy ↔ ∀ ε > (0:ℝ), ε.EventuallySteady a := by rfl
 
@@ -191,18 +191,18 @@ theorem Sequence.isCauchy_of_rat (a: Chapter5.Sequence) : a.IsCauchy ↔ (a:Sequ
 
 end Chapter6
 
-/-- Definition 6.1.5 -/
+/-- Definition 6.1.5 (CloseSeq) -/
 abbrev Real.CloseSeq (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) : Prop := ∀ n ≥ a.m, ε.Close (a n) L
 
-/-- Definition 6.1.5 -/
+/-- Definition 6.1.5 (CloseSeq, def) -/
 theorem Real.closeSeq_def (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) :
   ε.CloseSeq a L ↔ ∀ n ≥ a.m, dist (a n) L ≤ ε := by rfl
 
-/-- Definition 6.1.5 -/
+/-- Definition 6.1.5 (EventuallyClose) -/
 abbrev Real.EventuallyClose (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) : Prop :=
   ∃ N ≥ a.m, ε.CloseSeq (a.from N) L
 
-/-- Definition 6.1.5 -/
+/-- Definition 6.1.5 (EventuallyClose, def) -/
 theorem Real.eventuallyClose_def (ε: ℝ) (a: Chapter6.Sequence) (L:ℝ) :
   ε.EventuallyClose a L ↔ ∃ N, (N ≥ a.m) ∧ ε.CloseSeq (a.from N) L := by rfl
 
@@ -233,7 +233,7 @@ theorem Sequence.tendsTo_iff (a:Sequence) (L:ℝ) :
 
 noncomputable def seq_6_1_6 : Sequence := (fun (n:ℕ) ↦ 1-(10:ℝ)^(-(n:ℤ)-1):Sequence)
 
-/-- Examples 6.1.6 -/
+/-- Examples 6.1.6 (0.1 close) -/
 example : (0.1:ℝ).CloseSeq seq_6_1_6 1 := by
   rw [seq_6_1_6, Real.CloseSeq.coe]
   intro n
@@ -246,14 +246,14 @@ example : (0.1:ℝ).CloseSeq seq_6_1_6 1 := by
   gcongr <;> grind
 
 
-/-- Examples 6.1.6 -/
+/-- Examples 6.1.6 (0.01 not close) -/
 example : ¬ (0.01:ℝ).CloseSeq seq_6_1_6 1 := by
   intro h; specialize h 0 (by positivity); simp [seq_6_1_6] at h; norm_num at h
 
-/-- Examples 6.1.6 -/
+/-- Examples 6.1.6 (0.01 eventually close) -/
 example : (0.01:ℝ).EventuallyClose seq_6_1_6 1 := by sorry
 
-/-- Examples 6.1.6 -/
+/-- Examples 6.1.6 (tends to 1) -/
 example : seq_6_1_6.TendsTo 1 := by sorry
 
 /-- Proposition 6.1.7 (Uniqueness of limits) -/
@@ -279,16 +279,16 @@ theorem Sequence.tendsTo_unique (a:Sequence) {L L':ℝ} (h:L ≠ L') :
     _ = 2 * |L-L'|/3 := by grind
   linarith
 
-/-- Definition 6.1.8 -/
+/-- Definition 6.1.8 (Convergent) -/
 abbrev Sequence.Convergent (a:Sequence) : Prop := ∃ L, a.TendsTo L
 
-/-- Definition 6.1.8 -/
+/-- Definition 6.1.8 (Convergent, def) -/
 theorem Sequence.convergent_def (a:Sequence) : a.Convergent ↔ ∃ L, a.TendsTo L := by rfl
 
-/-- Definition 6.1.8 -/
+/-- Definition 6.1.8 (Divergent) -/
 abbrev Sequence.Divergent (a:Sequence) : Prop := ¬ a.Convergent
 
-/-- Definition 6.1.8 -/
+/-- Definition 6.1.8 (Divergent, def) -/
 theorem Sequence.divergent_def (a:Sequence) : a.Divergent ↔ ¬ a.Convergent := by rfl
 
 open Classical in
@@ -297,11 +297,11 @@ open Classical in
 -/
 noncomputable abbrev lim (a:Sequence) : ℝ := if h: a.Convergent then h.choose else 0
 
-/-- Definition 6.1.8 -/
+/-- Definition 6.1.8 (lim, def) -/
 theorem Sequence.lim_def {a:Sequence} (h: a.Convergent) : a.TendsTo (lim a) := by
   simp [lim, h]; exact h.choose_spec
 
-/-- Definition 6.1.8 -/
+/-- Definition 6.1.8 (lim, characterization) -/
 theorem Sequence.lim_eq {a:Sequence} {L:ℝ} :
 a.TendsTo L ↔ a.Convergent ∧ lim a = L := by
   constructor
@@ -340,31 +340,31 @@ theorem Sequence.lim_harmonic :
 theorem Sequence.IsCauchy.convergent {a:Sequence} (h:a.Convergent) : a.IsCauchy := by
   sorry
 
-/-- Example 6.1.13 -/
+/-- Example 6.1.13 (not eventually steady) -/
 example : ¬ (0.1:ℝ).EventuallySteady ((fun n ↦ (-1:ℝ)^n):Sequence) := by sorry
 
-/-- Example 6.1.13 -/
+/-- Example 6.1.13 (not Cauchy) -/
 example : ¬ ((fun n ↦ (-1:ℝ)^n):Sequence).IsCauchy := by sorry
 
-/-- Example 6.1.13 -/
+/-- Example 6.1.13 (not convergent) -/
 example : ¬ ((fun n ↦ (-1:ℝ)^n):Sequence).Convergent := by sorry
 
 /-- Proposition 6.1.15 / Exercise 6.1.6 (Formal limits are genuine limits) -/
 theorem Sequence.lim_eq_LIM {a:ℕ → ℚ} (h: (a:Chapter5.Sequence).IsCauchy) :
     ((a:Chapter5.Sequence):Sequence).TendsTo (Chapter5.Real.equivR (Chapter5.LIM a)) := by sorry
 
-/-- Definition 6.1.16 -/
+/-- Definition 6.1.16 (BoundedBy) -/
 abbrev Sequence.BoundedBy (a:Sequence) (M:ℝ) : Prop :=
   ∀ n, |a n| ≤ M
 
-/-- Definition 6.1.16 -/
+/-- Definition 6.1.16 (BoundedBy, def) -/
 lemma Sequence.boundedBy_def (a:Sequence) (M:ℝ) :
   a.BoundedBy M ↔ ∀ n, |a n| ≤ M := by rfl
 
-/-- Definition 6.1.16 -/
+/-- Definition 6.1.16 (IsBounded) -/
 abbrev Sequence.IsBounded (a:Sequence) : Prop := ∃ M ≥ 0, a.BoundedBy M
 
-/-- Definition 6.1.16 -/
+/-- Definition 6.1.16 (IsBounded, def) -/
 lemma Sequence.isBounded_def (a:Sequence) :
   a.IsBounded ↔ ∃ M ≥ 0, a.BoundedBy M := by rfl
 
@@ -375,10 +375,10 @@ theorem Sequence.bounded_of_cauchy {a:Sequence} (h: a.IsCauchy) : a.IsBounded :=
 theorem Sequence.bounded_of_convergent {a:Sequence} (h: a.Convergent) : a.IsBounded := by
   sorry
 
-/-- Example 6.1.18 -/
+/-- Example 6.1.18 (not bounded) -/
 example : ¬ ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).IsBounded := by sorry
 
-/-- Example 6.1.18 -/
+/-- Example 6.1.18 (not convergent) -/
 example : ¬ ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).Convergent := by sorry
 
 instance Sequence.inst_add : Add Sequence where
