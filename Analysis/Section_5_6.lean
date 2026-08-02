@@ -248,12 +248,12 @@ theorem Real.ratPow_mul {x y:Real} (hx: x > 0) (hy: y > 0) (q:ℚ) : (x*y)^q = x
 /-- Exercise 5.6.3 -/
 theorem Real.pow_even (x:Real) {n:ℕ} (hn: Even n) : x^n ≥ 0 := by sorry
 
-/-- Exercise 5.6.5 -/
+/-- Exercise 5.6.5 (a) -/
 theorem Real.max_ratPow {x y:Real} (hx: x > 0) (hy: y > 0) {q:ℚ} (hq: q > 0) :
   max (x^q) (y^q) = (max x y)^q := by
   sorry
 
-/-- Exercise 5.6.5 -/
+/-- Exercise 5.6.5 (b) -/
 theorem Real.min_ratPow {x y:Real} (hx: x > 0) (hy: y > 0) {q:ℚ} (hq: q > 0) :
   min (x^q) (y^q) = (min x y)^q := by
   sorry

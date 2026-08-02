@@ -329,23 +329,23 @@ theorem Real.floor_exist (x:Real) : ∃! n:ℤ, (n:Real) ≤ x ∧ x < (n:Real)+
 /-- Exercise 5.4.4 -/
 theorem Real.exist_inv_nat_le {x:Real} (hx: x.IsPos) : ∃ N:ℤ, N>0 ∧ (N:Real)⁻¹ < x := by sorry
 
-/-- Exercise 5.4.6 -/
+/-- Exercise 5.4.6 (a) -/
 theorem Real.dist_lt_iff (ε x y:Real) : |x-y| < ε ↔ y-ε < x ∧ x < y+ε := by sorry
 
-/-- Exercise 5.4.6 -/
+/-- Exercise 5.4.6 (b) -/
 theorem Real.dist_le_iff (ε x y:Real) : |x-y| ≤ ε ↔ y-ε ≤ x ∧ x ≤ y+ε := by sorry
 
-/-- Exercise 5.4.7 -/
+/-- Exercise 5.4.7 (a) -/
 theorem Real.le_add_eps_iff (x y:Real) : (∀ ε > 0, x ≤ y+ε) ↔ x ≤ y := by sorry
 
-/-- Exercise 5.4.7 -/
+/-- Exercise 5.4.7 (b) -/
 theorem Real.dist_le_eps_iff (x y:Real) : (∀ ε > 0, |x-y| ≤ ε) ↔ x = y := by sorry
 
-/-- Exercise 5.4.8 -/
+/-- Exercise 5.4.8 (a) -/
 theorem Real.LIM_of_le {x:Real} {a:ℕ → ℚ} (hcauchy: (a:Sequence).IsCauchy) (h: ∀ n, a n ≤ x) :
     LIM a ≤ x := by sorry
 
-/-- Exercise 5.4.8 -/
+/-- Exercise 5.4.8 (b) -/
 theorem Real.LIM_of_ge {x:Real} {a:ℕ → ℚ} (hcauchy: (a:Sequence).IsCauchy) (h: ∀ n, a n ≥ x) :
     LIM a ≥ x := by sorry
 
@@ -353,43 +353,43 @@ theorem Real.max_eq (x y:Real) : max x y = if x ≥ y then x else y := max_def' 
 
 theorem Real.min_eq (x y:Real) : min x y = if x ≤ y then x else y := rfl
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (a) -/
 theorem Real.neg_max (x y:Real) : max x y = - min (-x) (-y) := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (b) -/
 theorem Real.neg_min (x y:Real) : min x y = - max (-x) (-y) := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (c) -/
 theorem Real.max_comm (x y:Real) : max x y = max y x := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (d) -/
 theorem Real.max_self (x:Real) : max x x = x := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (e) -/
 theorem Real.max_add (x y z:Real) : max (x + z) (y + z) = max x y + z := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (f) -/
 theorem Real.max_mul (x y :Real) {z:Real} (hz: z.IsPos) : max (x * z) (y * z) = max x y * z := by
   sorry
-/- Additional exercise: What happens if z is negative? -/
+/- Additional exercise (after 5.4.9 (f)): What happens if z is negative? -/
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (g) -/
 theorem Real.min_comm (x y:Real) : min x y = min y x := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (h) -/
 theorem Real.min_self (x:Real) : min x x = x := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (i) -/
 theorem Real.min_add (x y z:Real) : min (x + z) (y + z) = min x y + z := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (j) -/
 theorem Real.min_mul (x y :Real) {z:Real} (hz: z.IsPos) : min (x * z) (y * z) = min x y * z := by
   sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (k) -/
 theorem Real.inv_max {x y :Real} (hx:x.IsPos) (hy:y.IsPos) : (max x y)⁻¹ = min x⁻¹ y⁻¹ := by sorry
 
-/-- Exercise 5.4.9 -/
+/-- Exercise 5.4.9 (l) -/
 theorem Real.inv_min {x y :Real} (hx:x.IsPos) (hy:y.IsPos) : (min x y)⁻¹ = max x⁻¹ y⁻¹ := by sorry
 
 /-- Not from textbook: the rationals map as an ordered ring homomorphism into the reals. -/
