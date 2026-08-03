@@ -58,13 +58,13 @@ theorem Sequence.sup_of_bounded {a:Sequence} (h: a.IsBounded) : a.sup.IsFinite :
 
 theorem Sequence.inf_of_bounded {a:Sequence} (h: a.IsBounded) : a.inf.IsFinite := by sorry
 
-/-- Proposition 6.3.6 (Least upper bound property) / Exercise 6.3.2 -/
+/-- Proposition 6.3.6 (a) (Least upper bound property) / Exercise 6.3.2 -/
 theorem Sequence.le_sup {a:Sequence} {n:ℤ} (hn: n ≥ a.m) : a n ≤ a.sup := by sorry
 
-/-- Proposition 6.3.6 (Least upper bound property) / Exercise 6.3.2 -/
+/-- Proposition 6.3.6 (b) (Least upper bound property) / Exercise 6.3.2 -/
 theorem Sequence.sup_le_upper {a:Sequence} {M:EReal} (h: ∀ n ≥ a.m, a n ≤ M) : a.sup ≤ M := by sorry
 
-/-- Proposition 6.3.6 (Least upper bound property) / Exercise 6.3.2 -/
+/-- Proposition 6.3.6 (c) (Least upper bound property) / Exercise 6.3.2 -/
 theorem Sequence.exists_between_lt_sup {a:Sequence} {y:EReal} (h: y < a.sup ) :
     ∃ n ≥ a.m, y < a n ∧ a n ≤ a.sup := by sorry
 
