@@ -78,22 +78,22 @@ lemma Sequence.eval_coe_at_int (n:ℤ) (a: ℕ → ℚ) : (a:Sequence) n = if n 
 @[simp]
 lemma Sequence.n0_coe (a: ℕ → ℚ) : (a:Sequence).n₀ = 0 := by norm_cast
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (a) -/
 abbrev Sequence.squares : Sequence := ((fun n:ℕ ↦ (n^2:ℚ)):Sequence)
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (b) -/
 example (n:ℕ) : Sequence.squares n = n^2 := Sequence.eval_coe _ _
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (c) -/
 abbrev Sequence.three : Sequence := ((fun (_:ℕ) ↦ (3:ℚ)):Sequence)
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (d) -/
 example (n:ℕ) : Sequence.three n = 3 := Sequence.eval_coe _ (fun (_:ℕ) ↦ (3:ℚ))
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (e) -/
 abbrev Sequence.squares_from_three : Sequence := mk' 3 (·^2)
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (f) -/
 example (n:ℤ) (hn: n ≥ 3) : Sequence.squares_from_three n = n^2 := Sequence.eval_mk _ hn
 
 -- need to temporarily leave the `Chapter5` namespace to introduce the following notation
@@ -362,17 +362,17 @@ abbrev Sequence.IsBounded (a:Sequence) : Prop := ∃ M ≥ 0, a.BoundedBy M
 /-- Definition 5.1.12 (bounded sequences) -/
 lemma Sequence.isBounded_def (a:Sequence) : a.IsBounded ↔ ∃ M ≥ 0, a.BoundedBy M := by rfl
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (a) -/
 example : BoundedBy ![1,-2,3,-4] 4 := by intro i; fin_cases i <;> norm_num
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (b) -/
 example : ¬((fun n:ℕ ↦ (-1)^n * (n+1:ℚ)):Sequence).IsBounded := by sorry
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (c) -/
 example : ((fun n:ℕ ↦ (-1:ℚ)^n):Sequence).IsBounded := by
   refine ⟨ 1, by norm_num, ?_ ⟩; intro i; by_cases h: 0 ≤ i <;> simp [h]
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (d) -/
 example : ¬((fun n:ℕ ↦ (-1:ℚ)^n):Sequence).IsCauchy := by
   rw [Sequence.IsCauchy.coe]
   by_contra h; specialize h (1/2 : ℚ) (by norm_num)
