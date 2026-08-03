@@ -172,8 +172,10 @@ theorem Convergesto.id (E:Set ℝ) (x₀:ℝ)
   intro ε hε
   refine ⟨ε, hε, ?_⟩
   intro x hx
-  have hxIoo : x ∈ Set.Ioo (x₀ - ε) (x₀ + ε) := hx.2
-  exact abs_sub_lt_iff.mpr ⟨by linarith [hxIoo.1], by linarith [hxIoo.2]⟩
+  -- Avoid `(fun x ↦ x) x` in the abs goal so linarith sees `x - x₀`.
+  have : |x - x₀| < ε :=
+    abs_lt.mpr ⟨by linarith [hx.2.1], by linarith [hx.2.2]⟩
+  simpa using this
 
 theorem Convergesto.sq (E:Set ℝ) (x₀:ℝ)
   : Convergesto E (fun x ↦ x^2) (x₀^2) x₀ := by
