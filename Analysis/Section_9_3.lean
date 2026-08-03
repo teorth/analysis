@@ -162,11 +162,18 @@ theorem Convergesto.div {E:Set ℝ} {f g: ℝ → ℝ} {L M:ℝ} {x₀:ℝ} (hM:
 
 theorem Convergesto.const (E:Set ℝ) (x₀:ℝ) (c:ℝ)
   : Convergesto E (fun _ ↦ c) c x₀ := by
-  sorry
+  intro ε hε
+  refine ⟨1, by norm_num, ?_⟩
+  intro x hx
+  simpa using hε
 
 theorem Convergesto.id (E:Set ℝ) (x₀:ℝ)
   : Convergesto E (fun x ↦ x) x₀ x₀ := by
-  sorry
+  intro ε hε
+  refine ⟨ε, hε, ?_⟩
+  intro x hx
+  have hxIoo : x ∈ Set.Ioo (x₀ - ε) (x₀ + ε) := hx.2
+  exact abs_sub_lt_iff.mpr ⟨by linarith [hxIoo.1], by linarith [hxIoo.2]⟩
 
 theorem Convergesto.sq (E:Set ℝ) (x₀:ℝ)
   : Convergesto E (fun x ↦ x^2) (x₀^2) x₀ := by

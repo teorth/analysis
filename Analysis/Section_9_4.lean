@@ -30,16 +30,31 @@ theorem ContinuousWithinAt.iff (X:Set ℝ) (f: ℝ → ℝ)  (x₀:ℝ) :
 #check continuousWithinAt_univ
 
 /-- Example 9.4.2. -/
-example (c x₀:ℝ) : ContinuousWithinAt (fun x ↦ c) .univ x₀ := by sorry
+example (c x₀:ℝ) : ContinuousWithinAt (fun x ↦ c) .univ x₀ := by
+  rw [ContinuousWithinAt.iff]
+  exact Convergesto.const _ _ _
 
-example (c x₀:ℝ) : ContinuousAt (fun x ↦ c) x₀ := by sorry
+example (c x₀:ℝ) : ContinuousAt (fun x ↦ c) x₀ := by
+  rw [← continuousWithinAt_univ]
+  exact ContinuousWithinAt.iff _ _ _ |>.mpr (Convergesto.const _ _ _)
 
-example (c:ℝ) : ContinuousOn (fun x:ℝ ↦ c) .univ := by sorry
+example (c:ℝ) : ContinuousOn (fun x:ℝ ↦ c) .univ := by
+  intro x hx
+  rw [ContinuousWithinAt.iff]
+  exact Convergesto.const _ _ _
 
-example (c:ℝ) : Continuous (fun x:ℝ ↦ c) := by sorry
+example (c:ℝ) : Continuous (fun x:ℝ ↦ c) := by
+  rw [continuous_iff_continuousOn_univ]
+  intro x hx
+  rw [ContinuousWithinAt.iff]
+  exact Convergesto.const _ _ _
 
 /-- Example 9.4.3. -/
-example : Continuous (fun x:ℝ ↦ x) := by sorry
+example : Continuous (fun x:ℝ ↦ x) := by
+  rw [continuous_iff_continuousOn_univ]
+  intro x hx
+  rw [ContinuousWithinAt.iff]
+  exact Convergesto.id _ _
 
 /-- Example 9.4.4. -/
 example {x₀:ℝ} (h: x₀ ≠ 0) : ContinuousAt Real.sign x₀ := by sorry
