@@ -78,22 +78,22 @@ lemma Sequence.eval_coe_at_int (n:ℤ) (a: ℕ → ℚ) : (a:Sequence) n = if n 
 @[simp]
 lemma Sequence.n0_coe (a: ℕ → ℚ) : (a:Sequence).n₀ = 0 := by norm_cast
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (a) -/
 abbrev Sequence.squares : Sequence := ((fun n:ℕ ↦ (n^2:ℚ)):Sequence)
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (b) -/
 example (n:ℕ) : Sequence.squares n = n^2 := Sequence.eval_coe _ _
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (c) -/
 abbrev Sequence.three : Sequence := ((fun (_:ℕ) ↦ (3:ℚ)):Sequence)
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (d) -/
 example (n:ℕ) : Sequence.three n = 3 := Sequence.eval_coe _ (fun (_:ℕ) ↦ (3:ℚ))
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (e) -/
 abbrev Sequence.squares_from_three : Sequence := mk' 3 (·^2)
 
-/-- Example 5.1.2 -/
+/-- Example 5.1.2 (f) -/
 example (n:ℤ) (hn: n ≥ 3) : Sequence.squares_from_three n = n^2 := Sequence.eval_mk _ hn
 
 -- need to temporarily leave the `Chapter5` namespace to introduce the following notation
