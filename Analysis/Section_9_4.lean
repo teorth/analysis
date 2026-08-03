@@ -44,14 +44,14 @@ example (c:ℝ) : ContinuousOn (fun x:ℝ ↦ c) .univ := by
   exact Convergesto.const _ _ _
 
 example (c:ℝ) : Continuous (fun x:ℝ ↦ c) := by
-  rw [continuous_iff_continuousOn_univ]
+  rw [← continuousOn_univ]
   intro x hx
   rw [ContinuousWithinAt.iff]
   exact Convergesto.const _ _ _
 
 /-- Example 9.4.3. -/
 example : Continuous (fun x:ℝ ↦ x) := by
-  rw [continuous_iff_continuousOn_univ]
+  rw [← continuousOn_univ]
   intro x hx
   rw [ContinuousWithinAt.iff]
   exact Convergesto.id _ _
