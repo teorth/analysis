@@ -362,17 +362,17 @@ abbrev Sequence.IsBounded (a:Sequence) : Prop := ∃ M ≥ 0, a.BoundedBy M
 /-- Definition 5.1.12 (bounded sequences) -/
 lemma Sequence.isBounded_def (a:Sequence) : a.IsBounded ↔ ∃ M ≥ 0, a.BoundedBy M := by rfl
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (a) -/
 example : BoundedBy ![1,-2,3,-4] 4 := by intro i; fin_cases i <;> norm_num
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (b) -/
 example : ¬((fun n:ℕ ↦ (-1)^n * (n+1:ℚ)):Sequence).IsBounded := by sorry
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (c) -/
 example : ((fun n:ℕ ↦ (-1:ℚ)^n):Sequence).IsBounded := by
   refine ⟨ 1, by norm_num, ?_ ⟩; intro i; by_cases h: 0 ≤ i <;> simp [h]
 
-/-- Example 5.1.13 -/
+/-- Example 5.1.13 (d) -/
 example : ¬((fun n:ℕ ↦ (-1:ℚ)^n):Sequence).IsCauchy := by
   rw [Sequence.IsCauchy.coe]
   by_contra h; specialize h (1/2 : ℚ) (by norm_num)
