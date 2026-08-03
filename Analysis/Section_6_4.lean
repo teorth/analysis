@@ -38,41 +38,41 @@ theorem Sequence.limit_point_def (a:Sequence) (x:ℝ) :
 
 noncomputable abbrev Example_6_4_3 : Sequence := (fun (n:ℕ) ↦ 1 - (10:ℝ)^(-(n:ℤ)-1))
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (a) -/
 example : (0.1:ℝ).Adherent Example_6_4_3 0.8 := by sorry
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (b) -/
 example : ¬ (0.1:ℝ).ContinuallyAdherent Example_6_4_3 0.8 := by sorry
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (c) -/
 example : (0.1:ℝ).ContinuallyAdherent Example_6_4_3 1 := by sorry
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (d) -/
 example : Example_6_4_3.LimitPoint 1 := by sorry
 
 noncomputable abbrev Example_6_4_4 : Sequence :=
   (fun (n:ℕ) ↦ (-1:ℝ)^n * (1 + (10:ℝ)^(-(n:ℤ)-1)))
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (a) -/
 example : (0.1:ℝ).Adherent Example_6_4_4 1 := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (b) -/
 example : (0.1:ℝ).ContinuallyAdherent Example_6_4_4 1 := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (c) -/
 example : Example_6_4_4.LimitPoint 1 := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (d) -/
 example : Example_6_4_4.LimitPoint (-1) := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (e) -/
 example : ¬ Example_6_4_4.LimitPoint 0 := by sorry
 
-/-- Proposition 6.4.5 / Exercise 6.4.1 -/
+/-- Proposition 6.4.5 (a) / Exercise 6.4.1 -/
 theorem Sequence.limit_point_of_limit {a:Sequence} {x:ℝ} (h: a.TendsTo x) : a.LimitPoint x := by
   sorry
 
-/-- Proposition 6.4.5 / Exercise 6.4.1 -/
+/-- Proposition 6.4.5 (b) / Exercise 6.4.1 -/
 theorem Sequence.limit_point_of_limit_unique {a:Sequence} {x y:ℝ} (h: a.TendsTo x) (hy: a.LimitPoint y) : x = y := by
   sorry
 
