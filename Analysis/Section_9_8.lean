@@ -154,8 +154,16 @@ def MonotoneOn.exist_inverse_without_strictmono :
         finv '' (.Icc (f a) (f b)) = .Icc a b ∧
         (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
         ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y) := by
-  -- apply isFalse: e.g. a constant monotone f on [a,b] has no strict inverse
-  sorry
+  -- Constant continuous monotone maps collapse [a,b] to a point, so no left inverse.
+  apply isFalse
+  intro h
+  let f : ℝ → ℝ := fun _ ↦ 0
+  obtain ⟨_, finv, _, _, _, hleft, _⟩ :=
+    h 0 1 (by norm_num) f continuousOn_const fun _ _ _ _ _ ↦ le_rfl
+  have h0 := hleft 0 (by simp)
+  have h1 := hleft 1 (by simp)
+  simp [f] at h0 h1
+  linarith
 
 
 /-
