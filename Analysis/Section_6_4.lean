@@ -38,16 +38,16 @@ theorem Sequence.limit_point_def (a:Sequence) (x:ℝ) :
 
 noncomputable abbrev Example_6_4_3 : Sequence := (fun (n:ℕ) ↦ 1 - (10:ℝ)^(-(n:ℤ)-1))
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (a) -/
 example : (0.1:ℝ).Adherent Example_6_4_3 0.8 := by sorry
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (b) -/
 example : ¬ (0.1:ℝ).ContinuallyAdherent Example_6_4_3 0.8 := by sorry
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (c) -/
 example : (0.1:ℝ).ContinuallyAdherent Example_6_4_3 1 := by sorry
 
-/-- Example 6.4.3 -/
+/-- Example 6.4.3 (d) -/
 example : Example_6_4_3.LimitPoint 1 := by sorry
 
 noncomputable abbrev Example_6_4_4 : Sequence :=
