@@ -68,11 +68,11 @@ example : Example_6_4_4.LimitPoint (-1) := by sorry
 /-- Example 6.4.4 (e) -/
 example : ¬ Example_6_4_4.LimitPoint 0 := by sorry
 
-/-- Proposition 6.4.5 / Exercise 6.4.1 -/
+/-- Proposition 6.4.5 (a) / Exercise 6.4.1 -/
 theorem Sequence.limit_point_of_limit {a:Sequence} {x:ℝ} (h: a.TendsTo x) : a.LimitPoint x := by
   sorry
 
-/-- Proposition 6.4.5 / Exercise 6.4.1 -/
+/-- Proposition 6.4.5 (b) / Exercise 6.4.1 -/
 theorem Sequence.limit_point_of_limit_unique {a:Sequence} {x y:ℝ} (h: a.TendsTo x) (hy: a.LimitPoint y) : x = y := by
   sorry
 
