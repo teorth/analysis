@@ -417,22 +417,22 @@ theorem SetTheory.Set.tuple_trans {I:Set} {X: I → Set} {a b c: ∀ i, X i}
   (hab: tuple a = tuple b) (hbc : tuple b = tuple c) :
     tuple a = tuple c := by sorry
 
-/-- Exercise 3.5.4 -/
+/-- Exercise 3.5.4 (a) -/
 theorem SetTheory.Set.prod_union (A B C:Set) : A ×ˢ (B ∪ C) = (A ×ˢ B) ∪ (A ×ˢ C) := by sorry
 
-/-- Exercise 3.5.4 -/
+/-- Exercise 3.5.4 (b) -/
 theorem SetTheory.Set.prod_inter (A B C:Set) : A ×ˢ (B ∩ C) = (A ×ˢ B) ∩ (A ×ˢ C) := by sorry
 
-/-- Exercise 3.5.4 -/
+/-- Exercise 3.5.4 (c) -/
 theorem SetTheory.Set.prod_diff (A B C:Set) : A ×ˢ (B \ C) = (A ×ˢ B) \ (A ×ˢ C) := by sorry
 
-/-- Exercise 3.5.4 -/
+/-- Exercise 3.5.4 (d) -/
 theorem SetTheory.Set.union_prod (A B C:Set) : (A ∪ B) ×ˢ C = (A ×ˢ C) ∪ (B ×ˢ C) := by sorry
 
-/-- Exercise 3.5.4 -/
+/-- Exercise 3.5.4 (e) -/
 theorem SetTheory.Set.inter_prod (A B C:Set) : (A ∩ B) ×ˢ C = (A ×ˢ C) ∩ (B ×ˢ C) := by sorry
 
-/-- Exercise 3.5.4 -/
+/-- Exercise 3.5.4 (f) -/
 theorem SetTheory.Set.diff_prod (A B C:Set) : (A \ B) ×ˢ C = (A ×ˢ C) \ (B ×ˢ C) := by sorry
 
 /-- Exercise 3.5.5 -/
