@@ -58,13 +58,13 @@ theorem Sequence.sup_of_bounded {a:Sequence} (h: a.IsBounded) : a.sup.IsFinite :
 
 theorem Sequence.inf_of_bounded {a:Sequence} (h: a.IsBounded) : a.inf.IsFinite := by sorry
 
-/-- Proposition 6.3.6 (Least upper bound property) / Exercise 6.3.2 -/
+/-- Proposition 6.3.6 (a) (Least upper bound property) / Exercise 6.3.2 -/
 theorem Sequence.le_sup {a:Sequence} {n:ℤ} (hn: n ≥ a.m) : a n ≤ a.sup := by sorry
 
-/-- Proposition 6.3.6 (Least upper bound property) / Exercise 6.3.2 -/
+/-- Proposition 6.3.6 (b) (Least upper bound property) / Exercise 6.3.2 -/
 theorem Sequence.sup_le_upper {a:Sequence} {M:EReal} (h: ∀ n ≥ a.m, a n ≤ M) : a.sup ≤ M := by sorry
 
-/-- Proposition 6.3.6 (Least upper bound property) / Exercise 6.3.2 -/
+/-- Proposition 6.3.6 (c) (Least upper bound property) / Exercise 6.3.2 -/
 theorem Sequence.exists_between_lt_sup {a:Sequence} {y:EReal} (h: y < a.sup ) :
     ∃ n ≥ a.m, y < a n ∧ a n ≤ a.sup := by sorry
 
@@ -82,11 +82,11 @@ abbrev Sequence.IsMonotone (a:Sequence) : Prop := ∀ n ≥ a.m, a (n+1) ≥ a n
 
 abbrev Sequence.IsAntitone (a:Sequence) : Prop := ∀ n ≥ a.m, a (n+1) ≤ a n
 
-/-- Proposition 6.3.8 / Exercise 6.3.3 -/
+/-- Proposition 6.3.8 (a) / Exercise 6.3.3 -/
 theorem Sequence.convergent_of_monotone {a:Sequence} (hbound: a.BddAbove) (hmono: a.IsMonotone) :
     a.Convergent := by sorry
 
-/-- Proposition 6.3.8 / Exercise 6.3.3 -/
+/-- Proposition 6.3.8 (b) / Exercise 6.3.3 -/
 theorem Sequence.lim_of_monotone {a:Sequence} (hbound: a.BddAbove) (hmono: a.IsMonotone) :
     lim a = a.sup := by sorry
 
@@ -102,19 +102,19 @@ theorem Sequence.convergent_iff_bounded_of_monotone {a:Sequence} (ha: a.IsMonoto
 theorem Sequence.bounded_iff_convergent_of_antitone {a:Sequence} (ha: a.IsAntitone) :
     a.Convergent ↔ a.IsBounded := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (a) -/
 noncomputable abbrev Example_6_3_9 (n:ℕ) := ⌊ Real.pi * 10^n ⌋ / (10:ℝ)^n
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (b) -/
 example : (Example_6_3_9:Sequence).IsMonotone := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (c) -/
 example : (Example_6_3_9:Sequence).BddAboveBy 4 := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (d) -/
 example : (Example_6_3_9:Sequence).Convergent := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (e) -/
 example : lim (Example_6_3_9:Sequence) ≤ 4 := by sorry
 
 /-- Proposition 6.3.1 -/
