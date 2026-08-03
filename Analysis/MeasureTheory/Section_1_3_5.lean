@@ -334,12 +334,10 @@ theorem ComplexAbsolutelyIntegrable.approx_by_simple {d:ℕ} {f: EuclideanSpace'
   -- Re/Im of f - g
   have hfg_re : Complex.re_fun (f - g) = Complex.re_fun f - g_re := by
     ext x; simp only [Complex.re_fun, hg_def, Pi.sub_apply, Pi.add_apply, Pi.smul_apply,
-      smul_eq_mul, Real.complex_fun, Complex.sub_re, Complex.add_re, Complex.ofReal_re,
-      Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im]; ring
+      smul_eq_mul, Real.complex_fun]; push Complex.re; ring
   have hfg_im : Complex.im_fun (f - g) = Complex.im_fun f - g_im := by
     ext x; simp only [Complex.im_fun, hg_def, Pi.sub_apply, Pi.add_apply, Pi.smul_apply,
-      smul_eq_mul, Real.complex_fun, Complex.sub_im, Complex.add_im, Complex.ofReal_im,
-      Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re]; ring
+      smul_eq_mul, Real.complex_fun]; push Complex.im; ring
   -- Pointwise: |f-g| ≤ |Re(f-g)| + |Im(f-g)|
   have h_bound : ∀ x, EReal.abs_fun (f - g) x ≤
       (EReal.abs_fun (Complex.re_fun (f - g)) + EReal.abs_fun (Complex.im_fun (f - g))) x :=
