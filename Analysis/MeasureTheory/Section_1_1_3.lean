@@ -1047,9 +1047,12 @@ lemma riemann_integral_eq_darboux_integral {f:ℝ → ℝ} {I: BoundedInterval} 
 lemma RiemannIntegrableOn.continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I = Icc I.a I.b)
     (hnonempty : I.toSet.Nonempty) (hcont: ContinuousOn f I.toSet) : RiemannIntegrableOn f I := by sorry
 
--- A function that is continuous on each piece of a partition is Riemann integrable on the whole interval.
+/-- Exercise 1.1.23' -/
+-- A bounded function that is continuous on each piece of a partition is Riemann integrable on
+-- the whole interval.  Boundedness cannot be dropped, since unbounded functions are never
+-- Riemann integrable (see RiemannIntegrable.bounded).
 lemma RiemannIntegrableOn.piecewise_continuous {f:ℝ → ℝ} {I: BoundedInterval} (hI: I = Icc I.a I.b)
-    (hnonempty : I.toSet.Nonempty)
+    (hnonempty : I.toSet.Nonempty) (hbound: ∃ M, ∀ x ∈ I, |f x| ≤ M)
     (T: Finset BoundedInterval)  (hdisjoint: (T : Set BoundedInterval).PairwiseDisjoint BoundedInterval.toSet)
     (hcover : I.toSet = ⋃ J ∈ T, J.toSet) (hcont: ∀ J ∈ T, ContinuousOn f J.toSet) :
     RiemannIntegrableOn f I := by sorry
