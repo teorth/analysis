@@ -102,7 +102,9 @@ example : ¬ ContinuousOn (fun x:ℝ ↦ 1/x) (Icc 0 1) := by
   -- `|1/x - 1/0| = |1/x|` and `x ≤ 1/2` ⇒ `1/x ≥ 2`, contradicting `< 1`.
   have hge : (2 : ℝ) ≤ |((1 : ℝ) / x) - ((1 : ℝ) / 0)| := by
     have : (2 : ℝ) ≤ 1 / x := by
-      simpa using (one_div_le_one_div hxpos (by norm_num : (0 : ℝ) < 1 / 2)).mpr hx_le_half
+      -- `0 < 1/2`, `0 < x`, `x ≤ 1/2` ⇒ `1/(1/2) ≤ 1/x`
+      simpa using
+        (one_div_le_one_div (by norm_num : (0 : ℝ) < 1 / 2) hxpos).mp hx_le_half
     simpa [div_zero, abs_of_pos (one_div_pos.mpr hxpos)] using this
   linarith
 
