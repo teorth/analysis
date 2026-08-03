@@ -88,25 +88,22 @@ example : ¬ ContinuousOn (fun x:ℝ ↦ 1/x) (Icc 0 1) := by
   -- restriction cannot be continuous at the left endpoint. (The false
   -- `ContinuousOn` claim was flipped to `¬` in #613; this closes the sorry.)
   intro h
-  have hc := h (by simp : (0 : ℝ) ∈ Icc 0 1)
-  rw [Metric.continuousWithinAt_iff] at hc
-  obtain ⟨δ, hδ, hδclose⟩ := hc 1 (by norm_num)
+  have hc := Metric.continuousWithinAt_iff.mp (h 0 (by simp)) 1 (by norm_num)
+  obtain ⟨δ, hδ, hδclose⟩ := hc
   set x : ℝ := min (δ / 2) (1 / 2)
   have hxpos : 0 < x := lt_min (half_pos hδ) (by norm_num)
   have hx_le_half : x ≤ 1 / 2 := min_le_right _ _
   have hxI : x ∈ Icc 0 1 := ⟨hxpos.le, le_trans hx_le_half (by norm_num)⟩
   have hdist : dist x (0 : ℝ) < δ := by
     have : x ≤ δ / 2 := min_le_left _ _
-    simp [Real.dist_eq, abs_of_pos hxpos]
+    simp [Real.dist_eq, abs_of_nonneg hxpos.le]
     linarith
   have hclose := hδclose hxI hdist
-  -- Goal contradiction: `|1/x - 0| < 1`, but `1/x ≥ 2`.
-  have hge : (2 : ℝ) ≤ |((1 : ℝ) / x) - 0| := by
-    have : (1 : ℝ) / x ≥ 2 := by
-      have := (one_div_le_one_div hxpos (by norm_num : (0 : ℝ) < 1 / 2)).mpr hx_le_half
-      -- `1/(1/2) = 2`
-      simpa using this
-    simpa [abs_of_pos (one_div_pos.mpr hxpos)] using this
+  -- `|1/x - 1/0| = |1/x|` and `x ≤ 1/2` ⇒ `1/x ≥ 2`, contradicting `< 1`.
+  have hge : (2 : ℝ) ≤ |((1 : ℝ) / x) - ((1 : ℝ) / 0)| := by
+    have : (2 : ℝ) ≤ 1 / x := by
+      simpa using (one_div_le_one_div hxpos (by norm_num : (0 : ℝ) < 1 / 2)).mpr hx_le_half
+    simpa [div_zero, abs_of_pos (one_div_pos.mpr hxpos)] using this
   linarith
 
 example : ¬ IntegrableOn (fun x:ℝ ↦ 1/x) (Icc 0 1) := by sorry
