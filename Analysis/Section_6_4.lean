@@ -53,19 +53,19 @@ example : Example_6_4_3.LimitPoint 1 := by sorry
 noncomputable abbrev Example_6_4_4 : Sequence :=
   (fun (n:ℕ) ↦ (-1:ℝ)^n * (1 + (10:ℝ)^(-(n:ℤ)-1)))
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (a) -/
 example : (0.1:ℝ).Adherent Example_6_4_4 1 := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (b) -/
 example : (0.1:ℝ).ContinuallyAdherent Example_6_4_4 1 := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (c) -/
 example : Example_6_4_4.LimitPoint 1 := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (d) -/
 example : Example_6_4_4.LimitPoint (-1) := by sorry
 
-/-- Example 6.4.4 -/
+/-- Example 6.4.4 (e) -/
 example : ¬ Example_6_4_4.LimitPoint 0 := by sorry
 
 /-- Proposition 6.4.5 / Exercise 6.4.1 -/
