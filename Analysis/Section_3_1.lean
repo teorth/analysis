@@ -731,45 +731,45 @@ example : ({3,5,9}:Set).replace (P := fun _ y ↦ y=1) (by aesop) = {1} := by
 /-- Exercise 3.1.5.  One can use the {tactic}`tfae_have` and {tactic}`tfae_finish` tactics here. -/
 theorem SetTheory.Set.subset_tfae (A B:Set) : [A ⊆ B, A ∪ B = B, A ∩ B = A].TFAE := by sorry
 
-/-- Exercise 3.1.7 -/
+/-- Exercise 3.1.7 (a) -/
 theorem SetTheory.Set.inter_subset_left (A B:Set) : A ∩ B ⊆ A := by
   sorry
 
-/-- Exercise 3.1.7 -/
+/-- Exercise 3.1.7 (b) -/
 theorem SetTheory.Set.inter_subset_right (A B:Set) : A ∩ B ⊆ B := by
   sorry
 
-/-- Exercise 3.1.7 -/
+/-- Exercise 3.1.7 (c) -/
 @[simp]
 theorem SetTheory.Set.subset_inter_iff (A B C:Set) : C ⊆ A ∩ B ↔ C ⊆ A ∧ C ⊆ B := by
   sorry
 
-/-- Exercise 3.1.7 -/
+/-- Exercise 3.1.7 (d) -/
 theorem SetTheory.Set.subset_union_left (A B:Set) : A ⊆ A ∪ B := by
   sorry
 
-/-- Exercise 3.1.7 -/
+/-- Exercise 3.1.7 (e) -/
 theorem SetTheory.Set.subset_union_right (A B:Set) : B ⊆ A ∪ B := by
   sorry
 
-/-- Exercise 3.1.7 -/
+/-- Exercise 3.1.7 (f) -/
 @[simp]
 theorem SetTheory.Set.union_subset_iff (A B C:Set) : A ∪ B ⊆ C ↔ A ⊆ C ∧ B ⊆ C := by
   sorry
 
-/-- Exercise 3.1.8 -/
+/-- Exercise 3.1.8 (a) -/
 @[simp]
 theorem SetTheory.Set.inter_union_cancel (A B:Set) : A ∩ (A ∪ B) = A := by sorry
 
-/-- Exercise 3.1.8 -/
+/-- Exercise 3.1.8 (b) -/
 @[simp]
 theorem SetTheory.Set.union_inter_cancel (A B:Set) : A ∪ (A ∩ B) = A := by sorry
 
-/-- Exercise 3.1.9 -/
+/-- Exercise 3.1.9 (a) -/
 theorem SetTheory.Set.partition_left {A B X:Set} (h_union: A ∪ B = X) (h_inter: A ∩ B = ∅) :
     A = X \ B := by sorry
 
-/-- Exercise 3.1.9 -/
+/-- Exercise 3.1.9 (b) -/
 theorem SetTheory.Set.partition_right {A B X:Set} (h_union: A ∪ B = X) (h_inter: A ∩ B = ∅) :
     B = X \ A := by
   sorry
