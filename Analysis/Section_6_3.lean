@@ -102,19 +102,19 @@ theorem Sequence.convergent_iff_bounded_of_monotone {a:Sequence} (ha: a.IsMonoto
 theorem Sequence.bounded_iff_convergent_of_antitone {a:Sequence} (ha: a.IsAntitone) :
     a.Convergent ↔ a.IsBounded := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (a) -/
 noncomputable abbrev Example_6_3_9 (n:ℕ) := ⌊ Real.pi * 10^n ⌋ / (10:ℝ)^n
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (b) -/
 example : (Example_6_3_9:Sequence).IsMonotone := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (c) -/
 example : (Example_6_3_9:Sequence).BddAboveBy 4 := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (d) -/
 example : (Example_6_3_9:Sequence).Convergent := by sorry
 
-/-- Example 6.3.9 -/
+/-- Example 6.3.9 (e) -/
 example : lim (Example_6_3_9:Sequence) ≤ 4 := by sorry
 
 /-- Proposition 6.3.1 -/
