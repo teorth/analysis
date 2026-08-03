@@ -82,11 +82,11 @@ abbrev Sequence.IsMonotone (a:Sequence) : Prop := ∀ n ≥ a.m, a (n+1) ≥ a n
 
 abbrev Sequence.IsAntitone (a:Sequence) : Prop := ∀ n ≥ a.m, a (n+1) ≤ a n
 
-/-- Proposition 6.3.8 / Exercise 6.3.3 -/
+/-- Proposition 6.3.8 (a) / Exercise 6.3.3 -/
 theorem Sequence.convergent_of_monotone {a:Sequence} (hbound: a.BddAbove) (hmono: a.IsMonotone) :
     a.Convergent := by sorry
 
-/-- Proposition 6.3.8 / Exercise 6.3.3 -/
+/-- Proposition 6.3.8 (b) / Exercise 6.3.3 -/
 theorem Sequence.lim_of_monotone {a:Sequence} (hbound: a.BddAbove) (hmono: a.IsMonotone) :
     lim a = a.sup := by sorry
 
