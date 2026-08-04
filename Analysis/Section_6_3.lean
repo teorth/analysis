@@ -26,22 +26,22 @@ noncomputable abbrev Sequence.sup (a:Sequence) : EReal := sSup { x | ∃ n ≥ a
 /-- Definition 6.3.1 -/
 noncomputable abbrev Sequence.inf (a:Sequence) : EReal := sInf { x | ∃ n ≥ a.m, x = a n }
 
-/-- Example 6.3.3 -/
+/-- Example 6.3.3 (a) -/
 example : ((fun (n:ℕ) ↦ (-1:ℝ)^(n+1)):Sequence).sup = 1 := by sorry
 
-/-- Example 6.3.3 -/
+/-- Example 6.3.3 (b) -/
 example : ((fun (n:ℕ) ↦ (-1:ℝ)^(n+1)):Sequence).inf = -1 := by sorry
 
-/-- Example 6.3.4 / Exercise 6.3.1 -/
+/-- Example 6.3.4 / Exercise 6.3.1 (a) -/
 example : ((fun (n:ℕ) ↦ 1/((n:ℝ)+1)):Sequence).sup = 1 := by sorry
 
-/-- Example 6.3.4 / Exercise 6.3.1 -/
+/-- Example 6.3.4 / Exercise 6.3.1 (b) -/
 example : ((fun (n:ℕ) ↦ 1/((n:ℝ)+1)):Sequence).inf = 0 := by sorry
 
-/-- Example 6.3.5 -/
+/-- Example 6.3.5 (a) -/
 example : ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).sup = ⊤ := by sorry
 
-/-- Example 6.3.5 -/
+/-- Example 6.3.5 (b) -/
 example : ((fun (n:ℕ) ↦ (n+1:ℝ)):Sequence).inf = 1 := by sorry
 
 abbrev Sequence.BddAboveBy (a:Sequence) (M:ℝ) : Prop := ∀ n ≥ a.m, a n ≤ M
@@ -68,13 +68,13 @@ theorem Sequence.sup_le_upper {a:Sequence} {M:EReal} (h: ∀ n ≥ a.m, a n ≤ 
 theorem Sequence.exists_between_lt_sup {a:Sequence} {y:EReal} (h: y < a.sup ) :
     ∃ n ≥ a.m, y < a n ∧ a n ≤ a.sup := by sorry
 
-/-- Remark 6.3.7 -/
+/-- Remark 6.3.7 (a) -/
 theorem Sequence.ge_inf {a:Sequence} {n:ℤ} (hn: n ≥ a.m) : a n ≥ a.inf := by sorry
 
-/-- Remark 6.3.7 -/
+/-- Remark 6.3.7 (b) -/
 theorem Sequence.inf_ge_lower {a:Sequence} {M:EReal} (h: ∀ n ≥ a.m, a n ≥ M) : a.inf ≥ M := by sorry
 
-/-- Remark 6.3.7 -/
+/-- Remark 6.3.7 (c) -/
 theorem Sequence.exists_between_gt_inf {a:Sequence} {y:EReal} (h: y > a.inf ) :
     ∃ n ≥ a.m, y > a n ∧ a n ≥ a.inf := by sorry
 
