@@ -203,14 +203,19 @@ noncomputable abbrev f_11_5_5 : ℝ → ℝ := fun x ↦
   else if x = 2 then 7
   else x^3
 
+/-- Example 11.5.5 (a) -/
 example : ¬ ContinuousOn f_11_5_5 (Icc 1 3) := by sorry
 
+/-- Example 11.5.5 (b) -/
 example : ContinuousOn f_11_5_5 (Ico 1 2) := by sorry
 
+/-- Example 11.5.5 (c) -/
 example : ContinuousOn f_11_5_5 (Icc 2 2) := by sorry
 
+/-- Example 11.5.5 (d) -/
 example : ContinuousOn f_11_5_5 (Ioc 2 3) := by sorry
 
+/-- Example 11.5.5 (e) -/
 example : PiecewiseContinuousOn f_11_5_5 (Icc 1 3) := by sorry
 
 /-- Proposition 11.5.6 / Exercise 11.5.1 -/
