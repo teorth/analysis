@@ -222,19 +222,19 @@ theorem Sequence.lim_of_between {a b c:Sequence} {L:ℝ} (hm: b.m = a.m ∧ c.m 
   (hab: ∀ n ≥ a.m, a n ≤ b n ∧ b n ≤ c n) (ha: a.TendsTo L) (hb: c.TendsTo L) :
     b.TendsTo L := by sorry
 
-/-- Example 6.4.15 -/
+/-- Example 6.4.15 (a) -/
 example : ((fun (n:ℕ) ↦ 2/(n+1:ℝ)):Sequence).TendsTo 0 := by
   sorry
 
-/-- Example 6.4.15 -/
+/-- Example 6.4.15 (b) -/
 example : ((fun (n:ℕ) ↦ -2/(n+1:ℝ)):Sequence).TendsTo 0 := by
   sorry
 
-/-- Example 6.4.15 -/
+/-- Example 6.4.15 (c) -/
 example : ((fun (n:ℕ) ↦ (-1)^n/(n+1:ℝ) + 1 / (n+1)^2):Sequence).TendsTo 0 := by
   sorry
 
-/-- Example 6.4.15 -/
+/-- Example 6.4.15 (d) -/
 example : ((fun (n:ℕ) ↦ (2:ℝ)^(-(n:ℤ))):Sequence).TendsTo 0 := by
   sorry
 
