@@ -735,7 +735,7 @@ lemma JordanMeasurable.linear {d:ℕ} (T: EuclideanSpace' d ≃ₗ[ℝ] Euclidea
 /-- Exercise 1.1.11 (2) -/
 -- The measure of a linear image of a Jordan measurable set equals the original measure (up to determinant scaling).
 lemma JordanMeasurable.measure_linear {d:ℕ} (T: EuclideanSpace' d ≃ₗ[ℝ] EuclideanSpace' d) :
-∃ D > 0, ∀ (E: Set (EuclideanSpace' d)) (hE: JordanMeasurable E), (linear T hE).measure = hE.measure := by sorry
+∃ D > 0, ∀ (E: Set (EuclideanSpace' d)) (hE: JordanMeasurable E), (linear T hE).measure = D * hE.measure := by sorry
 
 /-- An invertible matrix defines a linear equivalence on Euclidean space. -/
 noncomputable def Matrix.linear_equiv {d:ℕ} (A: Matrix (Fin d) (Fin d) ℝ) [Invertible A] :
