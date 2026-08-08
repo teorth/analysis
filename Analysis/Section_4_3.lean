@@ -95,7 +95,7 @@ theorem dist_eq_zero_iff (x y:ℚ) : dist x y = 0 ↔ x = y := by
 /-- Proposition 4.3.3(f) / Exercise 4.3.1 -/
 theorem dist_symm (x y:ℚ) : dist x y = dist y x := by sorry
 
-/-- Proposition 4.3.3(f) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(g) / Exercise 4.3.1 -/
 theorem dist_le (x y z:ℚ) : dist x z ≤ dist x y + dist y z := by sorry
 
 /--
