@@ -26,39 +26,39 @@ Users of the companion who have completed the exercises in this section are welc
 namespace Chapter5
 
 /--
-  Definition 5.4.1 (sequences bounded away from zero with sign). Sequences are indexed to start
-  from zero as this is more convenient for Mathlib purposes.
+  Definition 5.4.1 (sequences bounded away from zero with sign) (positive). Sequences are indexed
+  to start from zero as this is more convenient for Mathlib purposes.
 -/
 abbrev BoundedAwayPos (a:ℕ → ℚ) : Prop :=
   ∃ (c:ℚ), c > 0 ∧ ∀ n, a n ≥ c
 
-/-- Definition 5.4.1 (sequences bounded away from zero with sign). -/
+/-- Definition 5.4.1 (sequences bounded away from zero with sign) (negative). -/
 abbrev BoundedAwayNeg (a:ℕ → ℚ) : Prop :=
   ∃ (c:ℚ), c > 0 ∧ ∀ n, a n ≤ -c
 
-/-- Definition 5.4.1 (sequences bounded away from zero with sign). -/
+/-- Definition 5.4.1 (sequences bounded away from zero with sign) (positive, unfolded). -/
 theorem boundedAwayPos_def (a:ℕ → ℚ) : BoundedAwayPos a ↔ ∃ (c:ℚ), c > 0 ∧ ∀ n, a n ≥ c := by
   rfl
 
-/-- Definition 5.4.1 (sequences bounded away from zero with sign). -/
+/-- Definition 5.4.1 (sequences bounded away from zero with sign) (negative, unfolded). -/
 theorem boundedAwayNeg_def (a:ℕ → ℚ) : BoundedAwayNeg a ↔ ∃ (c:ℚ), c > 0 ∧ ∀ n, a n ≤ -c := by
   rfl
 
-/-- Examples 5.4.2 -/
+/-- Examples 5.4.2 (a) -/
 example : BoundedAwayPos (fun n ↦ 1 + 10^(-(n:ℤ)-1)) := ⟨ 1, by norm_num, by intros; simp; positivity ⟩
 
-/-- Examples 5.4.2 -/
+/-- Examples 5.4.2 (b) -/
 example : BoundedAwayNeg (fun n ↦ -1 - 10^(-(n:ℤ)-1)) := ⟨ 1, by norm_num, by intros; simp; positivity ⟩
 
-/-- Examples 5.4.2 -/
+/-- Examples 5.4.2 (c) -/
 example : ¬ BoundedAwayPos (fun n ↦ (-1)^n) := by
   intro ⟨ c, h1, h2 ⟩; specialize h2 1; grind
 
-/-- Examples 5.4.2 -/
+/-- Examples 5.4.2 (d) -/
 example : ¬ BoundedAwayNeg (fun n ↦ (-1)^n) := by
   intro ⟨ c, h1, h2 ⟩; specialize h2 0; grind
 
-/-- Examples 5.4.2 -/
+/-- Examples 5.4.2 (e) -/
 example : BoundedAwayZero (fun n ↦ (-1)^n) := ⟨ 1, by norm_num, by intros; simp ⟩
 
 theorem BoundedAwayZero.boundedAwayPos {a:ℕ → ℚ} (ha: BoundedAwayPos a) : BoundedAwayZero a := by
@@ -82,34 +82,34 @@ theorem Real.isPos_def (x:Real) :
 theorem Real.isNeg_def (x:Real) :
     IsNeg x ↔ ∃ a:ℕ → ℚ, BoundedAwayNeg a ∧ (a:Sequence).IsCauchy ∧ x = LIM a := by rfl
 
-/-- Proposition 5.4.4 (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (a) (basic properties of positive reals) / Exercise 5.4.1 -/
 theorem Real.trichotomous (x:Real) : x = 0 ∨ x.IsPos ∨ x.IsNeg := by sorry
 
-/-- Proposition 5.4.4 (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (b) (basic properties of positive reals) / Exercise 5.4.1 -/
 theorem Real.not_zero_pos (x:Real) : ¬(x = 0 ∧ x.IsPos) := by sorry
 
 theorem Real.nonzero_of_pos {x:Real} (hx: x.IsPos) : x ≠ 0 := by
   have := not_zero_pos x
   simpa [hx] using this
 
-/-- Proposition 5.4.4 (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (c) (basic properties of positive reals) / Exercise 5.4.1 -/
 theorem Real.not_zero_neg (x:Real) : ¬(x = 0 ∧ x.IsNeg) := by sorry
 
 theorem Real.nonzero_of_neg {x:Real} (hx: x.IsNeg) : x ≠ 0 := by
   have := not_zero_neg x
   simpa [hx] using this
 
-/-- Proposition 5.4.4 (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (d) (basic properties of positive reals) / Exercise 5.4.1 -/
 theorem Real.not_pos_neg (x:Real) : ¬(x.IsPos ∧ x.IsNeg) := by sorry
 
-/-- Proposition 5.4.4 (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (e) (basic properties of positive reals) / Exercise 5.4.1 -/
 @[simp]
 theorem Real.neg_iff_pos_of_neg (x:Real) : x.IsNeg ↔ (-x).IsPos := by sorry
 
-/-- Proposition 5.4.4 (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (f) (basic properties of positive reals) / Exercise 5.4.1 -/
 theorem Real.pos_add {x y:Real} (hx: x.IsPos) (hy: y.IsPos) : (x+y).IsPos := by sorry
 
-/-- Proposition 5.4.4 (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (g) (basic properties of positive reals) / Exercise 5.4.1 -/
 theorem Real.pos_mul {x y:Real} (hx: x.IsPos) (hy: y.IsPos) : (x*y).IsPos := by sorry
 
 theorem Real.pos_of_coe (q:ℚ) : (q:Real).IsPos ↔ q > 0 := by sorry
@@ -120,29 +120,29 @@ open Classical in
 /-- Need to use classical logic here because {name}`IsPos` and {name}`IsNeg` are not decidable -/
 noncomputable abbrev Real.abs (x:Real) : Real := if x.IsPos then x else (if x.IsNeg then -x else 0)
 
-/-- Definition 5.4.5 (absolute value) -/
+/-- Definition 5.4.5 (absolute value) (positive case) -/
 @[simp]
 theorem Real.abs_of_pos (x:Real) (hx: x.IsPos) : abs x = x := by
   simp [abs, hx]
 
-/-- Definition 5.4.5 (absolute value) -/
+/-- Definition 5.4.5 (absolute value) (negative case) -/
 @[simp]
 theorem Real.abs_of_neg (x:Real) (hx: x.IsNeg) : abs x = -x := by
   have : ¬x.IsPos := by have := not_pos_neg x; simpa [hx] using this
   simp [abs, hx, this]
 
-/-- Definition 5.4.5 (absolute value) -/
+/-- Definition 5.4.5 (absolute value) (zero case) -/
 @[simp]
 theorem Real.abs_of_zero : abs 0 = 0 := by
   have hpos: ¬(0:Real).IsPos := by have := not_zero_pos 0; simpa using this
   have hneg: ¬(0:Real).IsNeg := by have := not_zero_neg 0; simpa using this
   simp [abs, hpos, hneg]
 
-/-- Definition 5.4.6 (Ordering of the reals) -/
+/-- Definition 5.4.6 (Ordering of the reals) (strict order) -/
 instance Real.instLT : LT Real where
   lt x y := (x-y).IsNeg
 
-/-- Definition 5.4.6 (Ordering of the reals) -/
+/-- Definition 5.4.6 (Ordering of the reals) (order) -/
 instance Real.instLE : LE Real where
   le x y := (x < y) ∨ (x = y)
 
@@ -159,16 +159,16 @@ theorem Real.gt_of_coe (q q':ℚ): q > q' ↔ (q:Real) > (q':Real) := Real.lt_of
 theorem Real.isPos_iff (x:Real) : x.IsPos ↔ x > 0 := by sorry
 theorem Real.isNeg_iff (x:Real) : x.IsNeg ↔ x < 0 := by sorry
 
-/-- Proposition 5.4.7(a) (order trichotomy) / Exercise 5.4.2 -/
+/-- Proposition 5.4.7(a) (order trichotomy) (at least one holds) / Exercise 5.4.2 -/
 theorem Real.trichotomous' (x y:Real) : x > y ∨ x < y ∨ x = y := by sorry
 
-/-- Proposition 5.4.7(a) (order trichotomy) / Exercise 5.4.2 -/
+/-- Proposition 5.4.7(a) (order trichotomy) (> and < exclusive) / Exercise 5.4.2 -/
 theorem Real.not_gt_and_lt (x y:Real) : ¬ (x > y ∧ x < y):= by sorry
 
-/-- Proposition 5.4.7(a) (order trichotomy) / Exercise 5.4.2 -/
+/-- Proposition 5.4.7(a) (order trichotomy) (> and = exclusive) / Exercise 5.4.2 -/
 theorem Real.not_gt_and_eq (x y:Real) : ¬ (x > y ∧ x = y):= by sorry
 
-/-- Proposition 5.4.7(a) (order trichotomy) / Exercise 5.4.2 -/
+/-- Proposition 5.4.7(a) (order trichotomy) (< and = exclusive) / Exercise 5.4.2 -/
 theorem Real.not_lt_and_eq (x y:Real) : ¬ (x < y ∧ x = y):= by sorry
 
 /-- Proposition 5.4.7(b) (order is anti-symmetric) / Exercise 5.4.2 -/
@@ -180,11 +180,11 @@ theorem Real.lt_trans {x y z:Real} (hxy: x < y) (hyz: y < z) : x < z := by sorry
 /-- Proposition 5.4.7(d) (addition preserves order) / Exercise 5.4.2 -/
 theorem Real.add_lt_add_right {x y:Real} (z:Real) (hxy: x < y) : x + z < y + z := by sorry
 
-/-- Proposition 5.4.7(e) (positive multiplication preserves order) / Exercise 5.4.2 -/
+/-- Proposition 5.4.7(e) (positive multiplication preserves order) (strict) / Exercise 5.4.2 -/
 theorem Real.mul_lt_mul_right {x y z:Real} (hxy: x < y) (hz: z.IsPos) : x * z < y * z := by
   rw [antisymm, gt_iff] at hxy ⊢; convert pos_mul hxy hz using 1; ring
 
-/-- Proposition 5.4.7(e) (positive multiplication preserves order) / Exercise 5.4.2 -/
+/-- Proposition 5.4.7(e) (positive multiplication preserves order) (non-strict) / Exercise 5.4.2 -/
 theorem Real.mul_le_mul_left {x y z:Real} (hxy: x ≤ y) (hz: z.IsPos) : z * x ≤ z * y := by sorry
 
 theorem Real.mul_pos_neg {x y:Real} (hx: x.IsPos) (hy: y.IsNeg) : (x * y).IsNeg := by
