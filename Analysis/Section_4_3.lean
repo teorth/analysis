@@ -40,12 +40,13 @@ namespace Section_4_3
 /-- Definition 4.3.1 (Absolute value) -/
 abbrev abs (x:ℚ) : ℚ := if x > 0 then x else (if x < 0 then -x else 0)
 
+/-- Definition 4.3.1 (Absolute value) (positive case) -/
 theorem abs_of_pos {x: ℚ} (hx: 0 < x) : abs x = x := by grind
 
-/-- Definition 4.3.1 (Absolute value) -/
+/-- Definition 4.3.1 (Absolute value) (negative case) -/
 theorem abs_of_neg {x: ℚ} (hx: x < 0) : abs x = -x := by grind
 
-/-- Definition 4.3.1 (Absolute value) -/
+/-- Definition 4.3.1 (Absolute value) (zero case) -/
 theorem abs_of_zero : abs 0 = 0 := rfl
 
 /--
@@ -63,38 +64,38 @@ abbrev dist (x y : ℚ) := |x - y|
 -/
 theorem dist_eq (x y: ℚ) : dist x y = |x-y| := rfl
 
-/-- Proposition 4.3.3(a) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(a) (non-negativity) / Exercise 4.3.1 -/
 theorem abs_nonneg (x: ℚ) : |x| ≥ 0 := by sorry
 
-/-- Proposition 4.3.3(a) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(a) (vanishing iff zero) / Exercise 4.3.1 -/
 theorem abs_eq_zero_iff (x: ℚ) : |x| = 0 ↔ x = 0 := by sorry
 
 /-- Proposition 4.3.3(b) / Exercise 4.3.1 -/
 theorem abs_add (x y:ℚ) : |x + y| ≤ |x| + |y| := by sorry
 
-/-- Proposition 4.3.3(c) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(c) (two-sided bound) / Exercise 4.3.1 -/
 theorem abs_le_iff (x y:ℚ) : -y ≤ x ∧ x ≤ y ↔ |x| ≤ y := by sorry
 
-/-- Proposition 4.3.3(c) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(c) (bounded by own absolute value) / Exercise 4.3.1 -/
 theorem le_abs (x:ℚ) : -|x| ≤ x ∧ x ≤ |x| := by sorry
 
-/-- Proposition 4.3.3(d) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(d) (multiplicativity) / Exercise 4.3.1 -/
 theorem abs_mul (x y:ℚ) : |x * y| = |x| * |y| := by sorry
 
-/-- Proposition 4.3.3(d) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(d) (negation) / Exercise 4.3.1 -/
 theorem abs_neg (x:ℚ) : |-x| = |x| := by sorry
 
-/-- Proposition 4.3.3(e) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(e) (non-negativity) / Exercise 4.3.1 -/
 theorem dist_nonneg (x y:ℚ) : dist x y ≥ 0 := by sorry
 
-/-- Proposition 4.3.3(e) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(e) (vanishing iff equal) / Exercise 4.3.1 -/
 theorem dist_eq_zero_iff (x y:ℚ) : dist x y = 0 ↔ x = y := by
   sorry
 
 /-- Proposition 4.3.3(f) / Exercise 4.3.1 -/
 theorem dist_symm (x y:ℚ) : dist x y = dist y x := by sorry
 
-/-- Proposition 4.3.3(f) / Exercise 4.3.1 -/
+/-- Proposition 4.3.3(g) / Exercise 4.3.1 -/
 theorem dist_le (x y z:ℚ) : dist x z ≤ dist x y + dist y z := by sorry
 
 /--
@@ -104,13 +105,13 @@ theorem dist_le (x y z:ℚ) : dist x z ≤ dist x y + dist y z := by sorry
 -/
 theorem close_iff (ε x y:ℚ): ε.Close x y ↔ |x - y| ≤ ε := by rfl
 
-/-- Examples 4.3.6 -/
+/-- Examples 4.3.6 (a) -/
 example : (0.1:ℚ).Close (0.99:ℚ) (1.01:ℚ) := by sorry
 
-/-- Examples 4.3.6 -/
+/-- Examples 4.3.6 (b) -/
 example : ¬ (0.01:ℚ).Close (0.99:ℚ) (1.01:ℚ) := by sorry
 
-/-- Examples 4.3.6 -/
+/-- Examples 4.3.6 (c) -/
 example (ε : ℚ) (hε : ε > 0) : ε.Close 2 2 := by sorry
 
 theorem close_refl (x:ℚ) : (0:ℚ).Close x x := by sorry
@@ -125,11 +126,11 @@ theorem close_symm (ε x y:ℚ) : ε.Close x y ↔ ε.Close y x := by sorry
 theorem close_trans {ε δ x y z:ℚ} (hxy: ε.Close x y) (hyz: δ.Close y z) :
     (ε + δ).Close x z := by sorry
 
-/-- Proposition 4.3.7(d) / Exercise 4.3.2 -/
+/-- Proposition 4.3.7(d) (addition) / Exercise 4.3.2 -/
 theorem add_close {ε δ x y z w:ℚ} (hxy: ε.Close x y) (hzw: δ.Close z w) :
     (ε + δ).Close (x+z) (y+w) := by sorry
 
-/-- Proposition 4.3.7(d) / Exercise 4.3.2 -/
+/-- Proposition 4.3.7(d) (subtraction) / Exercise 4.3.2 -/
 theorem sub_close {ε δ x y z w:ℚ} (hxy: ε.Close x y) (hzw: δ.Close z w) :
     (ε + δ).Close (x-z) (y-w) := by sorry
 
@@ -173,36 +174,36 @@ theorem close_mul_mul' {ε δ x y z w:ℚ} (hxy: ε.Close x y) (hzw: δ.Close z 
     (ε*|z|+δ*|y|).Close (x * z) (y * w) := by
     sorry
 
-/-- Definition 4.3.9 (exponentiation).  Here we use the Mathlib definition. -/
+/-- Definition 4.3.9 (exponentiation) (base case).  Here we use the Mathlib definition. -/
 lemma pow_zero (x:ℚ) : x^0 = 1 := _root_.pow_zero x
 
 example : (0:ℚ)^0 = 1 := pow_zero 0
 
-/-- Definition 4.3.9 (exponentiation).  Here we use the Mathlib definition. -/
+/-- Definition 4.3.9 (exponentiation) (inductive step).  Here we use the Mathlib definition. -/
 lemma pow_succ (x:ℚ) (n:ℕ) : x^(n+1) = x^n * x := _root_.pow_succ x n
 
-/-- Proposition 4.3.10(a) (Properties of exponentiation, I) / Exercise 4.3.3 -/
+/-- Proposition 4.3.10(a) (Properties of exponentiation, I) (exponent sum) / Exercise 4.3.3 -/
 theorem pow_add (x:ℚ) (m n:ℕ) : x^n * x^m = x^(n+m) := by sorry
 
-/-- Proposition 4.3.10(a) (Properties of exponentiation, I) / Exercise 4.3.3 -/
+/-- Proposition 4.3.10(a) (Properties of exponentiation, I) (exponent product) / Exercise 4.3.3 -/
 theorem pow_mul (x:ℚ) (m n:ℕ) : (x^n)^m = x^(n*m) := by sorry
 
-/-- Proposition 4.3.10(a) (Properties of exponentiation, I) / Exercise 4.3.3 -/
+/-- Proposition 4.3.10(a) (Properties of exponentiation, I) (product base) / Exercise 4.3.3 -/
 theorem mul_pow (x y:ℚ) (n:ℕ) : (x*y)^n = x^n * y^n := by sorry
 
 /-- Proposition 4.3.10(b) (Properties of exponentiation, I) / Exercise 4.3.3 -/
 theorem pow_eq_zero (x:ℚ) (n:ℕ) (hn : 0 < n) : x^n = 0 ↔ x = 0 := by sorry
 
-/-- Proposition 4.3.10(c) (Properties of exponentiation, I) / Exercise 4.3.3 -/
+/-- Proposition 4.3.10(c) (Properties of exponentiation, I) (non-negativity) / Exercise 4.3.3 -/
 theorem pow_nonneg {x:ℚ} (n:ℕ) (hx: x ≥ 0) : x^n ≥ 0 := by sorry
 
-/-- Proposition 4.3.10(c) (Properties of exponentiation, I) / Exercise 4.3.3 -/
+/-- Proposition 4.3.10(c) (Properties of exponentiation, I) (positivity) / Exercise 4.3.3 -/
 theorem pow_pos {x:ℚ} (n:ℕ) (hx: x > 0) : x^n > 0 := by sorry
 
-/-- Proposition 4.3.10(c) (Properties of exponentiation, I) / Exercise 4.3.3 -/
+/-- Proposition 4.3.10(c) (Properties of exponentiation, I) (monotonicity) / Exercise 4.3.3 -/
 theorem pow_ge_pow (x y:ℚ) (n:ℕ) (hxy: x ≥ y) (hy: y ≥ 0) : x^n ≥ y^n := by sorry
 
-/-- Proposition 4.3.10(c) (Properties of exponentiation, I) / Exercise 4.3.3 -/
+/-- Proposition 4.3.10(c) (Properties of exponentiation, I) (strict inequality) / Exercise 4.3.3 -/
 theorem pow_gt_pow (x y:ℚ) (n:ℕ) (hxy: x > y) (hy: y ≥ 0) (hn: n > 0) : x^n > y^n := by sorry
 
 /-- Proposition 4.3.10(d) (Properties of exponentiation, I) / Exercise 4.3.3 -/
@@ -220,19 +221,19 @@ example (x:ℚ): x^(-3:ℤ) = 1/(x*x*x) := by convert zpow_neg x 3; ring
 
 theorem pow_eq_zpow (x:ℚ) (n:ℕ): x^(n:ℤ) = x^n := zpow_natCast x n
 
-/-- Proposition 4.3.12(a) (Properties of exponentiation, II) / Exercise 4.3.4 -/
+/-- Proposition 4.3.12(a) (Properties of exponentiation, II) (exponent sum) / Exercise 4.3.4 -/
 theorem zpow_add (x:ℚ) (n m:ℤ) (hx: x ≠ 0): x^n * x^m = x^(n+m) := by sorry
 
-/-- Proposition 4.3.12(a) (Properties of exponentiation, II) / Exercise 4.3.4 -/
+/-- Proposition 4.3.12(a) (Properties of exponentiation, II) (exponent product) / Exercise 4.3.4 -/
 theorem zpow_mul (x:ℚ) (n m:ℤ) : (x^n)^m = x^(n*m) := by sorry
 
-/-- Proposition 4.3.12(a) (Properties of exponentiation, II) / Exercise 4.3.4 -/
+/-- Proposition 4.3.12(a) (Properties of exponentiation, II) (product base) / Exercise 4.3.4 -/
 theorem mul_zpow (x y:ℚ) (n:ℤ) : (x*y)^n = x^n * y^n := by sorry
 
-/-- Proposition 4.3.12(b) (Properties of exponentiation, II) / Exercise 4.3.4 -/
+/-- Proposition 4.3.12(b) (Properties of exponentiation, II) (positivity) / Exercise 4.3.4 -/
 theorem zpow_pos {x:ℚ} (n:ℤ) (hx: x > 0) : x^n > 0 := by sorry
 
-/-- Proposition 4.3.12(b) (Properties of exponentiation, II) / Exercise 4.3.4 -/
+/-- Proposition 4.3.12(b) (Properties of exponentiation, II) (monotonicity) / Exercise 4.3.4 -/
 theorem zpow_ge_zpow {x y:ℚ} {n:ℤ} (hxy: x ≥ y) (hy: y > 0) (hn: n > 0): x^n ≥ y^n := by sorry
 
 theorem zpow_ge_zpow_ofneg {x y:ℚ} {n:ℤ} (hxy: x ≥ y) (hy: y > 0) (hn: n < 0) : x^n ≤ y^n := by
