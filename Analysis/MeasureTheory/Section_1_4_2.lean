@@ -158,7 +158,7 @@ open Ordinal in
 def ConcreteSigmaAlgebra.generated_by_eq {X:Type*} (F: Set (Set X)) :
   (ConcreteSigmaAlgebra.generated_by F).measurableSets =
   ⋃ α < ω₁,
-  Ordinal.limitRecOn (motive := fun _ ↦ Set (Set X)) α F (fun n G ↦ { E: Set X | (∃ S: Set G, Countable S ∧ E = ⋃ (H:S), H) ∨ (∃ S: Set G, Countable S ∧ E = (⋃ (H:S), H))ᶜ }) (fun α _ G ↦ ⋃ (β : Ordinal) (h : β < α), G β h) := by sorry
+  Ordinal.limitRecOn (motive := fun _ ↦ Set (Set X)) α F (fun n G ↦ { E: Set X | (∃ S: Set G, Countable S ∧ E = ⋃ (H:S), H) ∨ (∃ S: Set G, Countable S ∧ E = (⋃ (H:S), H)ᶜ) }) (fun α _ G ↦ ⋃ (β : Ordinal) (h : β < α), G β h) := by sorry
 
 open Cardinal in
 /-- Exercise 1.4.16 -/
