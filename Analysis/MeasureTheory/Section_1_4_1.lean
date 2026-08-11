@@ -161,7 +161,7 @@ def IsPartition.finer_than {I J X:Type*} {parts_I: I → Set X} {parts_J: J → 
 def IsPartition.mono {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
   (hI: IsPartition parts_I) (hJ: IsPartition parts_J)
   (h_finer: hI.finer_than hJ) :
-  hI.to_ConcreteBooleanAlgebra ≤ hJ.to_ConcreteBooleanAlgebra :=
+  hI.to_ConcreteBooleanAlgebra ≥ hJ.to_ConcreteBooleanAlgebra :=
   by sorry
 
 def IsPartition.remove_empty {I X:Type*} {parts: I → Set X} (h_part: IsPartition parts) : IsPartition (fun (i:{i:I // parts i ≠ ∅}) ↦ parts i.val) :=
