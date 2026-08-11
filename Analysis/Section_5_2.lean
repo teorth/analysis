@@ -36,14 +36,14 @@ namespace Chapter5
 lemma Rat.closeSeq_def (ε: ℚ) (a b: Sequence) :
     ε.CloseSeq a b ↔ ∀ n, n ≥ a.n₀ → n ≥ b.n₀ → ε.Close (a n) (b n) := by rfl
 
-/-- Example 5.2.2 -/
+/-- Example 5.2.2 (a) -/
 example : (0.1:ℚ).CloseSeq ((fun n:ℕ ↦ ((-1)^n:ℚ)):Sequence)
 ((fun n:ℕ ↦ ((1.1:ℚ) * (-1)^n)):Sequence) := by sorry
 
-/-- Example 5.2.2 -/
+/-- Example 5.2.2 (b) -/
 example : ¬ (0.1:ℚ).Steady ((fun n:ℕ ↦ ((-1)^n:ℚ)):Sequence) := by sorry
 
-/-- Example 5.2.2 -/
+/-- Example 5.2.2 (c) -/
 example : ¬ (0.1:ℚ).Steady ((fun n:ℕ ↦ ((1.1:ℚ) * (-1)^n)):Sequence) := by sorry
 
 /-- Definition 5.2.3 (Eventually ε-close sequences) -/
