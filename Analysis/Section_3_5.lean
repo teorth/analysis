@@ -199,7 +199,7 @@ noncomputable abbrev SetTheory.Set.prod_associator (X Y Z:Set) : (X ×ˢ Y) ×ˢ
   right_inv _ := by simp
 
 /--
-  Example 3.5.10. I suspect most of the equivalences will require classical reasoning and only be
+  Example 3.5.10 (a). I suspect most of the equivalences will require classical reasoning and only be
   defined non-computably, but would be happy to learn of counterexamples.
 -/
 noncomputable abbrev SetTheory.Set.singleton_iProd_equiv (i:Object) (X:Set) :
@@ -209,14 +209,14 @@ noncomputable abbrev SetTheory.Set.singleton_iProd_equiv (i:Object) (X:Set) :
   left_inv := sorry
   right_inv := sorry
 
-/-- Example 3.5.10 -/
+/-- Example 3.5.10 (b) -/
 abbrev SetTheory.Set.empty_iProd_equiv (X: (∅:Set) → Set) : iProd X ≃ Unit where
   toFun := sorry
   invFun := sorry
   left_inv := sorry
   right_inv := sorry
 
-/-- Example 3.5.10 -/
+/-- Example 3.5.10 (c) -/
 noncomputable abbrev SetTheory.Set.iProd_of_const_equiv (I:Set) (X: Set) :
     iProd (fun _:I ↦ X) ≃ (I → X) where
   toFun := sorry
@@ -224,7 +224,7 @@ noncomputable abbrev SetTheory.Set.iProd_of_const_equiv (I:Set) (X: Set) :
   left_inv := sorry
   right_inv := sorry
 
-/-- Example 3.5.10 -/
+/-- Example 3.5.10 (d) -/
 noncomputable abbrev SetTheory.Set.iProd_equiv_prod (X: ({0,1}:Set) → Set) :
     iProd X ≃ (X ⟨ 0, by simp ⟩) ×ˢ (X ⟨ 1, by simp ⟩) where
   toFun := sorry
@@ -232,7 +232,7 @@ noncomputable abbrev SetTheory.Set.iProd_equiv_prod (X: ({0,1}:Set) → Set) :
   left_inv := sorry
   right_inv := sorry
 
-/-- Example 3.5.10 -/
+/-- Example 3.5.10 (e) -/
 noncomputable abbrev SetTheory.Set.iProd_equiv_prod_triple (X: ({0,1,2}:Set) → Set) :
     iProd X ≃ (X ⟨ 0, by simp ⟩) ×ˢ (X ⟨ 1, by simp ⟩) ×ˢ (X ⟨ 2, by simp ⟩) where
   toFun := sorry
