@@ -185,13 +185,13 @@ theorem Convergesto.restrict {X Y:Set ℝ} {f: ℝ → ℝ} {L:ℝ} {x₀:ℝ} (
 
 theorem Real.sign_def (x:ℝ) : Real.sign x = if x < 0 then -1 else if x > 0 then 1 else 0 := rfl
 
-/-- Example 9.3.16 -/
+/-- Example 9.3.16 (a) -/
 theorem Convergesto.sign_right : Convergesto (.Ioi 0) Real.sign 1 0 := by sorry
 
-/-- Example 9.3.16 -/
+/-- Example 9.3.16 (b) -/
 theorem Convergesto.sign_left : Convergesto (.Iio 0) Real.sign (-1) 0 := by sorry
 
-/-- Example 9.3.16 -/
+/-- Example 9.3.16 (c) -/
 theorem Convergesto.sign_all : ¬ ∃ L, Convergesto (.univ) Real.sign L 0 := by sorry
 
 noncomputable abbrev f_9_3_17 : ℝ → ℝ := fun x ↦ if x = 0 then 1 else 0
