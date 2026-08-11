@@ -3283,18 +3283,18 @@ theorem UnsignedSimpleFunction.iff' {d:ℕ} {f: EuclideanSpace' d → EReal} (hf
 
 /-- Exercise 1.3.8(iii) -/
 theorem RealMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f)
-    (hg : ∃ M : ℝ, ∀ x, |g x| ≤ M) (heq: AlmostEverywhereEqual f g) : RealMeasurable g := by sorry
+    (heq: AlmostEverywhereEqual f g) : RealMeasurable g := by sorry
 
 theorem ComplexMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f)
-    (hg : ∃ M : ℝ, ∀ x, ‖g x‖ ≤ M) (heq: AlmostEverywhereEqual f g) : ComplexMeasurable g := by sorry
+    (heq: AlmostEverywhereEqual f g) : ComplexMeasurable g := by sorry
 
 /-- Exercise 1.3.8(iv) -/
 theorem RealMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → ℝ} (g: ℕ → EuclideanSpace' d → ℝ)
-    (hf : ∀ n, RealMeasurable (g n)) (hfn : ∃ M : ℝ, ∀ x, |f x| ≤ M)
+    (hf : ∀ n, RealMeasurable (g n))
     (heq: PointwiseAeConvergesTo g f) : RealMeasurable f := by sorry
 
 theorem ComplexMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → ℂ} (g: ℕ → EuclideanSpace' d → ℂ)
-    (hf : ∀ n, ComplexMeasurable (g n)) (hfn : ∃ M : ℝ, ∀ x, ‖f x‖ ≤ M)
+    (hf : ∀ n, ComplexMeasurable (g n))
     (heq: PointwiseAeConvergesTo g f) : ComplexMeasurable f := by sorry
 
 /-- Exercise 1.3.8(v) -/
