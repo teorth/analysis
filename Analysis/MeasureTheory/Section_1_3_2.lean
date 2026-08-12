@@ -3279,7 +3279,9 @@ theorem Continuous.RealMeasurable {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: Co
 theorem Continuous.ComplexMeasurable {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: Continuous f) : ComplexMeasurable f := by sorry
 
 /-- Exercise 1.3.8(ii) -/
-theorem UnsignedSimpleFunction.iff' {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Unsigned f) : UnsignedSimpleFunction f ↔ UnsignedMeasurable f ∧ Finite (f '' Set.univ) := by sorry
+theorem RealSimpleFunction.iff {d:ℕ} {f: EuclideanSpace' d → ℝ} : RealSimpleFunction f ↔ RealMeasurable f ∧ Finite (f '' Set.univ) := by sorry
+
+theorem ComplexSimpleFunction.iff {d:ℕ} {f: EuclideanSpace' d → ℂ} : ComplexSimpleFunction f ↔ ComplexMeasurable f ∧ Finite (f '' Set.univ) := by sorry
 
 /-- Exercise 1.3.8(iii) -/
 theorem RealMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f)
