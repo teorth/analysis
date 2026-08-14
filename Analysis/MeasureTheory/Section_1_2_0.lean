@@ -583,7 +583,10 @@ example : ∃ f: ℕ → ℝ → ℝ, ∃ F: ℝ → ℝ, ∃ M, ∀ n, ∀ x �
 
 /-- Exercise 1.2.2' -/
 -- Determine whether uniform convergence of uniformly bounded Riemann integrable functions preserves Riemann integrability (true or false).
-def Ex_1_2_2b : Decidable ( ∀ f: ℕ → ℝ → ℝ, ∀ F: ℝ → ℝ, (∃ M, ∀ n, ∀ x ∈ Set.Icc 0 1, |f n x| ≤ M) → (∀ x ∈ Set.Icc 0 1, TendstoUniformly f F Filter.atTop) → (∀ n, RiemannIntegrableOn (f n) (Icc 0 1)) → RiemannIntegrableOn F (Icc 0 1) ) := by
+def Ex_1_2_2b : Decidable ( ∀ f: ℕ → ℝ → ℝ, ∀ F: ℝ → ℝ,
+    (∃ M, ∀ n, ∀ x ∈ Set.Icc 0 1, |f n x| ≤ M) →
+    TendstoUniformlyOn f F Filter.atTop (Set.Icc 0 1) →
+    (∀ n, RiemannIntegrableOn (f n) (Icc 0 1)) → RiemannIntegrableOn F (Icc 0 1) ) := by
   -- the first line of this construction should be either `apply isTrue` or `apply isFalse`, depending on whether you believe the given statement to be true or false.
   sorry
 
