@@ -575,7 +575,8 @@ example :
 
 /-- Exercise 1.2.2 -/
 -- The pointwise limit of uniformly bounded Riemann integrable functions need not be Riemann integrable.
-example : ∃ f: ℕ → ℝ → ℝ, ∃ F: ℝ → ℝ, ∃ M, ∀ n, ∀ x ∈ Set.Icc 0 1, |f n x| ≤ M ∧
+example : ∃ f: ℕ → ℝ → ℝ, ∃ F: ℝ → ℝ,
+    (∃ M, ∀ n, ∀ x ∈ Set.Icc 0 1, |f n x| ≤ M) ∧
     (∀ x ∈ Set.Icc 0 1, Filter.atTop.Tendsto (fun n ↦ f n x) (nhds (F x))) ∧
     (∀ n, RiemannIntegrableOn (f n) (Icc 0 1)) ∧
     ¬ RiemannIntegrableOn F (Icc 0 1) := by
