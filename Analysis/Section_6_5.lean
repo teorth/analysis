@@ -70,15 +70,15 @@ theorem Sequence.lim_of_power_decay {k:ℕ} :
     · simp
   simp [lim_eq, ha', eq_zero_of_pow_eq_zero hlim]
 
-/-- Lemma 6.5.2 / Exercise 6.5.2 -/
+/-- Lemma 6.5.2 (ratio of absolute value less than one) / Exercise 6.5.2 -/
 theorem Sequence.lim_of_geometric {x:ℝ} (hx: |x| < 1) : ((fun (n:ℕ) ↦ x^n):Sequence).TendsTo 0 := by
   sorry
 
-/-- Lemma 6.5.2 / Exercise 6.5.2 -/
+/-- Lemma 6.5.2 (ratio one) / Exercise 6.5.2 -/
 theorem Sequence.lim_of_geometric' {x:ℝ} (hx: x = 1) : ((fun (n:ℕ) ↦ x^n):Sequence).TendsTo 1 := by
   sorry
 
-/-- Lemma 6.5.2 / Exercise 6.5.2 -/
+/-- Lemma 6.5.2 (ratio minus one or of absolute value greater than one) / Exercise 6.5.2 -/
 theorem Sequence.lim_of_geometric'' {x:ℝ} (hx: x = -1 ∨ |x| > 1) :
     ((fun (n:ℕ) ↦ x^n):Sequence).Divergent := by
   sorry
