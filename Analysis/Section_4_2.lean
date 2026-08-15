@@ -64,11 +64,11 @@ abbrev Rat.formalDiv (a b:ℤ) : Rat :=
 
 infix:100 " // " => Rat.formalDiv
 
-/-- Definition 4.2.1 (Rationals) -/
+/-- Definition 4.2.1 (Rationals, equality) -/
 theorem Rat.eq (a c:ℤ) {b d:ℤ} (hb: b ≠ 0) (hd: d ≠ 0): a // b = c // d ↔ a * d = c * b := by
   simp [formalDiv, hb, hd, Quotient.eq, PreRat.instSetoid]
 
-/-- Definition 4.2.1 (Rationals) -/
+/-- Definition 4.2.1 (Rationals, existence of a representation) -/
 theorem Rat.eq_diff (n:Rat) : ∃ a b, b ≠ 0 ∧ n = a // b := by
   apply Quotient.ind _ n; intro ⟨ a, b, h ⟩
   refine ⟨ a, b, h, ?_ ⟩
@@ -158,7 +158,7 @@ lemma Rat.inv_eq (a:ℤ) {b:ℤ} (hb: b ≠ 0) : (a // b)⁻¹ = b // a := by
 @[simp]
 theorem Rat.inv_zero : (0:Rat)⁻¹ = 0 := rfl
 
-/-- Proposition 4.2.4 (laws of algebra) / Exercise 4.2.3 -/
+/-- Proposition 4.2.4 (laws of algebra, additive group) / Exercise 4.2.3 -/
 instance Rat.addGroup_inst : AddGroup Rat :=
 AddGroup.ofLeftAxioms (by
   -- this proof is written to follow the structure of the original text.
@@ -175,18 +175,18 @@ AddGroup.ofLeftAxioms (by
 )
  (by sorry) (by sorry)
 
-/-- Proposition 4.2.4 (laws of algebra) / Exercise 4.2.3 -/
+/-- Proposition 4.2.4 (laws of algebra, additive commutative group) / Exercise 4.2.3 -/
 instance Rat.instAddCommGroup : AddCommGroup Rat where
   add_comm := by sorry
 
-/-- Proposition 4.2.4 (laws of algebra) / Exercise 4.2.3 -/
+/-- Proposition 4.2.4 (laws of algebra, commutative monoid) / Exercise 4.2.3 -/
 instance Rat.instCommMonoid : CommMonoid Rat where
   mul_comm := by sorry
   mul_assoc := by sorry
   one_mul := by sorry
   mul_one := by sorry
 
-/-- Proposition 4.2.4 (laws of algebra) / Exercise 4.2.3 -/
+/-- Proposition 4.2.4 (laws of algebra, commutative ring) / Exercise 4.2.3 -/
 instance Rat.instCommRing : CommRing Rat where
   left_distrib := by sorry
   right_distrib := by sorry
@@ -219,7 +219,7 @@ instance Rat.instDivInvMonoid : DivInvMonoid Rat where
 
 theorem Rat.div_eq (q r:Rat) : q/r = q * r⁻¹ := by rfl
 
-/-- Proposition 4.2.4 (laws of algebra) / Exercise 4.2.3 -/
+/-- Proposition 4.2.4 (laws of algebra, field) / Exercise 4.2.3 -/
 instance Rat.instField : Field Rat where
   exists_pair_ne := by sorry
   mul_inv_cancel := by sorry
@@ -253,23 +253,23 @@ def Rat.isPos (q:Rat) : Prop := ∃ a b:ℤ, a > 0 ∧ b > 0 ∧ q = a/b
 /-- Definition 4.2.6 (negativity) -/
 def Rat.isNeg (q:Rat) : Prop := ∃ r:Rat, r.isPos ∧ q = -r
 
-/-- Lemma 4.2.7 (trichotomy of rationals) / Exercise 4.2.4 -/
+/-- Lemma 4.2.7 (trichotomy of rationals, trichotomy) / Exercise 4.2.4 -/
 theorem Rat.trichotomous (x:Rat) : x = 0 ∨ x.isPos ∨ x.isNeg := by sorry
 
-/-- Lemma 4.2.7 (trichotomy of rationals) / Exercise 4.2.4 -/
+/-- Lemma 4.2.7 (trichotomy of rationals, zero vs positive) / Exercise 4.2.4 -/
 theorem Rat.not_zero_and_pos (x:Rat) : ¬(x = 0 ∧ x.isPos) := by sorry
 
-/-- Lemma 4.2.7 (trichotomy of rationals) / Exercise 4.2.4 -/
+/-- Lemma 4.2.7 (trichotomy of rationals, zero vs negative) / Exercise 4.2.4 -/
 theorem Rat.not_zero_and_neg (x:Rat) : ¬(x = 0 ∧ x.isNeg) := by sorry
 
-/-- Lemma 4.2.7 (trichotomy of rationals) / Exercise 4.2.4 -/
+/-- Lemma 4.2.7 (trichotomy of rationals, positive vs negative) / Exercise 4.2.4 -/
 theorem Rat.not_pos_and_neg (x:Rat) : ¬(x.isPos ∧ x.isNeg) := by sorry
 
-/-- Definition 4.2.8 (Ordering of the rationals) -/
+/-- Definition 4.2.8 (Ordering of the rationals, strict) -/
 instance Rat.instLT : LT Rat where
   lt x y := (x-y).isNeg
 
-/-- Definition 4.2.8 (Ordering of the rationals) -/
+/-- Definition 4.2.8 (Ordering of the rationals, non-strict) -/
 instance Rat.instLE : LE Rat where
   le x y := (x < y) ∨ (x = y)
 
@@ -279,16 +279,16 @@ theorem Rat.le_iff (x y:Rat) : x ≤ y ↔ (x < y) ∨ (x = y) := by rfl
 theorem Rat.gt_iff (x y:Rat) : x > y ↔ (x-y).isPos := by sorry
 theorem Rat.ge_iff (x y:Rat) : x ≥ y ↔ (x > y) ∨ (x = y) := by sorry
 
-/-- Proposition 4.2.9(a) (order trichotomy) / Exercise 4.2.5 -/
+/-- Proposition 4.2.9(a) (order trichotomy, trichotomy) / Exercise 4.2.5 -/
 theorem Rat.trichotomous' (x y:Rat) : x > y ∨ x < y ∨ x = y := by sorry
 
-/-- Proposition 4.2.9(a) (order trichotomy) / Exercise 4.2.5 -/
+/-- Proposition 4.2.9(a) (order trichotomy, greater vs less) / Exercise 4.2.5 -/
 theorem Rat.not_gt_and_lt (x y:Rat) : ¬ (x > y ∧ x < y):= by sorry
 
-/-- Proposition 4.2.9(a) (order trichotomy) / Exercise 4.2.5 -/
+/-- Proposition 4.2.9(a) (order trichotomy, greater vs equal) / Exercise 4.2.5 -/
 theorem Rat.not_gt_and_eq (x y:Rat) : ¬ (x > y ∧ x = y):= by sorry
 
-/-- Proposition 4.2.9(a) (order trichotomy) / Exercise 4.2.5 -/
+/-- Proposition 4.2.9(a) (order trichotomy, less vs equal) / Exercise 4.2.5 -/
 theorem Rat.not_lt_and_eq (x y:Rat) : ¬ (x < y ∧ x = y):= by sorry
 
 /-- Proposition 4.2.9(b) (order is anti-symmetric) / Exercise 4.2.5 -/
