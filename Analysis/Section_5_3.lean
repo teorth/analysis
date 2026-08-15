@@ -63,11 +63,11 @@ theorem CauchySequence.coe_to_sequence (a: CauchySequence) :
 @[simp]
 theorem CauchySequence.coe_coe {a:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) : mk' ha = a := by rfl
 
-/-- Proposition 5.3.3 / Exercise 5.3.1 -/
+/-- Proposition 5.3.3 (equivalence is transitive) / Exercise 5.3.1 -/
 theorem Sequence.equiv_trans {a b c:ℕ → ℚ} (hab: Equiv a b) (hbc: Equiv b c) :
   Equiv a c := by sorry
 
-/-- Proposition 5.3.3 / Exercise 5.3.1 -/
+/-- Proposition 5.3.3 (equivalence is an equivalence relation) / Exercise 5.3.1 -/
 instance CauchySequence.instSetoid : Setoid CauchySequence where
   r := fun a b ↦ Sequence.Equiv a b
   iseqv := {
@@ -99,7 +99,7 @@ theorem LIM_def {a:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) :
     LIM a = Quotient.mk _ (CauchySequence.mk' ha) := by
   rw [LIM, dif_pos ha]
 
-/-- Definition 5.3.1 (Real numbers) -/
+/-- Definition 5.3.1 (Real numbers, every real is a limit) -/
 theorem Real.eq_lim (x:Real) : ∃ (a:ℕ → ℚ), (a:Sequence).IsCauchy ∧ x = LIM a := by
   apply Quotient.ind _ x; intro a; use (a:ℕ → ℚ)
   observe : ((a:ℕ → ℚ):Sequence) = a.toSequence
@@ -107,7 +107,7 @@ theorem Real.eq_lim (x:Real) : ∃ (a:ℕ → ℚ), (a:Sequence).IsCauchy ∧ x 
   refine ⟨ a.cauchy, ?_ ⟩
   congr; ext n; simp; replace := congr($this n); simp_all
 
-/-- Definition 5.3.1 (Real numbers) -/
+/-- Definition 5.3.1 (Real numbers, equality of limits) -/
 theorem Real.LIM_eq_LIM {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a = LIM b ↔ Sequence.Equiv a b := by
   constructor
@@ -156,7 +156,7 @@ theorem Sequence.add_equiv {a b a' b':ℕ → ℚ} (haa': Equiv a a')
     Equiv (a + b) (a' + b') :=
   equiv_trans (add_equiv_left _ haa') (add_equiv_right _ hbb')
 
-/-- Definition 5.3.4 (Addition of reals) -/
+/-- Definition 5.3.4 (Addition of reals, instance) -/
 noncomputable instance Real.add_inst : Add Real where
   add := fun x y ↦
     Quotient.liftOn₂ x y (fun a b ↦ LIM (a + b)) (by
@@ -167,7 +167,7 @@ noncomputable instance Real.add_inst : Add Real where
       all_goals apply Sequence.IsCauchy.add <;> rw [CauchySequence.coe_to_sequence] <;> convert @CauchySequence.cauchy ?_
       )
 
-/-- Definition 5.3.4 (Addition of reals) -/
+/-- Definition 5.3.4 (Addition of reals, on limits) -/
 theorem Real.LIM_add {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a + LIM b = LIM (a + b) := by
   simp_rw [LIM_def ha, LIM_def hb, LIM_def (Sequence.IsCauchy.add ha hb)]
@@ -256,7 +256,7 @@ theorem Real.neg_LIM (a:ℕ → ℚ) (ha: (a:Sequence).IsCauchy) : -LIM a = LIM 
 theorem Sequence.IsCauchy.neg (a:ℕ → ℚ) (ha: (a:Sequence).IsCauchy) :
     ((-a:ℕ → ℚ):Sequence).IsCauchy := by sorry
 
-/-- Proposition 5.3.11 (laws of algebra) -/
+/-- Proposition 5.3.11 (laws of algebra, additive group) -/
 noncomputable instance Real.addGroup_inst : AddGroup Real :=
   AddGroup.ofLeftAxioms (by sorry) (by sorry) (by sorry)
 
@@ -272,18 +272,18 @@ theorem Real.LIM_sub {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Seque
 /-- {name (full := RatCast.ratCast)}`ratCast` distributes over subtraction -/
 theorem Real.ratCast_sub (a b:ℚ) : (a:Real) - (b:Real) = (a-b:ℚ) := by sorry
 
-/-- Proposition 5.3.11 (laws of algebra) -/
+/-- Proposition 5.3.11 (laws of algebra, additive commutative group) -/
 noncomputable instance Real.instAddCommGroup : AddCommGroup Real where
   add_comm := by sorry
 
-/-- Proposition 5.3.11 (laws of algebra) -/
+/-- Proposition 5.3.11 (laws of algebra, commutative monoid) -/
 noncomputable instance Real.instCommMonoid : CommMonoid Real where
   mul_comm := by sorry
   mul_assoc := by sorry
   one_mul := by sorry
   mul_one := by sorry
 
-/-- Proposition 5.3.11 (laws of algebra) -/
+/-- Proposition 5.3.11 (laws of algebra, commutative ring) -/
 noncomputable instance Real.instCommRing : CommRing Real where
   left_distrib := by sorry
   right_distrib := by sorry
@@ -310,23 +310,23 @@ abbrev BoundedAwayZero (a:ℕ → ℚ) : Prop :=
 theorem bounded_away_zero_def (a:ℕ → ℚ) : BoundedAwayZero a ↔
   ∃ (c:ℚ), c > 0 ∧ ∀ n, |a n| ≥ c := by rfl
 
-/-- Examples 5.3.13 -/
+/-- Examples 5.3.13 (a) -/
 example : BoundedAwayZero (fun n ↦ (-1)^n) := by use 1; simp
 
-/-- Examples 5.3.13 -/
+/-- Examples 5.3.13 (b) -/
 example : ¬ BoundedAwayZero (fun n ↦ 10^(-(n:ℤ)-1)) := by sorry
 
-/-- Examples 5.3.13 -/
+/-- Examples 5.3.13 (c) -/
 example : ¬ BoundedAwayZero (fun n ↦ 1 - 10^(-(n:ℤ))) := by sorry
 
-/-- Examples 5.3.13 -/
+/-- Examples 5.3.13 (d) -/
 example : BoundedAwayZero (fun n ↦ 10^(n+1)) := by
   use 1, by norm_num
   intro n; dsimp
   rw [abs_of_nonneg (by positivity), show (1:ℚ) = 10^0 by norm_num]
   gcongr <;> grind
 
-/-- Examples 5.3.13 -/
+/-- Examples 5.3.13 (e) -/
 example : ¬ ((fun (n:ℕ) ↦ (10:ℚ)^(n+1)):Sequence).IsBounded := by sorry
 
 /-- Lemma 5.3.14 -/
