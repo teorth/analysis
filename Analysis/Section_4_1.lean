@@ -62,7 +62,7 @@ abbrev Int.formalDiff (a b:ℕ)  : Int := Quotient.mk PreInt.instSetoid ⟨ a,b 
 
 infix:100 " —— " => Int.formalDiff
 
-/-- Definition 4.1.1 (Integers) -/
+/-- Definition 4.1.1 (Integers, equality) -/
 theorem Int.eq (a b c d:ℕ): a —— b = c —— d ↔ a + d = c + b :=
   ⟨ Quotient.exact, by intro h; exact Quotient.sound h ⟩
 
@@ -76,7 +76,7 @@ instance Int.decidableEq : DecidableEq Int := by
     exact decEq _ _
   exact Quotient.recOnSubsingleton₂ a b this
 
-/-- Definition 4.1.1 (Integers) -/
+/-- Definition 4.1.1 (Integers, existence of a representation) -/
 theorem Int.eq_diff (n:Int) : ∃ a b, n = a —— b := by apply n.ind _; intro ⟨ a, b ⟩; use a, b
 
 /-- Lemma 4.1.3 (Addition well-defined) -/
@@ -89,7 +89,7 @@ instance Int.instAdd : Add Int where
 /-- Definition 4.1.2 (Definition of addition) -/
 theorem Int.add_eq (a b c d:ℕ) : a —— b + c —— d = (a+c)——(b+d) := Quotient.lift₂_mk _ _ _ _
 
-/-- Lemma 4.1.3 (Multiplication well-defined) -/
+/-- Lemma 4.1.3 (Multiplication well-defined, left argument) -/
 theorem Int.mul_congr_left (a b a' b' c d : ℕ) (h: a —— b = a' —— b') :
     (a*c+b*d) —— (a*d+b*c) = (a'*c+b'*d) —— (a'*d+b'*c) := by
   simp only [eq] at *
@@ -98,7 +98,7 @@ theorem Int.mul_congr_left (a b a' b' c d : ℕ) (h: a —— b = a' —— b') 
     _ = c*(a'+b) + d*(a+b') := by rw [h]
     _ = _ := by ring
 
-/-- Lemma 4.1.3 (Multiplication well-defined) -/
+/-- Lemma 4.1.3 (Multiplication well-defined, right argument) -/
 theorem Int.mul_congr_right (a b c d c' d' : ℕ) (h: c —— d = c' —— d') :
     (a*c+b*d) —— (a*d+b*c) = (a*c'+b*d') —— (a*d'+b*c') := by
   simp only [eq] at *
@@ -107,7 +107,7 @@ theorem Int.mul_congr_right (a b c d c' d' : ℕ) (h: c —— d = c' —— d')
     _ = a*(c'+d) + b*(c+d') := by rw [h]
     _ = _ := by ring
 
-/-- Lemma 4.1.3 (Multiplication well-defined) -/
+/-- Lemma 4.1.3 (Multiplication well-defined, both arguments) -/
 theorem Int.mul_congr {a b c d a' b' c' d' : ℕ} (h1: a —— b = a' —— b') (h2: c —— d = c' —— d') :
   (a*c+b*d) —— (a*d+b*c) = (a'*c'+b'*d') —— (a'*d'+b'*c') := by
   rw [mul_congr_left a b a' b' c d h1, mul_congr_right a' b' c d c' d' h2]
@@ -187,15 +187,15 @@ theorem Int.not_pos_neg (x:Int) : x.IsPos ∧ x.IsNeg → False := by
   rintro ⟨ ⟨ n, _, rfl ⟩, ⟨ m, _, hm ⟩ ⟩; simp_rw [natCast_eq, neg_eq, eq] at hm
   linarith
 
-/-- Proposition 4.1.6 (laws of algebra) / Exercise 4.1.4 -/
+/-- Proposition 4.1.6 (laws of algebra, additive group) / Exercise 4.1.4 -/
 instance Int.instAddGroup : AddGroup Int :=
   AddGroup.ofLeftAxioms (by sorry) (by sorry) (by sorry)
 
-/-- Proposition 4.1.6 (laws of algebra) / Exercise 4.1.4 -/
+/-- Proposition 4.1.6 (laws of algebra, additive commutative group) / Exercise 4.1.4 -/
 instance Int.instAddCommGroup : AddCommGroup Int where
   add_comm := by sorry
 
-/-- Proposition 4.1.6 (laws of algebra) / Exercise 4.1.4 -/
+/-- Proposition 4.1.6 (laws of algebra, commutative monoid) / Exercise 4.1.4 -/
 instance Int.instCommMonoid : CommMonoid Int where
   mul_comm := by sorry
   mul_assoc := by
@@ -208,7 +208,7 @@ instance Int.instCommMonoid : CommMonoid Int where
   one_mul := by sorry
   mul_one := by sorry
 
-/-- Proposition 4.1.6 (laws of algebra) / Exercise 4.1.4 -/
+/-- Proposition 4.1.6 (laws of algebra, commutative ring) / Exercise 4.1.4 -/
 instance Int.instCommRing : CommRing Int where
   left_distrib := by sorry
   right_distrib := by sorry
@@ -226,11 +226,11 @@ theorem Int.mul_eq_zero {a b:Int} (h: a * b = 0) : a = 0 ∨ b = 0 := by sorry
 /-- Corollary 4.1.9 (Cancellation law) / Exercise 4.1.6 -/
 theorem Int.mul_right_cancel₀ (a b c:Int) (h: a*c = b*c) (hc: c ≠ 0) : a = b := by sorry
 
-/-- Definition 4.1.10 (Ordering of the integers) -/
+/-- Definition 4.1.10 (Ordering of the integers, non-strict) -/
 instance Int.instLE : LE Int where
   le n m := ∃ a:ℕ, m = n + a
 
-/-- Definition 4.1.10 (Ordering of the integers) -/
+/-- Definition 4.1.10 (Ordering of the integers, strict) -/
 instance Int.instLT : LT Int where
   lt n m := n ≤ m ∧ n ≠ m
 
@@ -247,25 +247,25 @@ theorem Int.add_lt_add_right {a b:Int} (c:Int) (h: a < b) : a+c < b+c := by sorr
 /-- Lemma 4.1.11(c) (Positive multiplication preserves order) / Exercise 4.1.7 -/
 theorem Int.mul_lt_mul_of_pos_right {a b c:Int} (hab : a < b) (hc: 0 < c) : a*c < b*c := by sorry
 
-/-- Lemma 4.1.11(d) (Negation reverses order) / Exercise 4.1.7 -/
+/-- Lemma 4.1.11(d) (Negation reverses order, strict) / Exercise 4.1.7 -/
 theorem Int.neg_gt_neg {a b:Int} (h: b < a) : -a < -b := by sorry
 
-/-- Lemma 4.1.11(d) (Negation reverses order) / Exercise 4.1.7 -/
+/-- Lemma 4.1.11(d) (Negation reverses order, non-strict) / Exercise 4.1.7 -/
 theorem Int.neg_ge_neg {a b:Int} (h: b ≤ a) : -a ≤ -b := by sorry
 
 /-- Lemma 4.1.11(e) (Order is transitive) / Exercise 4.1.7 -/
 theorem Int.lt_trans {a b c:Int} (hab: a < b) (hbc: b < c) : a < c := by sorry
 
-/-- Lemma 4.1.11(f) (Order trichotomy) / Exercise 4.1.7 -/
+/-- Lemma 4.1.11(f) (Order trichotomy, trichotomy) / Exercise 4.1.7 -/
 theorem Int.trichotomous' (a b:Int) : a > b ∨ a < b ∨ a = b := by sorry
 
-/-- Lemma 4.1.11(f) (Order trichotomy) / Exercise 4.1.7 -/
+/-- Lemma 4.1.11(f) (Order trichotomy, greater vs less) / Exercise 4.1.7 -/
 theorem Int.not_gt_and_lt (a b:Int) : ¬ (a > b ∧ a < b):= by sorry
 
-/-- Lemma 4.1.11(f) (Order trichotomy) / Exercise 4.1.7 -/
+/-- Lemma 4.1.11(f) (Order trichotomy, greater vs equal) / Exercise 4.1.7 -/
 theorem Int.not_gt_and_eq (a b:Int) : ¬ (a > b ∧ a = b):= by sorry
 
-/-- Lemma 4.1.11(f) (Order trichotomy) / Exercise 4.1.7 -/
+/-- Lemma 4.1.11(f) (Order trichotomy, less vs equal) / Exercise 4.1.7 -/
 theorem Int.not_lt_and_eq (a b:Int) : ¬ (a < b ∧ a = b):= by sorry
 
 /-- (Not from textbook) Establish the decidability of this order. -/
