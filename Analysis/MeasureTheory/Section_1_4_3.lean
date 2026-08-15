@@ -17,7 +17,7 @@ class FinitelyAdditiveMeasure {X:Type*} (B: ConcreteBooleanAlgebra X) where
   measure_finite_additive : ∀ E F : Set X, B.measurable E → B.measurable F → Disjoint E F →
     measure (E ∪ F) = measure E + measure F
 
-/-- Example 1.4.21 -/
+/-- Example 1.4.21 (Lebesgue measure) -/
 noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMeasure (LebesgueMeasurable.boolean_algebra d) :=
   {
     measure A := Lebesgue_measure A
@@ -26,7 +26,7 @@ noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMea
     measure_finite_additive := by sorry
   }
 
-/-- Example 1.4.21 -/
+/-- Example 1.4.21 (restriction to a subalgebra) -/
 def FinitelyAdditiveMeasure.restrict_alg {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) {B':ConcreteBooleanAlgebra X} (hBB': B' ≤ B) : FinitelyAdditiveMeasure B' :=
   {
     measure := μ.measure
@@ -35,15 +35,15 @@ def FinitelyAdditiveMeasure.restrict_alg {X:Type*} {B: ConcreteBooleanAlgebra X}
     measure_finite_additive := by sorry
   }
 
-/-- Example 1.4.21 -/
+/-- Example 1.4.21 (Jordan measure) -/
 noncomputable def FinitelyAdditiveMeasure.jordan (d:ℕ) : FinitelyAdditiveMeasure (JordanMeasurable.boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg (LebesgueMeasurable.gt_jordan_boolean_algebra d)
 
-/-- Example 1.4.21 -/
+/-- Example 1.4.21 (null sets) -/
 noncomputable def FinitelyAdditiveMeasure.null (d:ℕ) : FinitelyAdditiveMeasure (IsNull.boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg (IsNull.lt_lebesgue_boolean_algebra d)
 
-/-- Example 1.4.21 -/
+/-- Example 1.4.21 (elementary sets) -/
 noncomputable def FinitelyAdditiveMeasure.elem (d:ℕ) : FinitelyAdditiveMeasure (EuclideanSpace'.elementary_boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg (by sorry)
 
