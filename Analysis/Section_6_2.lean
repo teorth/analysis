@@ -44,29 +44,29 @@ theorem EReal.neg_of_real (x:Real) : -(x:EReal) = (-x:ℝ) := rfl
 #check EReal.neg_top
 #check EReal.neg_bot
 
-/-- Definition 6.2.3 (Ordering of extended reals) -/
+/-- Definition 6.2.3 (Ordering of extended reals, non-strict) -/
 theorem EReal.le_iff (x y:EReal) :
     x ≤ y ↔ (∃ (x' y':Real), x = x' ∧ y = y' ∧ x' ≤ y') ∨ y = ⊤ ∨ x = ⊥ := by
   obtain ⟨ x', rfl ⟩ | rfl | rfl := EReal.def x <;> obtain ⟨ y', rfl ⟩ | rfl | rfl := EReal.def y <;> simp <;> tauto
 
-/-- Definition 6.2.3 (Ordering of extended reals) -/
+/-- Definition 6.2.3 (Ordering of extended reals, strict) -/
 theorem EReal.lt_iff (x y:EReal) : x < y ↔ x ≤ y ∧ x ≠ y := lt_iff_le_and_ne
 
 #check EReal.coe_lt_coe_iff
 
-/-- Examples 6.2.4 -/
+/-- Examples 6.2.4 (a) -/
 example : (3:EReal) ≤ (5:EReal) := by rw [le_iff]; left; use (3:ℝ), (5:ℝ); norm_cast
 
 
-/-- Examples 6.2.4 -/
+/-- Examples 6.2.4 (b) -/
 example : (3:EReal) < ⊤ := by rw [lt_iff]; exact ⟨le_top, real_neq_infty 3⟩
 
 
-/-- Examples 6.2.4 -/
+/-- Examples 6.2.4 (c) -/
 example : (⊥:EReal) < ⊤ := bot_lt_top
 
 
-/-- Examples 6.2.4 -/
+/-- Examples 6.2.4 (d) -/
 example : ¬ (3:EReal) ≤ ⊥ := by
   by_contra h
   simp at h
@@ -95,7 +95,7 @@ theorem EReal.trans {x y z:EReal} (hxy : x ≤ y) (hyz: y ≤ z) : x ≤ z := by
 /-- Proposition 6.2.5(d) / Exercise 6.2.1 -/
 theorem EReal.neg_of_lt {x y:EReal} (hxy : x ≤ y): -y ≤ -x := by sorry
 
-/-- Definition 6.2.6 -/
+/-- Definition 6.2.6 (supremum of a bounded nonempty set) -/
 theorem EReal.sup_of_bounded_nonempty {E: Set ℝ} (hbound: BddAbove E) (hnon: E.Nonempty) :
     sSup ((fun (x:ℝ) ↦ (x:EReal)) '' E) = sSup E := calc
   _ = sSup
@@ -108,7 +108,7 @@ theorem EReal.sup_of_bounded_nonempty {E: Set ℝ} (hbound: BddAbove E) (hnon: E
   _ = ((sSup E : ℝ) : WithTop ℝ) := by congr; symm; exact WithTop.coe_sSup' hbound
   _ = _ := rfl
 
-/-- Definition 6.2.6 -/
+/-- Definition 6.2.6 (supremum of an unbounded nonempty set) -/
 theorem EReal.sup_of_unbounded_nonempty {E: Set ℝ} (hunbound: ¬ BddAbove E) (hnon: E.Nonempty) :
     sSup ((fun (x:ℝ) ↦ (x:EReal)) '' E) = ⊤ := by
   erw [sSup_eq_top]
@@ -118,13 +118,13 @@ theorem EReal.sup_of_unbounded_nonempty {E: Set ℝ} (hunbound: ¬ BddAbove E) (
   . exact absurd hb (lt_irrefl _)
   exact ⟨↑hnon.choose, Set.mem_image_of_mem _ hnon.choose_spec, bot_lt_coe _⟩
 
-/-- Definition 6.2.6 -/
+/-- Definition 6.2.6 (supremum of the empty set) -/
 theorem EReal.sup_of_empty : sSup (∅:Set EReal) = ⊥ := sSup_empty
 
-/-- Definition 6.2.6 -/
+/-- Definition 6.2.6 (supremum of a set containing infinity) -/
 theorem EReal.sup_of_infty_mem {E: Set EReal} (hE: ⊤ ∈ E) : sSup E = ⊤ := csSup_eq_top_of_top_mem hE
 
-/-- Definition 6.2.6 -/
+/-- Definition 6.2.6 (supremum ignores negative infinity) -/
 theorem EReal.sup_of_neg_infty_mem {E: Set EReal} : sSup E = sSup (E \ {⊥}) := (sSup_diff_singleton_bot _).symm
 
 theorem EReal.inf_eq_neg_sup (E: Set EReal) : sInf E = - sSup (-E) := by
