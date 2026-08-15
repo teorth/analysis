@@ -253,14 +253,14 @@ abbrev SetTheory.Set.empty : Set := ∅
 abbrev SetTheory.Set.singleton_empty : Set := {(empty: Object)}
 abbrev SetTheory.Set.pair_empty : Set := {(empty: Object), (singleton_empty: Object)}
 
-/-- Exercise 3.1.2 -/
+/-- Exercise 3.1.2 (empty set is not a singleton) -/
 theorem SetTheory.Set.emptyset_neq_singleton : empty ≠ singleton_empty := by
   sorry
 
-/-- Exercise 3.1.2 -/
+/-- Exercise 3.1.2 (empty set is not a pair) -/
 theorem SetTheory.Set.emptyset_neq_pair : empty ≠ pair_empty := by sorry
 
-/-- Exercise 3.1.2 -/
+/-- Exercise 3.1.2 (singleton is not a pair) -/
 theorem SetTheory.Set.singleton_empty_neq_pair : singleton_empty ≠ pair_empty := by
   sorry
 
@@ -276,15 +276,15 @@ theorem SetTheory.Set.union_congr_left (A A' B:Set) (h: A = A') : A ∪ B = A' �
 -/
 theorem SetTheory.Set.union_congr_right (A B B':Set) (h: B = B') : A ∪ B = A ∪ B' := by sorry
 
-/-- Lemma 3.1.12 (Basic properties of unions) / Exercise 3.1.3 -/
+/-- Lemma 3.1.12 (Basic properties of unions, singletons) / Exercise 3.1.3 -/
 theorem SetTheory.Set.singleton_union_singleton (a b:Object) :
     ({a}:Set) ∪ ({b}:Set) = {a,b} := by
   sorry
 
-/-- Lemma 3.1.12 (Basic properties of unions) / Exercise 3.1.3 -/
+/-- Lemma 3.1.12 (Basic properties of unions, commutativity) / Exercise 3.1.3 -/
 theorem SetTheory.Set.union_comm (A B:Set) : A ∪ B = B ∪ A := by sorry
 
-/-- Lemma 3.1.12 (Basic properties of unions) / Exercise 3.1.3 -/
+/-- Lemma 3.1.12 (Basic properties of unions, associativity) / Exercise 3.1.3 -/
 theorem SetTheory.Set.union_assoc (A B C:Set) : (A ∪ B) ∪ C = A ∪ (B ∪ C) := by
   -- this proof is written to follow the structure of the original text.
   ext x
@@ -347,15 +347,15 @@ theorem SetTheory.Set.ssubset_def (X Y:Set) : X ⊂ Y ↔ (X ⊆ Y ∧ X ≠ Y) 
 /-- Remark 3.1.15 -/
 theorem SetTheory.Set.subset_congr_left {A A' B:Set} (hAA':A = A') (hAB: A ⊆ B) : A' ⊆ B := by sorry
 
-/-- Examples 3.1.16 -/
+/-- Examples 3.1.16 (reflexivity) -/
 @[simp, refl]
 theorem SetTheory.Set.subset_self (A:Set) : A ⊆ A := by sorry
 
-/-- Examples 3.1.16 -/
+/-- Examples 3.1.16 (the empty set is a subset) -/
 @[simp]
 theorem SetTheory.Set.empty_subset (A:Set) : ∅ ⊆ A := by sorry
 
-/-- Proposition 3.1.17 (Partial ordering by set inclusion) -/
+/-- Proposition 3.1.17 (Partial ordering by set inclusion, transitivity) -/
 theorem SetTheory.Set.subset_trans {A B C:Set} (hAB:A ⊆ B) (hBC:B ⊆ C) : A ⊆ C := by
   -- This proof is written to follow the structure of the original text.
   rw [subset_def]
@@ -365,11 +365,11 @@ theorem SetTheory.Set.subset_trans {A B C:Set} (hAB:A ⊆ B) (hBC:B ⊆ C) : A �
   apply hBC x at hx
   assumption
 
-/-- Proposition 3.1.17 (Partial ordering by set inclusion) -/
+/-- Proposition 3.1.17 (Partial ordering by set inclusion, antisymmetry) -/
 theorem SetTheory.Set.subset_antisymm (A B:Set) (hAB:A ⊆ B) (hBA:B ⊆ A) : A = B := by
   sorry
 
-/-- Proposition 3.1.17 (Partial ordering by set inclusion) -/
+/-- Proposition 3.1.17 (Partial ordering by set inclusion, strict transitivity) -/
 theorem SetTheory.Set.ssubset_trans (A B C:Set) (hAB:A ⊂ B) (hBC:B ⊂ C) : A ⊂ C := by
   sorry
 
@@ -425,17 +425,17 @@ lemma SetTheory.Set.subtype_mk_coe {A:Set} {x:Object} (hx:x ∈ A) : A.subtype_m
 
 abbrev SetTheory.Set.specify (A:Set) (P: A → Prop) : Set := SetTheory.specify A P
 
-/-- Axiom 3.6 (axiom of specification) -/
+/-- Axiom 3.6 (axiom of specification, membership) -/
 theorem SetTheory.Set.specification_axiom {A:Set} {P: A → Prop} {x:Object} (h: x ∈ A.specify P) :
     x ∈ A :=
   (SetTheory.specification_axiom A P).1 x h
 
-/-- Axiom 3.6 (axiom of specification) -/
+/-- Axiom 3.6 (axiom of specification, the property holds) -/
 theorem SetTheory.Set.specification_axiom' {A:Set} (P: A → Prop) (x:A) :
     x.val ∈ A.specify P ↔ P x :=
   (SetTheory.specification_axiom A P).2 x
 
-/-- Axiom 3.6 (axiom of specification) -/
+/-- Axiom 3.6 (axiom of specification, the specified set is a subset) -/
 @[simp]
 theorem SetTheory.Set.specification_axiom'' {A:Set} (P: A → Prop) (x:Object) :
     x ∈ A.specify P ↔ ∃ h:x ∈ A, P ⟨ x, h ⟩ := by
@@ -793,15 +793,15 @@ theorem SetTheory.Set.union_eq_partition (A B:Set) : A ∪ B = (A \ B) ∪ (A �
 theorem SetTheory.Set.specification_from_replacement {A:Set} {P: A → Prop} :
     ∃ B, B ⊆ A ∧ ∀ x, x.val ∈ B ↔ P x := by sorry
 
-/-- Exercise 3.1.12. -/
+/-- Exercise 3.1.12 (unions) -/
 theorem SetTheory.Set.subset_union_subset {A B A' B':Set} (hA'A: A' ⊆ A) (hB'B: B' ⊆ B) :
     A' ∪ B' ⊆ A ∪ B := by sorry
 
-/-- Exercise 3.1.12. -/
+/-- Exercise 3.1.12 (intersections) -/
 theorem SetTheory.Set.subset_inter_subset {A B A' B':Set} (hA'A: A' ⊆ A) (hB'B: B' ⊆ B) :
     A' ∩ B' ⊆ A ∩ B := by sorry
 
-/-- Exercise 3.1.12. -/
+/-- Exercise 3.1.12 (differences: a counterexample) -/
 theorem SetTheory.Set.subset_diff_subset_counter :
     ∃ (A B A' B':Set), (A' ⊆ A) ∧ (B' ⊆ B) ∧ ¬ (A' \ B') ⊆ (A \ B) := by sorry
 
