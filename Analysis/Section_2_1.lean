@@ -137,7 +137,7 @@ theorem Nat.recurse_zero (f: Nat → Nat → Nat) (c: Nat) : Nat.recurse f c 0 =
 theorem Nat.recurse_succ (f: Nat → Nat → Nat) (c: Nat) (n: Nat) :
     recurse f c (n++) = f n (recurse f c n) := by rfl
 
-/-- Proposition 2.1.16 (recursive definitions). -/
+/-- Proposition 2.1.16 (recursive definitions, existence). -/
 theorem Nat.eq_recurse (f: Nat → Nat → Nat) (c: Nat) (a: Nat → Nat) :
     (a 0 = c ∧ ∀ n, a (n++) = f n (a n)) ↔ a = recurse f c := by
   constructor
@@ -154,7 +154,7 @@ theorem Nat.eq_recurse (f: Nat → Nat → Nat) (c: Nat) (a: Nat → Nat) :
   exact recurse_succ _ _
 
 
-/-- Proposition 2.1.16 (recursive definitions). -/
+/-- Proposition 2.1.16 (recursive definitions, uniqueness). -/
 theorem Nat.recurse_uniq (f: Nat → Nat → Nat) (c: Nat) :
     ∃! (a: Nat → Nat), a 0 = c ∧ ∀ n, a (n++) = f n (a n) := by
   apply ExistsUnique.intro (recurse f c)

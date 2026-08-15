@@ -32,10 +32,10 @@ theorem Real.upperBound_def (E: Set Real) (M: Real) : M ∈ upperBounds E ↔ �
 theorem Real.lowerBound_def (E: Set Real) (M: Real) : M ∈ lowerBounds E ↔ ∀ x ∈ E, x ≥ M :=
   mem_lowerBounds
 
-/-- API for Example 5.5.2 -/
+/-- API for Example 5.5.2 (the interval) -/
 theorem Real.Icc_def (x y:Real) : .Icc x y = { z | x ≤ z ∧ z ≤ y } := rfl
 
-/-- API for Example 5.5.2 -/
+/-- API for Example 5.5.2 (membership) -/
 theorem Real.mem_Icc (x y z:Real) : z ∈ Set.Icc x y ↔ x ≤ z ∧ z ≤ y := by simp [Real.Icc_def]
 
 /-- Example 5.5.2 -/
