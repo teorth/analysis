@@ -1744,12 +1744,12 @@ theorem Lebesgue_measure.translate {d:ℕ} {E: Set (EuclideanSpace' d)} (x: Eucl
    (hE: LebesgueMeasurable E): Lebesgue_measure (E + {x}) = Lebesgue_measure E := by
   sorry
 
-/-- Exercise 1.2.21 (Change of variables) -/
+/-- Exercise 1.2.21 (Change of variables, measurability) -/
 lemma LebesgueMeasurable.linear {d:ℕ} (T: EuclideanSpace' d ≃ₗ[ℝ] EuclideanSpace' d)
 {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E): LebesgueMeasurable (T '' E) := by
   sorry
 
-/-- Exercise 1.2.21 (Change of variables) -/
+/-- Exercise 1.2.21 (Change of variables, the measure scales by the determinant) -/
 lemma Lebesgue_measure.linear {d:ℕ} (A: Matrix (Fin d) (Fin d) ℝ) [Invertible A]
  {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E): Lebesgue_measure (A.linear_equiv '' E) = |A.det| * Lebesgue_measure E := by
   sorry
