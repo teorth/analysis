@@ -688,7 +688,15 @@ theorem IsElementary.empty (d:ℕ) : IsElementary (∅: Set (EuclideanSpace' d))
 
 /-- The union of a finset of elementary sets is elementary. -/
 lemma IsElementary.union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
-(hE: ∀ E ∈ S, IsElementary E) : IsElementary (⋃ E ∈ S, E) := by sorry
+(hE: ∀ E ∈ S, IsElementary E) : IsElementary (⋃ E ∈ S, E) := by
+  classical
+  induction S using Finset.induction_on with
+  | empty => simpa using IsElementary.empty d
+  | insert a S' ha ih =>
+    have hrest : IsElementary (⋃ E ∈ S', E) :=
+      ih (fun E hE' ↦ hE E (Finset.mem_insert_of_mem hE'))
+    have ha' : IsElementary a := hE a (Finset.mem_insert_self a S')
+    simpa using ha'.union hrest
 
 /-- Exercise 1.1.1 (Boolean closure): The intersection of two elementary sets is elementary. -/
 theorem IsElementary.inter {d:ℕ} {E F: Set (EuclideanSpace' d)}
