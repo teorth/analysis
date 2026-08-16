@@ -698,10 +698,38 @@ lemma IsElementary.union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
     have ha' : IsElementary a := hE a (Finset.mem_insert_self a S')
     simpa using ha'.union hrest
 
+/-- The intersection of two boxes is a box: intersect the sides coordinatewise. -/
+lemma Box.inter {d:ℕ} (B₁ B₂ : Box d) :
+    ∃ B : Box d, B.toSet = B₁.toSet ∩ B₂.toSet := by
+  refine ⟨⟨fun i ↦ B₁.side i ∩ B₂.side i⟩, ?_⟩
+  ext x
+  simp only [Box.mem_toSet, Set.mem_inter_iff]
+  constructor
+  · intro hx
+    exact ⟨fun i ↦ ((BoundedInterval.inter_eq _ _ ▸ hx i : x i ∈ (B₁.side i:Set ℝ) ∩ _)).1,
+           fun i ↦ ((BoundedInterval.inter_eq _ _ ▸ hx i : x i ∈ (B₁.side i:Set ℝ) ∩ _)).2⟩
+  · intro ⟨h₁, h₂⟩ i
+    have : x i ∈ (B₁.side i:Set ℝ) ∩ (B₂.side i:Set ℝ) := ⟨h₁ i, h₂ i⟩
+    rwa [← BoundedInterval.inter_eq] at this
+
 /-- Exercise 1.1.1 (Boolean closure): The intersection of two elementary sets is elementary. -/
 theorem IsElementary.inter {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E ∩ F) := by
-  sorry
+  classical
+  obtain ⟨S, rfl⟩ := hE
+  obtain ⟨T, rfl⟩ := hF
+  choose f hf using fun p : Box d × Box d ↦ Box.inter p.1 p.2
+  refine ⟨(S ×ˢ T).image f, ?_⟩
+  ext x
+  simp only [Set.mem_inter_iff, Set.mem_iUnion, Finset.mem_image, Finset.mem_product]
+  constructor
+  · rintro ⟨⟨B, hB, hxB⟩, ⟨C, hC, hxC⟩⟩
+    refine ⟨f (B, C), ⟨⟨(B, C), ⟨hB, hC⟩, rfl⟩, ?_⟩⟩
+    rw [hf (B, C)]
+    exact ⟨hxB, hxC⟩
+  · rintro ⟨D, ⟨⟨⟨B, C⟩, ⟨hB, hC⟩, rfl⟩, hxD⟩⟩
+    rw [hf (B, C)] at hxD
+    exact ⟨⟨B, hB, hxD.1⟩, ⟨C, hC, hxD.2⟩⟩
 
 /-- Exercise 1.1.1 (Boolean closure): The set difference of two elementary sets is elementary. -/
 theorem IsElementary.sdiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
