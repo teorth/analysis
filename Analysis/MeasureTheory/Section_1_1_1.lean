@@ -883,10 +883,75 @@ theorem IsElementary.symmDiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
 
 open Pointwise
 
+/-- Translating a bounded interval gives a bounded interval with the same open/closed ends. -/
+theorem BoundedInterval.translate (I: BoundedInterval) (c:ℝ) :
+    ((mk' (I.a + c) (I.b + c) I.lclosed I.uclosed : BoundedInterval) : Set ℝ)
+      = (I:Set ℝ) + {c} := by
+  ext y
+  simp only [mem_iff', mk'_a, mk'_b, mk'_lclosed, mk'_uclosed, Set.add_singleton,
+    Set.mem_image]
+  constructor
+  · intro hy
+    refine ⟨y - c, ?_, by ring⟩
+    revert hy
+    cases I.lclosed <;> cases I.uclosed <;> simp only [if_true, if_false,
+      Bool.false_eq_true] <;> grind
+  · rintro ⟨z, hz, rfl⟩
+    revert hz
+    cases I.lclosed <;> cases I.uclosed <;> simp only [if_true, if_false,
+      Bool.false_eq_true] <;> grind
+
+/-- Translating a box gives a box. -/
+theorem Box.translate {d:ℕ} (B: Box d) (x: EuclideanSpace' d) :
+    ∃ B' : Box d, (B':Set (EuclideanSpace' d)) = (B:Set (EuclideanSpace' d)) + {x} := by
+  let I' : Fin d → BoundedInterval := fun i ↦
+    BoundedInterval.mk' ((B.side i).a + x i) ((B.side i).b + x i)
+      (B.side i).lclosed (B.side i).uclosed
+  have hI' (i : Fin d) : (I' i : Set ℝ) = ((B.side i : Set ℝ)) + {x i} :=
+    BoundedInterval.translate (B.side i) (x i)
+  refine ⟨⟨I'⟩, ?_⟩
+  ext y
+  simp only [Box.mem_toSet]
+  constructor
+  · intro hy
+    apply Set.mem_add.mpr
+    refine ⟨.toLp 2 (fun i ↦ y i - x i), ?_, x, rfl, by apply PiLp.ext; intro i; simp⟩
+    simp only [Box.mem_toSet]; intro i
+    have : y i ∈ (I' i : Set ℝ) := hy i
+    rw [hI' i] at this
+    obtain ⟨a, ha, b, rfl, hab⟩ := this
+    convert ha using 1; linarith
+  · intro hy
+    obtain ⟨a, ha, b, hb, hab⟩ := Set.mem_add.mp hy
+    rw [Set.mem_singleton_iff.mp hb] at hab
+    simp only [Box.mem_toSet] at ha
+    intro i
+    rw [hI' i]
+    exact Set.mem_add.mpr ⟨a i, ha i, x i, rfl,
+      by have := congr_fun (congrArg WithLp.ofLp hab) i; simpa using this⟩
+
 /-- Exercise 1.1.1 (Boolean closure): Translation of an elementary set is elementary. -/
 theorem IsElementary.translate {d:ℕ} {E: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (x: EuclideanSpace' d) : IsElementary (E + {x}) := by
-  sorry
+  classical
+  obtain ⟨S, rfl⟩ := hE
+  choose f hf using fun B : Box d ↦ Box.translate B x
+  refine ⟨S.image f, ?_⟩
+  ext y
+  simp only [Set.mem_iUnion, Finset.mem_image, exists_prop]
+  constructor
+  · intro hy
+    obtain ⟨z, hz, w, hw, hzw⟩ := Set.mem_add.mp hy
+    rw [Set.mem_singleton_iff.mp hw] at hzw
+    obtain ⟨B, hB, hzB⟩ : ∃ B ∈ S, z ∈ (B:Set (EuclideanSpace' d)) := by simpa using hz
+    refine ⟨f B, ⟨B, hB, rfl⟩, ?_⟩
+    rw [hf B, ← hzw]
+    exact Set.mem_add.mpr ⟨z, hzB, x, rfl, rfl⟩
+  · rintro ⟨D, ⟨B, hB, rfl⟩, hyD⟩
+    rw [hf B] at hyD
+    obtain ⟨z, hzB, w, hw, hzw⟩ := Set.mem_add.mp hyD
+    rw [Set.mem_singleton_iff.mp hw] at hzw
+    exact Set.mem_add.mpr ⟨z, by simpa using Set.mem_biUnion hB hzB, x, rfl, hzw⟩
 
 /-- A sublemma for proving Lemma 1.1.2(i): Any finset of intervals admits a common
 refinement into pairwise disjoint sub-intervals. -/
