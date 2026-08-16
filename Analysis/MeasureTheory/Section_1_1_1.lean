@@ -677,7 +677,14 @@ theorem IsElementary.box {d:ℕ} (B: Box d) : IsElementary B.toSet := by
 /-- Exercise 1.1.1 (Boolean closure): The union of two elementary sets is elementary. -/
 theorem IsElementary.union {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E ∪ F) := by
-  sorry
+  classical
+  obtain ⟨S, rfl⟩ := hE
+  obtain ⟨T, rfl⟩ := hF
+  exact ⟨S ∪ T, (Finset.set_biUnion_union S T _).symm⟩
+
+/-- The empty set is elementary. -/
+theorem IsElementary.empty (d:ℕ) : IsElementary (∅: Set (EuclideanSpace' d)) := by
+  exact ⟨∅, by simp⟩
 
 /-- The union of a finset of elementary sets is elementary. -/
 lemma IsElementary.union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
@@ -686,10 +693,6 @@ lemma IsElementary.union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
 /-- Exercise 1.1.1 (Boolean closure): The intersection of two elementary sets is elementary. -/
 theorem IsElementary.inter {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E ∩ F) := by
-  sorry
-
-/-- The empty set is elementary. -/
-theorem IsElementary.empty (d:ℕ) : IsElementary (∅: Set (EuclideanSpace' d)) := by
   sorry
 
 /-- Exercise 1.1.1 (Boolean closure): The set difference of two elementary sets is elementary. -/
