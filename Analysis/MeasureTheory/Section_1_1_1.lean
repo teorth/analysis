@@ -792,15 +792,94 @@ theorem BoundedInterval.sdiff (I J: BoundedInterval) :
     intro h <;>
     grind
 
+/-- The difference of two boxes is elementary: a point of the difference leaves the second box
+in some coordinate, and in that coordinate the difference of the two sides is a union of two
+intervals. -/
+theorem Box.sdiff {d:ℕ} (B C: Box d) : IsElementary (B.toSet \ C.toSet) := by
+  classical
+  choose K₁ K₂ hK using fun i ↦ BoundedInterval.sdiff (B.side i) (C.side i)
+  -- the box obtained from `B` by shrinking side `i` to one of the two pieces
+  let piece : Fin d → Bool → Box d := fun i k ↦
+    ⟨fun j ↦ if j = i then (if k then K₁ i else K₂ i) else B.side j⟩
+  have hpiece_side (i : Fin d) (k : Bool) :
+      (piece i k).side i = (if k then K₁ i else K₂ i) := by simp [piece]
+  have hsub (i : Fin d) (k : Bool) :
+      ((if k then K₁ i else K₂ i : BoundedInterval) : Set ℝ) ⊆
+        (B.side i : Set ℝ) \ (C.side i : Set ℝ) := by
+    rw [hK i]
+    cases k <;> simp
+  refine ⟨Finset.univ.image (fun p : Fin d × Bool ↦ piece p.1 p.2), ?_⟩
+  ext x
+  simp only [Set.mem_diff, Box.mem_toSet, Set.mem_iUnion, Finset.mem_image, Finset.mem_univ,
+    true_and, exists_prop]
+  constructor
+  · rintro ⟨hxB, hxC⟩
+    obtain ⟨i, hi⟩ : ∃ i, x i ∉ (C.side i : Set ℝ) := by
+      by_contra hc
+      push_neg at hc
+      exact hxC (fun i ↦ hc i)
+    have : x i ∈ ((K₁ i : Set ℝ)) ∪ ((K₂ i : Set ℝ)) := by
+      rw [← hK i]; exact ⟨hxB i, hi⟩
+    rcases this with h | h
+    · refine ⟨piece i true, ⟨⟨(i, true), rfl⟩, ?_⟩⟩
+      intro j
+      by_cases hj : j = i
+      · subst hj; simpa [piece] using h
+      · simpa [piece, hj] using hxB j
+    · refine ⟨piece i false, ⟨⟨(i, false), rfl⟩, ?_⟩⟩
+      intro j
+      by_cases hj : j = i
+      · subst hj; simpa [piece] using h
+      · simpa [piece, hj] using hxB j
+  · rintro ⟨P, ⟨⟨⟨i, k⟩, rfl⟩, hxP⟩⟩
+    have hxi : x i ∈ (B.side i : Set ℝ) \ (C.side i : Set ℝ) := by
+      have := hxP i
+      rw [hpiece_side] at this
+      exact hsub i k this
+    refine ⟨fun j ↦ ?_, ?_⟩
+    · by_cases hj : j = i
+      · subst hj; exact hxi.1
+      · simpa [piece, hj] using hxP j
+    · intro hxC
+      exact hxi.2 (hxC i)
+
 /-- Exercise 1.1.1 (Boolean closure): The set difference of two elementary sets is elementary. -/
 theorem IsElementary.sdiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E \ F) := by
-  sorry
+  classical
+  obtain ⟨T, rfl⟩ := hF
+  induction T using Finset.induction_on with
+  | empty => simpa using hE
+  | insert C T' hC ih =>
+    have hrw : E \ (⋃ B ∈ insert C T', (B:Set (EuclideanSpace' d)))
+        = (E \ ⋃ B ∈ T', (B:Set (EuclideanSpace' d))) \ C.toSet := by
+      rw [Finset.set_biUnion_insert, Set.diff_diff, Set.union_comm]
+    rw [hrw]
+    obtain ⟨S, hS⟩ := ih
+    rw [hS]
+    have hdiff : (⋃ B ∈ S, (B:Set (EuclideanSpace' d))) \ C.toSet
+        = ⋃ B ∈ S, ((B:Set (EuclideanSpace' d)) \ C.toSet) := by
+      ext y; simp only [Set.mem_diff, Set.mem_iUnion, exists_prop]; tauto
+    rw [hdiff]
+    have : (⋃ B ∈ S, ((B:Set (EuclideanSpace' d)) \ C.toSet))
+        = ⋃ X ∈ S.image (fun B : Box d ↦ (B:Set (EuclideanSpace' d)) \ C.toSet), X := by
+      ext y
+      simp only [Set.mem_iUnion, Finset.mem_image, exists_prop]
+      constructor
+      · rintro ⟨B, hB, hy⟩; exact ⟨_, ⟨B, hB, rfl⟩, hy⟩
+      · rintro ⟨X, ⟨B, hB, rfl⟩, hy⟩; exact ⟨B, hB, hy⟩
+    rw [this]
+    refine IsElementary.union' ?_
+    intro X hX
+    simp only [Finset.mem_image] at hX
+    obtain ⟨B, -, rfl⟩ := hX
+    exact Box.sdiff B C
 
 /-- Exercise 1.1.1 (Boolean closure): The symmetric difference of two elementary sets is elementary. -/
 theorem IsElementary.symmDiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (symmDiff E F) := by
-  sorry
+  have := (hE.sdiff hF).union (hF.sdiff hE)
+  simpa [Set.symmDiff_def] using this
 
 open Pointwise
 
