@@ -731,6 +731,67 @@ theorem IsElementary.inter {d:ℕ} {E F: Set (EuclideanSpace' d)}
     rw [hf (B, C)] at hxD
     exact ⟨⟨B, hB, hxD.1⟩, ⟨C, hC, hxD.2⟩⟩
 
+/-- The bounded interval with the given endpoints, open or closed at each end as specified. -/
+def BoundedInterval.mk' (a b : ℝ) (lclosed uclosed : Bool) : BoundedInterval :=
+  match lclosed, uclosed with
+  | true, true => Icc a b
+  | true, false => Ico a b
+  | false, true => Ioc a b
+  | false, false => Ioo a b
+
+/-- Whether a bounded interval contains its left endpoint. -/
+def BoundedInterval.lclosed : BoundedInterval → Bool
+  | Icc _ _ => true
+  | Ico _ _ => true
+  | Ioo _ _ => false
+  | Ioc _ _ => false
+
+/-- Whether a bounded interval contains its right endpoint. -/
+def BoundedInterval.uclosed : BoundedInterval → Bool
+  | Icc _ _ => true
+  | Ioc _ _ => true
+  | Ioo _ _ => false
+  | Ico _ _ => false
+
+@[simp]
+theorem BoundedInterval.mk'_a (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).a = a := by cases lclosed <;> cases uclosed <;> rfl
+
+@[simp]
+theorem BoundedInterval.mk'_b (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).b = b := by cases lclosed <;> cases uclosed <;> rfl
+
+@[simp]
+theorem BoundedInterval.mk'_lclosed (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).lclosed = lclosed := by cases lclosed <;> cases uclosed <;> rfl
+
+@[simp]
+theorem BoundedInterval.mk'_uclosed (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).uclosed = uclosed := by cases lclosed <;> cases uclosed <;> rfl
+
+theorem BoundedInterval.mem_iff' (I: BoundedInterval) (x:ℝ) :
+    x ∈ (I:Set ℝ) ↔
+      ((if I.lclosed then I.a ≤ x else I.a < x) ∧ (if I.uclosed then x ≤ I.b else x < I.b)) := by
+  cases I <;> simp [toSet, lclosed, uclosed]
+
+/-- The set difference of two bounded intervals is the union of two bounded intervals: the
+part of the first below the second, and the part above it. -/
+theorem BoundedInterval.sdiff (I J: BoundedInterval) :
+    ∃ K₁ K₂ : BoundedInterval, (I:Set ℝ) \ (J:Set ℝ) = (K₁:Set ℝ) ∪ (K₂:Set ℝ) := by
+  obtain ⟨K₁, hK₁⟩ := BoundedInterval.inter I (mk' I.a J.a I.lclosed (!J.lclosed))
+  obtain ⟨K₂, hK₂⟩ := BoundedInterval.inter I (mk' J.b I.b (!J.uclosed) I.uclosed)
+  refine ⟨K₁, K₂, ?_⟩
+  rw [← hK₁, ← hK₂]
+  ext x
+  simp only [Set.mem_diff, Set.mem_union, Set.mem_inter_iff, mem_iff', mk'_a, mk'_b,
+    mk'_lclosed, mk'_uclosed]
+  cases hIl : I.lclosed <;> cases hIu : I.uclosed <;> cases hJl : J.lclosed <;> cases hJu : J.uclosed <;>
+    simp only [Bool.not_true, Bool.not_false, Bool.false_eq_true, reduceIte] <;>
+    push_neg <;>
+    constructor <;>
+    intro h <;>
+    grind
+
 /-- Exercise 1.1.1 (Boolean closure): The set difference of two elementary sets is elementary. -/
 theorem IsElementary.sdiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E \ F) := by
