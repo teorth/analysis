@@ -260,6 +260,41 @@ theorem JordanMeasurable.equiv {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornolo
   ∀ ε>0, ∃ A, ∃ hA: IsElementary A, Jordan_outer_measure (symmDiff E A) ≤ ε].TFAE := by
   sorry
 
+/-- An elementary set is bounded: it is a finite union of boxes, and each box sits inside
+the closed ball of radius the norm of its corner. -/
+theorem IsElementary.isBounded {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) :
+    Bornology.IsBounded E := by
+  classical
+  obtain ⟨S, rfl⟩ := hE
+  rw [Bornology.isBounded_biUnion_finset]
+  intro B _
+  -- each coordinate of a point of `B` is trapped between the endpoints of that side
+  set M : ℝ := Real.sqrt (∑ i, (max |(B.side i).a| |(B.side i).b|)^2) with hM
+  rw [Metric.isBounded_iff_subset_closedBall 0]
+  refine ⟨M, fun x hx ↦ ?_⟩
+  rw [Metric.mem_closedBall, dist_zero_right]
+  have hcoord (i : Fin d) : |x i| ≤ max |(B.side i).a| |(B.side i).b| := by
+    have hxi : x i ∈ ((B.side i : BoundedInterval) : Set ℝ) := hx i
+    have hsub := (B.side i).subset_Icc
+    rw [BoundedInterval.subset_iff] at hsub
+    have hmem := hsub hxi
+    simp only [BoundedInterval.set_Icc, Set.mem_Icc] at hmem
+    rcases abs_cases (x i) with ⟨h, -⟩ | ⟨h, -⟩
+    · calc |x i| = x i := h
+        _ ≤ (B.side i).b := hmem.2
+        _ ≤ |(B.side i).b| := le_abs_self _
+        _ ≤ _ := le_max_right _ _
+    · calc |x i| = -x i := h
+        _ ≤ -(B.side i).a := by linarith [hmem.1]
+        _ ≤ |(B.side i).a| := neg_le_abs _
+        _ ≤ _ := le_max_left _ _
+  rw [EuclideanSpace'.norm_eq, hM]
+  apply Real.sqrt_le_sqrt
+  refine Finset.sum_le_sum (fun i _ ↦ ?_)
+  calc (x i)^2 = |x i|^2 := (sq_abs _).symm
+    _ ≤ (max |(B.side i).a| |(B.side i).b|)^2 := by
+        nlinarith [hcoord i, abs_nonneg (x i)]
+
 /-- Every elementary set is Jordan measurable. -/
 theorem IsElementary.jordanMeasurable {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) : JordanMeasurable E := by
   sorry
@@ -277,8 +312,6 @@ theorem JordanMeasurable.empty (d:ℕ) : JordanMeasurable (∅: Set (EuclideanSp
 theorem JordanMeasurable.mes_of_empty (d:ℕ) : (JordanMeasurable.empty d).measure = 0 := by
   sorry
 
-
-/-- Exercise 1.1.6 (i) (Boolean closure) -/
 theorem JordanMeasurable.union {d:ℕ} {E F : Set (EuclideanSpace' d)}
   (hE: JordanMeasurable E) (hF: JordanMeasurable F) : JordanMeasurable (E ∪ F) := by
   -- Since $E$ and $F$ are both Jordan measurable, they are bounded.
