@@ -143,7 +143,18 @@ theorem Jordan_inner_le_outer {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornolog
 
 /-- Elementary measure of a subset is a lower bound for inner Jordan measure. -/
 theorem le_Jordan_inner {d:ℕ} {E A: Set (EuclideanSpace' d)}
-  (hA: IsElementary A) (hAE: A ⊆ E) : hA.measure ≤ Jordan_inner_measure A := by
+  (hA: IsElementary A) (hAE: A ⊆ E) (hE: Bornology.IsBounded E) :
+  hA.measure ≤ Jordan_inner_measure E := by
+  -- `hA.measure` is one of the numbers the supremum ranges over, and the whole
+  -- family is bounded above by the measure of an elementary set containing `E`.
+  obtain ⟨C, hC, hEC⟩ := IsElementary.contains_bounded hE
+  refine le_csSup ⟨hC.measure, ?_⟩ ⟨A, hA, hAE, rfl⟩
+  rintro m ⟨B, hB, hBE, rfl⟩
+  exact IsElementary.measure_mono hB hC (hBE.trans hEC)
+
+/-- The elementary measure of a set is a lower bound for its own inner Jordan measure. -/
+theorem le_Jordan_inner_self {d:ℕ} {A: Set (EuclideanSpace' d)}
+  (hA: IsElementary A) : hA.measure ≤ Jordan_inner_measure A := by
   -- Strategy:
   -- 1. Unfold definition: Jordan_inner_measure A = sSup { m | ∃ B, IsElementary B, B ⊆ A ∧ m = hB.measure }
   -- 2. Show hA.measure is in this set: use A itself (A ⊆ A, and hA.measure = hA.measure)
@@ -165,7 +176,16 @@ theorem le_Jordan_inner {d:ℕ} {E A: Set (EuclideanSpace' d)}
 
 /-- Elementary measure of a superset is an upper bound for outer Jordan measure. -/
 theorem Jordan_outer_le {d:ℕ} {E A: Set (EuclideanSpace' d)}
-  (hA: IsElementary A) (hAE: E ⊆ A) : Jordan_outer_measure A ≤ hA.measure := by
+  (hA: IsElementary A) (hAE: E ⊆ A) : Jordan_outer_measure E ≤ hA.measure := by
+  -- `hA.measure` is one of the numbers the infimum ranges over, and they are all
+  -- non-negative.
+  refine csInf_le ⟨0, ?_⟩ ⟨A, hA, hAE, rfl⟩
+  rintro m ⟨B, hB, -, rfl⟩
+  exact IsElementary.measure_nonneg hB
+
+/-- The elementary measure of a set is an upper bound for its own outer Jordan measure. -/
+theorem Jordan_outer_le_self {d:ℕ} {A: Set (EuclideanSpace' d)}
+  (hA: IsElementary A) : Jordan_outer_measure A ≤ hA.measure := by
   -- Strategy:
   -- 1. Unfold definition: Jordan_outer_measure A = sInf { m | ∃ B, IsElementary B, A ⊆ B ∧ m = hB.measure }
   -- 2. Show hA.measure is in this set: use A itself (A ⊆ A, and hA.measure = hA.measure)
