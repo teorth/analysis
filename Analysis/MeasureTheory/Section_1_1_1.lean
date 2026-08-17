@@ -677,37 +677,281 @@ theorem IsElementary.box {d:ℕ} (B: Box d) : IsElementary B.toSet := by
 /-- Exercise 1.1.1 (Boolean closure): The union of two elementary sets is elementary. -/
 theorem IsElementary.union {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E ∪ F) := by
-  sorry
+  classical
+  obtain ⟨S, rfl⟩ := hE
+  obtain ⟨T, rfl⟩ := hF
+  exact ⟨S ∪ T, (Finset.set_biUnion_union S T _).symm⟩
+
+/-- The empty set is elementary. -/
+theorem IsElementary.empty (d:ℕ) : IsElementary (∅: Set (EuclideanSpace' d)) := by
+  exact ⟨∅, by simp⟩
 
 /-- The union of a finset of elementary sets is elementary. -/
 lemma IsElementary.union' {d:ℕ} {S: Finset (Set (EuclideanSpace' d))}
-(hE: ∀ E ∈ S, IsElementary E) : IsElementary (⋃ E ∈ S, E) := by sorry
+(hE: ∀ E ∈ S, IsElementary E) : IsElementary (⋃ E ∈ S, E) := by
+  classical
+  induction S using Finset.induction_on with
+  | empty => simpa using IsElementary.empty d
+  | insert a S' ha ih =>
+    have hrest : IsElementary (⋃ E ∈ S', E) :=
+      ih (fun E hE' ↦ hE E (Finset.mem_insert_of_mem hE'))
+    have ha' : IsElementary a := hE a (Finset.mem_insert_self a S')
+    simpa using ha'.union hrest
+
+/-- The intersection of two boxes is a box: intersect the sides coordinatewise. -/
+lemma Box.inter {d:ℕ} (B₁ B₂ : Box d) :
+    ∃ B : Box d, B.toSet = B₁.toSet ∩ B₂.toSet := by
+  refine ⟨⟨fun i ↦ B₁.side i ∩ B₂.side i⟩, ?_⟩
+  ext x
+  simp only [Box.mem_toSet, Set.mem_inter_iff]
+  constructor
+  · intro hx
+    exact ⟨fun i ↦ ((BoundedInterval.inter_eq _ _ ▸ hx i : x i ∈ (B₁.side i:Set ℝ) ∩ _)).1,
+           fun i ↦ ((BoundedInterval.inter_eq _ _ ▸ hx i : x i ∈ (B₁.side i:Set ℝ) ∩ _)).2⟩
+  · intro ⟨h₁, h₂⟩ i
+    have : x i ∈ (B₁.side i:Set ℝ) ∩ (B₂.side i:Set ℝ) := ⟨h₁ i, h₂ i⟩
+    rwa [← BoundedInterval.inter_eq] at this
 
 /-- Exercise 1.1.1 (Boolean closure): The intersection of two elementary sets is elementary. -/
 theorem IsElementary.inter {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E ∩ F) := by
-  sorry
+  classical
+  obtain ⟨S, rfl⟩ := hE
+  obtain ⟨T, rfl⟩ := hF
+  choose f hf using fun p : Box d × Box d ↦ Box.inter p.1 p.2
+  refine ⟨(S ×ˢ T).image f, ?_⟩
+  ext x
+  simp only [Set.mem_inter_iff, Set.mem_iUnion, Finset.mem_image, Finset.mem_product]
+  constructor
+  · rintro ⟨⟨B, hB, hxB⟩, ⟨C, hC, hxC⟩⟩
+    refine ⟨f (B, C), ⟨⟨(B, C), ⟨hB, hC⟩, rfl⟩, ?_⟩⟩
+    rw [hf (B, C)]
+    exact ⟨hxB, hxC⟩
+  · rintro ⟨D, ⟨⟨⟨B, C⟩, ⟨hB, hC⟩, rfl⟩, hxD⟩⟩
+    rw [hf (B, C)] at hxD
+    exact ⟨⟨B, hB, hxD.1⟩, ⟨C, hC, hxD.2⟩⟩
 
-/-- The empty set is elementary. -/
-theorem IsElementary.empty (d:ℕ) : IsElementary (∅: Set (EuclideanSpace' d)) := by
-  sorry
+/-- The bounded interval with the given endpoints, open or closed at each end as specified. -/
+def BoundedInterval.mk' (a b : ℝ) (lclosed uclosed : Bool) : BoundedInterval :=
+  match lclosed, uclosed with
+  | true, true => Icc a b
+  | true, false => Ico a b
+  | false, true => Ioc a b
+  | false, false => Ioo a b
+
+/-- Whether a bounded interval contains its left endpoint. -/
+def BoundedInterval.lclosed : BoundedInterval → Bool
+  | Icc _ _ => true
+  | Ico _ _ => true
+  | Ioo _ _ => false
+  | Ioc _ _ => false
+
+/-- Whether a bounded interval contains its right endpoint. -/
+def BoundedInterval.uclosed : BoundedInterval → Bool
+  | Icc _ _ => true
+  | Ioc _ _ => true
+  | Ioo _ _ => false
+  | Ico _ _ => false
+
+@[simp]
+theorem BoundedInterval.mk'_a (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).a = a := by cases lclosed <;> cases uclosed <;> rfl
+
+@[simp]
+theorem BoundedInterval.mk'_b (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).b = b := by cases lclosed <;> cases uclosed <;> rfl
+
+@[simp]
+theorem BoundedInterval.mk'_lclosed (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).lclosed = lclosed := by cases lclosed <;> cases uclosed <;> rfl
+
+@[simp]
+theorem BoundedInterval.mk'_uclosed (a b : ℝ) (lclosed uclosed : Bool) :
+    (mk' a b lclosed uclosed).uclosed = uclosed := by cases lclosed <;> cases uclosed <;> rfl
+
+theorem BoundedInterval.mem_iff' (I: BoundedInterval) (x:ℝ) :
+    x ∈ (I:Set ℝ) ↔
+      ((if I.lclosed then I.a ≤ x else I.a < x) ∧ (if I.uclosed then x ≤ I.b else x < I.b)) := by
+  cases I <;> simp [toSet, lclosed, uclosed]
+
+/-- The set difference of two bounded intervals is the union of two bounded intervals: the
+part of the first below the second, and the part above it. -/
+theorem BoundedInterval.sdiff (I J: BoundedInterval) :
+    ∃ K₁ K₂ : BoundedInterval, (I:Set ℝ) \ (J:Set ℝ) = (K₁:Set ℝ) ∪ (K₂:Set ℝ) := by
+  obtain ⟨K₁, hK₁⟩ := BoundedInterval.inter I (mk' I.a J.a I.lclosed (!J.lclosed))
+  obtain ⟨K₂, hK₂⟩ := BoundedInterval.inter I (mk' J.b I.b (!J.uclosed) I.uclosed)
+  refine ⟨K₁, K₂, ?_⟩
+  rw [← hK₁, ← hK₂]
+  ext x
+  simp only [Set.mem_diff, Set.mem_union, Set.mem_inter_iff, mem_iff', mk'_a, mk'_b,
+    mk'_lclosed, mk'_uclosed]
+  cases hIl : I.lclosed <;> cases hIu : I.uclosed <;> cases hJl : J.lclosed <;> cases hJu : J.uclosed <;>
+    simp only [Bool.not_true, Bool.not_false, Bool.false_eq_true, reduceIte] <;>
+    push_neg <;>
+    constructor <;>
+    intro h <;>
+    grind
+
+/-- The difference of two boxes is elementary: a point of the difference leaves the second box
+in some coordinate, and in that coordinate the difference of the two sides is a union of two
+intervals. -/
+theorem Box.sdiff {d:ℕ} (B C: Box d) : IsElementary (B.toSet \ C.toSet) := by
+  classical
+  choose K₁ K₂ hK using fun i ↦ BoundedInterval.sdiff (B.side i) (C.side i)
+  -- the box obtained from `B` by shrinking side `i` to one of the two pieces
+  let piece : Fin d → Bool → Box d := fun i k ↦
+    ⟨fun j ↦ if j = i then (if k then K₁ i else K₂ i) else B.side j⟩
+  have hpiece_side (i : Fin d) (k : Bool) :
+      (piece i k).side i = (if k then K₁ i else K₂ i) := by simp [piece]
+  have hsub (i : Fin d) (k : Bool) :
+      ((if k then K₁ i else K₂ i : BoundedInterval) : Set ℝ) ⊆
+        (B.side i : Set ℝ) \ (C.side i : Set ℝ) := by
+    rw [hK i]
+    cases k <;> simp
+  refine ⟨Finset.univ.image (fun p : Fin d × Bool ↦ piece p.1 p.2), ?_⟩
+  ext x
+  simp only [Set.mem_diff, Box.mem_toSet, Set.mem_iUnion, Finset.mem_image, Finset.mem_univ,
+    true_and, exists_prop]
+  constructor
+  · rintro ⟨hxB, hxC⟩
+    obtain ⟨i, hi⟩ : ∃ i, x i ∉ (C.side i : Set ℝ) := by
+      by_contra hc
+      push_neg at hc
+      exact hxC (fun i ↦ hc i)
+    have : x i ∈ ((K₁ i : Set ℝ)) ∪ ((K₂ i : Set ℝ)) := by
+      rw [← hK i]; exact ⟨hxB i, hi⟩
+    rcases this with h | h
+    · refine ⟨piece i true, ⟨⟨(i, true), rfl⟩, ?_⟩⟩
+      intro j
+      by_cases hj : j = i
+      · subst hj; simpa [piece] using h
+      · simpa [piece, hj] using hxB j
+    · refine ⟨piece i false, ⟨⟨(i, false), rfl⟩, ?_⟩⟩
+      intro j
+      by_cases hj : j = i
+      · subst hj; simpa [piece] using h
+      · simpa [piece, hj] using hxB j
+  · rintro ⟨P, ⟨⟨⟨i, k⟩, rfl⟩, hxP⟩⟩
+    have hxi : x i ∈ (B.side i : Set ℝ) \ (C.side i : Set ℝ) := by
+      have := hxP i
+      rw [hpiece_side] at this
+      exact hsub i k this
+    refine ⟨fun j ↦ ?_, ?_⟩
+    · by_cases hj : j = i
+      · subst hj; exact hxi.1
+      · simpa [piece, hj] using hxP j
+    · intro hxC
+      exact hxi.2 (hxC i)
 
 /-- Exercise 1.1.1 (Boolean closure): The set difference of two elementary sets is elementary. -/
 theorem IsElementary.sdiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (E \ F) := by
-  sorry
+  classical
+  obtain ⟨T, rfl⟩ := hF
+  induction T using Finset.induction_on with
+  | empty => simpa using hE
+  | insert C T' hC ih =>
+    have hrw : E \ (⋃ B ∈ insert C T', (B:Set (EuclideanSpace' d)))
+        = (E \ ⋃ B ∈ T', (B:Set (EuclideanSpace' d))) \ C.toSet := by
+      rw [Finset.set_biUnion_insert, Set.diff_diff, Set.union_comm]
+    rw [hrw]
+    obtain ⟨S, hS⟩ := ih
+    rw [hS]
+    have hdiff : (⋃ B ∈ S, (B:Set (EuclideanSpace' d))) \ C.toSet
+        = ⋃ B ∈ S, ((B:Set (EuclideanSpace' d)) \ C.toSet) := by
+      ext y; simp only [Set.mem_diff, Set.mem_iUnion, exists_prop]; tauto
+    rw [hdiff]
+    have : (⋃ B ∈ S, ((B:Set (EuclideanSpace' d)) \ C.toSet))
+        = ⋃ X ∈ S.image (fun B : Box d ↦ (B:Set (EuclideanSpace' d)) \ C.toSet), X := by
+      ext y
+      simp only [Set.mem_iUnion, Finset.mem_image, exists_prop]
+      constructor
+      · rintro ⟨B, hB, hy⟩; exact ⟨_, ⟨B, hB, rfl⟩, hy⟩
+      · rintro ⟨X, ⟨B, hB, rfl⟩, hy⟩; exact ⟨B, hB, hy⟩
+    rw [this]
+    refine IsElementary.union' ?_
+    intro X hX
+    simp only [Finset.mem_image] at hX
+    obtain ⟨B, -, rfl⟩ := hX
+    exact Box.sdiff B C
 
 /-- Exercise 1.1.1 (Boolean closure): The symmetric difference of two elementary sets is elementary. -/
 theorem IsElementary.symmDiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (hF: IsElementary F) : IsElementary (symmDiff E F) := by
-  sorry
+  have := (hE.sdiff hF).union (hF.sdiff hE)
+  simpa [Set.symmDiff_def] using this
 
 open Pointwise
+
+/-- Translating a bounded interval gives a bounded interval with the same open/closed ends. -/
+theorem BoundedInterval.translate (I: BoundedInterval) (c:ℝ) :
+    ((mk' (I.a + c) (I.b + c) I.lclosed I.uclosed : BoundedInterval) : Set ℝ)
+      = (I:Set ℝ) + {c} := by
+  ext y
+  simp only [mem_iff', mk'_a, mk'_b, mk'_lclosed, mk'_uclosed, Set.add_singleton,
+    Set.mem_image]
+  constructor
+  · intro hy
+    refine ⟨y - c, ?_, by ring⟩
+    revert hy
+    cases I.lclosed <;> cases I.uclosed <;> simp only [if_true, if_false,
+      Bool.false_eq_true] <;> grind
+  · rintro ⟨z, hz, rfl⟩
+    revert hz
+    cases I.lclosed <;> cases I.uclosed <;> simp only [if_true, if_false,
+      Bool.false_eq_true] <;> grind
+
+/-- Translating a box gives a box. -/
+theorem Box.translate {d:ℕ} (B: Box d) (x: EuclideanSpace' d) :
+    ∃ B' : Box d, (B':Set (EuclideanSpace' d)) = (B:Set (EuclideanSpace' d)) + {x} := by
+  let I' : Fin d → BoundedInterval := fun i ↦
+    BoundedInterval.mk' ((B.side i).a + x i) ((B.side i).b + x i)
+      (B.side i).lclosed (B.side i).uclosed
+  have hI' (i : Fin d) : (I' i : Set ℝ) = ((B.side i : Set ℝ)) + {x i} :=
+    BoundedInterval.translate (B.side i) (x i)
+  refine ⟨⟨I'⟩, ?_⟩
+  ext y
+  simp only [Box.mem_toSet]
+  constructor
+  · intro hy
+    apply Set.mem_add.mpr
+    refine ⟨.toLp 2 (fun i ↦ y i - x i), ?_, x, rfl, by apply PiLp.ext; intro i; simp⟩
+    simp only [Box.mem_toSet]; intro i
+    have : y i ∈ (I' i : Set ℝ) := hy i
+    rw [hI' i] at this
+    obtain ⟨a, ha, b, rfl, hab⟩ := this
+    convert ha using 1; linarith
+  · intro hy
+    obtain ⟨a, ha, b, hb, hab⟩ := Set.mem_add.mp hy
+    rw [Set.mem_singleton_iff.mp hb] at hab
+    simp only [Box.mem_toSet] at ha
+    intro i
+    rw [hI' i]
+    exact Set.mem_add.mpr ⟨a i, ha i, x i, rfl,
+      by have := congr_fun (congrArg WithLp.ofLp hab) i; simpa using this⟩
 
 /-- Exercise 1.1.1 (Boolean closure): Translation of an elementary set is elementary. -/
 theorem IsElementary.translate {d:ℕ} {E: Set (EuclideanSpace' d)}
   (hE: IsElementary E) (x: EuclideanSpace' d) : IsElementary (E + {x}) := by
-  sorry
+  classical
+  obtain ⟨S, rfl⟩ := hE
+  choose f hf using fun B : Box d ↦ Box.translate B x
+  refine ⟨S.image f, ?_⟩
+  ext y
+  simp only [Set.mem_iUnion, Finset.mem_image, exists_prop]
+  constructor
+  · intro hy
+    obtain ⟨z, hz, w, hw, hzw⟩ := Set.mem_add.mp hy
+    rw [Set.mem_singleton_iff.mp hw] at hzw
+    obtain ⟨B, hB, hzB⟩ : ∃ B ∈ S, z ∈ (B:Set (EuclideanSpace' d)) := by simpa using hz
+    refine ⟨f B, ⟨B, hB, rfl⟩, ?_⟩
+    rw [hf B, ← hzw]
+    exact Set.mem_add.mpr ⟨z, hzB, x, rfl, rfl⟩
+  · rintro ⟨D, ⟨B, hB, rfl⟩, hyD⟩
+    rw [hf B] at hyD
+    obtain ⟨z, hzB, w, hw, hzw⟩ := Set.mem_add.mp hyD
+    rw [Set.mem_singleton_iff.mp hw] at hzw
+    exact Set.mem_add.mpr ⟨z, by simpa using Set.mem_biUnion hB hzB, x, rfl, hzw⟩
 
 /-- A sublemma for proving Lemma 1.1.2(i): Any finset of intervals admits a common
 refinement into pairwise disjoint sub-intervals. -/
