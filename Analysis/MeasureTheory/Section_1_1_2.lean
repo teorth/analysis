@@ -297,21 +297,29 @@ theorem IsElementary.isBounded {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsEleme
 
 /-- Every elementary set is Jordan measurable. -/
 theorem IsElementary.jordanMeasurable {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) : JordanMeasurable E := by
-  sorry
+  refine ⟨hE.isBounded, le_antisymm (Jordan_inner_le_outer hE.isBounded) ?_⟩
+  -- outer ≤ measure ≤ inner, taking `E` itself as the enclosing and the enclosed set
+  exact (Jordan_outer_le hE (Set.Subset.refl E)).trans
+    (le_Jordan_inner hE (Set.Subset.refl E) hE.isBounded)
 
 /-- The Jordan measure of an elementary set equals its elementary measure. -/
 theorem JordanMeasurable.mes_of_elementary {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) : hE.jordanMeasurable.measure = hE.measure := by
-  sorry
+  refine le_antisymm ?_ (le_Jordan_inner hE (Set.Subset.refl E) hE.isBounded)
+  rw [JordanMeasurable.eq_outer hE.jordanMeasurable]
+  exact Jordan_outer_le hE (Set.Subset.refl E)
 
 /-- The empty set is Jordan measurable. -/
-theorem JordanMeasurable.empty (d:ℕ) : JordanMeasurable (∅: Set (EuclideanSpace' d)) := by
-  sorry
+theorem JordanMeasurable.empty (d:ℕ) : JordanMeasurable (∅: Set (EuclideanSpace' d)) :=
+  IsElementary.jordanMeasurable (IsElementary.empty d)
 
 /-- The empty set has Jordan measure zero. -/
 @[simp]
 theorem JordanMeasurable.mes_of_empty (d:ℕ) : (JordanMeasurable.empty d).measure = 0 := by
-  sorry
+  have h := JordanMeasurable.mes_of_elementary (IsElementary.empty d)
+  rwa [IsElementary.measure_of_empty] at h
 
+
+/-- Exercise 1.1.6 (i) (Boolean closure) -/
 theorem JordanMeasurable.union {d:ℕ} {E F : Set (EuclideanSpace' d)}
   (hE: JordanMeasurable E) (hF: JordanMeasurable F) : JordanMeasurable (E ∪ F) := by
   -- Since $E$ and $F$ are both Jordan measurable, they are bounded.
