@@ -110,17 +110,17 @@ theorem SetTheory.Set.replace_exists (h: axiom_of_universal_specification) (A:Se
     ∃ (Z:Set), ∀ y, y ∈ Z ↔ ∃ a : A, P a y := by
   sorry
 
-/-- Exercise 3.2.2 -/
+/-- Exercise 3.2.2 (no set contains itself) -/
 theorem SetTheory.Set.not_mem_self (A:Set) : (A:Object) ∉ A := by sorry
 
-/-- Exercise 3.2.2 -/
+/-- Exercise 3.2.2 (no two sets contain each other) -/
 theorem SetTheory.Set.not_mem_mem (A B:Set) : (A:Object) ∉ B ∨ (B:Object) ∉ A := by sorry
 
-/-- Exercise 3.2.3 -/
+/-- Exercise 3.2.3 (universal specification) -/
 theorem SetTheory.Set.univ_iff : axiom_of_universal_specification ↔
   ∃ (U:Set), ∀ x, x ∈ U := by sorry
 
-/-- Exercise 3.2.3 -/
+/-- Exercise 3.2.3 (there is no universal set) -/
 theorem SetTheory.Set.no_univ : ¬ ∃ (U:Set), ∀ (x:Object), x ∈ U := by sorry
 
 
