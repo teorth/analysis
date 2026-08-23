@@ -660,15 +660,22 @@ lemma JordanMeasurable.measure_of_translate {d:ℕ} {E: Set (EuclideanSpace' d)}
   · exact eq_outer hE;
 
 /-- Exercise 1.1.7 (i) (Regions under graphs are Jordan measurable) -/
-lemma JordanMeasurable.graph {d:ℕ} {B:Box d} {f: EuclideanSpace' d → ℝ} (hf: ContinuousOn f B.toSet) : JordanMeasurable { p | ∃ x ∈ B.toSet, EuclideanSpace'.prod_equiv d 1 p = ⟨ x, f x ⟩ } := by
+lemma JordanMeasurable.graph {d:ℕ} {B:Box d} (hB: IsClosed B.toSet) {f: EuclideanSpace' d → ℝ}
+  (hf: ContinuousOn f B.toSet) :
+  JordanMeasurable { p | ∃ x ∈ B.toSet, EuclideanSpace'.prod_equiv d 1 p = ⟨ x, f x ⟩ } := by
   sorry
 
 /-- Exercise 1.1.7 (i) (Regions under graphs are Jordan measurable) -/
-lemma JordanMeasurable.measure_of_graph {d:ℕ} {B:Box d} {f: EuclideanSpace' d → ℝ} (hf: ContinuousOn f B.toSet) : (JordanMeasurable.graph hf).measure = 0 := by
+lemma JordanMeasurable.measure_of_graph {d:ℕ} {B:Box d} (hB: IsClosed B.toSet)
+  {f: EuclideanSpace' d → ℝ} (hf: ContinuousOn f B.toSet) :
+  (JordanMeasurable.graph hB hf).measure = 0 := by
   sorry
 
 /-- Exercise 1.1.7 (i) (Regions under graphs are Jordan measurable) -/
-lemma JordanMeasurable.undergraph {d:ℕ} {B:Box d} {f: EuclideanSpace' d → ℝ} (hf: ContinuousOn f B.toSet) : JordanMeasurable { p | ∃ x ∈ B.toSet, ∃ t:ℝ, EuclideanSpace'.prod_equiv d 1 p = ⟨ x, t ⟩ ∧ 0 ≤ t ∧ t ≤ f x } := by
+lemma JordanMeasurable.undergraph {d:ℕ} {B:Box d} (hB: IsClosed B.toSet)
+  {f: EuclideanSpace' d → ℝ} (hf: ContinuousOn f B.toSet) :
+  JordanMeasurable
+    { p | ∃ x ∈ B.toSet, ∃ t:ℝ, EuclideanSpace'.prod_equiv d 1 p = ⟨ x, t ⟩ ∧ 0 ≤ t ∧ t ≤ f x } := by
   sorry
 
 /-- Exercise 1.1.8(i) (A triangle is Jordan measurable) -/
