@@ -41,7 +41,8 @@ theorem IsNull.boolean_algebra.isSigmaAlgebra (d:ℕ) : (IsNull.boolean_algebra 
 def IsNull.sigmaAlgebra (d:ℕ) : ConcreteSigmaAlgebra (EuclideanSpace' d) :=
   (IsNull.boolean_algebra.isSigmaAlgebra d).toSigmaAlgebra
 
-theorem JordanMeasurable.boolean_algebra.not_isSigmaAlgebra (d:ℕ) : ¬ (JordanMeasurable.boolean_algebra d).isSigmaAlgebra :=
+theorem JordanMeasurable.boolean_algebra.not_isSigmaAlgebra (d:ℕ) (hd: d ≥ 1) :
+  ¬ (JordanMeasurable.boolean_algebra d).isSigmaAlgebra :=
   by sorry
 
 /-- Exercise 1.4.12 -/
