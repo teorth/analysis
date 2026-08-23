@@ -2562,15 +2562,6 @@ lemma Box.shrink_to_closed {d:ℕ} (B: Box d) (hB: B.toSet.Nonempty) (δ: ℝ) (
       simp only [B', BoundedInterval.toSet, Set.mem_Icc, le_refl, and_self]
 
 namespace IsElementary
-/-- Elementary sets are bounded (finite union of bounded boxes) -/
-lemma isBounded {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) :
-    Bornology.IsBounded E := by
-  obtain ⟨S, hS_eq⟩ := hE
-  rw [hS_eq]
-  rw [Bornology.isBounded_biUnion_finset]
-  intro B _
-  exact Box.isBounded B
-
 /-- Elementary measure of empty set is zero (handles proof term mismatch) -/
 lemma measure_of_empty_eq {d : ℕ} {E : Set (EuclideanSpace' d)}
     (hE : IsElementary E) (hempty : E = ∅) : hE.measure = 0 := by
