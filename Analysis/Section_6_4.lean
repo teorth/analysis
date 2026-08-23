@@ -201,19 +201,19 @@ theorem Sequence.tendsTo_iff_eq_limsup_liminf {a:Sequence} (c:ℝ) :
   a.TendsTo c ↔ a.liminf = c ∧ a.limsup = c := by
   sorry
 
-/-- Lemma 6.4.13 (Comparison principle) / Exercise 6.4.4 -/
+/-- Lemma 6.4.13 (Comparison principle, sup) / Exercise 6.4.4 -/
 theorem Sequence.sup_mono {a b:Sequence} (hm: a.m = b.m) (hab: ∀ n ≥ a.m, a n ≤ b n) :
     a.sup ≤ b.sup := by sorry
 
-/-- Lemma 6.4.13 (Comparison principle) / Exercise 6.4.4 -/
+/-- Lemma 6.4.13 (Comparison principle, inf) / Exercise 6.4.4 -/
 theorem Sequence.inf_mono {a b:Sequence} (hm: a.m = b.m) (hab: ∀ n ≥ a.m, a n ≤ b n) :
     a.inf ≤ b.inf := by sorry
 
-/-- Lemma 6.4.13 (Comparison principle) / Exercise 6.4.4 -/
+/-- Lemma 6.4.13 (Comparison principle, limsup) / Exercise 6.4.4 -/
 theorem Sequence.limsup_mono {a b:Sequence} (hm: a.m = b.m) (hab: ∀ n ≥ a.m, a n ≤ b n) :
     a.limsup ≤ b.limsup := by sorry
 
-/-- Lemma 6.4.13 (Comparison principle) / Exercise 6.4.4 -/
+/-- Lemma 6.4.13 (Comparison principle, liminf) / Exercise 6.4.4 -/
 theorem Sequence.liminf_mono {a b:Sequence} (hm: a.m = b.m) (hab: ∀ n ≥ a.m, a n ≤ b n) :
     a.liminf ≤ b.liminf := by sorry
 
