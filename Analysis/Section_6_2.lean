@@ -54,19 +54,19 @@ theorem EReal.lt_iff (x y:EReal) : x < y ↔ x ≤ y ∧ x ≠ y := lt_iff_le_an
 
 #check EReal.coe_lt_coe_iff
 
-/-- Examples 6.2.4 (a) -/
+/-- Examples 6.2.4 (two reals) -/
 example : (3:EReal) ≤ (5:EReal) := by rw [le_iff]; left; use (3:ℝ), (5:ℝ); norm_cast
 
 
-/-- Examples 6.2.4 (b) -/
+/-- Examples 6.2.4 (a real and positive infinity) -/
 example : (3:EReal) < ⊤ := by rw [lt_iff]; exact ⟨le_top, real_neq_infty 3⟩
 
 
-/-- Examples 6.2.4 (c) -/
+/-- Examples 6.2.4 (negative and positive infinity) -/
 example : (⊥:EReal) < ⊤ := bot_lt_top
 
 
-/-- Examples 6.2.4 (d) -/
+/-- Examples 6.2.4 (a real is not below negative infinity) -/
 example : ¬ (3:EReal) ≤ ⊥ := by
   by_contra h
   simp at h
