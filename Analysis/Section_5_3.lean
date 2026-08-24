@@ -310,23 +310,23 @@ abbrev BoundedAwayZero (a:ℕ → ℚ) : Prop :=
 theorem bounded_away_zero_def (a:ℕ → ℚ) : BoundedAwayZero a ↔
   ∃ (c:ℚ), c > 0 ∧ ∀ n, |a n| ≥ c := by rfl
 
-/-- Examples 5.3.13 (a) -/
+/-- Examples 5.3.13 (alternating signs) -/
 example : BoundedAwayZero (fun n ↦ (-1)^n) := by use 1; simp
 
-/-- Examples 5.3.13 (b) -/
+/-- Examples 5.3.13 (decaying powers of ten) -/
 example : ¬ BoundedAwayZero (fun n ↦ 10^(-(n:ℤ)-1)) := by sorry
 
-/-- Examples 5.3.13 (c) -/
+/-- Examples 5.3.13 (approaching one from below) -/
 example : ¬ BoundedAwayZero (fun n ↦ 1 - 10^(-(n:ℤ))) := by sorry
 
-/-- Examples 5.3.13 (d) -/
+/-- Examples 5.3.13 (growing powers of ten, bounded away from zero) -/
 example : BoundedAwayZero (fun n ↦ 10^(n+1)) := by
   use 1, by norm_num
   intro n; dsimp
   rw [abs_of_nonneg (by positivity), show (1:ℚ) = 10^0 by norm_num]
   gcongr <;> grind
 
-/-- Examples 5.3.13 (e) -/
+/-- Examples 5.3.13 (growing powers of ten, not bounded) -/
 example : ¬ ((fun (n:ℕ) ↦ (10:ℚ)^(n+1)):Sequence).IsBounded := by sorry
 
 /-- Lemma 5.3.14 -/
