@@ -1883,14 +1883,12 @@ lemma EuclideanSpace'.prod_equiv_apply_fst {d₁ d₂:ℕ}
     (EuclideanSpace'.prod_equiv d₁ d₂ x).1 i = x ⟨i, Nat.lt_add_right d₂ i.isLt⟩ := by
   simp [EuclideanSpace'.prod_equiv]
 
-/-- Second factor of {name}`prod_equiv`. -/
+/-- Second factor of {name}`prod_equiv`. Matches `toFun`, which uses `i + d₁`. -/
 lemma EuclideanSpace'.prod_equiv_apply_snd {d₁ d₂:ℕ}
     (x : EuclideanSpace' (d₁ + d₂)) (j : Fin d₂) :
     (EuclideanSpace'.prod_equiv d₁ d₂ x).2 j =
-      x ⟨d₁ + (j : ℕ), Nat.add_lt_add_left j.isLt d₁⟩ := by
+      x ⟨(j : ℕ) + d₁, by omega⟩ := by
   simp [EuclideanSpace'.prod_equiv]
-  congr 1
-  exact Fin.ext (Nat.add_comm _ _)
 
 /-- The set of a product box is the Cartesian product of the two boxes. -/
 lemma Box.prod_toSet {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
@@ -1899,49 +1897,26 @@ lemma Box.prod_toSet {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
   constructor
   · rintro ⟨⟨y, z⟩, ⟨hy, hz⟩, rfl⟩
     intro i
-    rw [Box.prod_side]
-    by_cases h : (i : ℕ) < d₁
-    · rw [dif_pos h]
-      have hcoord : (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z) i = y ⟨i, h⟩ := by
-        trans (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z)
-            ⟨(i : ℕ), Nat.lt_add_right d₂ h⟩
-        · congr 1
-          exact Fin.ext rfl
-        · exact EuclideanSpace'.prod_equiv_symm_apply_left y z h
-      rw [hcoord]
+    rcases i with ⟨i, hi⟩
+    simp only [Box.prod]
+    split_ifs with h
+    · simp [EuclideanSpace'.prod_equiv, dif_pos h]
       exact hy ⟨i, h⟩
-    · rw [dif_neg h]
-      have hj : (i : ℕ) - d₁ < d₂ := Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp h) i.isLt
-      have hcoord : (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z) i =
-          z ⟨(i : ℕ) - d₁, hj⟩ := by
-        trans (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z)
-            ⟨d₁ + ((i : ℕ) - d₁), Nat.add_lt_add_left hj d₁⟩
-        · congr 1
-          exact Fin.ext (Nat.add_sub_of_le (Nat.not_lt.mp h)).symm
-        · exact EuclideanSpace'.prod_equiv_symm_apply_right y z hj
-      rw [hcoord]
-      exact hz ⟨(i : ℕ) - d₁, hj⟩
+    · simp [EuclideanSpace'.prod_equiv, dif_neg h]
+      exact hz ⟨i - d₁, Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp h) hi⟩
   · intro hx
     refine ⟨⟨(EuclideanSpace'.prod_equiv d₁ d₂ x).1, (EuclideanSpace'.prod_equiv d₁ d₂ x).2⟩, ?_,
       (EuclideanSpace'.prod_equiv d₁ d₂).left_inv x⟩
     constructor
     · intro i
-      have hx' := hx ⟨i, Nat.lt_add_right d₂ i.isLt⟩
-      rw [Box.prod_side, dif_pos i.isLt] at hx'
-      rw [EuclideanSpace'.prod_equiv_apply_fst]
+      have hx' := hx ⟨(i : ℕ), Nat.lt_add_right d₂ i.isLt⟩
+      simp [Box.prod, EuclideanSpace'.prod_equiv, dif_pos i.isLt] at hx' ⊢
       exact hx'
     · intro j
-      have hnot : ¬ d₁ + (j : ℕ) < d₁ := Nat.not_lt.mpr (Nat.le_add_right _ _)
-      have hx' := hx ⟨d₁ + j.val, Nat.add_lt_add_left j.isLt d₁⟩
-      rw [Box.prod_side, dif_neg hnot] at hx'
-      have hside : B₂.side ⟨d₁ + (j : ℕ) - d₁,
-          Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp hnot)
-            (Nat.add_lt_add_left j.isLt d₁)⟩ = B₂.side j := by
-        congr 1
-        exact Fin.ext (Nat.add_sub_cancel_left d₁ j.val)
-      rw [hside] at hx'
-      rw [EuclideanSpace'.prod_equiv_apply_snd]
-      exact hx'
+      have hnot : ¬ (j : ℕ) + d₁ < d₁ := Nat.not_lt.mpr (Nat.le_add_left d₁ _)
+      have hx' := hx ⟨(j : ℕ) + d₁, by omega⟩
+      simp [Box.prod, EuclideanSpace'.prod_equiv, dif_neg hnot] at hx' ⊢
+      convert hx' <;> (apply Fin.ext; exact Nat.add_sub_cancel (j : ℕ) d₁)
 
 /-- Recovering the factors from a product box. -/
 lemma Box.prod_injective {d₁ d₂:ℕ} :
@@ -1954,14 +1929,14 @@ lemma Box.prod_injective {d₁ d₂:ℕ} :
     rw [Box.prod_side, Box.prod_side, dif_pos i.isLt, dif_pos i.isLt] at this
     exact this
   · ext j
-    have hnot : ¬ d₁ + (j : ℕ) < d₁ := Nat.not_lt.mpr (Nat.le_add_right _ _)
-    have := congrFun hside ⟨d₁ + j.val, Nat.add_lt_add_left j.isLt d₁⟩
+    have hnot : ¬ (j : ℕ) + d₁ < d₁ := Nat.not_lt.mpr (Nat.le_add_left d₁ _)
+    have := congrFun hside ⟨(j : ℕ) + d₁, by omega⟩
     rw [Box.prod_side, Box.prod_side, dif_neg hnot, dif_neg hnot] at this
-    have hj (C : Box d₂) : C.side ⟨d₁ + (j : ℕ) - d₁,
+    have hj (C : Box d₂) : C.side ⟨(j : ℕ) + d₁ - d₁,
         Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp hnot)
-          (Nat.add_lt_add_left j.isLt d₁)⟩ = C.side j := by
-      congr 1
-      exact Fin.ext (Nat.add_sub_cancel_left d₁ j.val)
+          (by omega)⟩ = C.side j := by
+      apply Fin.ext
+      exact Nat.add_sub_cancel (j : ℕ) d₁
     rwa [hj C₁, hj C₂] at this
 
 /-- Volume of a product box is the product of the volumes. -/
@@ -1969,18 +1944,14 @@ lemma Box.volume_prod {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
     |(B₁.prod B₂)|ᵥ = |B₁|ᵥ * |B₂|ᵥ := by
   simp only [Box.volume]
   rw [Fin.prod_univ_add]
-  congr 1
+  refine congrArg₂ (· * ·) ?_ ?_
   · apply Finset.prod_congr rfl
     intro i _
-    have hi : (Fin.castAdd d₂ i : ℕ) < d₁ := i.isLt
-    simp [dif_pos hi]
+    simp [Box.prod]
   · apply Finset.prod_congr rfl
     intro j _
-    have hnot : ¬ (Fin.natAdd d₁ j : ℕ) < d₁ :=
-      Nat.not_lt.mpr (Nat.le_add_right d₁ j.val)
-    simp [dif_neg hnot]
-    congr 1
-    exact Fin.ext (by simp [Fin.natAdd, Nat.add_sub_cancel_left])
+    simp [Box.prod] <;>
+      (apply Fin.ext; simp [Fin.natAdd, Nat.add_sub_cancel_left])
 
 /-- Exercise 1.1.4: The Cartesian product of two elementary sets is elementary. -/
 theorem IsElementary.prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace' d₁)} {E₂: Set (EuclideanSpace' d₂)}
@@ -1992,22 +1963,23 @@ theorem IsElementary.prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace' d₁)} {E�
   constructor
   · intro hx
     obtain ⟨⟨y, z⟩, ⟨hy, hz⟩, rfl⟩ := hx
-    obtain ⟨B, hB, hyB⟩ := Set.mem_iUnion₂.mp hy
-    obtain ⟨C, hC, hzC⟩ := Set.mem_iUnion₂.mp hz
-    refine ⟨B.prod C, ?_, ?_⟩
-    · refine (Finset.mem_image (s := S ×ˢ T) (f := fun p => p.1.prod p.2)).mpr ?_
-      exact ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩
-    · rw [← Box.prod_toSet]
-      exact ⟨⟨y, z⟩, ⟨hyB, hzC⟩, rfl⟩
+    rw [Set.mem_iUnion₂] at hy hz ⊢
+    obtain ⟨B, hB, hyB⟩ := hy
+    obtain ⟨C, hC, hzC⟩ := hz
+    exact ⟨B.prod C,
+      Finset.mem_image.mpr ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩,
+      by
+        rw [← Box.prod_toSet]
+        exact ⟨⟨y, z⟩, ⟨hyB, hzC⟩, rfl⟩⟩
   · intro hx
-    obtain ⟨BC, hBC, hxBC⟩ := Set.mem_iUnion₂.mp hx
+    rw [Set.mem_iUnion₂] at hx
+    obtain ⟨BC, hBC, hxBC⟩ := hx
     obtain ⟨⟨B, C⟩, hBC', rfl⟩ := Finset.mem_image.mp hBC
     obtain ⟨hB, hC⟩ := Finset.mem_product.mp hBC'
     rw [← Box.prod_toSet] at hxBC
     obtain ⟨⟨y, z⟩, ⟨hy, hz⟩, rfl⟩ := hxBC
-    refine ⟨⟨y, z⟩, ⟨?_, ?_⟩, rfl⟩
-    · exact Set.mem_iUnion₂.mpr ⟨B, hB, hy⟩
-    · exact Set.mem_iUnion₂.mpr ⟨C, hC, hz⟩
+    exact ⟨⟨y, z⟩,
+      ⟨Set.mem_iUnion₂.mpr ⟨B, hB, hy⟩, Set.mem_iUnion₂.mpr ⟨C, hC, hz⟩⟩, rfl⟩
 
 /-- The product of two pairwise disjoint box families remains pairwise disjoint. -/
 lemma Box.prod_pairwiseDisjoint {d₁ d₂:ℕ} {S : Finset (Box d₁)} {T : Finset (Box d₂)}
@@ -2058,22 +2030,23 @@ theorem IsElementary.measure_of_prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace'
     constructor
     · intro hx
       obtain ⟨⟨y, z⟩, ⟨hy, hz⟩, rfl⟩ := hx
-      obtain ⟨B, hB, hyB⟩ := Set.mem_iUnion₂.mp hy
-      obtain ⟨C, hC, hzC⟩ := Set.mem_iUnion₂.mp hz
-      refine ⟨B.prod C, ?_, ?_⟩
-      · refine (Finset.mem_image (s := S ×ˢ T) (f := fun p => p.1.prod p.2)).mpr ?_
-        exact ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩
-      · rw [← Box.prod_toSet]
-        exact ⟨⟨y, z⟩, ⟨hyB, hzC⟩, rfl⟩
+      rw [Set.mem_iUnion₂] at hy hz ⊢
+      obtain ⟨B, hB, hyB⟩ := hy
+      obtain ⟨C, hC, hzC⟩ := hz
+      exact ⟨B.prod C,
+        Finset.mem_image.mpr ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩,
+        by
+          rw [← Box.prod_toSet]
+          exact ⟨⟨y, z⟩, ⟨hyB, hzC⟩, rfl⟩⟩
     · intro hx
-      obtain ⟨BC, hBC, hxBC⟩ := Set.mem_iUnion₂.mp hx
+      rw [Set.mem_iUnion₂] at hx
+      obtain ⟨BC, hBC, hxBC⟩ := hx
       obtain ⟨⟨B, C⟩, hBC', rfl⟩ := Finset.mem_image.mp hBC
       obtain ⟨hB, hC⟩ := Finset.mem_product.mp hBC'
       rw [← Box.prod_toSet] at hxBC
       obtain ⟨⟨y, z⟩, ⟨hy, hz⟩, rfl⟩ := hxBC
-      refine ⟨⟨y, z⟩, ⟨?_, ?_⟩, rfl⟩
-      · exact Set.mem_iUnion₂.mpr ⟨B, hB, hy⟩
-      · exact Set.mem_iUnion₂.mpr ⟨C, hC, hz⟩
+      exact ⟨⟨y, z⟩,
+        ⟨Set.mem_iUnion₂.mpr ⟨B, hB, hy⟩, Set.mem_iUnion₂.mpr ⟨C, hC, hz⟩⟩, rfl⟩
   have hmeas : (hE₁.prod hE₂).measure = ∑ B ∈ U, |B|ᵥ :=
     (hE₁.prod hE₂).measure_eq hU_disj hprod_eq
   have hE₁m : hE₁.measure = ∑ B ∈ S, |B|ᵥ := hE₁.measure_eq hS_disj hE₁_eq
