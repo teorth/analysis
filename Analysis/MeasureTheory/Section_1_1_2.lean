@@ -324,7 +324,11 @@ theorem JordanMeasurable.equiv {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornolo
     have hε4 : 0 < ε / 4 := by positivity
     obtain ⟨A, hA, hΔ⟩ := h (ε / 4) hε4
     have hΔbound : Bornology.IsBounded (symmDiff E A) :=
-      (hE.union hA.isBounded).subset (Set.symmDiff_subset_union E A)
+      (hE.union hA.isBounded).subset (by
+        intro x hx
+        rcases Set.mem_symmDiff.mp hx with hx | hx
+        · exact Or.inl hx.1
+        · exact Or.inr hx.1)
     have hΔlt : Jordan_outer_measure (symmDiff E A) < ε / 2 := by linarith
     obtain ⟨C, hC, hΔC, hCμ⟩ := le_Jordan_outer hΔlt hΔbound
     have hEAC : E ⊆ A ∪ C := by
