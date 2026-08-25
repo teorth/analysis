@@ -44,21 +44,21 @@ theorem boundedAwayPos_def (a:ℕ → ℚ) : BoundedAwayPos a ↔ ∃ (c:ℚ), c
 theorem boundedAwayNeg_def (a:ℕ → ℚ) : BoundedAwayNeg a ↔ ∃ (c:ℚ), c > 0 ∧ ∀ n, a n ≤ -c := by
   rfl
 
-/-- Examples 5.4.2 (a) -/
+/-- Examples 5.4.2 (strictly positive) -/
 example : BoundedAwayPos (fun n ↦ 1 + 10^(-(n:ℤ)-1)) := ⟨ 1, by norm_num, by intros; simp; positivity ⟩
 
-/-- Examples 5.4.2 (b) -/
+/-- Examples 5.4.2 (strictly negative) -/
 example : BoundedAwayNeg (fun n ↦ -1 - 10^(-(n:ℤ)-1)) := ⟨ 1, by norm_num, by intros; simp; positivity ⟩
 
-/-- Examples 5.4.2 (c) -/
+/-- Examples 5.4.2 (alternating, not positive) -/
 example : ¬ BoundedAwayPos (fun n ↦ (-1)^n) := by
   intro ⟨ c, h1, h2 ⟩; specialize h2 1; grind
 
-/-- Examples 5.4.2 (d) -/
+/-- Examples 5.4.2 (alternating, not negative) -/
 example : ¬ BoundedAwayNeg (fun n ↦ (-1)^n) := by
   intro ⟨ c, h1, h2 ⟩; specialize h2 0; grind
 
-/-- Examples 5.4.2 (e) -/
+/-- Examples 5.4.2 (alternating, bounded away from zero) -/
 example : BoundedAwayZero (fun n ↦ (-1)^n) := ⟨ 1, by norm_num, by intros; simp ⟩
 
 theorem BoundedAwayZero.boundedAwayPos {a:ℕ → ℚ} (ha: BoundedAwayPos a) : BoundedAwayZero a := by
@@ -82,34 +82,34 @@ theorem Real.isPos_def (x:Real) :
 theorem Real.isNeg_def (x:Real) :
     IsNeg x ↔ ∃ a:ℕ → ℚ, BoundedAwayNeg a ∧ (a:Sequence).IsCauchy ∧ x = LIM a := by rfl
 
-/-- Proposition 5.4.4 (a) (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (trichotomy, at least one) / Exercise 5.4.1 -/
 theorem Real.trichotomous (x:Real) : x = 0 ∨ x.IsPos ∨ x.IsNeg := by sorry
 
-/-- Proposition 5.4.4 (b) (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (trichotomy, zero/positive exclusive) / Exercise 5.4.1 -/
 theorem Real.not_zero_pos (x:Real) : ¬(x = 0 ∧ x.IsPos) := by sorry
 
 theorem Real.nonzero_of_pos {x:Real} (hx: x.IsPos) : x ≠ 0 := by
   have := not_zero_pos x
   simpa [hx] using this
 
-/-- Proposition 5.4.4 (c) (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (trichotomy, zero/negative exclusive) / Exercise 5.4.1 -/
 theorem Real.not_zero_neg (x:Real) : ¬(x = 0 ∧ x.IsNeg) := by sorry
 
 theorem Real.nonzero_of_neg {x:Real} (hx: x.IsNeg) : x ≠ 0 := by
   have := not_zero_neg x
   simpa [hx] using this
 
-/-- Proposition 5.4.4 (d) (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (trichotomy, positive/negative exclusive) / Exercise 5.4.1 -/
 theorem Real.not_pos_neg (x:Real) : ¬(x.IsPos ∧ x.IsNeg) := by sorry
 
-/-- Proposition 5.4.4 (e) (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (negation) / Exercise 5.4.1 -/
 @[simp]
 theorem Real.neg_iff_pos_of_neg (x:Real) : x.IsNeg ↔ (-x).IsPos := by sorry
 
-/-- Proposition 5.4.4 (f) (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (sum) / Exercise 5.4.1 -/
 theorem Real.pos_add {x y:Real} (hx: x.IsPos) (hy: y.IsPos) : (x+y).IsPos := by sorry
 
-/-- Proposition 5.4.4 (g) (basic properties of positive reals) / Exercise 5.4.1 -/
+/-- Proposition 5.4.4 (product) / Exercise 5.4.1 -/
 theorem Real.pos_mul {x y:Real} (hx: x.IsPos) (hy: y.IsPos) : (x*y).IsPos := by sorry
 
 theorem Real.pos_of_coe (q:ℚ) : (q:Real).IsPos ↔ q > 0 := by sorry
@@ -353,43 +353,43 @@ theorem Real.max_eq (x y:Real) : max x y = if x ≥ y then x else y := max_def' 
 
 theorem Real.min_eq (x y:Real) : min x y = if x ≤ y then x else y := rfl
 
-/-- Exercise 5.4.9 (a) -/
+/-- Exercise 5.4.9 (i) (max as negated min) -/
 theorem Real.neg_max (x y:Real) : max x y = - min (-x) (-y) := by sorry
 
-/-- Exercise 5.4.9 (b) -/
+/-- Exercise 5.4.9 (i) (min as negated max) -/
 theorem Real.neg_min (x y:Real) : min x y = - max (-x) (-y) := by sorry
 
-/-- Exercise 5.4.9 (c) -/
+/-- Exercise 5.4.9 (ii) (commutativity of max) -/
 theorem Real.max_comm (x y:Real) : max x y = max y x := by sorry
 
-/-- Exercise 5.4.9 (d) -/
+/-- Exercise 5.4.9 (ii) (idempotence of max) -/
 theorem Real.max_self (x:Real) : max x x = x := by sorry
 
-/-- Exercise 5.4.9 (e) -/
+/-- Exercise 5.4.9 (ii) (translation of max) -/
 theorem Real.max_add (x y z:Real) : max (x + z) (y + z) = max x y + z := by sorry
 
-/-- Exercise 5.4.9 (f) -/
+/-- Exercise 5.4.9 (ii) (positive scaling of max) -/
 theorem Real.max_mul (x y :Real) {z:Real} (hz: z.IsPos) : max (x * z) (y * z) = max x y * z := by
   sorry
-/- Additional exercise (after 5.4.9 (f)): What happens if z is negative? -/
+/- Additional exercise (after 5.4.9 (ii)): What happens if z is negative? -/
 
-/-- Exercise 5.4.9 (g) -/
+/-- Exercise 5.4.9 (iii) (commutativity of min) -/
 theorem Real.min_comm (x y:Real) : min x y = min y x := by sorry
 
-/-- Exercise 5.4.9 (h) -/
+/-- Exercise 5.4.9 (iii) (idempotence of min) -/
 theorem Real.min_self (x:Real) : min x x = x := by sorry
 
-/-- Exercise 5.4.9 (i) -/
+/-- Exercise 5.4.9 (iii) (translation of min) -/
 theorem Real.min_add (x y z:Real) : min (x + z) (y + z) = min x y + z := by sorry
 
-/-- Exercise 5.4.9 (j) -/
+/-- Exercise 5.4.9 (iii) (positive scaling of min) -/
 theorem Real.min_mul (x y :Real) {z:Real} (hz: z.IsPos) : min (x * z) (y * z) = min x y * z := by
   sorry
 
-/-- Exercise 5.4.9 (k) -/
+/-- Exercise 5.4.9 (iv) (inverse of max) -/
 theorem Real.inv_max {x y :Real} (hx:x.IsPos) (hy:y.IsPos) : (max x y)⁻¹ = min x⁻¹ y⁻¹ := by sorry
 
-/-- Exercise 5.4.9 (l) -/
+/-- Exercise 5.4.9 (iv) (inverse of min) -/
 theorem Real.inv_min {x y :Real} (hx:x.IsPos) (hy:y.IsPos) : (min x y)⁻¹ = max x⁻¹ y⁻¹ := by sorry
 
 /-- Not from textbook: the rationals map as an ordered ring homomorphism into the reals. -/
