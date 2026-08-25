@@ -1934,9 +1934,8 @@ lemma Box.prod_injective {d₁ d₂:ℕ} :
     rw [Box.prod_side, Box.prod_side, dif_neg hnot, dif_neg hnot] at this
     have hj (C : Box d₂) : C.side ⟨(j : ℕ) + d₁ - d₁,
         Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp hnot)
-          (by omega)⟩ = C.side j := by
-      apply Fin.ext
-      exact Nat.add_sub_cancel (j : ℕ) d₁
+          (by omega)⟩ = C.side j :=
+      congrArg C.side (Fin.eq_of_val_eq (Nat.add_sub_cancel (j : ℕ) d₁))
     rwa [hj C₁, hj C₂] at this
 
 /-- Volume of a product box is the product of the volumes. -/
