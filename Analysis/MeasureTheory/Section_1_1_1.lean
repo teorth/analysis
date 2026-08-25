@@ -1889,6 +1889,8 @@ lemma EuclideanSpace'.prod_equiv_apply_snd {d₁ d₂:ℕ}
     (EuclideanSpace'.prod_equiv d₁ d₂ x).2 j =
       x ⟨d₁ + (j : ℕ), Nat.add_lt_add_left j.isLt d₁⟩ := by
   simp [EuclideanSpace'.prod_equiv]
+  congr 1
+  exact Fin.ext (Nat.add_comm _ _)
 
 /-- The set of a product box is the Cartesian product of the two boxes. -/
 lemma Box.prod_toSet {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
@@ -1900,14 +1902,24 @@ lemma Box.prod_toSet {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
     rw [Box.prod_side]
     by_cases h : (i : ℕ) < d₁
     · rw [dif_pos h]
-      have hi : i = ⟨(i : ℕ), Nat.lt_add_right d₂ h⟩ := Fin.ext rfl
-      rw [hi, EuclideanSpace'.prod_equiv_symm_apply_left y z h]
+      have hcoord : (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z) i = y ⟨i, h⟩ := by
+        trans (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z)
+            ⟨(i : ℕ), Nat.lt_add_right d₂ h⟩
+        · congr 1
+          exact Fin.ext rfl
+        · exact EuclideanSpace'.prod_equiv_symm_apply_left y z h
+      rw [hcoord]
       exact hy ⟨i, h⟩
     · rw [dif_neg h]
       have hj : (i : ℕ) - d₁ < d₂ := Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp h) i.isLt
-      have hi : i = ⟨d₁ + ((i : ℕ) - d₁), Nat.add_lt_add_left hj d₁⟩ :=
-        Fin.ext (Nat.add_sub_of_le (Nat.not_lt.mp h)).symm
-      rw [hi, EuclideanSpace'.prod_equiv_symm_apply_right y z hj]
+      have hcoord : (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z) i =
+          z ⟨(i : ℕ) - d₁, hj⟩ := by
+        trans (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z)
+            ⟨d₁ + ((i : ℕ) - d₁), Nat.add_lt_add_left hj d₁⟩
+        · congr 1
+          exact Fin.ext (Nat.add_sub_of_le (Nat.not_lt.mp h)).symm
+        · exact EuclideanSpace'.prod_equiv_symm_apply_right y z hj
+      rw [hcoord]
       exact hz ⟨(i : ℕ) - d₁, hj⟩
   · intro hx
     refine ⟨⟨(EuclideanSpace'.prod_equiv d₁ d₂ x).1, (EuclideanSpace'.prod_equiv d₁ d₂ x).2⟩, ?_,
@@ -1960,13 +1972,15 @@ lemma Box.volume_prod {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
   congr 1
   · apply Finset.prod_congr rfl
     intro i _
-    rw [Box.prod_side, dif_pos i.isLt]
+    have hi : (Fin.castAdd d₂ i : ℕ) < d₁ := i.isLt
+    simp [dif_pos hi]
   · apply Finset.prod_congr rfl
     intro j _
-    have hnot : ¬ d₁ + (j : ℕ) < d₁ := Nat.not_lt.mpr (Nat.le_add_right _ _)
-    rw [Box.prod_side, dif_neg hnot]
+    have hnot : ¬ (Fin.natAdd d₁ j : ℕ) < d₁ :=
+      Nat.not_lt.mpr (Nat.le_add_right d₁ j.val)
+    simp [dif_neg hnot]
     congr 1
-    exact Fin.ext (Nat.add_sub_cancel_left d₁ j.val)
+    exact Fin.ext (by simp [Fin.natAdd, Nat.add_sub_cancel_left])
 
 /-- Exercise 1.1.4: The Cartesian product of two elementary sets is elementary. -/
 theorem IsElementary.prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace' d₁)} {E₂: Set (EuclideanSpace' d₂)}
@@ -1981,7 +1995,8 @@ theorem IsElementary.prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace' d₁)} {E�
     obtain ⟨B, hB, hyB⟩ := Set.mem_iUnion₂.mp hy
     obtain ⟨C, hC, hzC⟩ := Set.mem_iUnion₂.mp hz
     refine ⟨B.prod C, ?_, ?_⟩
-    · exact Finset.mem_image.mpr ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩
+    · refine (Finset.mem_image (s := S ×ˢ T) (f := fun p => p.1.prod p.2)).mpr ?_
+      exact ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩
     · rw [← Box.prod_toSet]
       exact ⟨⟨y, z⟩, ⟨hyB, hzC⟩, rfl⟩
   · intro hx
@@ -2011,7 +2026,8 @@ lemma Box.prod_pairwiseDisjoint {d₁ d₂:ℕ} {S : Finset (Box d₁)} {T : Fin
   obtain ⟨hx1, hx2⟩ := hx
   obtain ⟨⟨y, z⟩, ⟨hy1, hz1⟩, rfl⟩ := hx1
   obtain ⟨⟨y', z'⟩, ⟨hy2, hz2⟩, hyz⟩ := hx2
-  have hyz' : (y, z) = (y', z') := (EuclideanSpace'.prod_equiv d₁ d₂).symm.injective hyz
+  have hyz' : (y, z) = (y', z') :=
+    (EuclideanSpace'.prod_equiv d₁ d₂).symm.injective hyz.symm
   rcases hyz' with ⟨rfl, rfl⟩
   have hC : C₁ = C₂ := by
     by_contra hneC
@@ -2045,7 +2061,8 @@ theorem IsElementary.measure_of_prod {d₁ d₂:ℕ} {E₁: Set (EuclideanSpace'
       obtain ⟨B, hB, hyB⟩ := Set.mem_iUnion₂.mp hy
       obtain ⟨C, hC, hzC⟩ := Set.mem_iUnion₂.mp hz
       refine ⟨B.prod C, ?_, ?_⟩
-      · exact Finset.mem_image.mpr ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩
+      · refine (Finset.mem_image (s := S ×ˢ T) (f := fun p => p.1.prod p.2)).mpr ?_
+        exact ⟨⟨B, C⟩, Finset.mem_product.mpr ⟨hB, hC⟩, rfl⟩
       · rw [← Box.prod_toSet]
         exact ⟨⟨y, z⟩, ⟨hyB, hzC⟩, rfl⟩
     · intro hx
