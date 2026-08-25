@@ -352,8 +352,7 @@ theorem JordanMeasurable.equiv {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornolo
       intro x ⟨hx1, hx2⟩
       exact hx1.2 hx2.2
     have hadd := IsElementary.measure_of_disjUnion (hA.sdiff hC) hAinter hdisj
-    have hAdecomp : (A \ C) ∪ (A ∩ C) = A := by
-      ext x; simp [Set.mem_union, Set.mem_diff, Set.mem_inter_iff]; tauto
+    have hAdecomp : (A \ C) ∪ (A ∩ C) = A := Set.diff_union_inter A C
     have heq := IsElementary.measure_eq_of_set_eq
       ((hA.sdiff hC).union hAinter) hA hAdecomp
     have hinter_le : hAinter.measure ≤ hC.measure :=
