@@ -62,11 +62,11 @@ def Rat.pos_infinite_descent : Decidable (∃ a:ℕ → {x: ℚ // 0 < x}, ∀ n
   refine ⟨fun n ↦ ⟨(1 : ℚ) / (n + 1), by positivity⟩, ?_⟩
   intro n
   have h1 : (0 : ℚ) < (n : ℚ) + 1 := by positivity
-  have h2 : (0 : ℚ) < (n : ℚ) + 2 := by positivity
-  have : (1 : ℚ) / ((n : ℚ) + 2) < 1 / ((n : ℚ) + 1) := by
+  have h2 : (0 : ℚ) < (n : ℚ) + 1 + 1 := by positivity
+  have : (1 : ℚ) / ((n : ℚ) + 1 + 1) < 1 / ((n : ℚ) + 1) := by
     rw [div_lt_div_iff₀ h2 h1]
     linarith
-  simpa using this
+  exact this
 
 #check even_iff_exists_two_mul
 #check odd_iff_exists_bit1
