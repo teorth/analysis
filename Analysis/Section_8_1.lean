@@ -115,12 +115,28 @@ theorem Nat.exists_unique_min {X : Set ℕ} (hX : X.Nonempty) :
   sorry
 
 def Int.exists_unique_min : Decidable (∀ (X : Set ℤ) (hX : X.Nonempty), ∃! m ∈ X, ∀ n ∈ X, m ≤ n) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  -- ℤ itself is nonempty but has no least element.
+  apply isFalse
+  intro h
+  obtain ⟨m, ⟨_, hle⟩, _⟩ := h (Set.univ : Set ℤ) ⟨0, trivial⟩
+  have := hle (m - 1) trivial
+  linarith
 
 def NNRat.exists_unique_min : Decidable (∀ (X : Set NNRat) (hX : X.Nonempty), ∃! m ∈ X, ∀ n ∈ X, m ≤ n) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  -- Positive rationals have no least element: any candidate is beaten by half of it.
+  apply isFalse
+  intro h
+  let X : Set NNRat := {q | 0 < q}
+  have hX : X.Nonempty := ⟨1, by norm_num⟩
+  obtain ⟨m, ⟨hm, hle⟩, _⟩ := h X hX
+  have hmpos : 0 < m := hm
+  have hhalf : (m / 2 : NNRat) ∈ X := by
+    change 0 < m / 2
+    exact div_pos hmpos (by norm_num)
+  have := hle (m / 2) hhalf
+  have : m ≤ m / 2 := this
+  have : m / 2 < m := half_lt_self hmpos
+  exact (not_le_of_gt this) ‹_›
 
 
 open Classical in
