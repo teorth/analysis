@@ -53,22 +53,31 @@ example : g_9_2_2 ∘ f_9_2_2 = fun x ↦ 2*x^2 := by grind
 
 /-- Exercise 9.2.1 (a) -/
 def Exercise_9_2_1a : Decidable (∀ (f g h : ℝ → ℝ), (f+g) ∘ h = f ∘ h + g ∘ h) := by
-  -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isTrue
+  intro f g h
+  ext x
+  simp [Pi.add_apply]
 
 /-- Exercise 9.2.1 (b) -/
 def Exercise_9_2_1b : Decidable (∀ (f g h : ℝ → ℝ), f ∘ (g + h) = f ∘ g + f ∘ h) := by
-  -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  -- Counterexample: squaring does not distribute over addition.
+  apply isFalse
+  intro h
+  have := congrArg (fun F ↦ F 1) (h (fun x ↦ x ^ 2) (fun _ ↦ (1:ℝ)) (fun _ ↦ (1:ℝ)))
+  norm_num at this
 
 /-- Exercise 9.2.1 (c) -/
 def Exercise_9_2_1c : Decidable (∀ (f g h : ℝ → ℝ), (f+g) * h = f * h + g * h) := by
-  -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isTrue
+  intro f g h
+  ext x
+  simp [Pi.add_apply, Pi.mul_apply]; ring
 
 /-- Exercise 9.2.1 (d) -/
 def Exercise_9_2_1d : Decidable (∀ (f g h : ℝ → ℝ), f * (g+h) = f * g + f * h) := by
-  -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isTrue
+  intro f g h
+  ext x
+  simp [Pi.add_apply, Pi.mul_apply]; ring
 
 end Chapter9
