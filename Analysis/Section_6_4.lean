@@ -323,7 +323,10 @@ def Sequence.tendsTo_real_iff :
     have han : (a.from 0) n = -1 := by
       rw [a.from_eval hn0]
       simp [a, hn0]
-    simp [Real.Close, Real.dist_eq, han]
+    change ε.Close ((a.from 0) n) (-1)
+    rw [han]
+    simp [Real.Close, Real.dist_eq]
+    exact le_of_lt hε
   have habs : a.abs.TendsTo (1 : ℝ) := by
     intro ε hε
     refine ⟨0, by simp [a, Sequence.abs], ?_⟩
@@ -332,7 +335,10 @@ def Sequence.tendsTo_real_iff :
     have han : (a.abs.from 0) n = 1 := by
       rw [Sequence.from_eval (a.abs) hn0]
       simp [Sequence.abs, a, hn0]
-    simp [Real.Close, Real.dist_eq, han]
+    change ε.Close ((a.abs.from 0) n) (1 : ℝ)
+    rw [han]
+    simp [Real.Close, Real.dist_eq]
+    exact le_of_lt hε
   exact (a.abs.tendsTo_unique (by norm_num : (-1 : ℝ) ≠ 1))
     ⟨(h a (-1)).mp ha, habs⟩
 
