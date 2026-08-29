@@ -276,8 +276,46 @@ theorem Series.telescope {a:ℕ → ℝ} (ha: Filter.atTop.Tendsto a (nhds 0)) :
 /-- Exercise 7.2.1 -/
 def Series.exercise_7_2_1_convergent :
   Decidable ( (mk' (m := 1) (fun n ↦ (-1:ℝ)^(n:ℤ))).converges ) := by
-  -- The first line of this proof should be `apply isTrue` or `apply isFalse`.
-  sorry
+  -- Consecutive partial sums differ by 1, so the series is not Cauchy.
+  apply isFalse
+  intro h
+  set s := mk' (m := 1) (fun n ↦ (-1:ℝ)^(n:ℤ))
+  obtain ⟨L, hL⟩ := h
+  have hε := Metric.tendsto_atTop.mp hL (1 / 2 : ℝ) (by norm_num)
+  obtain ⟨N₀, hN₀⟩ := hε
+  let Ne : ℤ := 2 * max N₀ 1
+  let No : ℤ := Ne + 1
+  have hNe : N₀ ≤ Ne := by
+    have h1 : (1 : ℤ) ≤ max N₀ 1 := le_max_right _ _
+    have h2 : max N₀ 1 ≤ 2 * max N₀ 1 := by nlinarith
+    exact (le_max_left N₀ 1).trans h2
+  have hNo : N₀ ≤ No := hNe.trans (Int.le_add_one Ne)
+  have hsucc : s.partial No = s.partial Ne + s.seq No := by
+    have : Ne ≥ s.m - 1 := by
+      change Ne ≥ (0 : ℤ)
+      have : (1 : ℤ) ≤ max N₀ 1 := le_max_right _ _
+      nlinarith
+    simpa [No] using s.partial_succ this
+  have hterm : |s.seq No| = 1 := by
+    have hge : (1 : ℤ) ≤ No := by
+      have : (1 : ℤ) ≤ max N₀ 1 := le_max_right _ _
+      nlinarith
+    simp only [s, Series.mk', hge, ↓reduceDIte]
+    exact abs_neg_one_zpow No
+  have hdiff : |s.partial No - s.partial Ne| = 1 := by
+    rw [hsucc, add_sub_cancel_left, hterm]
+  have hlt : |s.partial No - s.partial Ne| < 1 := by
+    have he : dist (s.partial Ne) L < 1 / 2 := hN₀ Ne hNe
+    have ho : dist (s.partial No) L < 1 / 2 := hN₀ No hNo
+    have := dist_triangle (s.partial No) L (s.partial Ne)
+    -- |No - Ne| ≤ |No - L| + |L - Ne|
+    rw [Real.dist_eq, Real.dist_eq, Real.dist_eq] at he ho this ⊢
+    calc |s.partial No - s.partial Ne|
+        ≤ |s.partial No - L| + |L - s.partial Ne| := abs_sub_le _ _ _
+      _ = |s.partial No - L| + |s.partial Ne - L| := by rw [abs_sub_comm L]
+      _ < 1 / 2 + 1 / 2 := add_lt_add ho he
+      _ = 1 := by norm_num
+  linarith [hdiff, hlt]
 
 
 end Chapter7
