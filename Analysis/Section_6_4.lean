@@ -314,23 +314,25 @@ def Sequence.tendsTo_real_iff :
   -- The constant sequence -1 tends to -1, but its absolute value tends to 1 ≠ -1.
   apply isFalse
   intro h
-  let a : Sequence := Sequence.mk' 0 (fun _ ↦ (-1 : ℝ))
+  let a : Sequence := (fun _ : ℕ ↦ (-1 : ℝ))
   have ha : a.TendsTo (-1) := by
     intro ε hε
     refine ⟨0, by simp [a], ?_⟩
     intro n hn
-    have hn0 : n ≥ (0 : ℤ) := hn
-    simp [Real.Close, Real.dist_eq, a.from_eval hn, Sequence.eval_mk hn0]
+    have hn0 : n ≥ (0 : ℤ) := by simpa [a, Sequence.from] using hn
+    have han : (a.from 0) n = -1 := by
+      rw [a.from_eval hn0]
+      simp [a, hn0]
+    simp [Real.Close, Real.dist_eq, han]
   have habs : a.abs.TendsTo (1 : ℝ) := by
     intro ε hε
     refine ⟨0, by simp [a, Sequence.abs], ?_⟩
     intro n hn
-    have hn0 : n ≥ (0 : ℤ) := by
-      simpa [Sequence.abs, a] using hn
-    have : (a.abs.from 0) n = 1 := by
-      simp [Sequence.from_eval (a.abs) hn, Sequence.abs, Sequence.eval_mk (by omega : n ≥ (0:ℤ)), a,
-        abs_neg]
-    simp [Real.Close, Real.dist_eq, this]
+    have hn0 : n ≥ (0 : ℤ) := by simpa [a, Sequence.abs, Sequence.from] using hn
+    have han : (a.abs.from 0) n = 1 := by
+      rw [Sequence.from_eval (a.abs) hn0]
+      simp [Sequence.abs, a, hn0]
+    simp [Real.Close, Real.dist_eq, han]
   exact (a.abs.tendsTo_unique (by norm_num : (-1 : ℝ) ≠ 1))
     ⟨(h a (-1)).mp ha, habs⟩
 
