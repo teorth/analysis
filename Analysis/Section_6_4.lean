@@ -314,17 +314,23 @@ def Sequence.tendsTo_real_iff :
   -- The constant sequence -1 tends to -1, but its absolute value tends to 1 ≠ -1.
   apply isFalse
   intro h
-  let a : Sequence := (fun _ : ℕ ↦ (-1 : ℝ) : Sequence)
+  let a : Sequence := Sequence.mk' 0 (fun _ ↦ (-1 : ℝ))
   have ha : a.TendsTo (-1) := by
     intro ε hε
-    refine ⟨a.m, le_rfl, ?_⟩
+    refine ⟨0, by simp [a], ?_⟩
     intro n hn
-    simp [Real.Close, a, Real.dist_eq]
+    have hn0 : n ≥ (0 : ℤ) := hn
+    simp [Real.Close, Real.dist_eq, a.from_eval hn, Sequence.eval_mk hn0]
   have habs : a.abs.TendsTo (1 : ℝ) := by
     intro ε hε
-    refine ⟨a.abs.m, le_rfl, ?_⟩
+    refine ⟨0, by simp [a, Sequence.abs], ?_⟩
     intro n hn
-    simp [Real.Close, a, Sequence.abs, Real.dist_eq]
+    have hn0 : n ≥ (0 : ℤ) := by
+      simpa [Sequence.abs, a] using hn
+    have : (a.abs.from 0) n = 1 := by
+      simp [Sequence.from_eval (a.abs) hn, Sequence.abs, Sequence.eval_mk (by omega : n ≥ (0:ℤ)), a,
+        abs_neg]
+    simp [Real.Close, Real.dist_eq, this]
   exact (a.abs.tendsTo_unique (by norm_num : (-1 : ℝ) ≠ 1))
     ⟨(h a (-1)).mp ha, habs⟩
 
