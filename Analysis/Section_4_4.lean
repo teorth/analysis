@@ -66,7 +66,7 @@ def Rat.pos_infinite_descent : Decidable (∃ a:ℕ → {x: ℚ // 0 < x}, ∀ n
   have : (1 : ℚ) / ((n : ℚ) + 1 + 1) < 1 / ((n : ℚ) + 1) := by
     rw [div_lt_div_iff₀ h2 h1]
     linarith
-  exact this
+  exact Subtype.mk_lt_mk.mpr this
 
 #check even_iff_exists_two_mul
 #check odd_iff_exists_bit1
