@@ -127,16 +127,15 @@ def NNRat.exists_unique_min : Decidable (∀ (X : Set NNRat) (hX : X.Nonempty), 
   apply isFalse
   intro h
   let X : Set NNRat := {q | 0 < q}
-  have hX : X.Nonempty := ⟨1, by norm_num⟩
+  have hX : X.Nonempty := ⟨1, show (0:NNRat) < 1 from one_pos⟩
   obtain ⟨m, ⟨hm, hle⟩, _⟩ := h X hX
   have hmpos : 0 < m := hm
   have hhalf : (m / 2 : NNRat) ∈ X := by
     change 0 < m / 2
-    exact div_pos hmpos (by norm_num)
-  have := hle (m / 2) hhalf
-  have : m ≤ m / 2 := this
-  have : m / 2 < m := half_lt_self hmpos
-  exact (not_le_of_gt this) ‹_›
+    exact div_pos hmpos two_pos
+  have hle' := hle (m / 2) hhalf
+  have hlt : m / 2 < m := half_lt_self hmpos
+  exact (not_le_of_gt hlt) hle'
 
 
 open Classical in
