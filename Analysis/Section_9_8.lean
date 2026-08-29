@@ -151,10 +151,11 @@ def MonotoneOn.exist_inverse_without_continuity :
     dsimp [f]
     split_ifs <;> linarith
   obtain ⟨himg, _⟩ := h 0 2 (by norm_num) f hf
+  have hf0 : f 0 = 0 := by simp [f]
+  have hf2 : f 2 = 3 := by simp [f]
   have : (3 / 2 : ℝ) ∈ f '' (.Icc (0:ℝ) 2) := by
     have mem : (3 / 2 : ℝ) ∈ Set.Icc (f 0) (f 2) := by
-      change (3 / 2 : ℝ) ∈ Set.Icc (0:ℝ) 3
-      norm_num
+      simp [hf0, hf2]; norm_num
     simpa [himg] using mem
   obtain ⟨x, hx, hxeq⟩ := this
   dsimp [f] at hxeq
