@@ -53,20 +53,20 @@ def Int.infinite_descent : Decidable (∃ a:ℕ → ℤ, ∀ n, a (n+1) < a n) :
   apply isTrue
   refine ⟨fun n ↦ - (n:ℤ), ?_⟩
   intro n
-  -- -(n+1) < -n
+  -- simp closes -(n+1) < -n
   simp
-  exact Nat.cast_lt.mpr n.lt_succ_self
 
 /-- Exercise 4.4.2 (b') -/
 def Rat.pos_infinite_descent : Decidable (∃ a:ℕ → {x: ℚ // 0 < x}, ∀ n, a (n+1) < a n) := by
   apply isTrue
   refine ⟨fun n ↦ ⟨(1 : ℚ) / (n + 1), by positivity⟩, ?_⟩
   intro n
-  change (1 : ℚ) / (n + 1 + 1) < 1 / (n + 1)
-  have h1 : (0 : ℚ) < n + 1 := by positivity
-  have h2 : (0 : ℚ) < n + 2 := by positivity
-  rw [div_lt_div_iff₀ h2 h1]
-  linarith
+  have h1 : (0 : ℚ) < (n : ℚ) + 1 := by positivity
+  have h2 : (0 : ℚ) < (n : ℚ) + 2 := by positivity
+  have : (1 : ℚ) / ((n : ℚ) + 2) < 1 / ((n : ℚ) + 1) := by
+    rw [div_lt_div_iff₀ h2 h1]
+    linarith
+  simpa using this
 
 #check even_iff_exists_two_mul
 #check odd_iff_exists_bit1
