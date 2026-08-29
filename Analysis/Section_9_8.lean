@@ -142,8 +142,23 @@ def MonotoneOn.exist_inverse_without_continuity :
         finv '' (.Icc (f a) (f b)) = .Icc a b ∧
         (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
         ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y) := by
-  -- apply isFalse: strict mono alone doesn't guarantee a continuous inverse
-  sorry
+  -- A jump is strictly mono on [0,2] but its image is not the full interval [f 0, f 2].
+  apply isFalse
+  intro h
+  let f : ℝ → ℝ := fun x ↦ if x < 1 then x else x + 1
+  have hf : StrictMonoOn f (.Icc (0:ℝ) 2) := by
+    intro x hx y hy hxy
+    dsimp [f]
+    split_ifs <;> linarith
+  obtain ⟨himg, _⟩ := h 0 2 (by norm_num) f hf
+  have : (3 / 2 : ℝ) ∈ f '' (.Icc (0:ℝ) 2) := by
+    have mem : (3 / 2 : ℝ) ∈ Set.Icc (f 0) (f 2) := by
+      change (3 / 2 : ℝ) ∈ Set.Icc (0:ℝ) 3
+      norm_num
+    simpa [himg] using mem
+  obtain ⟨x, hx, hxeq⟩ := this
+  dsimp [f] at hxeq
+  split_ifs at hxeq <;> linarith
 
 /-- Exercise 9.8.4 (without strict monotonicity) -/
 def MonotoneOn.exist_inverse_without_strictmono :
@@ -154,8 +169,16 @@ def MonotoneOn.exist_inverse_without_strictmono :
         finv '' (.Icc (f a) (f b)) = .Icc a b ∧
         (∀ x ∈ Set.Icc a b, finv (f x) = x) ∧
         ∀ y ∈ Set.Icc (f a) (f b), f (finv y) = y) := by
-  -- apply isFalse: e.g. a constant monotone f on [a,b] has no strict inverse
-  sorry
+  -- Constant continuous monotone maps collapse [a,b] to a point, so no left inverse.
+  apply isFalse
+  intro h
+  let f : ℝ → ℝ := fun _ ↦ 0
+  obtain ⟨_, finv, _, _, _, hleft, _⟩ :=
+    h 0 1 (by norm_num) f continuousOn_const fun _ _ _ _ _ ↦ le_rfl
+  have h0 := hleft 0 (by simp)
+  have h1 := hleft 1 (by simp)
+  simp [f] at h0 h1
+  linarith
 
 
 /-
