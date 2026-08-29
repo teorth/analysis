@@ -210,12 +210,13 @@ def BddOn.div : Decidable (∀ (f g : ℝ → ℝ) (X : Set ℝ) (_ : ∀ x ∈ 
     have : (1 : ℝ) / (M + 2) ≤ 1 / 2 := by
       apply one_div_le_one_div_of_le <;> linarith
     linarith
-  have hbound : |(f / g) x| ≤ M := hM x hxX
   have hxpos : 0 < x := by positivity
-  have : |1 / x| ≤ M := by
-    simpa [f, g, Pi.div_apply, abs_of_pos (one_div_pos.mpr hxpos)] using hbound
+  have hval : |(f / g) x| = (M + 2 : ℝ) := by
+    simp [f, g, Pi.div_apply, x, abs_of_pos (one_div_pos.mpr hxpos),
+      abs_of_nonneg (show (0:ℝ) ≤ M + 2 by linarith), one_div_div]
   have : (M + 2 : ℝ) ≤ M := by
-    simpa [x, abs_of_pos (one_div_pos.mpr hxpos), one_div_div] using this
+    have := hM x hxX
+    rwa [hval] at this
   linarith
 
 end Chapter9
