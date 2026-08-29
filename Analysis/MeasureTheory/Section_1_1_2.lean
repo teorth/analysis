@@ -897,10 +897,16 @@ lemma EuclideanSpace'.norm_prod_equiv_symm {d₁ d₂:ℕ}
   refine congrArg₂ (· + ·) ?_ ?_
   · apply Finset.sum_congr rfl
     intro i _
-    rw [EuclideanSpace'.prod_equiv_symm_apply_left y z i.isLt]
+    have hi := i.isLt
+    have : Fin.castAdd d₂ i = ⟨(i : ℕ), Nat.lt_add_right d₂ hi⟩ := by
+      ext; simp [Fin.castAdd]
+    rw [this, EuclideanSpace'.prod_equiv_symm_apply_left y z hi]
   · apply Finset.sum_congr rfl
     intro j _
-    rw [EuclideanSpace'.prod_equiv_symm_apply_right y z j.isLt]
+    have hj := j.isLt
+    have : Fin.natAdd d₁ j = ⟨d₁ + (j : ℕ), Nat.add_lt_add_left hj d₁⟩ := by
+      ext; simp [Fin.natAdd]
+    rw [this, EuclideanSpace'.prod_equiv_symm_apply_right y z hj]
 
 lemma EuclideanSpace'.prod_mono {d₁ d₂:ℕ}
     {E₁ E₁' : Set (EuclideanSpace' d₁)} {E₂ E₂' : Set (EuclideanSpace' d₂)}
