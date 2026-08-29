@@ -201,22 +201,21 @@ def BddOn.div : Decidable (∀ (f g : ℝ → ℝ) (X : Set ℝ) (_ : ∀ x ∈ 
     simp [g, abs_of_pos hx.1]
     exact le_of_lt hx.2⟩
   obtain ⟨M, hM⟩ := h f g X hg hf hgB
-  have hMnonneg : 0 ≤ M := (abs_nonneg _).trans (hM (1/2) (by norm_num))
-  let x : ℝ := 1 / (M + 1)
+  have hhalf : (1 / 2 : ℝ) ∈ X := by constructor <;> norm_num
+  have hMnonneg : 0 ≤ M := (abs_nonneg _).trans (hM (1 / 2) hhalf)
+  -- Always in (0, 1/2] ⊆ (0,1) when M ≥ 0.
+  let x : ℝ := 1 / (M + 2)
   have hxX : x ∈ X := by
-    constructor
-    · positivity
-    · have : 0 ≤ M := hMnonneg
-      have : 1 / (M + 1) < 1 := by
-        rw [div_lt_one (by positivity)]
-        linarith
-      exact this
-  have hbound : |f x / g x| ≤ M := hM x hxX
-  have : |1 / x| ≤ M := by simpa [f, g] using hbound
+    refine ⟨by positivity, ?_⟩
+    have : (1 : ℝ) / (M + 2) ≤ 1 / 2 := by
+      apply one_div_le_one_div_of_le <;> linarith
+    linarith
+  have hbound : |(f / g) x| ≤ M := hM x hxX
   have hxpos : 0 < x := by positivity
-  simp [abs_of_pos (show 0 < 1 / x by positivity), x] at this
-  -- 1 / (1/(M+1)) = M+1 ≤ M
-  field_simp at this
+  have : |1 / x| ≤ M := by
+    simpa [f, g, Pi.div_apply, abs_of_pos (one_div_pos.mpr hxpos)] using hbound
+  have : (M + 2 : ℝ) ≤ M := by
+    simpa [x, abs_of_pos (one_div_pos.mpr hxpos), one_div_div] using this
   linarith
 
 end Chapter9
