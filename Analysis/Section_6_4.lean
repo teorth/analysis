@@ -311,8 +311,22 @@ theorem Sequence.sup_not_strict_mono : ∃ (a b:ℕ → ℝ), (∀ n, a n < b n)
 /-- Exercise 6.4.7 -/
 def Sequence.tendsTo_real_iff :
   Decidable (∀ (a:Sequence) (x:ℝ), a.TendsTo x ↔ a.abs.TendsTo x) := by
-  -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  -- The constant sequence -1 tends to -1, but its absolute value tends to 1 ≠ -1.
+  apply isFalse
+  intro h
+  let a : Sequence := (fun _ : ℕ ↦ (-1 : ℝ) : Sequence)
+  have ha : a.TendsTo (-1) := by
+    intro ε hε
+    refine ⟨a.m, le_rfl, ?_⟩
+    intro n hn
+    simp [Real.Close, a, Real.dist_eq]
+  have habs : a.abs.TendsTo (1 : ℝ) := by
+    intro ε hε
+    refine ⟨a.abs.m, le_rfl, ?_⟩
+    intro n hn
+    simp [Real.Close, a, Sequence.abs, Real.dist_eq]
+  exact (a.abs.tendsTo_unique (by norm_num : (-1 : ℝ) ≠ 1))
+    ⟨(h a (-1)).mp ha, habs⟩
 
 /-- This definition is needed for Exercises 6.4.8 and 6.4.9. -/
 abbrev Sequence.ExtendedLimitPoint (a:Sequence) (x:EReal) : Prop := if x = ⊤ then ¬ a.BddAbove else if x = ⊥ then ¬ a.BddBelow else a.LimitPoint x.toReal
