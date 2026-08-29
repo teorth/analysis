@@ -187,7 +187,36 @@ theorem BddOn.mul (f g : ℝ → ℝ) (X : Set ℝ) (hf : BddOn f X) (hg : BddOn
 
 def BddOn.div : Decidable (∀ (f g : ℝ → ℝ) (X : Set ℝ) (_ : ∀ x ∈ X, g x ≠ 0) (_ : BddOn f X)
     (_: BddOn g X), (BddOn (f / g) X)) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`, depending on whether you believe the given statement to be true or false.
-  sorry
+  -- Bounded numerator and denominator need not give a bounded quotient (e.g. 1/x on (0,1)).
+  apply isFalse
+  intro h
+  let f : ℝ → ℝ := fun _ ↦ 1
+  let g : ℝ → ℝ := fun x ↦ x
+  let X : Set ℝ := Set.Ioo 0 1
+  have hg : ∀ x ∈ X, g x ≠ 0 := by
+    intro x hx; exact ne_of_gt hx.1
+  have hf : BddOn f X := ⟨1, by intro x _hx; simp [f]⟩
+  have hgB : BddOn g X := ⟨1, by
+    intro x hx
+    simp [g, abs_of_pos hx.1]
+    exact le_of_lt hx.2⟩
+  obtain ⟨M, hM⟩ := h f g X hg hf hgB
+  have hMnonneg : 0 ≤ M := (abs_nonneg _).trans (hM (1/2) (by norm_num))
+  let x : ℝ := 1 / (M + 1)
+  have hxX : x ∈ X := by
+    constructor
+    · positivity
+    · have : 0 ≤ M := hMnonneg
+      have : 1 / (M + 1) < 1 := by
+        rw [div_lt_one (by positivity)]
+        linarith
+      exact this
+  have hbound : |f x / g x| ≤ M := hM x hxX
+  have : |1 / x| ≤ M := by simpa [f, g] using hbound
+  have hxpos : 0 < x := by positivity
+  simp [abs_of_pos (show 0 < 1 / x by positivity), x] at this
+  -- 1 / (1/(M+1)) = M+1 ≤ M
+  field_simp at this
+  linarith
 
 end Chapter9
