@@ -292,12 +292,40 @@ theorem SetTheory.Set.image_of_union {X Y:Set} (f:X → Y) (A B: Set) :
     image f (A ∪ B) = (image f A) ∪ (image f B) := by sorry
 
 def SetTheory.Set.image_of_inter' : Decidable (∀ X Y:Set, ∀ f:X → Y, ∀ A B: Set, image f (A ∩ B) = (image f A) ∩ (image f B)) := by
-  -- The first line of this construction should be either `apply isTrue` or `apply isFalse`
-  sorry
+  -- Constant map: image(A ∩ B) = ∅ but image A ∩ image B = {0}.
+  apply isFalse
+  intro h
+  let f : nat → nat := fun _ ↦ (0:nat)
+  have hf := h nat nat f ({0}:Set) ({1}:Set)
+  have hr : (0:Object) ∈ (image f ({0}:Set)) ∩ (image f ({1}:Set)) := by
+    refine (mem_inter _ _ _).mpr ⟨?_, ?_⟩
+    · rw [mem_image]; exact ⟨(0:nat), by simp [mem_singleton], rfl⟩
+    · rw [mem_image]; exact ⟨(1:nat), by simp [mem_singleton], rfl⟩
+  rw [← hf, mem_image] at hr
+  obtain ⟨x, hx, _⟩ := hr
+  have hx' := (mem_inter _ _ _).mp hx
+  have e0 : x.val = (0:Object) := (mem_singleton _ _).mp hx'.1
+  have e1 : x.val = (1:Object) := (mem_singleton _ _).mp hx'.2
+  have h01 : (0:Object) = 1 := e0.symm.trans e1
+  exact (Nat.zero_ne_one ((ofNat_inj' 0 1).mp h01))
 
 def SetTheory.Set.image_of_diff' : Decidable (∀ X Y:Set, ∀ f:X → Y, ∀ A B: Set, image f (A \ B) = (image f A) \ (image f B)) := by
-  -- The first line of this construction should be either `apply isTrue` or `apply isFalse`
-  sorry
+  -- Constant map: image(A \ B) = {0} but image A \ image B = ∅.
+  apply isFalse
+  intro h
+  let f : nat → nat := fun _ ↦ (0:nat)
+  have hf := h nat nat f ({0,1}:Set) ({1}:Set)
+  have hl : (0:Object) ∈ image f (({0,1}:Set) \ ({1}:Set)) := by
+    rw [mem_image]
+    refine ⟨(0:nat), ?_, rfl⟩
+    simp [mem_sdiff, mem_pair, mem_singleton]
+  have hr : (0:Object) ∉ (image f ({0,1}:Set)) \ (image f ({1}:Set)) := by
+    intro hin
+    have hmem := (mem_sdiff _ _ _).mp hin
+    have : (0:Object) ∈ image f ({1}:Set) := by
+      rw [mem_image]; exact ⟨(1:nat), by simp [mem_singleton], rfl⟩
+    exact hmem.2 this
+  exact hr (hf ▸ hl)
 
 /-- Exercise 3.4.4 -/
 theorem SetTheory.Set.preimage_of_inter {X Y:Set} (f:X → Y) (A B: Set) :
