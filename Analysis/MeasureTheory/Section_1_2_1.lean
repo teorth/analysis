@@ -4340,7 +4340,8 @@ theorem Box.sum_volume_eq {d:ℕ} (B B': ℕ → Box d) (hdisj: Pairwise (Functi
 /-- Exercise 1.2.5: For any set that equals a countable union of almost disjoint boxes,
     the Lebesgue outer measure equals the Jordan inner measure. -/
 theorem Lebesgue_outer_measure.eq_Jordan_inner_of_boxes {d:ℕ} (E: Set (EuclideanSpace' d)) (B: ℕ → Box d)
-    (hE: E = ⋃ n, (B n).toSet) (hdisj: Pairwise (Function.onFun AlmostDisjoint B)) :
+    (hE: E = ⋃ n, (B n).toSet) (hdisj: Pairwise (Function.onFun AlmostDisjoint B))
+    (hbound : Bornology.IsBounded E) :
     Lebesgue_outer_measure E = Jordan_inner_measure E := by
   sorry
 
@@ -5121,7 +5122,8 @@ theorem IsOpen.eq_union_boxes {d:ℕ} (hd : 0 < d) (E: Set (EuclideanSpace' d)) 
         have h_scale_lt : (↑(B_idx j).1 : ℤ) < ↑(B_idx i).1 := by exact_mod_cast hij_gt
         exact dyadicCubeLargerNotInSmaller hd h_scale_lt h_ji
 
-theorem Lebesgue_outer_measure.of_open {d:ℕ} (E: Set (EuclideanSpace' d)) (hE: IsOpen E) : Lebesgue_outer_measure E = Jordan_inner_measure E := by
+theorem Lebesgue_outer_measure.of_open {d:ℕ} (E: Set (EuclideanSpace' d)) (hE: IsOpen E)
+    (hbound : Bornology.IsBounded E) : Lebesgue_outer_measure E = Jordan_inner_measure E := by
   by_cases hd : d = 0
   · -- Dimension 0: In dim 0, open sets are either ∅ or Set.univ
     subst hd
@@ -5255,7 +5257,7 @@ theorem Lebesgue_outer_measure.of_open {d:ℕ} (E: Set (EuclideanSpace' d)) (hE:
       -- Decompose E into almost-disjoint dyadic boxes
       obtain ⟨B, hE_eq, hB_dyadic, hB_disj⟩ := IsOpen.eq_union_boxes hd' E hE hE_nonempty
       -- Apply lemma eq_Jordan_inner_of_boxes (Exercise 1.2.5)
-      exact Lebesgue_outer_measure.eq_Jordan_inner_of_boxes E B hE_eq hB_disj
+      exact Lebesgue_outer_measure.eq_Jordan_inner_of_boxes E B hE_eq hB_disj hbound
 
 /-- Lemma 1.2.12 (Outer regularity). m\*(E) = inf\{m\*(U) : E ⊆ U, U open\}. -/
 theorem Lebesgue_outer_measure.eq {d:ℕ} (E: Set (EuclideanSpace' d)) : Lebesgue_outer_measure E = sInf { M | ∃ U, E ⊆ U ∧ IsOpen U ∧ M = Lebesgue_outer_measure U} := by
