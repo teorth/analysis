@@ -442,14 +442,72 @@ theorem SetTheory.Set.inter_of_prod (A B C D:Set) :
 /-- Exercise 3.5.5 (b) -/
 def SetTheory.Set.union_of_prod :
   Decidable (∀ (A B C D:Set), (A ×ˢ B) ∪ (C ×ˢ D) = (A ∪ C) ×ˢ (B ∪ D)) := by
-  -- the first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  -- Diagonal vs rectangle: LHS has 2 pairs, RHS has 4.
+  apply isFalse
+  intro h
+  let A : Set := {0}
+  let B : Set := {0}
+  let C : Set := {1}
+  let D : Set := {1}
+  have hf := h A B C D
+  let z : Object := (⟨(0:Object), (1:Object)⟩ : OrderedPair)
+  have hr : z ∈ (A ∪ C) ×ˢ (B ∪ D) := by
+    rw [mem_cartesian]
+    refine ⟨⟨(0:Object), ?_⟩, ⟨(1:Object), ?_⟩, rfl⟩
+    · simp [A, C, mem_union, mem_singleton]
+    · simp [B, D, mem_union, mem_singleton]
+  have hl : z ∉ (A ×ˢ B) ∪ (C ×ˢ D) := by
+    intro hin
+    have pair_eq {x y : Object} (hz : z = (⟨x, y⟩ : OrderedPair)) : x = 0 ∧ y = 1 := by
+      have := OrderedPair.toObject.injective (by
+        change OrderedPair.toObject ⟨0, 1⟩ = OrderedPair.toObject ⟨x, y⟩
+        simpa [z] using hz)
+      simpa [OrderedPair.eq] using this
+    cases (mem_union _ _ _).mp hin with
+    | inl hinAB =>
+      obtain ⟨x, y, hz⟩ := (mem_cartesian _ _ _).mp hinAB
+      have hy0 : y.val = (0:Object) := by simpa [B, mem_singleton] using y.property
+      have hy1 : y.val = (1:Object) := (pair_eq hz).2
+      exact Nat.zero_ne_one ((ofNat_inj' 0 1).mp (hy0.symm.trans hy1))
+    | inr hinCD =>
+      obtain ⟨x, y, hz⟩ := (mem_cartesian _ _ _).mp hinCD
+      have hx1 : x.val = (1:Object) := by simpa [C, mem_singleton] using x.property
+      have hx0 : x.val = (0:Object) := (pair_eq hz).1
+      exact Nat.zero_ne_one ((ofNat_inj' 0 1).mp (hx0.trans hx1))
+  exact hl (by rwa [← hf] at hr)
 
 /-- Exercise 3.5.5 (c) -/
 def SetTheory.Set.diff_of_prod :
   Decidable (∀ (A B C D:Set), (A ×ˢ B) \ (C ×ˢ D) = (A \ C) ×ˢ (B \ D)) := by
-  -- the first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  -- (0,0) survives on the left but the right-hand product is empty.
+  apply isFalse
+  intro h
+  let A : Set := {0}
+  let B : Set := {0}
+  let C : Set := {0}
+  let D : Set := {1}
+  have hf := h A B C D
+  let z : Object := (⟨(0:Object), (0:Object)⟩ : OrderedPair)
+  have hl : z ∈ (A ×ˢ B) \ (C ×ˢ D) := by
+    refine (mem_sdiff _ _ _).mpr ⟨?_, ?_⟩
+    · rw [mem_cartesian]
+      refine ⟨⟨(0:Object), by simp [A, mem_singleton]⟩,
+        ⟨(0:Object), by simp [B, mem_singleton]⟩, rfl⟩
+    · intro hin
+      obtain ⟨x, y, hz⟩ := (mem_cartesian _ _ _).mp hin
+      have hy : y.val = (1:Object) := by simpa [D, mem_singleton] using y.property
+      have hy0 : y.val = (0:Object) := by
+        have := OrderedPair.toObject.injective (by
+          change OrderedPair.toObject ⟨0, 0⟩ = OrderedPair.toObject ⟨x.val, y.val⟩
+          simpa [z] using hz)
+        exact ((OrderedPair.eq _ _ _ _).mp this).2
+      exact Nat.zero_ne_one ((ofNat_inj' 0 1).mp (hy0.symm.trans hy))
+  have hr : z ∉ (A \ C) ×ˢ (B \ D) := by
+    intro hin
+    obtain ⟨x, _y, _hz⟩ := (mem_cartesian _ _ _).mp hin
+    have hx := (mem_sdiff _ _ _).mp x.property
+    exact hx.2 ((mem_singleton _ _).mpr ((mem_singleton _ _).mp hx.1))
+  exact hr (hf ▸ hl)
 
 /--
   Exercise 3.5.6.
