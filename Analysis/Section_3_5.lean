@@ -459,10 +459,11 @@ def SetTheory.Set.union_of_prod :
   have hl : z ∉ (A ×ˢ B) ∪ (C ×ˢ D) := by
     intro hin
     have pair_eq {x y : Object} (hz : z = (⟨x, y⟩ : OrderedPair)) : x = 0 ∧ y = 1 := by
-      have := OrderedPair.toObject.injective (by
+      have hinj := OrderedPair.toObject.injective (by
         change OrderedPair.toObject ⟨0, 1⟩ = OrderedPair.toObject ⟨x, y⟩
         simpa [z] using hz)
-      simpa [OrderedPair.eq] using this
+      have := (OrderedPair.eq _ _ _ _).mp hinj
+      exact ⟨this.1.symm, this.2.symm⟩
     cases (mem_union _ _ _).mp hin with
     | inl hinAB =>
       obtain ⟨x, y, hz⟩ := (mem_cartesian _ _ _).mp hinAB
@@ -473,7 +474,7 @@ def SetTheory.Set.union_of_prod :
       obtain ⟨x, y, hz⟩ := (mem_cartesian _ _ _).mp hinCD
       have hx1 : x.val = (1:Object) := by simpa [C, mem_singleton] using x.property
       have hx0 : x.val = (0:Object) := (pair_eq hz).1
-      exact Nat.zero_ne_one ((ofNat_inj' 0 1).mp (hx0.trans hx1))
+      exact Nat.zero_ne_one ((ofNat_inj' 0 1).mp (hx0.symm.trans hx1))
   exact hl (by rwa [← hf] at hr)
 
 /-- Exercise 3.5.5 (c) -/
@@ -500,7 +501,7 @@ def SetTheory.Set.diff_of_prod :
         have := OrderedPair.toObject.injective (by
           change OrderedPair.toObject ⟨0, 0⟩ = OrderedPair.toObject ⟨x.val, y.val⟩
           simpa [z] using hz)
-        exact ((OrderedPair.eq _ _ _ _).mp this).2
+        exact ((OrderedPair.eq _ _ _ _).mp this).2.symm
       exact Nat.zero_ne_one ((ofNat_inj' 0 1).mp (hy0.symm.trans hy))
   have hr : z ∉ (A \ C) ×ˢ (B \ D) := by
     intro hin
