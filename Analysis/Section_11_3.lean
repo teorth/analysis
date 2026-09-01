@@ -192,7 +192,7 @@ def MajorizesOn.of_add : Decidable ( ∀ (f g h:ℝ → ℝ) (I:BoundedInterval)
  MajorizesOn (f+h) (g+h) I) := by
   apply isTrue
   intro f g h I hfg x hx
-  exact add_le_add_right (hfg x hx) _
+  simpa [Pi.add_apply] using add_le_add (hfg x hx) (le_refl (h x))
 
 def MajorizesOn.of_mul : Decidable ( ∀ (f g h:ℝ → ℝ) (I:BoundedInterval) (hfg: MajorizesOn f g I),
  MajorizesOn (f*h) (g*h) I) := by
