@@ -190,18 +190,41 @@ theorem MajorizesOn.anti_symm {f g: ℝ → ℝ} {I: BoundedInterval}:
 /-- Exercise 11.3.2 -/
 def MajorizesOn.of_add : Decidable ( ∀ (f g h:ℝ → ℝ) (I:BoundedInterval) (hfg: MajorizesOn f g I),
  MajorizesOn (f+h) (g+h) I) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isTrue
+  intro f g h I hfg x hx
+  exact add_le_add_right (hfg x hx) _
 
 def MajorizesOn.of_mul : Decidable ( ∀ (f g h:ℝ → ℝ) (I:BoundedInterval) (hfg: MajorizesOn f g I),
  MajorizesOn (f*h) (g*h) I) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isFalse
+  intro H
+  let I : BoundedInterval := Icc 0 1
+  let f : ℝ → ℝ := fun _ ↦ 1
+  let g : ℝ → ℝ := fun _ ↦ 0
+  let h : ℝ → ℝ := fun _ ↦ -1
+  have hfg : MajorizesOn f g I := by
+    intro x _hx; simp [f, g]
+  have hmaj := H f g h I hfg
+  have hx : (0 : ℝ) ∈ (I : Set ℝ) := by simp [I]
+  have := hmaj 0 hx
+  simp [f, g, h, Pi.mul_apply] at this
+  linarith
 
 def MajorizesOn.of_smul : Decidable ( ∀ (f g:ℝ → ℝ) (c:ℝ) (I:BoundedInterval) (hfg: MajorizesOn f g I),
  MajorizesOn (c • f) (c • g) I) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isFalse
+  intro H
+  let I : BoundedInterval := Icc 0 1
+  let f : ℝ → ℝ := fun _ ↦ 1
+  let g : ℝ → ℝ := fun _ ↦ 0
+  let c : ℝ := -1
+  have hfg : MajorizesOn f g I := by
+    intro x _hx; simp [f, g]
+  have hmaj := H f g c I hfg
+  have hx : (0 : ℝ) ∈ (I : Set ℝ) := by simp [I]
+  have := hmaj 0 hx
+  simp [f, g, c, Pi.smul_apply, smul_eq_mul] at this
+  linarith
 
 
 end Chapter11
