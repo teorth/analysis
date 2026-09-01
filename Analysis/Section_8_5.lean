@@ -353,7 +353,14 @@ example : ¬ ∃ x : {x:ℝ| x > 0}, IsMin x := by sorry
 example {X Y:Type} [PartialOrder Y] (f:X → Y) : ∃ h₀: PartialOrder X, h₀.le = (fun x y ↦ f x < f y ∨ x = y) := by sorry
 
 def Ex_8_5_5_b : Decidable (∀ (X Y:Type) (h: LinearOrder Y) (f:X → Y), ∃ h₀: LinearOrder X, h₀.le = (fun x y ↦ f x < f y ∨ x = y)) := by
-  sorry
+  apply isFalse
+  intro H
+  let f : Bool → ℝ := fun _ ↦ 0
+  obtain ⟨inst, heq⟩ := H Bool ℝ inferInstance f
+  have htot := inst.le_total false true
+  -- With a constant map, the proposed `le` collapses to equality, which is not total on Bool.
+  rw [heq] at htot
+  simp [f] at htot
 
 -- Final part of Exercise 8.5.5; if the answer to the previous part is "no", modify the hypotheses to make it true.
 
