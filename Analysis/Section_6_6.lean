@@ -63,8 +63,18 @@ theorem Sequence.convergent_of_subseq_of_bounded {a:ℕ→ ℝ} (ha: (a:Sequence
 /-- Exercise 6.6.2 -/
 def Sequence.exist_subseq_of_subseq :
   Decidable (∃ a b : ℕ → ℝ, a ≠ b ∧ Sequence.subseq a b ∧ Sequence.subseq b a) := by
-    -- The first line of this construction should be `apply isTrue` or `apply isFalse`.
-    sorry
+    -- a = (0,1,0,1,…), b = (1,0,1,0,…): each is the shift-subsequence of the other.
+    apply isTrue
+    refine ⟨fun n ↦ (n % 2 : ℕ), fun n ↦ ((n + 1) % 2 : ℕ), ?ne, ?hab, ?hba⟩
+    · intro h
+      have := congrArg (fun f ↦ f 0) h
+      norm_num at this
+    · refine ⟨fun n ↦ n + 1, Nat.strictMono_nat_of_lt_succ (fun _ ↦ Nat.lt_succ_self _), ?_⟩
+      intro n
+      simp [Nat.add_mod]
+    · refine ⟨fun n ↦ n + 1, Nat.strictMono_nat_of_lt_succ (fun _ ↦ Nat.lt_succ_self _), ?_⟩
+      intro n
+      simp [Nat.add_mod]
 
 /--
   Exercise 6.6.3.  You may find the API around Mathlib's {name}`Nat.find` to be useful
