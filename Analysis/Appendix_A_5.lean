@@ -96,21 +96,36 @@ example : ¬ ∃ m:ℤ, ∀ n:ℤ, m > n := by
 
 /-- Exercise A.5.1 -/
 def Exercise_A_5_1a : Decidable (∀ x > (0:ℝ), ∀ y > (0:ℝ), y^2 = x ) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  -- Not every positive x is every positive y's square (take x=1, y=2).
+  apply isFalse
+  intro h
+  have := h (1:ℝ) (by norm_num) (2:ℝ) (by norm_num)
+  norm_num at this
 
 def Exercise_A_5_1b : Decidable (∃ x > (0:ℝ), ∀ y > (0:ℝ), y^2 = x ) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  -- No single positive x equals y^2 for every positive y.
+  apply isFalse
+  intro h
+  obtain ⟨x, hx, hxall⟩ := h
+  have h1 := hxall (1:ℝ) (by norm_num)
+  have h2 := hxall (2:ℝ) (by norm_num)
+  linarith
 
 def Exercise_A_5_1c : Decidable (∃ x > (0:ℝ), ∃ y > (0:ℝ), y^2 = x ) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isTrue
+  refine ⟨(1:ℝ), by norm_num, (1:ℝ), by norm_num, ?_⟩
+  norm_num
 
 def Exercise_A_5_1d : Decidable (∀ y > (0:ℝ), ∃ x > (0:ℝ), y^2 = x ) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  apply isTrue
+  intro y hy
+  refine ⟨y^2, sq_pos_of_pos hy, rfl⟩
 
 def Exercise_A_5_1e : Decidable (∃ y > (0:ℝ), ∀ x > (0:ℝ), y^2 = x ) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  -- No single positive y has y^2 equal to every positive x.
+  apply isFalse
+  intro h
+  obtain ⟨y, hy, hyall⟩ := h
+  have h1 := hyall (1:ℝ) (by norm_num)
+  have h2 := hyall (2:ℝ) (by norm_num)
+  linarith
