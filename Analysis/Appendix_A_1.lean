@@ -207,8 +207,11 @@ def Exercise_A_1_3 : Decidable (∀ (X Y: Prop), (X → Y) → (¬X → ¬ Y) �
 
 /-- Exercise A.1.4. -/
 def Exercise_A_1_4 : Decidable (∀ (X Y: Prop), (X → Y) → (¬Y → ¬ X) → (X ↔ Y)) := by
-  -- the first line of this construction should be either `apply isTrue` or `apply isFalse`.
-  sorry
+  -- ¬Y → ¬X is the contrapositive of X → Y, so the claim reduces to (X → Y) → (X ↔ Y).
+  apply isFalse
+  intro h
+  -- False → True holds, but False ↔ True does not.
+  exact (h False True False.elim False.elim).mpr trivial
 
 /-- Exercise A.1.5. -/
 def Exercise_A_1_5 : Decidable (∀ (X Y Z: Prop), (X ↔ Y) → (Y ↔ Z) → [X,Y,Z].TFAE) := by
