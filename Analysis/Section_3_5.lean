@@ -460,8 +460,24 @@ theorem SetTheory.Set.prod_subset_prod {A B C D:Set}
 
 def SetTheory.Set.prod_subset_prod' :
   Decidable (∀ (A B C D:Set), A ×ˢ B ⊆ C ×ˢ D ↔ A ⊆ C ∧ B ⊆ D) := by
-  -- the first line of this construction should be `apply isTrue` or `apply isFalse`.
-  sorry
+  -- Without nonempty hypotheses the forward direction fails: empty × B ⊆ C × D
+  -- can hold while B ⊈ D.
+  apply isFalse
+  intro h
+  let A : Set := ∅
+  let B : Set := {0}
+  let C : Set := {0}
+  let D : Set := ∅
+  have hf := h A B C D
+  have hsub : A ×ˢ B ⊆ C ×ˢ D := by
+    intro z hz
+    have : z ∈ (∅:Set) ×ˢ B := by simpa [A] using hz
+    exact ((mem_cartesian _ _ _).mp this).1.property.elim
+  have hnot : ¬ (A ⊆ C ∧ B ⊆ D) := by
+    intro ⟨_, hBD⟩
+    have : (0:Object) ∈ D := hBD (by simp [B, mem_singleton])
+    simpa [D] using this
+  exact hnot (hf.mp hsub)
 
 /-- Exercise 3.5.7 -/
 theorem SetTheory.Set.direct_sum {X Y Z:Set} (f: Z → X) (g: Z → Y) :
