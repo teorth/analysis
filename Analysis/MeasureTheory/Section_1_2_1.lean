@@ -4338,10 +4338,14 @@ theorem Box.sum_volume_eq {d:ℕ} (B B': ℕ → Box d) (hdisj: Pairwise (Functi
   exact h_toReal_eq
 
 /-- Exercise 1.2.5: For any set that equals a countable union of almost disjoint boxes,
-    the Lebesgue outer measure equals the Jordan inner measure. -/
+    the Lebesgue outer measure equals the Jordan inner measure.  The text asserts this for
+    unbounded sets too, "where we extend the definition of Jordan inner measure to unbounded sets
+    in the obvious manner", so {name}`Jordan_inner_measure'` is the notion intended here; stated
+    with the real-valued {name}`Jordan_inner_measure` the claim is false, as the whole space
+    shows. -/
 theorem Lebesgue_outer_measure.eq_Jordan_inner_of_boxes {d:ℕ} (E: Set (EuclideanSpace' d)) (B: ℕ → Box d)
     (hE: E = ⋃ n, (B n).toSet) (hdisj: Pairwise (Function.onFun AlmostDisjoint B)) :
-    Lebesgue_outer_measure E = Jordan_inner_measure E := by
+    Lebesgue_outer_measure E = Jordan_inner_measure' E := by
   sorry
 
 def IsCube {d:ℕ} (B: Box d) : Prop := ∃ r, ∀ i, |B.side i|ₗ = r
@@ -5121,11 +5125,13 @@ theorem IsOpen.eq_union_boxes {d:ℕ} (hd : 0 < d) (E: Set (EuclideanSpace' d)) 
         have h_scale_lt : (↑(B_idx j).1 : ℤ) < ↑(B_idx i).1 := by exact_mod_cast hij_gt
         exact dyadicCubeLargerNotInSmaller hd h_scale_lt h_ji
 
-theorem Lebesgue_outer_measure.of_open {d:ℕ} (E: Set (EuclideanSpace' d)) (hE: IsOpen E) : Lebesgue_outer_measure E = Jordan_inner_measure E := by
+theorem Lebesgue_outer_measure.of_open {d:ℕ} (E: Set (EuclideanSpace' d)) (hE: IsOpen E) : Lebesgue_outer_measure E = Jordan_inner_measure' E := by
   by_cases hd : d = 0
   · -- Dimension 0: In dim 0, open sets are either ∅ or Set.univ
     subst hd
-    rw [Lebesgue_outer_measure_of_dim_zero]
+    -- every set is bounded in dimension zero, so the extended inner measure is the usual one
+    rw [Jordan_inner_measure'_eq_coe (EuclideanSpace'.isBounded_of_dim_zero E),
+      Lebesgue_outer_measure_of_dim_zero]
     by_cases hne : E.Nonempty
     · -- Case: E is nonempty → E = Set.univ in dimension 0
       simp only [hne, ↓reduceIte]
@@ -5228,7 +5234,8 @@ theorem Lebesgue_outer_measure.of_open {d:ℕ} (E: Set (EuclideanSpace' d)) (hE:
     by_cases hE_empty : E = ∅
     · -- Empty set case: use Lebesgue_outer_measure.of_empty and Jordan_inner_measure ∅ = 0
       subst hE_empty
-      rw [Lebesgue_outer_measure.of_empty]
+      rw [Jordan_inner_measure'_eq_coe Bornology.isBounded_empty,
+        Lebesgue_outer_measure.of_empty]
       -- Show (0 : EReal) = ↑(Jordan_inner_measure ∅)
       -- First prove Jordan_inner_measure ∅ = 0
       have h_jordan_empty : Jordan_inner_measure (∅ : Set (EuclideanSpace' d)) = 0 := by
