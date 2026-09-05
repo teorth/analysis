@@ -251,15 +251,6 @@ theorem le_Jordan_outer {d:ℕ} {E: Set (EuclideanSpace' d)} {m:ℝ}
   obtain ⟨A, hA, hE_subset, rfl⟩ := hm'
   exact ⟨A, hA, hE_subset, hm'_lt⟩
 
-/-- Exercise 1.1.5 -/
--- Equivalent characterizations of Jordan measurability: inner and outer measures coincide.
-theorem JordanMeasurable.equiv {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBounded E) :
- [JordanMeasurable E,
-  ∀ ε>0, ∃ A, ∃ B, ∃ hA: IsElementary A, ∃ hB: IsElementary B,
-    A ⊆ E ∧ E ⊆ B ∧ (hB.sdiff hA).measure ≤ ε,
-  ∀ ε>0, ∃ A, ∃ hA: IsElementary A, Jordan_outer_measure (symmDiff E A) ≤ ε].TFAE := by
-  sorry
-
 /-- An elementary set is bounded: it is a finite union of boxes, and each box sits inside
 the closed ball of radius the norm of its corner. -/
 theorem IsElementary.isBounded {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) :
@@ -294,6 +285,80 @@ theorem IsElementary.isBounded {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsEleme
   calc (x i)^2 = |x i|^2 := (sq_abs _).symm
     _ ≤ (max |(B.side i).a| |(B.side i).b|)^2 := by
         nlinarith [hcoord i, abs_nonneg (x i)]
+
+/-- Exercise 1.1.5 -/
+-- Equivalent characterizations of Jordan measurability: inner and outer measures coincide.
+theorem JordanMeasurable.equiv {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBounded E) :
+ [JordanMeasurable E,
+  ∀ ε>0, ∃ A, ∃ B, ∃ hA: IsElementary A, ∃ hB: IsElementary B,
+    A ⊆ E ∧ E ⊆ B ∧ (hB.sdiff hA).measure ≤ ε,
+  ∀ ε>0, ∃ A, ∃ hA: IsElementary A, Jordan_outer_measure (symmDiff E A) ≤ ε].TFAE := by
+  tfae_have 1 → 2 := by
+    intro hJM ε hε
+    obtain ⟨A, hA, hAE, hAμ⟩ :=
+      Jordan_inner_le (show Jordan_inner_measure E - ε / 2 < Jordan_inner_measure E by
+        linarith [half_pos hε])
+    obtain ⟨B, hB, hEB, hBμ⟩ :=
+      le_Jordan_outer (show Jordan_outer_measure E < Jordan_outer_measure E + ε / 2 by
+        linarith [half_pos hε]) hE
+    have hAB : A ⊆ B := hAE.trans hEB
+    have hadd := IsElementary.measure_of_disjUnion hA (hB.sdiff hA) disjoint_sdiff_self_right
+    have heq := IsElementary.measure_eq_of_set_eq (hA.union (hB.sdiff hA)) hB
+      (Set.union_diff_cancel hAB)
+    refine ⟨A, B, hA, hB, hAE, hEB, ?_⟩
+    linarith [hJM.2, hAμ, hBμ, hadd, heq]
+  tfae_have 2 → 3 := by
+    intro h ε hε
+    obtain ⟨A, B, hA, hB, hAE, hEB, hmeas⟩ := h ε hε
+    refine ⟨A, hA, ?_⟩
+    have hsub : symmDiff E A ⊆ B \ A := by
+      intro x hx
+      rcases (Set.mem_symmDiff.mp hx) with hx | hx
+      · exact ⟨hEB hx.1, hx.2⟩
+      · exact (hx.2 (hAE hx.1)).elim
+    exact (Jordan_outer_le (hB.sdiff hA) hsub).trans hmeas
+  tfae_have 3 → 1 := by
+    intro h
+    refine ⟨hE, le_antisymm (Jordan_inner_le_outer hE) ?_⟩
+    refine le_of_forall_pos_le_add fun ε hε => ?_
+    have hε4 : 0 < ε / 4 := by positivity
+    obtain ⟨A, hA, hΔ⟩ := h (ε / 4) hε4
+    have hΔbound : Bornology.IsBounded (symmDiff E A) :=
+      (hE.union hA.isBounded).subset (by
+        intro x hx
+        rcases Set.mem_symmDiff.mp hx with hx | hx
+        · exact Or.inl hx.1
+        · exact Or.inr hx.1)
+    have hΔlt : Jordan_outer_measure (symmDiff E A) < ε / 2 := by linarith
+    obtain ⟨C, hC, hΔC, hCμ⟩ := le_Jordan_outer hΔlt hΔbound
+    have hEAC : E ⊆ A ∪ C := by
+      intro x hx
+      by_cases hxA : x ∈ A
+      · exact Or.inl hxA
+      · exact Or.inr (hΔC (Set.mem_symmDiff.mpr (Or.inl ⟨hx, hxA⟩)))
+    have hACE : A \ C ⊆ E := by
+      intro x hx
+      by_contra hxE
+      exact hx.2 (hΔC (Set.mem_symmDiff.mpr (Or.inr ⟨hx.1, hxE⟩)))
+    have hinner : (hA.sdiff hC).measure ≤ Jordan_inner_measure E :=
+      le_Jordan_inner (hA.sdiff hC) hACE hE
+    have houter : Jordan_outer_measure E ≤ (hA.union hC).measure :=
+      Jordan_outer_le (hA.union hC) hEAC
+    have hsubadd : (hA.union hC).measure ≤ hA.measure + hC.measure :=
+      IsElementary.measure_of_union hA hC
+    have hAinter : IsElementary (A ∩ C) := hA.inter hC
+    have hdisj : Disjoint (A \ C) (A ∩ C) := by
+      rw [Set.disjoint_iff]
+      intro x ⟨hx1, hx2⟩
+      exact hx1.2 hx2.2
+    have hadd := IsElementary.measure_of_disjUnion (hA.sdiff hC) hAinter hdisj
+    have hAdecomp : (A \ C) ∪ (A ∩ C) = A := Set.diff_union_inter A C
+    have heq := IsElementary.measure_eq_of_set_eq
+      ((hA.sdiff hC).union hAinter) hA hAdecomp
+    have hinter_le : hAinter.measure ≤ hC.measure :=
+      IsElementary.measure_mono hAinter hC Set.inter_subset_right
+    linarith [hinner, houter, hsubadd, hadd, heq, hinter_le, hCμ]
+  tfae_finish
 
 /-- Every elementary set is Jordan measurable. -/
 theorem IsElementary.jordanMeasurable {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsElementary E) : JordanMeasurable E := by
