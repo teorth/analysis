@@ -30,9 +30,10 @@ noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMea
 def FinitelyAdditiveMeasure.restrict_alg {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) {B':ConcreteBooleanAlgebra X} (hBB': B' ≤ B) : FinitelyAdditiveMeasure B' :=
   {
     measure := μ.measure
-    measure_pos := by sorry
-    measure_empty := by sorry
-    measure_finite_additive := by sorry
+    measure_pos := fun A hA => μ.measure_pos A (hBB' A hA)
+    measure_empty := μ.measure_empty
+    measure_finite_additive := fun E F hE hF hdisj =>
+      μ.measure_finite_additive E F (hBB' E hE) (hBB' F hF) hdisj
   }
 
 /-- Example 1.4.21 (Jordan measure) -/
@@ -52,8 +53,12 @@ open Classical in
 noncomputable def FinitelyAdditiveMeasure.dirac {X:Type*} (x₀:X) (B: ConcreteBooleanAlgebra X) : FinitelyAdditiveMeasure B :=
   {
     measure := fun A => if x₀ ∈ A then 1 else 0
-    measure_pos := by sorry
-    measure_empty := by sorry
+    measure_pos := by
+      intro A _
+      split_ifs
+      · exact zero_le_one
+      · exact le_rfl
+    measure_empty := by simp [Set.not_mem_empty]
     measure_finite_additive := by sorry
   }
 
@@ -62,9 +67,9 @@ noncomputable instance FinitelyAdditiveMeasure.instZero {X:Type*} (B: ConcreteBo
   {
     zero := {
       measure := fun A => 0
-      measure_pos := by sorry
-      measure_empty := by sorry
-      measure_finite_additive := by sorry
+      measure_pos := fun _ _ => le_rfl
+      measure_empty := rfl
+      measure_finite_additive := fun _ _ _ _ _ => by simp
     }
   }
 
@@ -74,9 +79,12 @@ noncomputable instance FinitelyAdditiveMeasure.instAdd {X:Type*} {B: ConcreteBoo
     add := fun μ ν =>
       {
         measure := fun A => μ.measure A + ν.measure A
-        measure_pos := by sorry
-        measure_empty := by sorry
-        measure_finite_additive := by sorry
+        measure_pos := fun A hA => add_nonneg (μ.measure_pos A hA) (ν.measure_pos A hA)
+        measure_empty := by simp [μ.measure_empty, ν.measure_empty]
+        measure_finite_additive := fun E F hE hF hdisj => by
+          simp [μ.measure_finite_additive E F hE hF hdisj,
+            ν.measure_finite_additive E F hE hF hdisj]
+          abel
       }
   }
 
@@ -85,8 +93,8 @@ noncomputable instance FinitelyAdditiveMeasure.instSmul {X:Type*} {B: ConcreteBo
     smul := fun c μ =>
         {
         measure := fun A => c * μ.measure A
-        measure_pos := by sorry
-        measure_empty := by sorry
+        measure_pos := fun A hA => mul_nonneg (zero_le _) (μ.measure_pos A hA)
+        measure_empty := by simp [μ.measure_empty]
         measure_finite_additive := by sorry
         }
 }
