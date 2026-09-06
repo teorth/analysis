@@ -57,8 +57,8 @@ instance ConcreteBooleanAlgebra.instOrderBot {X:Type*} : OrderBot (ConcreteBoole
 def EuclideanSpace'.elementary_boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => IsElementary E ∨ IsElementary Eᶜ
-    empty_mem := by sorry
-    compl_mem := by sorry
+    empty_mem := Or.inl (IsElementary.empty d)
+    compl_mem := fun E hE => hE.symm
     union_mem := by sorry
   }
 
