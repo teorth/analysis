@@ -49,19 +49,19 @@ Slight change from the book to accomodate the change to {lean}`Real.CloseFn`
 -/
 example : (0.42:ℝ).CloseFn (.Icc 1.9 2.1) (fun x ↦ x^2) 4 := by sorry
 
-/-- Example 9.3.4 -/
+/-- Example 9.3.4 (not close on the whole interval) -/
 example: ¬(0.1:ℝ).CloseFn (.Icc 1 3) (fun x ↦ x^2) 4 := by
   sorry
 
-/-- Example 9.3.4 -/
+/-- Example 9.3.4 (close near the point) -/
 example: (0.1:ℝ).CloseNear (.Icc 1 3) (fun x ↦ x^2) 4 2 := by
   sorry
 
-/-- Example 9.3.5 -/
+/-- Example 9.3.5 (not close on the whole interval) -/
 example: ¬(0.1:ℝ).CloseFn (.Icc 1 3) (fun x ↦ x^2) 9 := by
   sorry
 
-/-- Example 9.3.5 -/
+/-- Example 9.3.5 (close near the point) -/
 example: (0.1:ℝ).CloseNear (.Icc 1 3) (fun x ↦ x^2) 9 3 := by
   sorry
 
