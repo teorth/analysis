@@ -66,8 +66,8 @@ def EuclideanSpace'.elementary_boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra 
 def JordanMeasurable.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => JordanMeasurable E ∨ JordanMeasurable Eᶜ
-    empty_mem := by sorry
-    compl_mem := by sorry
+    empty_mem := Or.inl (JordanMeasurable.empty d)
+    compl_mem := fun E hE => hE.symm
     union_mem := by sorry
   }
 
@@ -79,9 +79,9 @@ def JordanMeasurable.gt_elementary_boolean_algebra (d:ℕ) :
 def LebesgueMeasurable.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => LebesgueMeasurable E
-    empty_mem := by sorry
-    compl_mem := by sorry
-    union_mem := by sorry
+    empty_mem := LebesgueMeasurable.empty
+    compl_mem := fun _ hE => hE.complement
+    union_mem := fun _ _ hE hF => hE.union hF
   }
 
 def LebesgueMeasurable.gt_jordan_boolean_algebra (d:ℕ) :
