@@ -110,7 +110,24 @@ def IsNull.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) 
     measurable := fun E => IsNull E ∨ IsNull Eᶜ
     empty_mem := Or.inl Lebesgue_measure.empty
     compl_mem := fun _ hE => hE.symm
-    union_mem := by sorry
+    union_mem := fun E F hE hF => by
+      rcases hE with hE | hE <;> rcases hF with hF | hF
+      · refine Or.inl ?_
+        have hle : Lebesgue_outer_measure (E ∪ F) ≤
+            Lebesgue_outer_measure E + Lebesgue_outer_measure F := by
+          simpa [Fin.sum_univ_two] using
+            Lebesgue_outer_measure.finite_union_le (fun i : Fin 2 => if i = 0 then E else F)
+        simp [hE, hF] at hle
+        exact le_antisymm hle (Lebesgue_outer_measure.nonneg _)
+      · refine Or.inr (IsNull.subset hF ?_)
+        intro x hx
+        exact hx.2
+      · refine Or.inr (IsNull.subset hE ?_)
+        intro x hx
+        exact hx.1
+      · refine Or.inr (IsNull.subset hE ?_)
+        intro x hx
+        exact hx.1
   }
 
 def IsNull.lt_lebesgue_boolean_algebra (d:ℕ) :
