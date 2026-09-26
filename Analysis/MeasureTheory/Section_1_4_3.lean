@@ -252,7 +252,7 @@ noncomputable instance CountablyAdditiveMeasure.instZero {X:Type*} (B: ConcreteS
   {
     zero := {
       toFinitelyAdditiveMeasure := 0
-      measure_countable_additive := by sorry
+      measure_countable_additive := fun _ _ _ => tsum_zero.symm
     }
   }
 
