@@ -149,8 +149,8 @@ def FinitelyAdditiveMeasure.restrict {X:Type*} {B: ConcreteBooleanAlgebra X} (μ
 noncomputable def FinitelyAdditiveMeasure.counting (X:Type*) : FinitelyAdditiveMeasure (⊤  : ConcreteBooleanAlgebra X) :=
   {
     measure := fun E => ENat.card E
-    measure_pos := by sorry
-    measure_empty := by sorry
+    measure_pos := fun _ _ => by positivity
+    measure_empty := by simp
     measure_finite_additive := by sorry
   }
 
