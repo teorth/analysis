@@ -27,6 +27,8 @@ theorem EReal.indicator_of_mem {X:Type*} {A: Set X} {x:X} (h: x ∈ A) : EReal.i
 theorem EReal.indicator_of_notMem {X:Type*} {A: Set X} {x:X} (h: x ∉ A) : EReal.indicator A x = 0 := by
   simp [EReal.indicator, Real.EReal_fun, Set.indicator'_of_notMem h]
 
+theorem EReal.indicator_eq_comp {X:Type*} (A: Set X) : EReal.indicator A = Real.toEReal ∘ A.indicator' := rfl
+
 noncomputable def Complex.indicator {X:Type*} (A: Set X) : X → ℂ := Real.complex_fun A.indicator'
 
 /-- Definition 1.3.2 -/
@@ -1062,12 +1064,26 @@ lemma UnsignedSimpleFunction.integral_le_integral_of_aeLe {d:ℕ} {f g: Euclidea
 /-- Exercise 1.3.1(vi) (Compatibility with Lebesgue measure, indicator) -/
 lemma UnsignedSimpleFunction.indicator {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E) :
   UnsignedSimpleFunction (Real.toEReal ∘ E.indicator') := by
-  sorry
+  use 1, fun _ => (1 : EReal), fun _ => E
+  constructor
+  · intro
+    exact ⟨hE, zero_le_one⟩
+  · ext x
+    simp only [Function.comp_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    rw [Fin.sum_univ_one]
+    simp [EReal.indicator, Real.EReal_fun]
 
 /-- Exercise 1.3.1(vi) (Compatibility with Lebesgue measure, integral of an indicator) -/
 lemma UnsignedSimpleFunction.integral_indicator {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E) :
   (UnsignedSimpleFunction.indicator hE).integ = Lebesgue_measure E := by
-  sorry
+  have hrep : Real.toEReal ∘ E.indicator' =
+      ∑ i : Fin 1, (1 : EReal) • EReal.indicator ((fun _ : Fin 1 => E) i) := by
+    ext x
+    simp only [Function.comp_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    rw [Fin.sum_univ_one]
+    simp [EReal.indicator, Real.EReal_fun]
+  have h := integral_eq (indicator hE) (fun _ => hE) (fun _ => zero_le_one) hrep
+  simpa [Fin.sum_univ_one] using h
 
 lemma RealSimpleFunction.abs {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpleFunction f) : UnsignedSimpleFunction (EReal.abs_fun f) := by
   sorry
@@ -1299,11 +1315,25 @@ lemma ComplexSimpleFunction.integral_eq_integral_of_aeEqual {d:ℕ} {f g: Euclid
 /-- Exercise 1.3.2(iii) (Compatibility with Lebesgue measure, indicator) -/
 lemma RealSimpleFunction.indicator {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E) :
   RealSimpleFunction (E.indicator') := by
-  sorry
+  use 1, fun _ => (1 : ℝ), fun _ => E
+  constructor
+  · intro
+    exact hE
+  · ext x
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    rw [Fin.sum_univ_one]
+    simp
 
 lemma ComplexSimpleFunction.indicator {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E) :
   ComplexSimpleFunction (Complex.indicator E) := by
-  sorry
+  use 1, fun _ => (1 : ℂ), fun _ => E
+  constructor
+  · intro
+    exact hE
+  · ext x
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    rw [Fin.sum_univ_one]
+    simp [Complex.indicator, Real.complex_fun]
 
 /-- Exercise 1.3.2(iii) (Compatibility with Lebesgue measure, integral of an indicator) -/
 lemma RealSimpleFunction.integral_indicator {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: LebesgueMeasurable E) (hfin: Lebesgue_measure E < ⊤): (RealSimpleFunction.indicator hE).integ = (Lebesgue_measure E).toReal := by
