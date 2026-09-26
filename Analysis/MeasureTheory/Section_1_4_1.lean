@@ -21,9 +21,16 @@ instance ConcreteBooleanAlgebra.instLE (X:Type*) : LE (ConcreteBooleanAlgebra X)
 
 instance ConcreteBooleanAlgebra.instPartialOrder (X:Type*) : PartialOrder (ConcreteBooleanAlgebra X) :=
   {
-    le_refl := sorry
-    le_trans := sorry
-    le_antisymm := sorry
+    le_refl := fun B E hE => hE
+    le_trans := fun A B C hAB hBC E hE => hBC E (hAB E hE)
+    le_antisymm := by
+      intro A B hAB hBA
+      have : A.measurable = B.measurable := by
+        ext E
+        exact ⟨hAB E, hBA E⟩
+      cases A
+      cases B
+      congr
   }
 
 def ConcreteBooleanAlgebra.measurableSets {X:Type*} (B: ConcreteBooleanAlgebra X) : Set (Set X) :=
@@ -38,7 +45,7 @@ instance ConcreteBooleanAlgebra.instOrderTop {X:Type*} : OrderTop (ConcreteBoole
       compl_mem := fun _ _ => trivial
       union_mem := fun _ _ _ _ => trivial
     }
-    le_top := sorry
+    le_top := fun _ _ _ => trivial
   }
 
 /-- Example 1.4.3 (the smallest algebra) -/
@@ -50,7 +57,10 @@ instance ConcreteBooleanAlgebra.instOrderBot {X:Type*} : OrderBot (ConcreteBoole
       compl_mem := fun E hE => by grind
       union_mem := fun E F hE hF => by grind
     }
-    bot_le := sorry
+    bot_le := fun B E hE => by
+      rcases hE with h | h
+      · simpa [h] using B.empty_mem
+      · simpa [h, Set.compl_empty] using B.compl_mem ∅ B.empty_mem
   }
 
 /-- Exercise 1.4.1 (Elementary algebra) -/
