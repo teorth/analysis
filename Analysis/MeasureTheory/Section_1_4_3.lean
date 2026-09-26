@@ -229,7 +229,8 @@ theorem FinitelyAdditiveMeasure.isCountablyAdditive_restrict_alg {X:Type*} {B B'
 def CountablyAdditiveMeasure.restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (hBB' : B' ≤ B) : CountablyAdditiveMeasure B' :=
   {
     toFinitelyAdditiveMeasure := μ.toFinitelyAdditiveMeasure.restrict_alg hBB',
-    measure_countable_additive := by sorry
+    measure_countable_additive := fun E hE hdisj =>
+      μ.measure_countable_additive E (fun n => hBB' (E n) (hE n)) hdisj
   }
 
 /-- Example 1.4.29 (Dirac measure) -/
