@@ -130,10 +130,29 @@ noncomputable instance FinitelyAdditiveMeasure.instAddCommMonoid {X:Type*} {B: C
 
 noncomputable instance FinitelyAdditiveMeasure.instDistribMulAction {X:Type*} {B: ConcreteBooleanAlgebra X} : DistribMulAction ENNReal (FinitelyAdditiveMeasure B) :=
 {
-  smul_zero := by sorry,
-  smul_add := by sorry,
-  one_smul := by sorry,
-  mul_smul := by sorry
+  smul_zero := by
+    intro c
+    congr 1
+    ext A
+    simp
+  smul_add := by
+    intro c μ ν
+    cases μ; cases ν
+    congr 1
+    ext A
+    exact left_distrib (c : EReal) _ _
+  one_smul := by
+    intro μ
+    cases μ
+    congr 1
+    ext A
+    exact one_smul EReal _
+  mul_smul := by
+    intro a b μ
+    cases μ
+    congr 1
+    ext A
+    exact mul_assoc (a : EReal) _ _
 }
 
 /-- Example 1.4.25 (Restriction of a measure) -/
