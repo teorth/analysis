@@ -221,7 +221,7 @@ def FinitelyAdditiveMeasure.isCountablyAdditive.toCountablyAdditive {X:Type*} {B
 
 /-- Example 1.4.28 -/
 theorem FinitelyAdditiveMeasure.lebesgue_isCountablyAdditive (d:ℕ) : (FinitelyAdditiveMeasure.lebesgue d).isCountablyAdditive :=
-  by sorry
+  ⟨LebesgueMeasurable.boolean_algebra.isSigmaAlgebra d, Lebesgue_measure.countable_union⟩
 
 theorem FinitelyAdditiveMeasure.isCountablyAdditive_restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (hBB': B' ≤ B) : (μ.toFinitelyAdditiveMeasure.restrict_alg hBB').isCountablyAdditive :=
   by sorry
