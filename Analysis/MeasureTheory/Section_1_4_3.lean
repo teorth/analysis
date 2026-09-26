@@ -161,9 +161,14 @@ noncomputable instance FinitelyAdditiveMeasure.instDistribMulAction {X:Type*} {B
 def FinitelyAdditiveMeasure.restrict {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) (A:Set X) (hA:B.measurable A) : FinitelyAdditiveMeasure (B.restrict A) :=
   {
     measure := fun E => μ.measure E
-    measure_pos := by sorry
-    measure_empty := by sorry
-    measure_finite_additive := by sorry
+    measure_pos := fun E hE =>
+      μ.measure_pos (Subtype.val '' E) ((B.restrict_iff hA E).mp hE)
+    measure_empty := by
+      simpa using μ.measure_empty
+    measure_finite_additive := fun E F hE hF hdisj =>
+      μ.measure_finite_additive (Subtype.val '' E) (Subtype.val '' F)
+        ((B.restrict_iff hA E).mp hE) ((B.restrict_iff hA F).mp hF)
+        (hdisj.image Subtype.val)
   }
 
 /-- Example 1.4.26 (Counting a measure) -/
