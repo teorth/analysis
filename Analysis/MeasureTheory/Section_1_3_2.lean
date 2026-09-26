@@ -1714,16 +1714,69 @@ theorem UnsignedMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Un
   tfae_finish
 
 /-- Exercise 1.3.3(i) -/
-theorem Continuous.UnsignedMeasurable {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Continuous f) (hnonneg: Unsigned f): UnsignedMeasurable f := by sorry
+theorem Continuous.UnsignedMeasurable {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Continuous f) (hnonneg: Unsigned f): _root_.UnsignedMeasurable f := by
+  have h_iff : _root_.UnsignedMeasurable f ↔ ∀ U : Set EReal, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
+    (_root_.UnsignedMeasurable.TFAE hnonneg).out 0 9
+  apply h_iff.mpr
+  intro U hU
+  exact IsOpen.measurable (hU.preimage hf)
+
+/-- Unsigned simple functions are nonnegative. -/
+lemma UnsignedSimpleFunction.unsigned {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedSimpleFunction f) : Unsigned f := by
+  intro x
+  obtain ⟨k, c, E, hc, heq⟩ := hf
+  rw [heq]
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  apply Finset.sum_nonneg
+  intro i _
+  have h1 : 0 ≤ c i := (hc i).2
+  have h2 : 0 ≤ EReal.indicator (E i) x := by
+    simp only [EReal.indicator, Real.EReal_fun]
+    exact EReal.coe_nonneg.mpr (Set.indicator_nonneg (fun _ _ => zero_le_one) x)
+  exact mul_nonneg h1 h2
 
 /-- Exercise 1.3.3(ii) -/
-theorem UnsignedSimpleFunction.unsignedMeasurable {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedSimpleFunction f): UnsignedMeasurable f := by sorry
+theorem UnsignedSimpleFunction.unsignedMeasurable {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedSimpleFunction f): UnsignedMeasurable f :=
+  ⟨hf.unsigned, fun _ ↦ f, fun _ ↦ hf, fun _ ↦ tendsto_const_nhds⟩
 
 /-- Exercise 1.3.3(iii) -/
-theorem UnsignedMeasurable.sup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ iSup (fun n ↦ f n x)) := by sorry
+theorem UnsignedMeasurable.sup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ iSup (fun n ↦ f n x)) := by
+  have hnonneg : Unsigned (fun x ↦ iSup (fun n ↦ f n x)) := by
+    intro x
+    exact le_trans ((hf 0).1 x) (le_iSup (fun n ↦ f n x) 0)
+  have h_iff : UnsignedMeasurable (fun x ↦ iSup (fun n ↦ f n x)) ↔
+      ∀ t, LebesgueMeasurable {x | iSup (fun n ↦ f n x) > t} :=
+    (UnsignedMeasurable.TFAE hnonneg).out 0 4
+  apply h_iff.mpr
+  intro t
+  have h_eq : {x | iSup (fun n ↦ f n x) > t} = ⋃ n, {x | f n x > t} := by
+    ext x
+    simp [lt_iSup_iff]
+  rw [h_eq]
+  refine LebesgueMeasurable.countable_union fun n => ?_
+  have hn : UnsignedMeasurable (f n) ↔ ∀ t, LebesgueMeasurable {x | f n x > t} :=
+    (UnsignedMeasurable.TFAE (hf n).1).out 0 4
+  exact hn.mp (hf n) t
 
 /-- Exercise 1.3.3(iii) -/
-theorem UnsignedMeasurable.inf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ iInf (fun n ↦ f n x)) := by sorry
+theorem UnsignedMeasurable.inf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ iInf (fun n ↦ f n x)) := by
+  have hnonneg : Unsigned (fun x ↦ iInf (fun n ↦ f n x)) := by
+    intro x
+    exact le_iInf fun n => (hf n).1 x
+  have h_iff : UnsignedMeasurable (fun x ↦ iInf (fun n ↦ f n x)) ↔
+      ∀ t, LebesgueMeasurable {x | iInf (fun n ↦ f n x) ≥ t} :=
+    (UnsignedMeasurable.TFAE hnonneg).out 0 5
+  apply h_iff.mpr
+  intro t
+  have h_eq : {x | iInf (fun n ↦ f n x) ≥ t} = ⋂ n, {x | f n x ≥ t} := by
+    ext x
+    simp only [Set.mem_setOf_eq, Set.mem_iInter]
+    exact le_iInf_iff
+  rw [h_eq]
+  refine LebesgueMeasurable.countable_inter fun n => ?_
+  have hn : UnsignedMeasurable (f n) ↔ ∀ t, LebesgueMeasurable {x | f n x ≥ t} :=
+    (UnsignedMeasurable.TFAE (hf n).1).out 0 5
+  exact hn.mp (hf n) t
 
 /-- Exercise 1.3.3(iii) -/
 theorem UnsignedMeasurable.limsup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ Filter.atTop.limsup (fun n ↦ f n x) ) := by sorry
