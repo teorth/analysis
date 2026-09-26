@@ -101,10 +101,30 @@ noncomputable instance FinitelyAdditiveMeasure.instSmul {X:Type*} {B: ConcreteBo
 
 noncomputable instance FinitelyAdditiveMeasure.instAddCommMonoid {X:Type*} {B: ConcreteBooleanAlgebra X} : AddCommMonoid (FinitelyAdditiveMeasure B) :=
 {
-  add_assoc := by sorry,
-  zero_add := by sorry,
-  add_zero := by sorry,
-  add_comm := by sorry
+  add_assoc := by
+    intro μ ν ρ
+    cases μ; cases ν; cases ρ
+    congr 1
+    ext A
+    exact add_assoc _ _ _
+  zero_add := by
+    intro μ
+    cases μ
+    congr 1
+    ext A
+    exact zero_add _
+  add_zero := by
+    intro μ
+    cases μ
+    congr 1
+    ext A
+    exact add_zero _
+  add_comm := by
+    intro μ ν
+    cases μ; cases ν
+    congr 1
+    ext A
+    exact add_comm _ _
   nsmul := nsmulRec
 }
 
