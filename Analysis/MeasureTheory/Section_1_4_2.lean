@@ -47,7 +47,13 @@ theorem JordanMeasurable.boolean_algebra.not_isSigmaAlgebra (d:ℕ) (hd: d ≥ 1
   by sorry
 
 /-- Exercise 1.4.12 -/
-theorem ConcreteSigmaAlgebra.restrict_is_sigma {X:Type*} (B: ConcreteSigmaAlgebra X) (A:Set X): (B.restrict A).isSigmaAlgebra := by sorry
+theorem ConcreteSigmaAlgebra.restrict_is_sigma {X:Type*} (B: ConcreteSigmaAlgebra X) (A:Set X): (B.restrict A).isSigmaAlgebra := by
+  classical
+  intro E hE
+  choose E' hmeas heq using hE
+  refine ⟨⋃ n, E' n, B.countable_union_mem E' hmeas, ?_⟩
+  ext x
+  simp [heq]
 
 def ConcreteSigmaAlgebra.restrict {X:Type*} (B: ConcreteSigmaAlgebra X) (A:Set X) : ConcreteSigmaAlgebra A := (B.restrict_is_sigma A).toSigmaAlgebra
 
