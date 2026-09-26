@@ -98,8 +98,11 @@ def LebesgueMeasurable.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (Euclide
   }
 
 def LebesgueMeasurable.gt_jordan_boolean_algebra (d:ℕ) :
-  LebesgueMeasurable.boolean_algebra d ≥ JordanMeasurable.boolean_algebra d :=
-  by sorry
+  LebesgueMeasurable.boolean_algebra d ≥ JordanMeasurable.boolean_algebra d := by
+  intro E hE
+  rcases hE with h | h
+  · exact Jordan_measurable.lebesgue h
+  · exact (Jordan_measurable.lebesgue h).complement
 
 /-- Example 1.4.6 (Null algebra) -/
 def IsNull.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
