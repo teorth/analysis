@@ -102,22 +102,27 @@ def LebesgueMeasurable.gt_jordan_boolean_algebra (d:ℕ) :
 def IsNull.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => IsNull E ∨ IsNull Eᶜ
-    empty_mem := by sorry
-    compl_mem := by sorry
+    empty_mem := Or.inl Lebesgue_measure.empty
+    compl_mem := fun _ hE => hE.symm
     union_mem := by sorry
   }
 
 def IsNull.lt_lebesgue_boolean_algebra (d:ℕ) :
-  IsNull.boolean_algebra d ≤ LebesgueMeasurable.boolean_algebra d :=
-  by sorry
+  IsNull.boolean_algebra d ≤ LebesgueMeasurable.boolean_algebra d := by
+  intro E hE
+  rcases hE with h | h
+  · exact IsNull.measurable h
+  · exact (IsNull.measurable h).complement
 
 /-- Exercise 1.4.2 (Restriction) -/
 def ConcreteBooleanAlgebra.restrict {X:Type*} (B: ConcreteBooleanAlgebra X) (A:Set X) : ConcreteBooleanAlgebra A :=
   {
     measurable := fun E => ∃ E' : Set X, B.measurable E' ∧ E = Subtype.val ⁻¹' E'
-    empty_mem := by sorry
-    compl_mem := by sorry
-    union_mem := by sorry
+    empty_mem := ⟨∅, B.empty_mem, by simp⟩
+    compl_mem := fun E ⟨E', hE', hE⟩ =>
+      ⟨E'ᶜ, B.compl_mem E' hE', by simp [hE]⟩
+    union_mem := fun E F ⟨E', hE', hE⟩ ⟨F', hF', hF⟩ =>
+      ⟨E' ∪ F', B.union_mem E' F' hE' hF', by simp [hE, hF]⟩
   }
 
 def ConcreteBooleanAlgebra.restrict_iff {X:Type*} {B: ConcreteBooleanAlgebra X} {A:Set X} (h: B.measurable A) (E: Set A) :
@@ -151,16 +156,25 @@ def IsPartition {I X:Type*} (parts: I → Set X) : Prop := (Set.PairwiseDisjoint
 def IsPartition.to_ConcreteBooleanAlgebra {I X: Type*} {atoms: I → Set X} (h_part: IsPartition atoms) : ConcreteBooleanAlgebra X :=
   {
     measurable := fun E => ∃ J: Set I, E = ⋃ i ∈ J, atoms i
-    empty_mem := by sorry
+    empty_mem := ⟨∅, by simp⟩
     compl_mem := by sorry
     union_mem := by sorry
   }
 
-def IsPartition.discrete (X:Type*) : IsPartition (fun x:X ↦ {x}) := by sorry
+def IsPartition.discrete (X:Type*) : IsPartition (fun x:X ↦ {x}) := by
+  refine ⟨?_, ?_⟩
+  · intro x _ y _ hxy
+    exact Set.disjoint_singleton.mpr hxy
+  · ext x
+    simp [Set.mem_iUnion]
 
 def ConcreteBooleanAlgebra.top_atomic (X:Type*) : (IsPartition.discrete X).to_ConcreteBooleanAlgebra = ⊤ := by sorry
 
-def IsPartition.trivial (X:Type*) : IsPartition (fun (x:Unit) ↦ (Set.univ: Set X)) := by sorry
+def IsPartition.trivial (X:Type*) : IsPartition (fun (x:Unit) ↦ (Set.univ: Set X)) := by
+  refine ⟨?_, ?_⟩
+  · intro a _ b _ hne
+    exact (hne (Subsingleton.elim a b)).elim
+  · simp
 
 def ConcreteBooleanAlgebra.bot_atomic (X:Type*) : (IsPartition.trivial X).to_ConcreteBooleanAlgebra = ⊥ := by sorry
 
@@ -237,9 +251,9 @@ instance ConcreteBooleanAlgebra.instInfSet {X:Type*} : InfSet (ConcreteBooleanAl
       sInf S :=
         {
           measurable := fun E => ∀ B ∈ S, B.measurable E
-          empty_mem := by sorry
-          compl_mem := by sorry
-          union_mem := by sorry
+          empty_mem := fun B _ => B.empty_mem
+          compl_mem := fun E hE B hB => B.compl_mem E (hE B hB)
+          union_mem := fun E F hE hF B hB => B.union_mem E F (hE B hB) (hF B hB)
         }
   }
 
