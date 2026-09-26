@@ -46,7 +46,9 @@ noncomputable def FinitelyAdditiveMeasure.null (d:ℕ) : FinitelyAdditiveMeasure
 
 /-- Example 1.4.21 (elementary sets) -/
 noncomputable def FinitelyAdditiveMeasure.elem (d:ℕ) : FinitelyAdditiveMeasure (EuclideanSpace'.elementary_boolean_algebra d) :=
-(FinitelyAdditiveMeasure.lebesgue d).restrict_alg (by sorry)
+(FinitelyAdditiveMeasure.lebesgue d).restrict_alg
+  (le_trans (JordanMeasurable.gt_elementary_boolean_algebra d)
+    (LebesgueMeasurable.gt_jordan_boolean_algebra d))
 
 open Classical in
 /-- Example 1.4.22 (Dirac measure) -/
