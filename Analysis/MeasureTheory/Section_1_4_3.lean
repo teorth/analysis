@@ -224,7 +224,8 @@ theorem FinitelyAdditiveMeasure.lebesgue_isCountablyAdditive (d:ℕ) : (Finitely
   ⟨LebesgueMeasurable.boolean_algebra.isSigmaAlgebra d, Lebesgue_measure.countable_union⟩
 
 theorem FinitelyAdditiveMeasure.isCountablyAdditive_restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (hBB': B' ≤ B) : (μ.toFinitelyAdditiveMeasure.restrict_alg hBB').isCountablyAdditive :=
-  by sorry
+  ⟨B'.countable_union_mem, fun E hE hdisj =>
+    μ.measure_countable_additive E (fun n => hBB' (E n) (hE n)) hdisj⟩
 
 def CountablyAdditiveMeasure.restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (hBB' : B' ≤ B) : CountablyAdditiveMeasure B' :=
   {
