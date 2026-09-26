@@ -17,6 +17,16 @@ noncomputable abbrev Jordan_inner_measure {d:ℕ} (E: Set (EuclideanSpace' d)) :
 noncomputable abbrev Jordan_outer_measure {d:ℕ} (E: Set (EuclideanSpace' d)) : ℝ :=
   sInf { m:ℝ | ∃ (A: Set (EuclideanSpace' d)), ∃ hA: IsElementary A, E ⊆ A ∧ m = hA.measure }
 
+/-- Definition 1.1.4, extended to unbounded sets.  Exercise 1.2.5 of the text asks for the Jordan
+inner measure "extended to unbounded sets in the obvious manner".  Because
+{name}`Jordan_inner_measure` is real-valued, its supremum returns the junk value zero whenever the
+elementary subsets of a set have unbounded measure, as happens for the whole space; this variant
+takes the supremum in {name}`EReal` instead, so that such a set receives the value infinity.  The
+two agree on bounded sets, by Jordan_inner_measure'_eq_coe below. -/
+noncomputable abbrev Jordan_inner_measure' {d:ℕ} (E: Set (EuclideanSpace' d)) : EReal :=
+  sSup { m:EReal | ∃ (A: Set (EuclideanSpace' d)), ∃ hA: IsElementary A,
+    A ⊆ E ∧ m = (hA.measure:EReal) }
+
 /-- A bounded set is Jordan measurable if its inner and outer Jordan measures coincide. -/
 noncomputable abbrev JordanMeasurable {d:ℕ} (E: Set (EuclideanSpace' d)) : Prop :=
   Bornology.IsBounded E ∧ Jordan_inner_measure E = Jordan_outer_measure E
@@ -78,6 +88,127 @@ theorem IsElementary.contains_bounded {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: 
   -- Step 4: Show B.toSet is elementary
   have hB_elem : IsElementary B.toSet := IsElementary.box B
   exact ⟨B.toSet, hB_elem, hE_subset⟩
+
+/-- Every set has the empty set as an elementary subset, so the supremum defining the Jordan
+inner measure is taken over a nonempty set of reals. -/
+theorem Jordan_inner_nonempty {d:ℕ} (E: Set (EuclideanSpace' d)) :
+    { m:ℝ | ∃ (A: Set (EuclideanSpace' d)), ∃ hA: IsElementary A,
+      A ⊆ E ∧ m = hA.measure }.Nonempty :=
+  ⟨0, ∅, IsElementary.empty d, Set.empty_subset E, (IsElementary.measure_of_empty d).symm⟩
+
+/-- For a bounded set that supremum is also bounded above, by the measure of any elementary
+superset. -/
+theorem Jordan_inner_bddAbove {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBounded E) :
+    BddAbove { m:ℝ | ∃ (A: Set (EuclideanSpace' d)), ∃ hA: IsElementary A,
+      A ⊆ E ∧ m = hA.measure } := by
+  obtain ⟨C, hC, hEC⟩ := IsElementary.contains_bounded hE
+  refine ⟨hC.measure, ?_⟩
+  rintro _ ⟨A, hA, hAE, rfl⟩
+  exact IsElementary.measure_mono hA hC (hAE.trans hEC)
+
+/-- For a nonempty set of reals that is bounded above, the supremum computed in {name}`EReal`
+agrees with the supremum computed in the reals.  Both hypotheses are needed: without them the
+real-valued supremum returns its junk value while the extended one returns an infinity. -/
+theorem EReal.sSup_image_coe {S : Set ℝ} (hne : S.Nonempty) (hbdd : BddAbove S) :
+    sSup ((fun x:ℝ ↦ (x:EReal)) '' S) = ((sSup S : ℝ) : EReal) := by
+  obtain ⟨m₀, hm₀⟩ := hne
+  obtain ⟨u, hu⟩ := id hbdd
+  apply le_antisymm
+  · apply sSup_le
+    rintro _ ⟨m, hm, rfl⟩
+    show ((m:ℝ):EReal) ≤ ((sSup S : ℝ):EReal)
+    exact_mod_cast le_csSup hbdd hm
+  · -- the supremum in `EReal` is squeezed between `m₀` and the upper bound `u`, hence finite
+    set T := sSup ((fun x:ℝ ↦ (x:EReal)) '' S)
+    have hTu : T ≤ ((u:ℝ):EReal) := by
+      apply sSup_le
+      rintro _ ⟨m, hm, rfl⟩
+      show ((m:ℝ):EReal) ≤ ((u:ℝ):EReal)
+      exact_mod_cast hu hm
+    have hm₀T : ((m₀:ℝ):EReal) ≤ T := le_sSup ⟨m₀, hm₀, rfl⟩
+    have hTtop : T ≠ ⊤ := by
+      intro h
+      rw [h] at hTu
+      exact absurd hTu (not_le.mpr (EReal.coe_lt_top u))
+    have hTbot : T ≠ ⊥ := by
+      intro h
+      rw [h] at hm₀T
+      exact absurd hm₀T (not_le.mpr (EReal.bot_lt_coe m₀))
+    rw [← EReal.coe_toReal hTtop hTbot]
+    apply EReal.coe_le_coe
+    apply csSup_le ⟨m₀, hm₀⟩
+    intro m hm
+    have hle : ((m:ℝ):EReal) ≤ T := le_sSup ⟨m, hm, rfl⟩
+    rw [← EReal.coe_toReal hTtop hTbot] at hle
+    exact_mod_cast hle
+
+/-- The extended-real and real descriptions of the elementary subset measures of a set are
+related by coercion. -/
+theorem Jordan_inner_measure'_set_eq {d:ℕ} (E: Set (EuclideanSpace' d)) :
+    { m:EReal | ∃ (A: Set (EuclideanSpace' d)), ∃ hA: IsElementary A,
+        A ⊆ E ∧ m = (hA.measure:EReal) }
+      = (fun x:ℝ ↦ (x:EReal)) ''
+          { m:ℝ | ∃ (A: Set (EuclideanSpace' d)), ∃ hA: IsElementary A,
+            A ⊆ E ∧ m = hA.measure } := by
+  ext m
+  constructor
+  · rintro ⟨A, hA, hAE, rfl⟩
+    exact ⟨hA.measure, ⟨A, hA, hAE, rfl⟩, rfl⟩
+  · rintro ⟨x, ⟨A, hA, hAE, rfl⟩, rfl⟩
+    exact ⟨A, hA, hAE, rfl⟩
+
+/-- On bounded sets the extended Jordan inner measure agrees with {name}`Jordan_inner_measure`,
+which is what makes it an extension of Definition 1.1.4 rather than a different notion. -/
+theorem Jordan_inner_measure'_eq_coe {d:ℕ} {E: Set (EuclideanSpace' d)}
+    (hE: Bornology.IsBounded E) :
+    Jordan_inner_measure' E = ((Jordan_inner_measure E : ℝ) : EReal) := by
+  rw [show Jordan_inner_measure' E
+        = sSup ((fun x:ℝ ↦ (x:EReal)) ''
+            { m:ℝ | ∃ (A: Set (EuclideanSpace' d)), ∃ hA: IsElementary A,
+              A ⊆ E ∧ m = hA.measure })
+      from congrArg sSup (Jordan_inner_measure'_set_eq E)]
+  exact EReal.sSup_image_coe (Jordan_inner_nonempty E) (Jordan_inner_bddAbove hE)
+
+/-- The extended Jordan inner measure of the whole space is infinite in positive dimension, which
+is the behaviour the text intends when it extends the definition to unbounded sets.  By contrast
+{name}`Jordan_inner_measure` returns its junk value of zero here, because it takes a supremum in
+the reals over a set with no upper bound.  This is why Exercise 1.2.5 and the formula for the
+outer measure of an open set have to be stated with the extended version. -/
+theorem Jordan_inner_measure'_univ {d:ℕ} (hd: 0 < d) :
+    Jordan_inner_measure' (Set.univ : Set (EuclideanSpace' d)) = ⊤ := by
+  apply sSup_eq_top.mpr
+  intro b hb
+  -- pick a natural number exceeding `b`, and use the cube of that side length
+  obtain ⟨n, hn⟩ : ∃ n:ℕ, b < ((n:ℝ):EReal) := by
+    rcases eq_or_ne b ⊥ with rfl | hbot
+    · exact ⟨0, by simp⟩
+    · obtain ⟨n, hn⟩ := exists_nat_gt b.toReal
+      refine ⟨n, ?_⟩
+      rw [← EReal.coe_toReal (ne_of_lt hb) hbot]
+      exact_mod_cast hn
+  set B : Box d := { side := fun _ ↦ BoundedInterval.Ioc 0 (n:ℝ) } with hB
+  refine ⟨((IsElementary.box B).measure : EReal),
+    ⟨B.toSet, IsElementary.box B, Set.subset_univ _, rfl⟩, ?_⟩
+  have hvol : (IsElementary.box B).measure = (n:ℝ)^d := by
+    rw [IsElementary.measure_of_box]
+    simp [hB, Box.volume]
+  rw [hvol]
+  refine lt_of_lt_of_le hn ?_
+  have hle : (n:ℝ) ≤ (n:ℝ)^d := by
+    rcases Nat.eq_zero_or_pos n with rfl | hn'
+    · simp
+    · calc (n:ℝ) = (n:ℝ)^1 := (pow_one _).symm
+        _ ≤ (n:ℝ)^d := by
+              apply pow_le_pow_right₀ (by exact_mod_cast hn') hd
+  exact_mod_cast hle
+
+/-- In dimension zero the whole space is a single point, so every set is bounded. -/
+theorem EuclideanSpace'.isBounded_of_dim_zero (E: Set (EuclideanSpace' 0)) :
+    Bornology.IsBounded E := by
+  rw [Metric.isBounded_iff_subset_closedBall 0]
+  refine ⟨0, fun x _ ↦ ?_⟩
+  rw [Metric.mem_closedBall, dist_zero_right, EuclideanSpace'.norm_eq]
+  simp
 
 /-- The inner Jordan measure is always non-negative. -/
 theorem Jordan_inner_measure_nonneg {d:ℕ} (E: Set (EuclideanSpace' d)) : 0 ≤ Jordan_inner_measure E := by
