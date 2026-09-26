@@ -299,12 +299,12 @@ lemma Sequence.IsCauchy.mk {n₀:ℤ} (a: {n // n ≥ n₀} → ℚ) :
 noncomputable def Sequence.sqrt_two : Sequence := (fun n:ℕ ↦ ((⌊ (Real.sqrt 2)*10^n ⌋ / 10^n):ℚ))
 
 /--
-  Example 5.1.10. (This requires extensive familiarity with Mathlib's API for the real numbers.)
+  Example 5.1.10 (a). (This requires extensive familiarity with Mathlib's API for the real numbers.)
 -/
 theorem Sequence.ex_5_1_10_a : (1:ℚ).Steady sqrt_two := by sorry
 
 /--
-  Example 5.1.10. (This requires extensive familiarity with Mathlib's API for the real numbers.)
+  Example 5.1.10 (b). (This requires extensive familiarity with Mathlib's API for the real numbers.)
 -/
 theorem Sequence.ex_5_1_10_b : (0.1:ℚ).Steady (sqrt_two.from 1) := by sorry
 
@@ -354,12 +354,12 @@ lemma boundedBy_def {n:ℕ} (a: Fin n → ℚ) (M:ℚ) : BoundedBy a M ↔ ∀ i
 
 abbrev Sequence.BoundedBy (a:Sequence) (M:ℚ) : Prop := ∀ n, |a n| ≤ M
 
-/-- Definition 5.1.12 (bounded sequences) -/
+/-- Definition 5.1.12 (bounded sequences, bounded by a given constant) -/
 lemma Sequence.boundedBy_def (a:Sequence) (M:ℚ) : a.BoundedBy M ↔ ∀ n, |a n| ≤ M := by rfl
 
 abbrev Sequence.IsBounded (a:Sequence) : Prop := ∃ M ≥ 0, a.BoundedBy M
 
-/-- Definition 5.1.12 (bounded sequences) -/
+/-- Definition 5.1.12 (bounded sequences, bounded) -/
 lemma Sequence.isBounded_def (a:Sequence) : a.IsBounded ↔ ∃ M ≥ 0, a.BoundedBy M := by rfl
 
 /-- Example 5.1.13 (a) -/
