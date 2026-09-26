@@ -19,7 +19,8 @@ def MeasurableSpace.toConcreteSigmaAlgebra {X: Type*} (M: MeasurableSpace X) : C
 
 def ConcreteBooleanAlgebra.isSigmaAlgebra {X: Type*} (B: ConcreteBooleanAlgebra X) : Prop := ∀ E : ℕ → Set X, (∀ n, measurable (E n)) → measurable (⋃ n, E n)
 
-theorem ConcreteSigmaAlgebra.isSigmaAlgebra {X: Type*} (B: ConcreteSigmaAlgebra X) : B.isSigmaAlgebra := by sorry
+theorem ConcreteSigmaAlgebra.isSigmaAlgebra {X: Type*} (B: ConcreteSigmaAlgebra X) : B.isSigmaAlgebra :=
+  B.countable_union_mem
 
 def ConcreteBooleanAlgebra.isSigmaAlgebra.toSigmaAlgebra {X: Type*} {B: ConcreteBooleanAlgebra X} (h: B.isSigmaAlgebra) : ConcreteSigmaAlgebra X :=
   { countable_union_mem := h }
@@ -55,9 +56,16 @@ instance ConcreteSigmaAlgebra.instLE (X:Type*) : LE (ConcreteSigmaAlgebra X) :=
 
 instance ConcreteSigmaAlgebra.instPartialOrder (X:Type*) : PartialOrder (ConcreteSigmaAlgebra X) :=
   {
-    le_refl := sorry
-    le_trans := sorry
-    le_antisymm := sorry
+    le_refl := fun B E hE => hE
+    le_trans := fun A B C hAB hBC E hE => hBC E (hAB E hE)
+    le_antisymm := by
+      intro A B hAB hBA
+      have : A.measurable = B.measurable := by
+        ext E
+        exact ⟨hAB E, hBA E⟩
+      cases A
+      cases B
+      congr
   }
 
 instance ConcreteSigmaAlgebra.instOrderTop {X:Type*} : OrderTop (ConcreteSigmaAlgebra X) :=
@@ -69,7 +77,7 @@ instance ConcreteSigmaAlgebra.instOrderTop {X:Type*} : OrderTop (ConcreteSigmaAl
       union_mem := fun _ _ _ _ => trivial
       countable_union_mem := fun _ _ => trivial
     }
-    le_top := sorry
+    le_top := fun _ _ _ => trivial
   }
 
 instance ConcreteSigmaAlgebra.instOrderBot {X:Type*} : OrderBot (ConcreteSigmaAlgebra X) :=
@@ -79,9 +87,26 @@ instance ConcreteSigmaAlgebra.instOrderBot {X:Type*} : OrderBot (ConcreteSigmaAl
       empty_mem := by grind
       compl_mem := fun E hE => by grind
       union_mem := fun E F hE hF => by grind
-      countable_union_mem := fun E hE => by sorry
+      countable_union_mem := fun E hE => by
+        by_cases h : ∃ n, E n = Set.univ
+        · obtain ⟨n, hn⟩ := h
+          refine Or.inr ?_
+          ext x
+          simp
+          exact ⟨n, by simp [hn]⟩
+        · refine Or.inl ?_
+          ext x
+          simp
+          intro n
+          have hEn := hE n
+          rcases hEn with h0 | h1
+          · simp [h0]
+          · exact (h ⟨n, h1⟩).elim
     }
-    bot_le := sorry
+    bot_le := fun B E hE => by
+      rcases hE with h | h
+      · simpa [h] using B.empty_mem
+      · simpa [h, Set.compl_empty] using B.compl_mem ∅ B.empty_mem
   }
 
 /-- Exercise 1.4.13 (Intersection of sigma-algebras) -/
@@ -90,10 +115,10 @@ instance ConcreteSigmaAlgebra.instInfSet {X:Type*} : InfSet (ConcreteSigmaAlgebr
       sInf S :=
         {
           measurable := fun E => ∀ B ∈ S, B.measurable E
-          empty_mem := by sorry
-          compl_mem := by sorry
-          union_mem := by sorry
-          countable_union_mem := by sorry
+          empty_mem := fun B _ => B.empty_mem
+          compl_mem := fun E hE B hB => B.compl_mem E (hE B hB)
+          union_mem := fun E F hE hF B hB => B.union_mem E F (hE B hB) (hF B hB)
+          countable_union_mem := fun E hE B hB => B.countable_union_mem E (fun n => hE n B hB)
         }
   }
 
@@ -219,7 +244,23 @@ def MeasurableSpace.sigmaAlgebra {X: Type*} (M: MeasurableSpace X) : ConcreteSig
   measurable := M.MeasurableSet'
   empty_mem := M.measurableSet_empty
   compl_mem := M.measurableSet_compl
-  union_mem := sorry
+  union_mem := fun E F hE hF => by
+    have hunion : E ∪ F = ⋃ n, if n = 0 then E else F := by
+      ext x
+      simp only [Set.mem_union, Set.mem_iUnion]
+      constructor
+      · rintro (hx | hx)
+        · exact ⟨0, by simp [hx]⟩
+        · exact ⟨1, by simp [hx]⟩
+      · rintro ⟨n, hx⟩
+        by_cases hn : n = 0
+        · exact Or.inl (by simpa [hn] using hx)
+        · exact Or.inr (by simpa [hn] using hx)
+    rw [hunion]
+    exact M.measurableSet_iUnion _ (fun n => by
+      by_cases hn : n = 0
+      · simpa [hn] using hE
+      · simpa [hn] using hF)
   countable_union_mem := M.measurableSet_iUnion
 }
 
