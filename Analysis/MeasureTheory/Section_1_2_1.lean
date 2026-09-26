@@ -50,12 +50,17 @@ lemma Box.isClosed_toSet_of_Icc {d : ℕ} (B : Box d)
 
 /-- Exercise 1.2.3(i) (Empty set) -/
 theorem Lebesgue_outer_measure.of_empty (d:ℕ) : Lebesgue_outer_measure (∅: Set (EuclideanSpace' d)) = 0 := by
-  sorry
+  obtain rfl | hd := Nat.eq_zero_or_pos d
+  · simp [Lebesgue_outer_measure_of_dim_zero]
+  · exact Countable.Lebesgue_measure hd Set.countable_empty
 
 /-- Exercise 1.2.3(ii) (Monotonicity) -/
 theorem Lebesgue_outer_measure.mono {d: ℕ} {E F : Set (EuclideanSpace' d)} (h : E ⊆ F) :
     Lebesgue_outer_measure E ≤ Lebesgue_outer_measure F := by
-  sorry
+  unfold Lebesgue_outer_measure
+  refine sInf_le_sInf ?_
+  rintro V ⟨X, S, hF, rfl⟩
+  exact ⟨X, S, h.trans hF, rfl⟩
 
 /-- Lebesgue outer measure is non-negative.
     Since it's the sInf of sums of box volumes, which are all ≥ 0, the result is ≥ 0. -/
