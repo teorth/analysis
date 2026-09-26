@@ -153,7 +153,9 @@ instance ConcreteSigmaAlgebra.instCompleteLattice {X:Type*} : CompleteLattice (C
     isGLB_sInf := sorry
   }
 
-theorem ConcreteSigmaAlgebra.generated_by_le {X:Type*} (F: Set (Set X)) : ConcreteBooleanAlgebra.generated_by F ≤ (ConcreteSigmaAlgebra.generated_by F).toConcreteBooleanAlgebra := by sorry
+theorem ConcreteSigmaAlgebra.generated_by_le {X:Type*} (F: Set (Set X)) : ConcreteBooleanAlgebra.generated_by F ≤ (ConcreteSigmaAlgebra.generated_by F).toConcreteBooleanAlgebra := by
+  intro E hE B hB
+  exact hE B.toConcreteBooleanAlgebra fun A hA => hB A hA
 
 example : ∃ (X:Type*) (F: Set (Set X)), ConcreteBooleanAlgebra.generated_by F ≠ (ConcreteSigmaAlgebra.generated_by F).toConcreteBooleanAlgebra := by sorry
 
