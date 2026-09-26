@@ -31,7 +31,7 @@ def ConcreteBooleanAlgebra.isAtomic.isSigmaAlgebra {X: Type*} {B: ConcreteBoolea
 
 /-- Exercise 1.4.11 -/
 theorem LebesgueMeasurable.boolean_algebra.isSigmaAlgebra (d:ℕ) : (LebesgueMeasurable.boolean_algebra d).isSigmaAlgebra :=
-  by sorry
+  fun E hE => LebesgueMeasurable.countable_union hE
 
 def LebesgueMeasurable.sigmaAlgebra (d:ℕ) : ConcreteSigmaAlgebra (EuclideanSpace' d) :=
   (LebesgueMeasurable.boolean_algebra.isSigmaAlgebra d).toSigmaAlgebra
