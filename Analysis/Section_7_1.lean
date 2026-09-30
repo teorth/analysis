@@ -70,10 +70,7 @@ example (a: ℤ → ℝ) (m:ℤ) : ∑ i ∈ Icc m (m+1), a i = a m + a (m+1) :=
   simp [Finset.sum_singleton]
 
 example (a: ℤ → ℝ) (m:ℤ) : ∑ i ∈ Icc m (m+2), a i = a m + a (m+1) + a (m+2) := by
-  -- peel last term with n = m+1, then peel again with n = m
-  rw [show ∑ i ∈ Icc m (m + 2), a i = ∑ i ∈ Icc m (m + 1), a i + a (m + 2) from
-    sum_of_nonempty (n := m + 1) (by omega) a]
-  rw [sum_of_nonempty (n := m) (by omega) a]
+  rw [sum_of_nonempty (by omega) a, sum_of_nonempty (by omega) a]
   simp [Finset.sum_singleton]
 
 /-- Remark 7.1.3 -/
