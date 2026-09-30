@@ -60,7 +60,7 @@ noncomputable def FinitelyAdditiveMeasure.dirac {X:Type*} (x₀:X) (B: ConcreteB
       split_ifs
       · exact zero_le_one
       · exact le_rfl
-    measure_empty := by simp [Set.not_mem_empty]
+    measure_empty := by simp
     measure_finite_additive := by
       intro E F _ _ hdisj
       by_cases hxE : x₀ ∈ E
