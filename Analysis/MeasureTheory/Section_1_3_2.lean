@@ -3327,9 +3327,15 @@ theorem ComplexMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → ℂ}:
   := by sorry
 
 /-- Exercise 1.3.8(i) -/
-theorem Continuous.RealMeasurable {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: Continuous f) : RealMeasurable f := by sorry
+theorem Continuous.RealMeasurable {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: Continuous f) : RealMeasurable f := by
+  have h_iff : _root_.RealMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
+    (_root_.RealMeasurable.TFAE (f := f)).out 0 3
+  exact h_iff.mpr fun U hU => IsOpen.measurable (hU.preimage hf)
 
-theorem Continuous.ComplexMeasurable {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: Continuous f) : ComplexMeasurable f := by sorry
+theorem Continuous.ComplexMeasurable {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: Continuous f) : ComplexMeasurable f := by
+  have h_iff : _root_.ComplexMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
+    (_root_.ComplexMeasurable.TFAE (f := f)).out 0 4
+  exact h_iff.mpr fun U hU => IsOpen.measurable (hU.preimage hf)
 
 /-- Exercise 1.3.8(ii) -/
 theorem RealSimpleFunction.iff {d:ℕ} {f: EuclideanSpace' d → ℝ} : RealSimpleFunction f ↔ RealMeasurable f ∧ Finite (f '' Set.univ) := by sorry
