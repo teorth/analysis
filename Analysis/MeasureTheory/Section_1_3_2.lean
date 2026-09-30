@@ -1779,10 +1779,14 @@ theorem UnsignedMeasurable.inf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
   exact hn.mp (hf n) t
 
 /-- Exercise 1.3.3(iii) -/
-theorem UnsignedMeasurable.limsup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ Filter.atTop.limsup (fun n ↦ f n x) ) := by sorry
+theorem UnsignedMeasurable.limsup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ Filter.atTop.limsup (fun n ↦ f n x) ) := by
+  simpa only [Filter.limsup_eq_iInf_iSup_of_nat'] using
+    (UnsignedMeasurable.inf fun n => UnsignedMeasurable.sup fun i => hf (i + n))
 
 /-- Exercise 1.3.3(iii) -/
-theorem UnsignedMeasurable.liminf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ Filter.atTop.liminf (fun n ↦ f n x) ) := by sorry
+theorem UnsignedMeasurable.liminf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} (hf: ∀ n, UnsignedMeasurable (f n)) : UnsignedMeasurable (fun x ↦ Filter.atTop.liminf (fun n ↦ f n x) ) := by
+  simpa only [Filter.liminf_eq_iSup_iInf_of_nat'] using
+    (UnsignedMeasurable.sup fun n => UnsignedMeasurable.inf fun i => hf (i + n))
 
 /-- Exercise 1.3.3(iv) -/
 theorem UnsignedMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg : Unsigned g) (heq: AlmostEverywhereEqual f g) : UnsignedMeasurable g := by sorry
