@@ -3353,9 +3353,19 @@ theorem ComplexMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → ℂ} (g: ℕ
     (heq: PointwiseAeConvergesTo g f) : ComplexMeasurable f := by sorry
 
 /-- Exercise 1.3.8(v) -/
-theorem RealMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) {φ: ℝ → ℝ} (hφ: Continuous φ)  : RealMeasurable (φ ∘ f) := by sorry
+theorem RealMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) {φ: ℝ → ℝ} (hφ: Continuous φ)  : RealMeasurable (φ ∘ f) := by
+  have h_source : RealMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
+    (RealMeasurable.TFAE (f := f)).out 0 3
+  have h_target : RealMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
+    (RealMeasurable.TFAE (f := φ ∘ f)).out 0 3
+  exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
-theorem ComplexMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) {φ: ℂ → ℂ} (hφ: Continuous φ)  : ComplexMeasurable (φ ∘ f) := by sorry
+theorem ComplexMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) {φ: ℂ → ℂ} (hφ: Continuous φ)  : ComplexMeasurable (φ ∘ f) := by
+  have h_source : ComplexMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
+    (ComplexMeasurable.TFAE (f := f)).out 0 4
+  have h_target : ComplexMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
+    (ComplexMeasurable.TFAE (f := φ ∘ f)).out 0 4
+  exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
 /-- Exercise 1.3.8(vi) (Sum of measurable functions) -/
 theorem RealMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) (hg: RealMeasurable g) : RealMeasurable (f + g) := by sorry
