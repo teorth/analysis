@@ -70,7 +70,9 @@ example (a: ℤ → ℝ) (m:ℤ) : ∑ i ∈ Icc m (m+1), a i = a m + a (m+1) :=
   simp [Finset.sum_singleton]
 
 example (a: ℤ → ℝ) (m:ℤ) : ∑ i ∈ Icc m (m+2), a i = a m + a (m+1) + a (m+2) := by
-  rw [sum_of_nonempty (by omega) a, sum_of_nonempty (by omega) a]
+  have h1 := sum_of_nonempty (n := m + 1) (by omega) a
+  simp only [show (m + 1 + 1 : ℤ) = m + 2 by ring] at h1
+  rw [h1, sum_of_nonempty (n := m) (by omega) a]
   simp [Finset.sum_singleton]
 
 /-- Remark 7.1.3 -/
