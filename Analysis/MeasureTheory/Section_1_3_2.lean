@@ -3363,9 +3363,21 @@ theorem RealMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMea
 theorem ComplexMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) (hg: ComplexMeasurable g) : ComplexMeasurable (f + g) := by sorry
 
 /-- Exercise 1.3.8(vi') (Difference of measurable functions) -/
-theorem RealMeasurable.sub {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) (hg: RealMeasurable g) : RealMeasurable (f - g) := by sorry
+theorem RealMeasurable.sub {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) (hg: RealMeasurable g) : RealMeasurable (f - g) := by
+  obtain ⟨u, hu, huf⟩ := hf
+  obtain ⟨v, hv, hvg⟩ := hg
+  refine ⟨fun n => u n + (-1 : ℝ) • v n, fun n => (hu n).add ((hv n).smul (-1)), ?_⟩
+  intro x
+  simpa only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, neg_one_mul, sub_eq_add_neg,
+    Pi.sub_apply] using (huf x).sub (hvg x)
 
-theorem ComplexMeasurable.sub {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) (hg: ComplexMeasurable g) : ComplexMeasurable (f - g) := by sorry
+theorem ComplexMeasurable.sub {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) (hg: ComplexMeasurable g) : ComplexMeasurable (f - g) := by
+  obtain ⟨u, hu, huf⟩ := hf
+  obtain ⟨v, hv, hvg⟩ := hg
+  refine ⟨fun n => u n + (-1 : ℂ) • v n, fun n => (hu n).add ((hv n).smul (-1)), ?_⟩
+  intro x
+  simpa only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, neg_one_mul, sub_eq_add_neg,
+    Pi.sub_apply] using (huf x).sub (hvg x)
 
 /-- Exercise 1.3.8(vi'') (Product of measurable functions) -/
 theorem RealMeasurable.mul {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) (hg: RealMeasurable g) : RealMeasurable (f * g) := by sorry
