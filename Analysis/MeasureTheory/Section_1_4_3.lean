@@ -95,9 +95,11 @@ noncomputable instance FinitelyAdditiveMeasure.instSmul {X:Type*} {B: ConcreteBo
     smul := fun c μ =>
         {
         measure := fun A => c * μ.measure A
-        measure_pos := fun A hA => mul_nonneg (zero_le _) (μ.measure_pos A hA)
+        measure_pos := fun A hA => mul_nonneg (EReal.coe_ennreal_nonneg c) (μ.measure_pos A hA)
         measure_empty := by simp [μ.measure_empty]
-        measure_finite_additive := by sorry
+        measure_finite_additive := fun E F hE hF hdisj => by
+          rw [μ.measure_finite_additive E F hE hF hdisj]
+          exact EReal.left_distrib_of_nonneg (μ.measure_pos E hE) (μ.measure_pos F hF)
         }
 }
 
