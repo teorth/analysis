@@ -3358,9 +3358,19 @@ theorem RealMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: Real
 theorem ComplexMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) {φ: ℂ → ℂ} (hφ: Continuous φ)  : ComplexMeasurable (φ ∘ f) := by sorry
 
 /-- Exercise 1.3.8(vi) (Sum of measurable functions) -/
-theorem RealMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) (hg: RealMeasurable g) : RealMeasurable (f + g) := by sorry
+theorem RealMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) (hg: RealMeasurable g) : RealMeasurable (f + g) := by
+  obtain ⟨u, hu, huf⟩ := hf
+  obtain ⟨v, hv, hvg⟩ := hg
+  refine ⟨fun n => u n + v n, fun n => (hu n).add (hv n), ?_⟩
+  intro x
+  exact (huf x).add (hvg x)
 
-theorem ComplexMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) (hg: ComplexMeasurable g) : ComplexMeasurable (f + g) := by sorry
+theorem ComplexMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) (hg: ComplexMeasurable g) : ComplexMeasurable (f + g) := by
+  obtain ⟨u, hu, huf⟩ := hf
+  obtain ⟨v, hv, hvg⟩ := hg
+  refine ⟨fun n => u n + v n, fun n => (hu n).add (hv n), ?_⟩
+  intro x
+  exact (huf x).add (hvg x)
 
 /-- Exercise 1.3.8(vi') (Difference of measurable functions) -/
 theorem RealMeasurable.sub {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) (hg: RealMeasurable g) : RealMeasurable (f - g) := by sorry
