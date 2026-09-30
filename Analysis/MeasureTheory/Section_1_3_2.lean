@@ -3338,10 +3338,20 @@ theorem ComplexSimpleFunction.iff {d:ℕ} {f: EuclideanSpace' d → ℂ} : Compl
 
 /-- Exercise 1.3.8(iii) -/
 theorem RealMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: RealMeasurable f)
-    (heq: AlmostEverywhereEqual f g) : RealMeasurable g := by sorry
+    (heq: AlmostEverywhereEqual f g) : RealMeasurable g := by
+  obtain ⟨u, hu, huf⟩ := hf
+  have h_iff : RealMeasurable g ↔ ∃ u, (∀ n, RealSimpleFunction (u n)) ∧
+      PointwiseAeConvergesTo u g := (RealMeasurable.TFAE (f := g)).out 0 1
+  refine h_iff.mpr ⟨u, hu, ?_⟩
+  exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
 theorem ComplexMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f)
-    (heq: AlmostEverywhereEqual f g) : ComplexMeasurable g := by sorry
+    (heq: AlmostEverywhereEqual f g) : ComplexMeasurable g := by
+  obtain ⟨u, hu, huf⟩ := hf
+  have h_iff : ComplexMeasurable g ↔ ∃ u, (∀ n, ComplexSimpleFunction (u n)) ∧
+      PointwiseAeConvergesTo u g := (ComplexMeasurable.TFAE (f := g)).out 0 1
+  refine h_iff.mpr ⟨u, hu, ?_⟩
+  exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
 /-- Exercise 1.3.8(iv) -/
 theorem RealMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → ℝ} (g: ℕ → EuclideanSpace' d → ℝ)
