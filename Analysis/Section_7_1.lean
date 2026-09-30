@@ -75,7 +75,6 @@ example (a: ℤ → ℝ) (m:ℤ) : ∑ i ∈ Icc m (m+2), a i = a m + a (m+1) + 
     sum_of_nonempty (n := m + 1) (by omega) a]
   rw [sum_of_nonempty (n := m) (by omega) a]
   simp [Finset.sum_singleton]
-  abel
 
 /-- Remark 7.1.3 -/
 example (a: ℤ → ℝ) (m n:ℤ) : ∑ i ∈ Icc m n, a i = ∑ j ∈ Icc m n, a j := rfl
