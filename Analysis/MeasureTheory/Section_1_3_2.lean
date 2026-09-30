@@ -1794,7 +1794,16 @@ theorem UnsignedMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → EReal} (g: 
 theorem UnsignedMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) {φ: EReal → EReal} (hφ: Continuous φ) (hφnn : ∀ x ≥ 0, φ x ≥ 0) : UnsignedMeasurable (φ ∘ f) := by sorry
 
 /-- Exercise 1.3.3(vii) -/
-theorem UnsignedMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg: UnsignedMeasurable g) : UnsignedMeasurable (f + g) := by sorry
+theorem UnsignedMeasurable.add {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg: UnsignedMeasurable g) : UnsignedMeasurable (f + g) := by
+  obtain ⟨hfn, u, hu, huf⟩ := hf
+  obtain ⟨hgn, v, hv, hvg⟩ := hg
+  refine ⟨fun x => add_nonneg (hfn x) (hgn x),
+    fun n => u n + v n, fun n => (hu n).add (hv n), ?_⟩
+  intro x
+  have hfb : f x ≠ ⊥ := ne_of_gt (lt_of_lt_of_le EReal.bot_lt_zero (hfn x))
+  have hgb : g x ≠ ⊥ := ne_of_gt (lt_of_lt_of_le EReal.bot_lt_zero (hgn x))
+  exact (EReal.continuousAt_add (Or.inr hgb) (Or.inl hfb)).tendsto.comp
+    ((huf x).prodMk_nhds (hvg x))
 
 def UniformConvergesTo {X:Type*} (f: ℕ → X → EReal) (g: X → EReal) : Prop := ∀ ε:NNReal, ε > 0 → ∃ N:ℕ, ∀ n ≥ N, ∀ x, f n x > g x - ε ∧ f n x < g x + ε
 
