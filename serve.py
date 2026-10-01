@@ -8,19 +8,21 @@ BOOK_SITE = os.path.abspath('./.lake/build/literate-html')
 DOCS_SITE = os.path.abspath('./.lake/build/doc')
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
-    # Avoid spurious error messages from /favicon.ico
-    def do_GET(self):
-        if self.path == '/favicon.ico':
-            self.send_response(204)
+    def send_head(self):
+        parsed = urlparse(self.path)
+        # GET and HEAD share the same routing and response headers.
+        if parsed.path == '/favicon.ico':
+            self.send_response(HTTPStatus.NO_CONTENT)
             self.end_headers()
-            return
-        elif self.path in ('/', '/analysis'):
-            self.send_response(301)
-            self.send_header('Location', '/analysis/')
+            return None
+        elif parsed.path in ('/', '/analysis'):
+            self.send_response(HTTPStatus.MOVED_PERMANENTLY)
+            self.send_header('Location', parsed._replace(path='/analysis/').geturl())
+            self.send_header('Content-Length', '0')
             self.end_headers()
-            return
+            return None
 
-        super().do_GET()
+        return super().send_head()
 
 
     def translate_path(self, path):
