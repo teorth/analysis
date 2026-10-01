@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Test build and preview tooling
+        run: python3 -m unittest discover -s tests
+
       - uses: leanprover/lean-action@v1
         with:
           build: false
