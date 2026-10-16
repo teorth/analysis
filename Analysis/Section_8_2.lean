@@ -121,7 +121,7 @@ theorem sum_of_sum_of_AbsConvergent_nonneg {f:ℕ × ℕ → ℝ} (hf:AbsConverg
     . simp [a, sum_product, Series.partial]
     solve_by_elim
   replace (N:ℤ) : ∑ n ∈ Icc 0 N, (a n.toNat).sum ≤ L := by
-    apply le_of_tendsto' (x := .atTop) (tendsto_finset_sum _ _) (this N)
+    apply le_of_tendsto' (x := .atTop) (tendsto_finsetSum _ _) (this N)
     solve_by_elim [convergesTo_sum]
   replace (N:ℤ) : (fun n ↦ (a n).sum:Series).partial N ≤ L := by
     convert this N with n hn; simp_all

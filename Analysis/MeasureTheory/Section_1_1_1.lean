@@ -788,11 +788,11 @@ theorem BoundedInterval.sdiff (I J: BoundedInterval) :
   refine ⟨K₁, K₂, ?_⟩
   rw [← hK₁, ← hK₂]
   ext x
-  simp only [Set.mem_diff, Set.mem_union, Set.mem_inter_iff, mem_iff', mk'_a, mk'_b,
+  simp only [Set.mem_sdiff, Set.mem_union, Set.mem_inter_iff, mem_iff', mk'_a, mk'_b,
     mk'_lclosed, mk'_uclosed]
   cases hIl : I.lclosed <;> cases hIu : I.uclosed <;> cases hJl : J.lclosed <;> cases hJu : J.uclosed <;>
     simp only [Bool.not_true, Bool.not_false, Bool.false_eq_true, reduceIte] <;>
-    push_neg <;>
+    push Not <;>
     constructor <;>
     intro h <;>
     grind
@@ -815,13 +815,13 @@ theorem Box.sdiff {d:ℕ} (B C: Box d) : IsElementary (B.toSet \ C.toSet) := by
     cases k <;> simp
   refine ⟨Finset.univ.image (fun p : Fin d × Bool ↦ piece p.1 p.2), ?_⟩
   ext x
-  simp only [Set.mem_diff, Box.mem_toSet, Set.mem_iUnion, Finset.mem_image, Finset.mem_univ,
+  simp only [Set.mem_sdiff, Box.mem_toSet, Set.mem_iUnion, Finset.mem_image, Finset.mem_univ,
     true_and, exists_prop]
   constructor
   · rintro ⟨hxB, hxC⟩
     obtain ⟨i, hi⟩ : ∃ i, x i ∉ (C.side i : Set ℝ) := by
       by_contra hc
-      push_neg at hc
+      push Not at hc
       exact hxC (fun i ↦ hc i)
     have : x i ∈ ((K₁ i : Set ℝ)) ∪ ((K₂ i : Set ℝ)) := by
       rw [← hK i]; exact ⟨hxB i, hi⟩
@@ -858,13 +858,13 @@ theorem IsElementary.sdiff {d:ℕ} {E F: Set (EuclideanSpace' d)}
   | insert C T' hC ih =>
     have hrw : E \ (⋃ B ∈ insert C T', (B:Set (EuclideanSpace' d)))
         = (E \ ⋃ B ∈ T', (B:Set (EuclideanSpace' d))) \ C.toSet := by
-      rw [Finset.set_biUnion_insert, Set.diff_diff, Set.union_comm]
+      rw [Finset.set_biUnion_insert, Set.sdiff_sdiff, Set.union_comm]
     rw [hrw]
     obtain ⟨S, hS⟩ := ih
     rw [hS]
     have hdiff : (⋃ B ∈ S, (B:Set (EuclideanSpace' d))) \ C.toSet
         = ⋃ B ∈ S, ((B:Set (EuclideanSpace' d)) \ C.toSet) := by
-      ext y; simp only [Set.mem_diff, Set.mem_iUnion, exists_prop]; tauto
+      ext y; simp only [Set.mem_sdiff, Set.mem_iUnion, exists_prop]; tauto
     rw [hdiff]
     have : (⋃ B ∈ S, ((B:Set (EuclideanSpace' d)) \ C.toSet))
         = ⋃ X ∈ S.image (fun B : Box d ↦ (B:Set (EuclideanSpace' d)) \ C.toSet), X := by
@@ -899,11 +899,11 @@ theorem BoundedInterval.translate (I: BoundedInterval) (c:ℝ) :
   · intro hy
     refine ⟨y - c, ?_, by ring⟩
     revert hy
-    cases I.lclosed <;> cases I.uclosed <;> simp only [if_true, if_false,
+    cases I.lclosed <;> cases I.uclosed <;> simp only [ite_true, ite_false,
       Bool.false_eq_true] <;> grind
   · rintro ⟨z, hz, rfl⟩
     revert hz
-    cases I.lclosed <;> cases I.uclosed <;> simp only [if_true, if_false,
+    cases I.lclosed <;> cases I.uclosed <;> simp only [ite_true, ite_false,
       Bool.false_eq_true] <;> grind
 
 /-- Translating a box gives a box. -/
@@ -1059,7 +1059,7 @@ theorem Box.partition {d:ℕ} (S: Finset (Box d)) : ∃ T: Finset (Box d), (T : 
   intro B hB
   choose U hU using hJ
   use {B' | ∀ i, ∃ hi : B'.val.side i ∈ J i, ⟨ _, hi ⟩ ∈ U i hB}
-  ext x; simp only [Box.mem_toSet, Set.mem_iUnion, Set.mem_setOf_eq, Subtype.exists]
+  ext x; simp only [Box.mem_toSet, Set.mem_iUnion, Set.mem_ofPred_eq, Subtype.exists]
   constructor
   . intro h
     have h' : ∀ i, x i ∈ ⋃ K ∈ U i hB, (K:BoundedInterval).toSet := by
@@ -1150,7 +1150,7 @@ theorem Box.vol_eq {d:ℕ} (B: Box d):
   (nhds |B|ᵥ) := by
   simp [Box.volume]
   have : ∀ i ∈ Finset.univ, Filter.atTop.Tendsto (fun N:ℕ ↦ (N:ℝ)⁻¹ * Nat.card ↥((B.side i).toSet ∩ Set.range ((fun n:ℤ ↦ (N:ℝ)⁻¹*n)))) (nhds |B.side i|ₗ) := fun i _ ↦ (B.side i).length_eq
-  convert tendsto_finset_prod Finset.univ this with N
+  convert tendsto_finsetProd Finset.univ this with N
   simp [Finset.prod_mul_distrib]; left
   norm_cast; simp_rw [←Nat.card_coe_set_eq, ←Nat.card_pi]
   apply Nat.card_congr (B.sample_congr N)
@@ -1161,7 +1161,7 @@ theorem Box.sum_vol_eq {d:ℕ} {T: Finset (Box d)}
  (hT: (T : Set (Box d)).PairwiseDisjoint Box.toSet) :
   Filter.atTop.Tendsto (fun N:ℕ ↦ (N:ℝ)^(-d:ℝ) * Nat.card ↥((⋃ B ∈ T, B.toSet) ∩ (Set.range (fun (n:Fin d → ℤ) ↦ .toLp 2 (fun i ↦ (N:ℝ)⁻¹*(n i))))))
   (nhds (∑ B ∈ T, |B|ᵥ)) := by
-  apply (tendsto_finset_sum T (fun B _ ↦ B.vol_eq)).congr'
+  apply (tendsto_finsetSum T (fun B _ ↦ B.vol_eq)).congr'
   rw [Filter.EventuallyEq, Filter.eventually_atTop]; use 1; intro N hN
   symm; convert Finset.mul_sum _ _ _
   convert Nat.cast_sum _ _
@@ -1867,7 +1867,7 @@ lemma Box.prod_side {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) (i : Fin (
 lemma EuclideanSpace'.prod_equiv_symm_apply_left {d₁ d₂:ℕ}
     (y : EuclideanSpace' d₁) (z : EuclideanSpace' d₂) {i : ℕ} (hi : i < d₁) :
     (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z) ⟨i, Nat.lt_add_right d₂ hi⟩ = y ⟨i, hi⟩ := by
-  simp [EuclideanSpace'.prod_equiv, dif_pos hi]
+  simp [EuclideanSpace'.prod_equiv, dite_eq_left hi]
 
 /-- Coordinate of a product vector in the second block. -/
 lemma EuclideanSpace'.prod_equiv_symm_apply_right {d₁ d₂:ℕ}
@@ -1875,7 +1875,7 @@ lemma EuclideanSpace'.prod_equiv_symm_apply_right {d₁ d₂:ℕ}
     (EuclideanSpace'.prod_equiv d₁ d₂).symm (y, z) ⟨d₁ + j, Nat.add_lt_add_left hj d₁⟩ =
       z ⟨j, hj⟩ := by
   have hnot : ¬ d₁ + j < d₁ := Nat.not_lt.mpr (Nat.le_add_right _ _)
-  simp [EuclideanSpace'.prod_equiv, dif_neg hnot, Nat.add_sub_cancel_left]
+  simp [EuclideanSpace'.prod_equiv, dite_eq_right hnot, Nat.add_sub_cancel_left]
 
 /-- First factor of {name}`prod_equiv`. -/
 lemma EuclideanSpace'.prod_equiv_apply_fst {d₁ d₂:ℕ}
@@ -1900,9 +1900,9 @@ lemma Box.prod_toSet {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
     rcases i with ⟨i, hi⟩
     simp only [Box.prod]
     split_ifs with h
-    · simp [EuclideanSpace'.prod_equiv, dif_pos h]
+    · simp [EuclideanSpace'.prod_equiv, dite_eq_left h]
       exact hy ⟨i, h⟩
-    · simp [EuclideanSpace'.prod_equiv, dif_neg h]
+    · simp [EuclideanSpace'.prod_equiv, dite_eq_right h]
       exact hz ⟨i - d₁, Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp h) hi⟩
   · intro hx
     refine ⟨⟨(EuclideanSpace'.prod_equiv d₁ d₂ x).1, (EuclideanSpace'.prod_equiv d₁ d₂ x).2⟩, ?_,
@@ -1910,12 +1910,12 @@ lemma Box.prod_toSet {d₁ d₂:ℕ} (B₁: Box d₁) (B₂: Box d₂) :
     constructor
     · intro i
       have hx' := hx ⟨(i : ℕ), Nat.lt_add_right d₂ i.isLt⟩
-      simp [Box.prod, EuclideanSpace'.prod_equiv, dif_pos i.isLt] at hx' ⊢
+      simp [Box.prod, EuclideanSpace'.prod_equiv, dite_eq_left i.isLt] at hx' ⊢
       exact hx'
     · intro j
       have hnot : ¬ (j : ℕ) + d₁ < d₁ := Nat.not_lt.mpr (Nat.le_add_left d₁ _)
       have hx' := hx ⟨(j : ℕ) + d₁, by omega⟩
-      simp [Box.prod, EuclideanSpace'.prod_equiv, dif_neg hnot] at hx' ⊢
+      simp [Box.prod, EuclideanSpace'.prod_equiv, dite_eq_right hnot] at hx' ⊢
       convert hx' <;> (apply Fin.ext; exact Nat.add_sub_cancel (j : ℕ) d₁)
 
 /-- Recovering the factors from a product box. -/
@@ -1926,12 +1926,12 @@ lemma Box.prod_injective {d₁ d₂:ℕ} :
   refine Prod.ext ?_ ?_
   · ext i
     have := congrFun hside ⟨i, Nat.lt_add_right d₂ i.isLt⟩
-    rw [Box.prod_side, Box.prod_side, dif_pos i.isLt, dif_pos i.isLt] at this
+    rw [Box.prod_side, Box.prod_side, dite_eq_left i.isLt, dite_eq_left i.isLt] at this
     exact this
   · ext j
     have hnot : ¬ (j : ℕ) + d₁ < d₁ := Nat.not_lt.mpr (Nat.le_add_left d₁ _)
     have := congrFun hside ⟨(j : ℕ) + d₁, by omega⟩
-    rw [Box.prod_side, Box.prod_side, dif_neg hnot, dif_neg hnot] at this
+    rw [Box.prod_side, Box.prod_side, dite_eq_right hnot, dite_eq_right hnot] at this
     have hj (C : Box d₂) : C.side ⟨(j : ℕ) + d₁ - d₁,
         Nat.sub_lt_left_of_lt_add (Nat.not_lt.mp hnot)
           (by omega)⟩ = C.side j :=

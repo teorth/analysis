@@ -337,7 +337,7 @@ lemma exercise_1_2_1_union :
       have hy_rational : ∃ q : ℚ, (q:ℝ) = y := ⟨r.val, hr⟩
       -- But y is irrational: hy_irrat_mem : y ∈ {x | Irrational x}
       -- This means Irrational y, which contradicts hy_rational
-      simp only [Set.mem_setOf_eq] at hy_irrat_mem
+      simp only [Set.mem_ofPred_eq] at hy_irrat_mem
       exact hy_irrat_mem hy_rational
 
     -- Real.equiv_EuclideanSpace' commutes with interior
@@ -468,7 +468,7 @@ example :
   refine ⟨E, ?_, ?_, ?_⟩
   · intro n
     apply Bornology.IsBounded.subset (Metric.isBounded_Icc (a := 0) (b := 1))
-    exact Set.diff_subset
+    exact Set.sdiff_subset
   ·
     intro n
     have hJ :
@@ -664,7 +664,7 @@ theorem Jordan_outer_eq {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBo
               apply Finset.sum_congr rfl
               intro E _
               dsimp [vol]
-              rw [dif_pos (hS_elem E.val E.property)]
+              rw [dite_eq_left (hS_elem E.val E.property)]
             rw [h_congr]
             -- Subtype sum to set sum
             change ∑ E ∈ S_sets.attach, vol E.val = ∑ E ∈ S_sets, vol E
@@ -694,7 +694,7 @@ theorem Jordan_outer_eq {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBo
                exact h_non
              dsimp [vol]
              rw [hE_empty]
-             rw [dif_pos (IsElementary.empty d)]
+             rw [dite_eq_left (IsElementary.empty d)]
              exact IsElementary.measure_of_empty d
           rw [h_sets_eq]
 
@@ -704,7 +704,7 @@ theorem Jordan_outer_eq {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Bornology.IsBo
             apply Finset.sum_congr rfl
             intro B hB
             dsimp [vol]
-            rw [dif_pos (IsElementary.box B)]
+            rw [dite_eq_left (IsElementary.box B)]
             exact IsElementary.measure_of_box B
           · -- Injectivity
             intro B₁ hB₁ B₂ hB₂ h_eq
@@ -803,7 +803,7 @@ lemma Lebesgue_outer_measure_eq_nat_indexed {d:ℕ} (hd: 0 < d) (E: Set (Euclide
   -- Part 2 (≥): Countable covers ≥ ℕ-indexed covers
   · apply le_sInf
     intro b hb
-    simp only [Set.mem_setOf_eq] at hb
+    simp only [Set.mem_ofPred_eq] at hb
     obtain ⟨X, S, hS_cover, hb_eq⟩ := hb
     open Classical in
 
@@ -941,7 +941,7 @@ lemma hasSum_indicator_top_of_infinite (X : Set ℕ) (hX : ¬X.Finite) :
        _ = ∑ i ∈ F, if i ∈ X then (1 : EReal) else 0 := by
            apply Finset.sum_congr rfl
            intro i hi
-           rw [if_pos]
+           rw [ite_eq_left]
            exact hF_sub (Finset.mem_coe.mpr hi)
        _ ≤ ∑ i ∈ s, if i ∈ X then (1 : EReal) else 0 := by
            apply Finset.sum_le_sum_of_subset_of_nonneg hFs
@@ -1007,7 +1007,7 @@ lemma Lebesgue_outer_measure_of_dim_zero {E: Set (EuclideanSpace' 0)} :
     -- Lower bound: show 1 ≤ sInf (every cover has sum ≥ 1)
     · apply le_sInf
       intro b hb
-      simp only [Set.mem_setOf_eq] at hb
+      simp only [Set.mem_ofPred_eq] at hb
       obtain ⟨X, S, hcover, hb_eq⟩ := hb
       -- E is nonempty, so the cover must be nonempty
       have hX_nonempty : X.Nonempty := by
@@ -1111,7 +1111,7 @@ lemma Lebesgue_outer_measure_of_dim_zero {E: Set (EuclideanSpace' 0)} :
     -- Lower bound: 0 ≤ sInf (all EReal sums are ≥ 0 when summing volumes)
     · apply le_sInf
       intro b hb
-      simp only [Set.mem_setOf_eq] at hb
+      simp only [Set.mem_ofPred_eq] at hb
       obtain ⟨X, S, _, hb_eq⟩ := hb
       rw [hb_eq]
       -- Sum of nonnegative volumes is ≥ 0
@@ -1226,7 +1226,7 @@ lemma tsum_volume_finset_eq {d : ℕ} (hd : 0 < d) (S : Finset (Box d)) :
     intro n hn
     simp only [Finset.mem_range, not_lt] at hn
     unfold S_seq
-    rw [dif_neg (not_lt_of_ge hn)]
+    rw [dite_eq_right (not_lt_of_ge hn)]
     simp [h_zero_vol]
 
   -- Step 3: Relate finset.range sum to finset S sum
@@ -1289,7 +1289,7 @@ lemma tsum_volume_finset_eq {d : ℕ} (hd : 0 < d) (S : Finset (Box d)) :
   · -- h: Function preserves summand
     intro n hn
     have hn_lt := Finset.mem_range.mp hn
-    simp only [S_seq, dif_pos hn_lt]
+    simp only [S_seq, dite_eq_left hn_lt]
 
 
 -- For any bounded set, the Lebesgue outer measure is at most the Jordan outer measure.
@@ -1327,7 +1327,7 @@ theorem Lebesgue_outer_measure_le_Jordan {d:ℕ} {E: Set (EuclideanSpace' d)} (h
           -- Find a nonempty box in the partition
           have : ∃ B ∈ S, B.toSet.Nonempty := by
             by_contra h
-            push_neg at h
+            push Not at h
             -- h says: ∀ B, B ∈ S → B.toSet = ∅
             have hA_empty : A = ∅ := by
               rw [hA_eq]
@@ -1410,7 +1410,7 @@ theorem Lebesgue_outer_measure_le_Jordan {d:ℕ} {E: Set (EuclideanSpace' d)} (h
       -- S_seq i.val = S_list.get ⟨i.val, i.isLt⟩ = B by hi_eq
       simp only [S_seq]
       have hi_val_lt : i.val < S_list.length := i.isLt
-      rw [dif_pos hi_val_lt]
+      rw [dite_eq_left hi_val_lt]
       -- Show ⟨i.val, hi_val_lt⟩ = i so we can use hi_eq
       have : (⟨i.val, hi_val_lt⟩ : Fin S_list.length) = i := Fin.ext rfl
       rw [this, hi_eq]

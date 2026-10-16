@@ -164,7 +164,7 @@ theorem VitaliSet.nonmeasurable : ¬ LebesgueMeasurable (Real.equiv_EuclideanSpa
   -- f has range = {q | q ∈ [-1,1]}
   have hf_range : {q | q ∈ Set.Icc (-1:ℚ) 1} = Set.range f := by
     ext q
-    simp only [Set.mem_setOf_eq, Set.mem_range, f]
+    simp only [Set.mem_ofPred_eq, Set.mem_range, f]
     constructor
     · intro hq
       let q' : {q : ℚ | q ∈ Set.Icc (-1:ℚ) 1} := ⟨q, hq⟩

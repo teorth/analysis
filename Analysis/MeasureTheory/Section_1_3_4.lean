@@ -971,7 +971,7 @@ theorem L1.dist_eq_zero {d:ℕ} (f g: EuclideanSpace' d → ℂ) (hf: ComplexAbs
   -- Show the sets are equal
   have h_sets_eq : {x | ¬EReal.abs_fun (f - g) x = 0} = {x | ¬f x = g x} := by
     ext x
-    simp only [Set.mem_setOf_eq, EReal.abs_fun]
+    simp only [Set.mem_ofPred_eq, EReal.abs_fun]
     -- Goal: ¬‖(f - g) x‖.toEReal = 0 ↔ ¬f x = g x
     constructor
     · intro h hfg
@@ -1187,7 +1187,7 @@ lemma RealAbsolutelyIntegrable.integ_smul' {d:ℕ} {f: EuclideanSpace' d → ℝ
     rw [h_pos_scale, h_neg_scale, EReal.toReal_mul, EReal.toReal_mul, EReal.toReal_coe]
     ring
   · -- Case c < 0
-    push_neg at hc
+    push Not at hc
     have h_pos : EReal.pos_fun (c • f) = ((-c) : EReal) • EReal.neg_fun f := EReal.pos_fun_smul_neg f c hc
     have h_neg : EReal.neg_fun (c • f) = ((-c) : EReal) • EReal.pos_fun f := EReal.neg_fun_smul_neg f c hc
     have hnc : 0 ≤ -c := neg_nonneg.mpr (le_of_lt hc)

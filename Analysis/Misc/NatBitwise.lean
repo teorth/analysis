@@ -67,11 +67,11 @@ lemma testBit_finset_sum_pow_two {s : Finset ℕ} {i : ℕ} :
   constructor
   · intro h
     have : i ∈ (s.sum (2^·)).bitIndices.toFinset := List.mem_toFinset.mpr h
-    rw [Finset.toFinset_bitIndices_twoPowSum] at this
+    rw [Finset.toFinset_bitIndices_sum_two_pow] at this
     exact this
   · intro h
     have : i ∈ (s.sum (2^·)).bitIndices.toFinset := by
-      rw [Finset.toFinset_bitIndices_twoPowSum]
+      rw [Finset.toFinset_bitIndices_sum_two_pow]
       exact h
     exact List.mem_toFinset.mp this
 

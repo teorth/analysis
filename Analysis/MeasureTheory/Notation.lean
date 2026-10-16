@@ -80,7 +80,7 @@ def EuclideanSpace'.prod_equiv (d₁ d₂:ℕ) : EuclideanSpace' (d₁ + d₂) �
       simp only [this]
   right_inv x := by
     ext ⟨i, hi⟩
-    · simp [dif_pos hi]
+    · simp [dite_eq_left hi]
     · simp [show ¬(i + d₁ < d₁) by omega]
 
 def EuclideanSpace'.prod {d₁ d₂:ℕ} (E₁: Set (EuclideanSpace' d₁)) (E₂: Set (EuclideanSpace' d₂)) : Set (EuclideanSpace' (d₁+d₂)) := (EuclideanSpace'.prod_equiv d₁ d₂).symm '' (E₁ ×ˢ E₂)

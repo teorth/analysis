@@ -570,7 +570,7 @@ lemma exists_block_receives_at_least_6_red
   have hsum := redBlocks_partition_card color
   -- If both blocks had ≤ 5, then the total would be ≤ 10 — contradiction.
   by_contra h
-  push_neg at h   -- h : (redBlock1 color).card ≤ 5 ∧ (redBlock2 color).card ≤ 5
+  push Not at h   -- h : (redBlock1 color).card ≤ 5 ∧ (redBlock2 color).card ≤ 5
   have hle10 : (redNeighbors color).card ≤ 10 := by
     have : (redBlock1 color).card + (redBlock2 color).card ≤ 5 + 5 := by
       grind

@@ -314,7 +314,7 @@ theorem Function.onto_iff {X Y: Set} (f: Function X Y) : f.onto ↔ Function.Sur
 
 /-- Example 3.3.21 (using Mathlib) -/
 example : ¬ Function.Surjective (fun (n:ℤ) ↦ n^2) := by
-  unfold Function.Surjective; push_neg
+  unfold Function.Surjective; push Not
   use (-1); intro a
   linarith [sq_nonneg a]
 
@@ -368,7 +368,7 @@ example : Function.Bijective (fun n ↦ ⟨ n+1, by omega⟩ : ℕ → { n:ℕ /
 
 example : ¬ Function.Bijective (fun n ↦ n+1) := by
   suffices h : ¬ Function.Surjective (fun n ↦ n+1) by unfold Function.Bijective; tauto
-  unfold Function.Surjective; push_neg
+  unfold Function.Surjective; push Not
   use 0; intros
   symm; apply Nat.zero_ne_add_one
 
@@ -385,7 +385,7 @@ theorem Function.bijective_incorrect_def :
   rw [Function.bijective]
   suffices h : ¬ f.one_to_one by tauto
   rw [Function.one_to_one_iff]
-  push_neg; use 0, 1; simp [f]
+  push Not; use 0, 1; simp [f]
 
 /--
   We cannot use the notation {syntax term}`f⁻¹` for the inverse because in Mathlib's {name}`Inv` class, the inverse

@@ -140,7 +140,7 @@ theorem integ_eq_antideriv_sub {a b:ℝ} (h:a ≤ b) {f F: ℝ → ℝ}
           intro J hJ; by_cases hJ_empty : (J:Set ℝ) = ∅
           . simp [α_length_of_empty _ hJ_empty, length_of_empty hJ_empty]
           obtain hJab | hJab := le_or_gt J.b J.a
-          . push_neg at hJ_empty; choose x hx using hJ_empty
+          . push Not at hJ_empty; choose x hx using hJ_empty
             cases J with
             | Ioo _ _ => simp at hx; linarith
             | Ioc _ _ => simp at hx; linarith

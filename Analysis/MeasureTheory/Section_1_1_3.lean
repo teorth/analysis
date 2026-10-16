@@ -253,7 +253,7 @@ lemma eq_of_length_zero_of_Icc {I : BoundedInterval}
   · -- If I.a ≤ I.b, then with I.b ≤ I.a, we get I.a = I.b
     exact le_antisymm hab h_ba
   · -- If ¬(I.a ≤ I.b), then I.a > I.b
-    push_neg at hab
+    push Not at hab
     -- When I = Icc I.a I.b with I.a > I.b, we have I.toSet = ∅
     have h_empty : I.toSet = ∅ := by
       rw [hI]
@@ -489,8 +489,8 @@ lemma TaggedPartition.RiemannSum_changeTag_sub {I: BoundedInterval} {n:ℕ} (P: 
     rw [h_delta]
     simp only [TaggedPartition.changeTag]
     by_cases hik : i = k
-    · subst hik; simp only [Function.update_self, if_true]; ring
-    · simp only [Function.update_of_ne hik, hik, if_false]; ring
+    · subst hik; simp only [Function.update_self, ite_true]; ring
+    · simp only [Function.update_of_ne hik, hik, ite_false]; ring
   conv_lhs => rw [Finset.sum_congr rfl (fun i _ => h_terms i)]
   rw [Finset.sum_ite_eq' Finset.univ k]
   simp
@@ -592,13 +592,13 @@ theorem RiemannIntegrable.bounded {f: ℝ → ℝ} {I: BoundedInterval} (h: Riem
     have hxa : x = I.a := le_antisymm (by linarith [hx.1, hx.2, hab]) hx.1
     rw [hxa]
   · -- Positive-length case
-    push_neg at hab
+    push Not at hab
     have h_lt : I.a < I.b := by
       rw [hIcc] at h_nonempty
       simp only [BoundedInterval.toSet] at h_nonempty
       obtain ⟨x, hax, hxb⟩ := h_nonempty
       by_contra h_not_lt
-      push_neg at h_not_lt
+      push Not at h_not_lt
       have : I.b < I.a := lt_of_le_of_ne h_not_lt (Ne.symm hab)
       linarith
     -- Use ε-δ characterization with ε = 1
@@ -609,7 +609,7 @@ theorem RiemannIntegrable.bounded {f: ℝ → ℝ} {I: BoundedInterval} (h: Riem
     obtain ⟨N, hN⟩ := exists_nat_gt ((I.b - I.a) / δ)
     have hN_pos : 0 < N := by
       by_contra h_not_pos
-      push_neg at h_not_pos
+      push Not at h_not_pos
       interval_cases N
       simp at hN
       linarith [div_pos h_width_pos hδ_pos]
@@ -628,7 +628,7 @@ theorem RiemannIntegrable.bounded {f: ℝ → ℝ} {I: BoundedInterval} (h: Riem
     have h_P_norm_le : P.norm ≤ δ := by rw [h_P_norm]; exact h_norm_le
     -- For contradiction, assume f is unbounded
     by_contra h_unbounded
-    push_neg at h_unbounded
+    push Not at h_unbounded
     -- h_unbounded : ∀ M, ∃ x ∈ I.toSet, M < |f x|
     -- Let K = sum of |f| at partition left endpoints (a bound we'll use)
     let K := ∑ j : Fin N, |f (P.x_tag j)|

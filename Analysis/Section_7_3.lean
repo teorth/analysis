@@ -1,5 +1,5 @@
 import Mathlib.Tactic
-import Mathlib.Algebra.Field.Power
+import Mathlib.Algebra.Ring.Int.Parity
 import Mathlib.NumberTheory.LSeries.RiemannZeta
 import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 import Analysis.Section_6_1

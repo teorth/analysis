@@ -13,9 +13,9 @@ theorem finite_choice {X:Type*} {f:X → ℕ} {N:ℕ} (h: ∀ n < N, ∃ x, f x 
   set g' : Fin (N+1) → X := fun n ↦ if h:n.val < N then g ⟨ n.val, h ⟩ else x
   use g'
   intro n; by_cases h:n.val < N
-  . simp only [g', dif_pos h, hg]
+  . simp only [g', dite_eq_left h, hg]
   convert hx
-  . simp only [g', dif_neg h]
+  . simp only [g', dite_eq_right h]
   exact Nat.eq_of_lt_succ_of_not_lt n.isLt h
 
 lemma sec_ex {α β:Type*} [Fintype β] [DecidableEq β] (f : α → β) (h : ∀ b: β, ∃ a : α, f a = b) : ∃ s :β → α, f ∘ s = id := by
@@ -48,9 +48,9 @@ def finite_choice_trunc {X:Type*} {f:X → ℕ} {N:ℕ} (h: ∀ n < N, Trunc {x 
   apply Trunc.mk
   use g'
   intro n; by_cases h:n.val < N
-  . simp only [g', dif_pos h, hg]
+  . simp only [g', dite_eq_left h, hg]
   convert hx
-  . simp only [g', dif_neg h]
+  . simp only [g', dite_eq_right h]
   exact Nat.eq_of_lt_succ_of_not_lt n.isLt h
 
 def sec_ex_trunc {α β:Type*} [Fintype β] [DecidableEq β] (f : α → β) (h : ∀ b, Trunc { a // f a = b}) : Trunc { s // f ∘ s = id } := by

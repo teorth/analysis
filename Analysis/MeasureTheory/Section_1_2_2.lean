@@ -22,7 +22,7 @@ theorem IsOpen.measurable {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsOpen E) : 
   · -- E ⊆ E (reflexivity)
     rfl
   · -- Show m*(E \ E) ≤ ε
-    have h_empty : E \ E = ∅ := Set.diff_self
+    have h_empty : E \ E = ∅ := Set.sdiff_self
     rw [h_empty]
     have h_zero : Lebesgue_outer_measure (∅ : Set (EuclideanSpace' d)) = 0 :=
       Lebesgue_outer_measure.of_empty d
@@ -133,9 +133,9 @@ private lemma IsClosed.measurable_of_bounded {d:ℕ} {E: Set (EuclideanSpace' d)
       have hxy : x = y := Subsingleton.elim x y
       rw [hxy]
       exact hy
-    rw [hEU_eq, Set.diff_self, Lebesgue_outer_measure.of_empty]
+    rw [hEU_eq, Set.sdiff_self, Lebesgue_outer_measure.of_empty]
     exact le_of_lt hε
-  push_neg at hd
+  push Not at hd
   have hd_pos : 0 < d := Nat.pos_of_ne_zero hd
   -- If U \ E is empty, trivial
   by_cases h_diff_empty : U \ E = ∅
@@ -230,7 +230,7 @@ private lemma IsClosed.measurable_of_bounded {d:ℕ} {E: Set (EuclideanSpace' d)
                 exact Set.mem_iUnion_of_mem i hyi
               have hF_sub : (⋃ n, (Q n).toSet) ⊆ U := by
                 rw [← hQ_union]
-                exact Set.diff_subset
+                exact Set.sdiff_subset
               exact hF_sub (this hxF)
           -- So m*(E ∪ F_t) ≤ m*(U) ≤ m*(E) + ε/2
           have h_bound : Lebesgue_outer_measure (E ∪ F_t) ≤ Lebesgue_outer_measure E + ε / 2 := by
@@ -377,11 +377,11 @@ theorem IsNull.measurable {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsNull E) : 
     use ∅
     refine ⟨isOpen_empty, ?_, ?_⟩
     · rw [hE_empty]
-    · simp only [Set.empty_diff]
+    · simp only [Set.empty_sdiff]
       rw [Lebesgue_outer_measure.of_empty]
       exact le_of_lt hε
   -- Now d > 0
-  push_neg at hd
+  push Not at hd
   have hd_pos : 0 < d := Nat.pos_of_ne_zero hd
   -- m*(E) = 0 implies m*(E) ≠ ⊤
   have h_finite : Lebesgue_outer_measure E ≠ ⊤ := by rw [hE]; exact EReal.zero_ne_top
@@ -420,7 +420,7 @@ theorem IsNull.measurable {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: IsNull E) : 
   · -- m*(U \ E) ≤ ε
     -- Key bounds: m*(U \ E) ≤ m*(U) ≤ ∑ |U' n|ᵥ ≤ ∑ (|S n|ᵥ + δ n) ≤ ε'/2 + ε'/2 = ε' ≤ ε
     have h1 : Lebesgue_outer_measure (U \ E) ≤ Lebesgue_outer_measure U :=
-      Lebesgue_outer_measure.mono Set.diff_subset
+      Lebesgue_outer_measure.mono Set.sdiff_subset
     have h2 : Lebesgue_outer_measure U ≤ ∑' n, Lebesgue_outer_measure (interior (U' n).toSet) := by
       have : U = ⋃ n, interior (U' n).toSet := rfl
       rw [this]
@@ -532,7 +532,7 @@ theorem LebesgueMeasurable.empty' {d:ℕ} : LebesgueMeasurable (∅: Set (Euclid
   · exact isOpen_empty
   constructor
   · exact Set.empty_subset ∅
-  · have h_empty : ∅ \ ∅ = (∅ : Set (EuclideanSpace' d)) := Set.diff_self
+  · have h_empty : ∅ \ ∅ = (∅ : Set (EuclideanSpace' d)) := Set.sdiff_self
     rw [h_empty]
     rw [Lebesgue_outer_measure.of_empty d]
     exact le_of_lt hε
@@ -628,9 +628,9 @@ theorem LebesgueMeasurable.complement {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: 
 
   -- Key set-theoretic fact: Eᶜ \ Fₙ = Uₙ \ E
   have h_diff_eq : ∀ n, Eᶜ \ F_n n = U n \ E := fun n => by
-    simp only [F_n, Set.diff_compl]
+    simp only [F_n, Set.sdiff_compl]
     ext x
-    simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_diff]
+    simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_sdiff]
     tauto
 
   -- Step 3: Define F = ⋃ Fₙ (F-sigma set)
@@ -638,7 +638,7 @@ theorem LebesgueMeasurable.complement {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: 
 
   -- Step 4: Show m*(Eᶜ \ F) = 0
   have h_diff_F : ∀ n, Eᶜ \ F ⊆ U n \ E := fun n => by
-    have h1 : Eᶜ \ F ⊆ Eᶜ \ F_n n := Set.diff_subset_diff_right (Set.subset_iUnion F_n n)
+    have h1 : Eᶜ \ F ⊆ Eᶜ \ F_n n := Set.sdiff_subset_sdiff_right (Set.subset_iUnion F_n n)
     rw [h_diff_eq n] at h1
     exact h1
 
@@ -651,7 +651,7 @@ theorem LebesgueMeasurable.complement {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: 
     apply le_antisymm
     · -- Show m*(Eᶜ \ F) ≤ 0 by showing it's ≤ 1/(n+1) for all n
       by_contra h_ne
-      push_neg at h_ne
+      push Not at h_ne
       have h_pos : 0 < Lebesgue_outer_measure (Eᶜ \ F) := h_ne
       -- Get a real ε with 0 < ε ≤ m*(Eᶜ \ F)
       obtain ⟨ε, hε_pos, hε_le⟩ : ∃ ε : ℝ, 0 < ε ∧ (ε : EReal) ≤ Lebesgue_outer_measure (Eᶜ \ F) := by
@@ -684,7 +684,7 @@ theorem LebesgueMeasurable.complement {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: 
   -- Step 5: Show Eᶜ = F ∪ (Eᶜ \ F)
   have h_decomp : Eᶜ = F ∪ (Eᶜ \ F) := by
     ext x
-    simp only [Set.mem_union, Set.mem_diff]
+    simp only [Set.mem_union, Set.mem_sdiff]
     constructor
     · intro hx
       by_cases hxF : x ∈ F
@@ -1135,7 +1135,7 @@ private lemma Lebesgue_measure.countable_union_bounded {d:ℕ} (hd : 0 < d)
       intro n
       -- E_n = F_n ∪ (E_n \ F_n), and F_n ⊆ E_n
       -- By monotonicity and subadditivity: m(E_n) ≤ m(F_n) + m(E_n \ F_n) ≤ m(F_n) + ε/2^{n+1}
-      have h_partition : E n = F n ∪ (E n \ F n) := (Set.union_diff_cancel (hF n).2.1).symm
+      have h_partition : E n = F n ∪ (E n \ F n) := (Set.union_sdiff_cancel (hF n).2.1).symm
       -- Binary subadditivity: m(A ∪ B) ≤ m(A) + m(B)
       have h_binary_subadd : Lebesgue_measure (F n ∪ (E n \ F n)) ≤
           Lebesgue_measure (F n) + Lebesgue_measure (E n \ F n) := by
@@ -1276,7 +1276,7 @@ theorem Lebesgue_measure.countable_union {d:ℕ} {E: ℕ → Set (EuclideanSpace
         simp_rw [h_empty, Set.iUnion_empty]
         simp only [Lebesgue_measure.empty, tsum_zero, le_refl]
       · -- At least one E n is nonempty; by disjointness in a subsingleton, exactly one
-        push_neg at h_empty
+        push Not at h_empty
         obtain ⟨n₀, hn₀⟩ := h_empty
         -- In a Subsingleton, a nonempty set equals univ
         have hE_univ : E n₀ = Set.univ := by
@@ -1312,7 +1312,7 @@ theorem Lebesgue_measure.countable_union {d:ℕ} {E: ℕ → Set (EuclideanSpace
           rw [hE_empty m hm, Lebesgue_measure.empty]
         rw [h_sum, h_union]
     · -- For d ≥ 1, use the annuli decomposition from the textbook
-      push_neg at hd
+      push Not at hd
       have hd_pos : 0 < d := Nat.pos_of_ne_zero hd
       -- Define annuli: A_m = { x : m ≤ |x| < m+1 } for m ≥ 0
       -- Then ℝᵈ = ⋃_m A_m (disjoint union) and each A_m is bounded
@@ -1324,13 +1324,13 @@ theorem Lebesgue_measure.countable_union {d:ℕ} {E: ℕ → Set (EuclideanSpace
         rw [Metric.isBounded_iff_subset_closedBall 0]
         use m + 1
         intro x hx
-        simp only [Metric.mem_closedBall, dist_zero_right, A, Set.mem_setOf_eq] at hx ⊢
+        simp only [Metric.mem_closedBall, dist_zero_right, A, Set.mem_ofPred_eq] at hx ⊢
         exact le_of_lt hx.2
       -- The annuli cover all of ℝᵈ
       have hA_cover : ∀ x : EuclideanSpace' d, ∃ m, x ∈ A m := by
         intro x
         use ⌊‖x‖⌋₊
-        simp only [A, Set.mem_setOf_eq]
+        simp only [A, Set.mem_ofPred_eq]
         constructor
         · exact Nat.floor_le (norm_nonneg x)
         · exact Nat.lt_floor_add_one ‖x‖
@@ -1339,14 +1339,14 @@ theorem Lebesgue_measure.countable_union {d:ℕ} {E: ℕ → Set (EuclideanSpace
         intro i _ j _ hij
         simp only [Function.onFun, Set.disjoint_iff]
         intro x ⟨hi, hj⟩
-        simp only [A, Set.mem_setOf_eq, Set.mem_empty_iff_false] at hi hj ⊢
+        simp only [A, Set.mem_ofPred_eq, Set.mem_empty_iff_false] at hi hj ⊢
         by_cases h : i < j
         · have h1 : (j : ℝ) ≤ ‖x‖ := hj.1
           have h2 : ‖x‖ < i + 1 := hi.2
           have h3 : (j : ℝ) < i + 1 := lt_of_le_of_lt h1 h2
           have h4 : j < i + 1 := by exact_mod_cast h3
           omega
-        · push_neg at h
+        · push Not at h
           have hji : j < i := lt_of_le_of_ne h (Ne.symm hij)
           have h1 : (i : ℝ) ≤ ‖x‖ := hi.1
           have h2 : ‖x‖ < j + 1 := hj.2
@@ -1367,7 +1367,7 @@ theorem Lebesgue_measure.countable_union {d:ℕ} {E: ℕ → Set (EuclideanSpace
           have h2 : IsOpen { x : EuclideanSpace' d | ‖x‖ < (m : ℝ) + 1 } :=
             isOpen_lt continuous_norm continuous_const
           have heq : A m = { x | (m : ℝ) ≤ ‖x‖ } ∩ { x | ‖x‖ < (m : ℝ) + 1 } := by
-            ext x; simp only [A, Set.mem_setOf_eq, Set.mem_inter_iff]
+            ext x; simp only [A, Set.mem_ofPred_eq, Set.mem_inter_iff]
           rw [heq]
           exact LebesgueMeasurable.inter h1.measurable h2.measurable
         exact LebesgueMeasurable.inter (hmes n) hA_meas
@@ -1536,17 +1536,17 @@ theorem Lebesgue_measure.finite_union {d n:ℕ} {E: Fin n → Set (EuclideanSpac
     · intro ⟨k, hx⟩
       by_cases hk : k < n
       · use ⟨k, hk⟩
-        simpa [dif_pos hk] using hx
-      · simp [dif_neg hk] at hx
+        simpa [dite_eq_left hk] using hx
+      · simp [dite_eq_right hk] at hx
 
   -- E' is measurable (E(k) is measurable, ∅ is measurable)
   have hmes' : ∀ k, LebesgueMeasurable (E' k) := by
     intro k
     simp only [E']
     by_cases hk : k < n
-    · simp [dif_pos hk]
+    · simp [dite_eq_left hk]
       exact hmes ⟨k, hk⟩
-    · simp [dif_neg hk]
+    · simp [dite_eq_right hk]
       exact LebesgueMeasurable.empty
 
   -- E' is pairwise disjoint
@@ -1554,24 +1554,24 @@ theorem Lebesgue_measure.finite_union {d n:ℕ} {E: Fin n → Set (EuclideanSpac
     intro i _ j _ hij
     simp only [E', Function.onFun]
     by_cases hi : i < n <;> by_cases hj : j < n
-    · simp only [dif_pos hi, dif_pos hj]
+    · simp only [dite_eq_left hi, dite_eq_left hj]
       have hne : (⟨i, hi⟩ : Fin n) ≠ ⟨j, hj⟩ := by
         intro heq
         apply hij
         exact congrArg Fin.val heq
       exact hdisj (Set.mem_univ _) (Set.mem_univ _) hne
-    · simp only [dif_pos hi, dif_neg hj]
+    · simp only [dite_eq_left hi, dite_eq_right hj]
       exact disjoint_bot_right
-    · simp only [dif_neg hi, dif_pos hj]
+    · simp only [dite_eq_right hi, dite_eq_left hj]
       exact disjoint_bot_left
-    · simp only [dif_neg hi, dif_neg hj]
+    · simp only [dite_eq_right hi, dite_eq_right hj]
       exact disjoint_bot_left
 
   -- Apply countable_union
   rw [h_union, Lebesgue_measure.countable_union hmes' hdisj']
 
   -- The tsum over ℕ equals the tsum over Fin n (since E' k = ∅ for k ≥ n)
-  have h_empty : ∀ k ≥ n, E' k = ∅ := fun k hk => dif_neg (not_lt.mpr hk)
+  have h_empty : ∀ k ≥ n, E' k = ∅ := fun k hk => dite_eq_right (not_lt.mpr hk)
   have h_measure_empty : ∀ k ≥ n, Lebesgue_measure (E' k) = 0 := by
     intro k hk
     rw [h_empty k hk, Lebesgue_measure.empty]
@@ -1582,7 +1582,7 @@ theorem Lebesgue_measure.finite_union {d n:ℕ} {E: Fin n → Set (EuclideanSpac
   -- Direct approach: show term-by-term equality using the embedding
   have h_eq_terms : ∀ i : Fin n, Lebesgue_measure (E' i.val) = Lebesgue_measure (E i) := by
     intro i
-    simp only [E', dif_pos i.isLt]
+    simp only [E', dite_eq_left i.isLt]
 
   -- The tsum over ℕ equals the tsum over Fin n via reindexing
   -- Show that the support of E' is contained in {k : k < n}

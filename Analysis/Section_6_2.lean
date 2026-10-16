@@ -125,7 +125,7 @@ theorem EReal.sup_of_empty : sSup (∅:Set EReal) = ⊥ := sSup_empty
 theorem EReal.sup_of_infty_mem {E: Set EReal} (hE: ⊤ ∈ E) : sSup E = ⊤ := csSup_eq_top_of_top_mem hE
 
 /-- Definition 6.2.6 -/
-theorem EReal.sup_of_neg_infty_mem {E: Set EReal} : sSup E = sSup (E \ {⊥}) := (sSup_diff_singleton_bot _).symm
+theorem EReal.sup_of_neg_infty_mem {E: Set EReal} : sSup E = sSup (E \ {⊥}) := (sSup_sdiff_singleton_bot _).symm
 
 theorem EReal.inf_eq_neg_sup (E: Set EReal) : sInf E = - sSup (-E) := by
   simp_rw [←isGLB_iff_sInf_eq, isGLB_iff_le_iff, EReal.le_neg]

@@ -203,7 +203,7 @@ lemma atom_pairwiseDisjoint {X : Type*} {k k' : ℕ} (E : Fin k → Set X) (E' :
   simp only [Function.onFun]
   rw [Set.disjoint_left]
   intro x hxi hxj
-  simp only [atom, Set.mem_setOf_eq, atomMembership_eq_testBit] at hxi hxj
+  simp only [atom, Set.mem_ofPred_eq, atomMembership_eq_testBit] at hxi hxj
   -- If i ≠ j, they differ in some bit
   have hne : i.val ≠ j.val := Fin.val_ne_of_ne hij
   obtain ⟨bit, hbit⟩ := Nat.exists_testBit_ne_of_ne hne
@@ -212,7 +212,7 @@ lemma atom_pairwiseDisjoint {X : Type*} {k k' : ℕ} (E : Fin k → Set X) (E' :
   have hj_lt : j.val < 2^(k + k') := j.isLt
   have hbit_bound : bit < k + k' := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hi_false : i.val.testBit bit = false := Nat.testBit_lt_two_pow (Nat.lt_of_lt_of_le hi_lt (Nat.pow_le_pow_right (by norm_num : 1 ≤ 2) h))
     have hj_false : j.val.testBit bit = false := Nat.testBit_lt_two_pow (Nat.lt_of_lt_of_le hj_lt (Nat.pow_le_pow_right (by norm_num : 1 ≤ 2) h))
     exact hbit (hi_false.trans hj_false.symm)
@@ -323,7 +323,7 @@ lemma atomIndexOf_testBit_E {X : Type*} [DecidableEq X] {k k' : ℕ} (E : Fin k 
   -- Use testBit_two_pow_mul_add: for j.val < k and Part1 < 2^k, testBit j only looks at Part1
   have hpart1_lt : (Finset.univ.filter fun i : Fin k => x ∈ E i).sum (fun i => (2:ℕ)^i.val) < 2^k :=
     sum_pow_two_fin_lt
-  rw [add_comm, Nat.testBit_two_pow_mul_add _ hpart1_lt, if_pos j.isLt]
+  rw [add_comm, Nat.testBit_two_pow_mul_add _ hpart1_lt, ite_eq_left j.isLt]
   -- Now show: Part1.testBit j.val ↔ x ∈ E j
   rw [Nat.testBit_sum_pow_two_fin]
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
@@ -341,7 +341,7 @@ lemma atomIndexOf_testBit_E' {X : Type*} [DecidableEq X] {k k' : ℕ} (E : Fin k
     sum_pow_two_fin_lt
   rw [add_comm, Nat.testBit_two_pow_mul_add _ hpart1_lt]
   have hge : ¬ (k + j.val < k) := by omega
-  rw [if_neg hge]
+  rw [ite_eq_right hge]
   -- Now show: Part2_inner.testBit ((k + j.val) - k) ↔ x ∈ E' j
   have hsub : (k + j.val) - k = j.val := Nat.add_sub_cancel_left k j.val
   rw [hsub, Nat.testBit_sum_pow_two_fin]
@@ -354,7 +354,7 @@ lemma set_eq_biUnion_atoms {X : Type*} {k k' : ℕ} (E : Fin k → Set X) (E' : 
   ext x
   constructor
   · intro hx
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq]
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
     -- Construct the atom index from x's membership pattern
     let n : Fin (2^(k+k')) := ⟨atomIndexOf E E' x, atomIndexOf_lt E E' x⟩
     refine ⟨n, ?_, ?_⟩
@@ -363,12 +363,12 @@ lemma set_eq_biUnion_atoms {X : Type*} {k k' : ℕ} (E : Fin k → Set X) (E' : 
       simp only [n, atomIndexOf_testBit_E E E' x i]
       exact hx
     · -- Show x ∈ atom E E' n
-      simp only [atom, Set.mem_setOf_eq, n]
+      simp only [atom, Set.mem_ofPred_eq, n]
       refine ⟨fun j => ?_, fun j => ?_⟩
       · rw [atomMembership_eq_testBit, atomIndexOf_testBit_E E E' x j]
       · rw [atomMembership_eq_testBit, atomIndexOf_testBit_E' E E' x j]
   · intro hx
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq] at hx
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq] at hx
     obtain ⟨n, hn_bit, hx_atom⟩ := hx
     exact (hx_atom.1 i).mp hn_bit
 
@@ -379,18 +379,18 @@ lemma set_eq_biUnion_atoms' {X : Type*} {k k' : ℕ} (E : Fin k → Set X) (E' :
   ext x
   constructor
   · intro hx
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq]
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
     let n : Fin (2^(k+k')) := ⟨atomIndexOf E E' x, atomIndexOf_lt E E' x⟩
     refine ⟨n, ?_, ?_⟩
     · rw [atomMembership_eq_testBit]
       simp only [n, atomIndexOf_testBit_E' E E' x i]
       exact hx
-    · simp only [atom, Set.mem_setOf_eq, n]
+    · simp only [atom, Set.mem_ofPred_eq, n]
       refine ⟨fun j => ?_, fun j => ?_⟩
       · rw [atomMembership_eq_testBit, atomIndexOf_testBit_E E E' x j]
       · rw [atomMembership_eq_testBit, atomIndexOf_testBit_E' E E' x j]
   · intro hx
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq] at hx
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq] at hx
     obtain ⟨n, hn_bit, hx_atom⟩ := hx
     exact (hx_atom.2 i).mp hn_bit
 
@@ -404,7 +404,7 @@ lemma atom_measurable {d k k' : ℕ} {E : Fin k → Set (EuclideanSpace' d)} {E'
       (⋂ i : Fin k, if atomMembership k k' n i then E i else (E i)ᶜ) ∩
       (⋂ i : Fin k', if atomMembership k k' n (k + i) then E' i else (E' i)ᶜ) := by
     ext x
-    simp only [atom, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter]
+    simp only [atom, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
     constructor
     · intro ⟨h1, h2⟩
       constructor
@@ -560,7 +560,7 @@ lemma weightedMeasureSum_eq_of_eq {d k k' : ℕ}
     have hE_eq : E i = ⋃ n, atom' n := by
       rw [hE_decomp i]
       ext x
-      simp only [Set.mem_iUnion, Set.mem_setOf_eq]
+      simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
       constructor
       · intro ⟨n, hn, hx⟩
         use n
@@ -614,7 +614,7 @@ lemma weightedMeasureSum_eq_of_eq {d k k' : ℕ}
     have hE'_eq : E' i = ⋃ n, atom'' n := by
       rw [hE'_decomp i]
       ext x
-      simp only [Set.mem_iUnion, Set.mem_setOf_eq]
+      simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
       constructor
       · intro ⟨n, hn, hx⟩
         use n
@@ -743,7 +743,7 @@ lemma singleAtom_pairwiseDisjoint {X : Type*} {k : ℕ} (E : Fin k → Set X) :
 /-- Membership in singleAtom is determined by bit pattern -/
 lemma mem_singleAtom_iff {X : Type*} {k : ℕ} (E : Fin k → Set X) (n : Fin (2^k)) (x : X) :
     x ∈ singleAtom E n ↔ ∀ i : Fin k, n.val.testBit i.val ↔ x ∈ E i := by
-  simp only [singleAtom, atom, Set.mem_setOf_eq]
+  simp only [singleAtom, atom, Set.mem_ofPred_eq]
   constructor
   · intro ⟨h1, _⟩ i
     specialize h1 i
@@ -846,7 +846,7 @@ lemma UnsignedSimpleFunction.support_measurable {d:ℕ} {f: EuclideanSpace' d �
   -- Key: Support f = ⋃ i, E' i
   have h_eq : Support f = ⋃ i, E' i := by
     ext x
-    simp only [Support, Set.mem_setOf_eq, Set.mem_iUnion, E']
+    simp only [Support, Set.mem_ofPred_eq, Set.mem_iUnion, E']
     constructor
     · -- (⊆) If f(x) ≠ 0, some c_i > 0 and x ∈ E_i
       intro hne
@@ -899,7 +899,7 @@ lemma AlmostAlways.ofAlways {d:ℕ} {P: EuclideanSpace' d → Prop} (h: ∀ x, P
   unfold AlmostAlways IsNull
   have h_empty : { x | ¬ P x } = ∅ := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_not]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_not]
     exact h x
   rw [h_empty]
   exact Lebesgue_outer_measure.of_empty d
@@ -912,7 +912,7 @@ lemma AlmostAlways.mp {d:ℕ} {P Q: EuclideanSpace' d → Prop} (hP: AlmostAlway
   -- Goal: Lebesgue_outer_measure { x | ¬ Q x } = 0
   have h_subset : { x | ¬ Q x } ⊆ { x | ¬ P x } := by
     intro x hx
-    simp only [Set.mem_setOf_eq] at *
+    simp only [Set.mem_ofPred_eq] at *
     exact fun hp => hx (himp x hp)
   -- By monotonicity: measure { x | ¬ Q x } ≤ measure { x | ¬ P x } = 0
   have h_le := Lebesgue_outer_measure.mono h_subset
@@ -928,7 +928,7 @@ lemma AlmostAlways.countable {d:ℕ} {I: Type*} [Countable I] {P: I → Euclidea
   -- hP i : Lebesgue_outer_measure { x | ¬ P i x } = 0
   have h_eq : { x | ¬ ∀ i, P i x } = ⋃ i, { x | ¬ P i x } := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, not_forall]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, not_forall]
   rw [h_eq]
   -- Need: Lebesgue_outer_measure (⋃ i, { x | ¬ P i x }) = 0
   -- Use countable type I via Encodable
@@ -987,9 +987,9 @@ lemma AlmostEverywhereEqual.trans {d:ℕ} {X: Type*} {f g h: EuclideanSpace' d �
   unfold AlmostEverywhereEqual AlmostAlways IsNull at *
   have h_subset : {x | f x ≠ h x} ⊆ {x | f x ≠ g x} ∪ {x | g x ≠ h x} := by
     intro x hx
-    simp only [Set.mem_setOf_eq, Set.mem_union] at *
+    simp only [Set.mem_ofPred_eq, Set.mem_union] at *
     by_contra hc
-    push_neg at hc
+    push Not at hc
     exact hx (hc.1.trans hc.2)
   -- Express union as ℕ-indexed union for countable subadditivity
   let E : ℕ → Set (EuclideanSpace' d) := fun n =>
@@ -1211,7 +1211,7 @@ def RealSimpleFunction.pos {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpl
         · intro h; exact absurd (Finset.mem_univ j) h
       rw [hlhs, hrhs]
     · -- x is not in any atom, so f(x) = 0
-      push_neg at hx_in
+      push Not at hx_in
       have hlhs : f x = 0 := by
         rw [heq]
         simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]

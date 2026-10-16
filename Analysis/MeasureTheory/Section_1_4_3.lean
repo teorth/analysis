@@ -206,7 +206,7 @@ lemma ConcreteBooleanAlgebra.inter_mem {X:Type*} (B: ConcreteBooleanAlgebra X) {
 /-- Boolean algebras are closed under set difference. -/
 lemma ConcreteBooleanAlgebra.diff_mem {X:Type*} (B: ConcreteBooleanAlgebra X) {E F : Set X}
     (hE : B.measurable E) (hF : B.measurable F) : B.measurable (E \ F) := by
-  rw [Set.diff_eq]
+  rw [Set.sdiff_eq]
   exact B.inter_mem hE (B.compl_mem F hF)
 
 /-- Boolean algebras are closed under finite unions. -/
@@ -224,7 +224,7 @@ lemma ConcreteBooleanAlgebra.finite_biUnion_mem {X J:Type*} (B: ConcreteBooleanA
 theorem FinitelyAdditiveMeasure.mono {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) {E F : Set X} (hE : B.measurable E) (hF : B.measurable F) (hsub : E ⊆ F) : μ.measure E ≤ μ.measure F := by
   have hdiff := B.diff_mem hF hE
   have hdisj : Disjoint E (F \ E) := Set.disjoint_left.mpr fun _ hxE hxd => hxd.2 hxE
-  have hunion : E ∪ (F \ E) = F := Set.union_diff_cancel hsub
+  have hunion : E ∪ (F \ E) = F := Set.union_sdiff_cancel hsub
   have hsum := μ.measure_finite_additive E (F \ E) hE hdiff hdisj
   rw [← hunion, hsum]
   exact le_add_of_nonneg_right (μ.measure_pos (F \ E) hdiff)
@@ -253,10 +253,10 @@ theorem FinitelyAdditiveMeasure.finite_subadditivity {X:Type*} {B: ConcreteBoole
     intro A C hA hC
     have hdiff := B.diff_mem hC hA
     have hdisj : Disjoint A (C \ A) := Set.disjoint_left.mpr fun _ hxA hxd => hxd.2 hxA
-    have hunion : A ∪ (C \ A) = A ∪ C := Set.union_diff_self
+    have hunion : A ∪ (C \ A) = A ∪ C := Set.union_sdiff_self
     have hsum := μ.measure_finite_additive A (C \ A) hA hdiff hdisj
     rw [← hunion, hsum]
-    exact add_le_add (le_refl _) (μ.mono hdiff hC Set.diff_subset)
+    exact add_le_add (le_refl _) (μ.mono hdiff hC Set.sdiff_subset)
   refine Finset.induction_on I ?empty ?step
   · simp [μ.measure_empty]
   · intro a s ha ih
@@ -272,10 +272,10 @@ theorem FinitelyAdditiveMeasure.mes_union_add_mes_inter {X:Type*} {B: ConcreteBo
   have hdisj₁ : Disjoint E (F \ E) := Set.disjoint_left.mpr fun _ hxE hxd => hxd.2 hxE
   have hdisj₂ : Disjoint (E ∩ F) (F \ E) :=
     Set.disjoint_left.mpr fun _ hx hxd => hxd.2 hx.1
-  have h₁ : E ∪ (F \ E) = E ∪ F := Set.union_diff_self
+  have h₁ : E ∪ (F \ E) = E ∪ F := Set.union_sdiff_self
   have h₂ : (E ∩ F) ∪ (F \ E) = F := by
     ext x
-    simp [Set.mem_union, Set.mem_inter_iff, Set.mem_diff]
+    simp [Set.mem_union, Set.mem_inter_iff, Set.mem_sdiff]
     tauto
   have hsum₁ := μ.measure_finite_additive E (F \ E) hE hdiff hdisj₁
   have hsum₂ := μ.measure_finite_additive (E ∩ F) (F \ E) hinter hdiff hdisj₂
