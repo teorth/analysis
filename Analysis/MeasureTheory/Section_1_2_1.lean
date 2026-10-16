@@ -1,3 +1,4 @@
+import Mathlib.Analysis.Real.Cardinality
 import Analysis.MeasureTheory.Section_1_2_0
 import Analysis.Misc.«Real-EReal-ENNReal»
 import Analysis.Misc.Combinatorics
@@ -1760,7 +1761,7 @@ lemma le_of_finset_cover {d:ℕ} (hd: 0 < d) (E: Set (EuclideanSpace' d))
             have h_lhs : ∑' (p : SigmaType), p.snd.val.volume.toEReal = ↑(∑' (p : SigmaType), f_enn p) := by
               have h_eq : ∀ p : SigmaType, p.snd.val.volume.toEReal = φ (f_enn p) := by
                 intro p
-                simp only [f_enn, φ, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
+                show p.snd.val.volume.toEReal = ((ENNReal.ofReal p.snd.val.volume : ENNReal) : EReal)
                 rw [EReal.coe_ennreal_ofReal, max_eq_left (Box.volume_nonneg _)]
               simp_rw [h_eq]
               exact (Summable.map_tsum ENNReal.summable φ h_cont).symm
@@ -1781,7 +1782,7 @@ lemma le_of_finset_cover {d:ℕ} (hd: 0 < d) (E: Set (EuclideanSpace' d))
                   rw [map_sum]
                   apply Finset.sum_congr rfl
                   intro (B : (I n : Set (Box d))) _
-                  simp only [f_enn, φ, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
+                  show B.val.volume.toEReal = ((ENNReal.ofReal B.val.volume : ENNReal) : EReal)
                   rw [EReal.coe_ennreal_ofReal, max_eq_left (Box.volume_nonneg _)]
                 simp_rw [h_eq_term]
                 exact (Summable.map_tsum ENNReal.summable φ h_cont).symm
@@ -2222,16 +2223,7 @@ lemma partition_volume_bound {d : ℕ} {P : Finset (Box d)}
         Finset.sum_add_distrib
     _ = ∑ x : { B // B ∈ P_nonempty }, (B' x.1 x.2).volume + P_nonempty.card * ε := by
         congr 1
-        rw [Finset.sum_const, Finset.card_univ, ← smul_eq_mul]
-        have : (Finset.univ : Finset { B // B ∈ P_nonempty }).image (fun x => x.val) = P_nonempty := by
-          ext B
-          simp only [Finset.mem_image]
-          constructor
-          · intro ⟨a, _, ha_eq⟩; rw [← ha_eq]; exact a.property
-          · intro hB; exact ⟨⟨B, hB⟩, Finset.mem_univ _, rfl⟩
-        rw [← Finset.card_univ, ← this]
-        rw [Finset.card_image_of_injective _ (fun x y h => Subtype.ext h)]
-        simp [smul_eq_mul]
+        rw [Finset.sum_const, Finset.card_univ, Fintype.card_coe, nsmul_eq_mul]
 
 /-- Shrunk boxes B' inherit injectivity from parent boxes' disjointness when B' are nonempty. -/
 lemma injective_of_shrunk_nonempty {d : ℕ} {P : Finset (Box d)}
@@ -2345,7 +2337,7 @@ lemma Box.inflate {d:ℕ} (B: Box d) (δ: ℝ) (hδ: 0 < δ) :
     -- |B'|ᵥ = ∏ᵢ |B'.side i|ₗ ≤ ∏ᵢ (|B.side i|ₗ + 2ε) = f(ε)
     have hB'_vol_le : |B'|ᵥ ≤ f ε := by
       simp only [Box.volume, f, B']
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro i _; exact BoundedInterval.length_nonneg _
       · intro i _
         simp only [BoundedInterval.length, BoundedInterval.a, BoundedInterval.b]

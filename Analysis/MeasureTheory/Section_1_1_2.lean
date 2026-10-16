@@ -529,10 +529,10 @@ theorem JordanMeasurable.union {d:ℕ} {E F : Set (EuclideanSpace' d)}
     have h_inner_outer_eq : ∀ ε > 0, ∃ A B : Set (EuclideanSpace' d), ∃ hA : IsElementary A, ∃ hB : IsElementary B, A ⊆ E ∪ F ∧ E ∪ F ⊆ B ∧ (IsElementary.measure (hB.sdiff hA)) ≤ ε := by
       intro ε hε_pos
       obtain ⟨A₁, B₁, hA₁, hB₁, hA₁_subset_E, hE_subset_B₁, hB₁_minus_A₁⟩ : ∃ A₁ B₁ : Set (EuclideanSpace' d), ∃ hA₁ : IsElementary A₁, ∃ hB₁ : IsElementary B₁, A₁ ⊆ E ∧ E ⊆ B₁ ∧ (IsElementary.measure (hB₁.sdiff hA₁)) ≤ ε / 2 := by
-        have := JordanMeasurable.equiv hE_bounded |>.out 0 1 ; simp_all only [gt_iff_lt, exists_and_left, implies_true,
+        have := JordanMeasurable.equiv hE_bounded |>.out 1 2 ; simp_all only [gt_iff_lt, exists_and_left, implies_true,
           iff_true, div_pos_iff_of_pos_left, Nat.ofNat_pos]
       obtain ⟨A₂, B₂, hA₂, hB₂, hA₂_subset_F, hF_subset_B₂, hB₂_minus_A₂⟩ : ∃ A₂ B₂ : Set (EuclideanSpace' d), ∃ hA₂ : IsElementary A₂, ∃ hB₂ : IsElementary B₂, A₂ ⊆ F ∧ F ⊆ B₂ ∧ (IsElementary.measure (hB₂.sdiff hA₂)) ≤ ε / 2 := by
-        have := JordanMeasurable.equiv hF_bounded |>.out 0 1;
+        have := JordanMeasurable.equiv hF_bounded |>.out 1 2;
         exact this.mp hF ( ε / 2 ) ( half_pos hε_pos ) |> fun ⟨ A₂, B₂, hA₂, hB₂, hA₂_subset_F, hF_subset_B₂, hB₂_minus_A₂ ⟩ => ⟨ A₂, B₂, hA₂, hB₂, hA₂_subset_F, hF_subset_B₂, by linarith ⟩;
       refine' ⟨ A₁ ∪ A₂, B₁ ∪ B₂, _, _, _, _, _ ⟩ <;> try { exact hA₁.union hA₂ } <;> try { exact hB₁.union hB₂ } <;> try { exact Set.union_subset_union hA₁_subset_E hA₂_subset_F } <;> try { exact Set.union_subset_union hE_subset_B₁ hF_subset_B₂ };
       refine' le_trans ( le_trans ( IsElementary.measure_mono _ _ _ ) ( IsElementary.measure_of_union _ _ ) ) _;
@@ -583,10 +583,10 @@ theorem JordanMeasurable.inter {d:ℕ} {E F : Set (EuclideanSpace' d)}
     have h_jordan_measurable : ∀ ε > 0, ∃ A B : Set (EuclideanSpace' d), ∃ hA : IsElementary A, ∃ hB : IsElementary B, A ⊆ E ∧ E ⊆ B ∧ (hB.sdiff hA).measure ≤ ε / 2 ∧ ∃ C D : Set (EuclideanSpace' d), ∃ hC : IsElementary C, ∃ hD : IsElementary D, C ⊆ F ∧ F ⊆ D ∧ (hD.sdiff hC).measure ≤ ε / 2 := by
       intro ε hε_pos
       obtain ⟨A, B, hA, hB, hA_sub, hB_sup, hA_B⟩ : ∃ A B : Set (EuclideanSpace' d), ∃ hA : IsElementary A, ∃ hB : IsElementary B, A ⊆ E ∧ E ⊆ B ∧ (hB.sdiff hA).measure ≤ ε / 2 := by
-        have := JordanMeasurable.equiv (hE.1) |>.out 0 1; simp_all only [gt_iff_lt, exists_and_left, implies_true,
+        have := JordanMeasurable.equiv (hE.1) |>.out 1 2; simp_all only [gt_iff_lt, exists_and_left, implies_true,
           iff_true, div_pos_iff_of_pos_left, Nat.ofNat_pos];
       obtain ⟨C, D, hC, hD, hC_sub, hD_sup, hC_D⟩ : ∃ C D : Set (EuclideanSpace' d), ∃ hC : IsElementary C, ∃ hD : IsElementary D, C ⊆ F ∧ F ⊆ D ∧ (hD.sdiff hC).measure ≤ ε / 2 := by
-        have := JordanMeasurable.equiv ( show Bornology.IsBounded F from hF.1 ) |>.out 0 1;
+        have := JordanMeasurable.equiv ( show Bornology.IsBounded F from hF.1 ) |>.out 1 2;
         exact this.mp hF ( ε / 2 ) ( half_pos hε_pos ) |> fun ⟨ C, D, hC, hD, hC_sub, hD_sup, hC_D ⟩ => ⟨ C, D, hC, hD, hC_sub, hD_sup, by linarith ⟩
       use A, B, hA, hB, hA_sub, hB_sup, hA_B, C, D, hC, hD, hC_sub, hD_sup, hC_D;
     intro ε hε_pos
@@ -633,11 +633,11 @@ theorem JordanMeasurable.sdiff {d:ℕ} {E F : Set (EuclideanSpace' d)}
       have h_diff : ∀ ε > 0, ∃ A B : Set (EuclideanSpace' d), ∃ hA : IsElementary A, ∃ hB : IsElementary B, A ⊆ E ∧ E ⊆ B ∧ (hB.sdiff hA).measure ≤ ε / 2 ∧ ∃ C D : Set (EuclideanSpace' d), ∃ hC : IsElementary C, ∃ hD : IsElementary D, C ⊆ F ∧ F ⊆ D ∧ (hD.sdiff hC).measure ≤ ε / 2 := by
         intros ε hε_pos
         obtain ⟨A, B, hA, hB, hAB⟩ : ∃ A B : Set (EuclideanSpace' d), ∃ hA : IsElementary A, ∃ hB : IsElementary B, A ⊆ E ∧ E ⊆ B ∧ (hB.sdiff hA).measure ≤ ε / 2 := by
-          have := JordanMeasurable.equiv hE.1 |>.out 0 1;
+          have := JordanMeasurable.equiv hE.1 |>.out 1 2;
           exact this.mp hE ( ε / 2 ) ( half_pos hε_pos );
         have h_diff : ∀ ε > 0, ∃ C D : Set (EuclideanSpace' d), ∃ hC : IsElementary C, ∃ hD : IsElementary D, C ⊆ F ∧ F ⊆ D ∧ (hD.sdiff hC).measure ≤ ε / 2 := by
           have := JordanMeasurable.equiv hF.1;
-          have := this.out 0 1;
+          have := this.out 1 2;
           intro ε_1 a
           simp_all only [gt_iff_lt, exists_and_left, implies_true, exists_prop, List.tfae_cons_self, iff_true,
             div_pos_iff_of_pos_left, Nat.ofNat_pos];
@@ -680,6 +680,7 @@ theorem JordanMeasurable.sdiff {d:ℕ} {E F : Set (EuclideanSpace' d)}
 theorem JordanMeasurable.symmDiff {d:ℕ} {E F : Set (EuclideanSpace' d)}
   (hE: JordanMeasurable E) (hF: JordanMeasurable F) : JordanMeasurable (symmDiff E F) := by
   convert JordanMeasurable.union ( hE.sdiff hF ) ( hF.sdiff hE ) using 1
+  rfl
 
 /-- Exercise 1.1.6 (ii) (non-negativity) -/
 theorem JordanMeasurable.nonneg {d:ℕ} {E : Set (EuclideanSpace' d)}

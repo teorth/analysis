@@ -1,3 +1,4 @@
+import Mathlib.Analysis.Calculus.ContDiff.Defs
 import Analysis.MeasureTheory.Section_1_2_1
 
 /-!
@@ -913,7 +914,7 @@ theorem LebesgueMeasurable.TFAE {d:ℕ} (E: Set (EuclideanSpace' d)) :
     ].TFAE
   := by sorry
 
-  /-- Exercise 1.2.8 -/
+/-- Exercise 1.2.8 -/
 theorem Jordan_measurable.lebesgue {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: JordanMeasurable E) : LebesgueMeasurable E := by
   sorry
 
@@ -1100,7 +1101,7 @@ private lemma Lebesgue_measure.countable_union_bounded {d:ℕ} (hd : 0 < d)
       have h_14 : LebesgueMeasurable (E n) →
           (∀ ε > 0, ∃ F : Set (EuclideanSpace' d), IsClosed F ∧ F ⊆ E n ∧
             Lebesgue_outer_measure (E n \ F) ≤ ε) := by
-        have := List.TFAE.out h_tfae 0 3
+        have := List.TFAE.out h_tfae 1 4
         exact this.mp
       exact h_14 (hmes n) δ hδ
     -- Choose ε_n = ε / 2^{n+1} for each n
@@ -1777,7 +1778,7 @@ theorem Lebesgue_measure.unique {d:ℕ} (m: Set (EuclideanSpace' d) → EReal)
   : ∀ E, LebesgueMeasurable E → m E = Lebesgue_measure E := by sorry
 
 /-- Exercise 1.2.24(i) (Lebesgue measure as the completion of elementary measure). -/
-instance IsElementary.ae_equiv {d:ℕ} {A: Set (EuclideanSpace' d)} (hA: IsElementary A):
+def IsElementary.ae_equiv {d:ℕ} {A: Set (EuclideanSpace' d)} (hA: IsElementary A):
 Setoid (Set A) := {
    r E F := IsNull (Subtype.val '' (_root_.symmDiff E F))
    iseqv := by sorry

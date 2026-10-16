@@ -123,7 +123,7 @@ lemma TaggedPartition.exists_norm_le (I: BoundedInterval) (hI: I = Icc I.a I.b) 
   linarith
 
 /-- The filter {name}`TaggedPartition.nhds_zero` is non-trivial when the interval has positive length. -/
-instance TaggedPartition.nhds_zero_neBot (I: BoundedInterval) (hI: I = Icc I.a I.b) (hab: I.a < I.b) :
+theorem TaggedPartition.nhds_zero_neBot (I: BoundedInterval) (hI: I = Icc I.a I.b) (hab: I.a < I.b) :
     Filter.NeBot (TaggedPartition.nhds_zero I) := by
   unfold TaggedPartition.nhds_zero
   rw [Filter.comap_neBot_iff]

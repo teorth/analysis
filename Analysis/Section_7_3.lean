@@ -131,7 +131,7 @@ theorem Series.cauchy_criterion {s:Series} (hm: s.m = 1) (hs:s.nonneg) (hmono: �
     . simp [T, Series.partial, htm, hN]; convert hM 0; simp [S, Series.partial, hm]
     rw [Int.eq_natCast_toNat.mpr hN]; apply (Lemma_7_3_6 N.toNat).2.trans; grind
   intro ⟨ M, hM ⟩; use M; intro K'; obtain hK' | hK' := lt_or_ge K' 1
-  . simp [S, Series.partial, hm, hK']; convert hM (-1)
+  . simp [S, Series.partial, hm, hK']; convert hM (-1); simp [T, Series.partial, htm]
   set K := (K'-1).toNat; have hK : K' = K + 1 := by rw [Int.toNat_of_nonneg (by linarith)]; abel
   calc
     _ ≤ S (2 ^ (K+1) - 1) := by
@@ -177,14 +177,15 @@ theorem Series.zeta_eq {q:ℝ} (hq: q > 1) : (mk' (m := 1) fun n ↦ 1 / (n:ℝ)
     rw [abs_of_nonneg]; positivity
   have tail (a: ℤ → ℝ) (L:ℝ) : Filter.atTop.Tendsto a (nhds L) ↔ Filter.atTop.Tendsto (fun n:ℕ ↦ a n) (nhds L) := by
     convert Filter.tendsto_map'_iff (g:= fun n:ℕ ↦ (n:ℤ) )
-    simp
+    · simp
+    · rfl
   unfold convergesTo
   rw [tail _ L]
   convert Summable.tendsto_sum_tsum_nat this with n
   simp [Series.partial]
   set e : ℕ ↪ ℤ := {
     toFun n := n+1
-    inj' _ _ _ := by grind
+    inj' := show Function.Injective _ by intro a b h; simpa using h
   }
   convert Finset.sum_map _ e _ using 2 with n _ m hm
   . ext x; simp [e]; constructor

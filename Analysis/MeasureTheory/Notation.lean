@@ -1,4 +1,5 @@
 import Mathlib.Tactic
+import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
 # Introduction to Measure Theory, Chapter 0: Notation
@@ -124,9 +125,9 @@ theorem ENNReal.upward_continuous {x y:ℕ → ENNReal} (hx: Monotone x) (hy: Mo
       have := hx hn.1
       order
     have : atTop.Tendsto (fun n ↦ x n * y ny) (nhds ⊤) := by
-      convert Tendsto.comp (g := fun z ↦ z * y ny) _ hx_lim
-      convert (ENNReal.continuous_mul_const hyn').tendsto ⊤
-      rw [top_mul]; order
+      have h := ((ENNReal.continuous_mul_const hyn').tendsto ⊤).comp hx_lim
+      rw [ENNReal.top_mul hny.ne'] at h
+      exact h
     apply tendsto_nhds_top_mono this
     simp [EventuallyLE, eventually_atTop]
     use ny; intro n hn
@@ -134,10 +135,9 @@ theorem ENNReal.upward_continuous {x y:ℕ → ENNReal} (hx: Monotone x) (hy: Mo
   obtain rfl | hy₀' := eq_top_or_lt_top y₀
   . rw [mul_top (by order)]
     have : atTop.Tendsto (fun n ↦ x nx * y n) (nhds ⊤) := by
-      convert Tendsto.comp (g := fun z ↦ (x nx) * z) _ hy_lim
-      convert (ENNReal.continuous_const_mul _).tendsto ⊤
-      . rw [mul_top]; order
-      specialize hx_lt nx; order
+      have h := ((ENNReal.continuous_const_mul ((hx_lt nx).trans_lt hx₀').ne).tendsto ⊤).comp hy_lim
+      rw [ENNReal.mul_top hnx.ne'] at h
+      exact h
     apply tendsto_nhds_top_mono this
     simp [EventuallyLE, eventually_atTop]
     use nx; intro n hn
@@ -166,7 +166,7 @@ example : ∃ (x y:ℕ → ENNReal) (_hx: Antitone x) (_hy: Antitone y)
   · have hxR : Tendsto (fun n : ℕ => (1 : ℝ) / (n : ℝ)) atTop (nhds 0) :=
       tendsto_one_div_atTop_nhds_zero_nat
     have hxR' : Tendsto (fun n : ℕ => ENNReal.ofReal (1 / (n : ℝ))) atTop (nhds 0) := by
-      simpa [Function.comp, ENNReal.ofReal_zero]
+      simpa [Function.comp_def, ENNReal.ofReal_zero]
       using (ENNReal.continuous_ofReal.tendsto 0).comp hxR
     have heq : ∀ᶠ n in atTop, x n = ENNReal.ofReal (1 / (n : ℝ)) := by
       refine (eventually_ge_atTop 1).mono ?_
@@ -189,8 +189,7 @@ example : ∃ (x y:ℕ → ENNReal) (_hx: Antitone x) (_hy: Antitone y)
 example {A:Type} {x : A → ENNReal} (hx: ∑' α, x α < ⊤) :
   ∃ E: Set A, Countable E ∧ ∀ α ∉ E, x α = 0 := by
   refine ⟨{a | x a ≠ 0}, ?_, ?_⟩
-  · simpa [Set.mem_setOf_eq] using
-      (Summable.countable_support_ennreal (ne_of_lt hx))
+  · exact Summable.countable_support_ennreal (ne_of_lt hx)
   · aesop
 
 /-- Theorem 0.0.2 (Tonelli's theorem for series)  -/
@@ -219,7 +218,7 @@ theorem ENNReal.tsum_of_tsum (x: ℕ → ℕ → ENNReal) : ∑' p:ℕ × ℕ, x
       _ ≤ _ := by apply ENNReal.tsum_le_tsum; intros; apply ENNReal.sum_le_tsum
   apply le_of_tendsto' (tendsto_nat_tsum _); intro N
   apply le_of_tendsto' (f := fun M ↦ ∑ n ∈ .range N, ∑ m ∈ .range M, x n m) (x := atTop)
-  . apply tendsto_finset_sum; intros; apply tendsto_nat_tsum
+  . apply tendsto_finsetSum; intros; apply tendsto_nat_tsum
   intro M; calc
     _ = ∑ p ∈ .range N ×ˢ .range M, x p.1 p.2 := by symm; apply Finset.sum_product
     _ ≤ _ := ENNReal.sum_le_tsum _

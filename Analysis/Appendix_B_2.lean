@@ -67,6 +67,7 @@ theorem NNRealDecimal.surj (x:NNReal) : ∃ d:NNRealDecimal, x = d := by
   have := (d.toNNReal_conv.tendsto_sum_tsum_nat).const_add (s 0:NNReal)
   convert_to Filter.atTop.Tendsto (fun n ↦ s n * (10:NNReal)^(-n:ℝ)) (nhds (d:NNReal)) at this
   . ext n; rw [hsum n]
+  . rfl
   apply tendsto_nhds_unique _ this
   apply Filter.Tendsto.squeeze (g := fun n:ℕ ↦ x - (10:NNReal)^(-n:ℝ)) (h := fun _ ↦ x)
   . convert Filter.Tendsto.const_sub (c := 0) x _

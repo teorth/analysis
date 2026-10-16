@@ -146,7 +146,7 @@ noncomputable def g {a:ZMod N} (ha: a ∉ B) (b:B): B :=
     (hdiff (a-b.val) (by grind)).choose.2
 
 lemma f_def {a:ZMod N} (ha: a ∉ B) (b:B) : a - b = f ha b - g ha b := by
-  convert (hdiff (a - b.val) (by grind)).choose_spec.1.symm
+  convert (hdiff (a - b.val) (by grind)).choose_spec.1.symm <;> rfl
 
 lemma f_def' {a:ZMod N} (ha: a ∉ B) (b c d:B) : a - b = c - d ↔ c = f ha b ∧ d = g ha b := by
   constructor

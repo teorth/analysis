@@ -34,7 +34,9 @@ lemma Sequence.pow_eval {a:Sequence} {k: ℕ} {n: ℤ} (hn : n ≥ a.m): (a ^ k)
 
 @[simp]
 lemma Sequence.pow_one (a:Sequence) : a^1 = a := by
-  ext n; rfl; simp only [HPow.hPow, Pow.pow]; split_ifs with h; simp; simp [a.vanish n (by grind)]
+  ext n; rfl; by_cases h : n ≥ a.m
+  · simp [pow_eval h]
+  · rw [(a^1).vanish n (by change n < a.m; grind), a.vanish n (by grind)]
 
 lemma Sequence.pow_succ (a:Sequence) (k:ℕ): a^(k+1) = a^k * a := by
   ext x

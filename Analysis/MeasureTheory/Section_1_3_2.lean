@@ -1101,7 +1101,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
             have h_min_le : (min (f x) ↑n).toReal ≤ n := by
               have h_le := min_le_right (f x) ↑n
               have := EReal.toReal_le_toReal h_le hbot (EReal.coe_ne_top n)
-              simp only at this; exact this
+              exact this
             have h_min_eq_n : (min (f x) ↑n).toReal = n := le_antisymm h_min_le h_toReal_ge
             by_contra hcontra; push_neg at hcontra
             have h_min_eq : min (f x) ↑n = f x := min_eq_left (le_of_lt hcontra)
@@ -1353,8 +1353,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
               simp only [ite_true]
               rw [hk_eq]
               -- Use helper lemma, then normalize coercions
-              convert mul_pow2_div_pow2_eq n using 2
-              simp only [← EReal.coe_natCast, Nat.cast_pow, Nat.cast_ofNat, EReal.coe_pow]
+              convert mul_pow2_div_pow2_eq n using 2 <;> norm_cast
             · intro j hj
               -- hj : approx_fn f n x = if ↑j = n * 2^n then ↑n else ↑↑↑j / ↑(2^n)
               -- The simp didn't make progress because E is not in scope for hj after previous simp
@@ -1385,7 +1384,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
                   convert hk_eq.symm.trans hj using 2; all_goals norm_cast
                 have h_eq : (((k : ℕ) : ℝ) : EReal) / ((2^n : ℕ) : EReal) =
                             (((n * 2^n : ℕ) : ℝ) : EReal) / ((2^n : ℕ) : EReal) := by
-                  rw [h_k_val]; convert (mul_pow2_div_pow2_eq n).symm using 2
+                  rw [h_k_val]; convert (mul_pow2_div_pow2_eq n).symm using 2 <;> norm_cast
                 exact absurd (ereal_div_pow2_eq_imp_eq k (n * 2^n) n h_eq) hk_max
               · -- Both j and k are not n*2^n
                 simp only [hj_max, ↓reduceIte] at hj
@@ -1716,7 +1715,7 @@ theorem UnsignedMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Un
 /-- Exercise 1.3.3(i) -/
 theorem Continuous.UnsignedMeasurable {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Continuous f) (hnonneg: Unsigned f): _root_.UnsignedMeasurable f := by
   have h_iff : _root_.UnsignedMeasurable f ↔ ∀ U : Set EReal, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (_root_.UnsignedMeasurable.TFAE hnonneg).out 0 9
+    (_root_.UnsignedMeasurable.TFAE hnonneg).out 1 10
   apply h_iff.mpr
   intro U hU
   exact IsOpen.measurable (hU.preimage hf)
@@ -1746,7 +1745,7 @@ theorem UnsignedMeasurable.sup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
     exact le_trans ((hf 0).1 x) (le_iSup (fun n ↦ f n x) 0)
   have h_iff : UnsignedMeasurable (fun x ↦ iSup (fun n ↦ f n x)) ↔
       ∀ t, LebesgueMeasurable {x | iSup (fun n ↦ f n x) > t} :=
-    (UnsignedMeasurable.TFAE hnonneg).out 0 4
+    (UnsignedMeasurable.TFAE hnonneg).out 1 5
   apply h_iff.mpr
   intro t
   have h_eq : {x | iSup (fun n ↦ f n x) > t} = ⋃ n, {x | f n x > t} := by
@@ -1755,7 +1754,7 @@ theorem UnsignedMeasurable.sup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
   rw [h_eq]
   refine LebesgueMeasurable.countable_union fun n => ?_
   have hn : UnsignedMeasurable (f n) ↔ ∀ t, LebesgueMeasurable {x | f n x > t} :=
-    (UnsignedMeasurable.TFAE (hf n).1).out 0 4
+    (UnsignedMeasurable.TFAE (hf n).1).out 1 5
   exact hn.mp (hf n) t
 
 /-- Exercise 1.3.3(iii) -/
@@ -1765,7 +1764,7 @@ theorem UnsignedMeasurable.inf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
     exact le_iInf fun n => (hf n).1 x
   have h_iff : UnsignedMeasurable (fun x ↦ iInf (fun n ↦ f n x)) ↔
       ∀ t, LebesgueMeasurable {x | iInf (fun n ↦ f n x) ≥ t} :=
-    (UnsignedMeasurable.TFAE hnonneg).out 0 5
+    (UnsignedMeasurable.TFAE hnonneg).out 1 6
   apply h_iff.mpr
   intro t
   have h_eq : {x | iInf (fun n ↦ f n x) ≥ t} = ⋂ n, {x | f n x ≥ t} := by
@@ -1775,7 +1774,7 @@ theorem UnsignedMeasurable.inf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
   rw [h_eq]
   refine LebesgueMeasurable.countable_inter fun n => ?_
   have hn : UnsignedMeasurable (f n) ↔ ∀ t, LebesgueMeasurable {x | f n x ≥ t} :=
-    (UnsignedMeasurable.TFAE (hf n).1).out 0 5
+    (UnsignedMeasurable.TFAE (hf n).1).out 1 6
   exact hn.mp (hf n) t
 
 /-- Exercise 1.3.3(iii) -/
@@ -3082,7 +3081,7 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
 lemma f_lifted_measurable : UnsignedMeasurable f_lifted := by
   -- Apply Lemma 1.3.9(viii): f is measurable iff ∀ t, {x | f(x) ≤ t} is measurable
   have h_iff : UnsignedMeasurable f_lifted ↔ (∀ t, LebesgueMeasurable {x | f_lifted x ≤ t}) :=
-    (UnsignedMeasurable.TFAE f_lifted_unsigned).out 0 7
+    (UnsignedMeasurable.TFAE f_lifted_unsigned).out 1 8
   apply h_iff.mpr
   intro t
   rcases lt_trichotomy t 0 with ht_neg | ht_zero | ht_pos

@@ -239,7 +239,7 @@ lemma exercise_1_2_1_union :
         { toEquiv := Real.equiv_EuclideanSpace'
           continuous_toFun := hf_cont
           continuous_invFun := hg_cont }
-      simpa using e.image_closure Q
+      exact e.image_closure Q
 
     rw [← h_image_closure] at h_outer_eq
     rw [h_closure_Q] at h_outer_eq
@@ -360,7 +360,7 @@ lemma exercise_1_2_1_union :
         { toEquiv := Real.equiv_EuclideanSpace'
           continuous_toFun := hf_cont
           continuous_invFun := hg_cont }
-      simpa using e.image_interior Q
+      exact e.image_interior Q
 
     rw [← h_image_interior] at h_inner_eq
     rw [h_interior_Q, Set.image_empty] at h_inner_eq
@@ -1072,6 +1072,7 @@ lemma Lebesgue_outer_measure_of_dim_zero {E: Set (EuclideanSpace' 0)} :
               -- Apply helper lemma: infinite indicator sum diverges to ⊤
               -- g and the lemma function are definitionally equal under classical
               convert hasSum_indicator_top_of_infinite X hX using 2
+              simp [g]
             exact h_top.tsum_eq.symm ▸ h_top
         -- If HasSum g s, then for any finite set F, ∑ n ∈ F, g n ≤ s
         -- Apply this with F = {n₀}
@@ -1217,6 +1218,7 @@ lemma tsum_volume_finset_eq {d : ℕ} (hd : 0 < d) (S : Finset (Box d)) :
     apply Finset.prod_eq_zero (Finset.mem_univ (⟨0, hd⟩ : Fin d))
     simp only [ite_true]
     simp [BoundedInterval.length]
+    exact le_of_eq rfl
 
   -- Step 2: Use tsum_eq_sum to convert infinite sum to finite sum
   have h_tsum_eq : ∑' n, (S_seq n).volume.toEReal = ∑ n ∈ Finset.range S_list.length, (S_seq n).volume.toEReal := by

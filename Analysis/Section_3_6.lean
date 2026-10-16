@@ -219,7 +219,11 @@ theorem SetTheory.Set.has_card_to_card {X:Set} {n: ℕ}: X.has_card n → X.card
   intro h; simp [card, card_uniq (⟨ n, h ⟩:X.finite).choose_spec h]; aesop
 
 theorem SetTheory.Set.card_to_has_card {X:Set} {n: ℕ} (hn: n ≠ 0): X.card = n → X.has_card n
-  := by grind [card, has_card_card]
+  := by
+  intro h
+  have hX : X.finite := by
+    by_contra hX; simp [card, hX] at h; omega
+  rw [←h]; exact has_card_card hX
 
 theorem SetTheory.Set.card_fin_eq (n:ℕ): (Fin n).has_card n := (has_card_iff _ _).mp ⟨ id, Function.bijective_id ⟩
 

@@ -762,7 +762,7 @@ private lemma RealSimpleFunction.approx_by_step_aux {d:ℕ} {g : EuclideanSpace'
         intro j
         by_cases hvj : v j = 0
         · exact ⟨∅, IsElementary.empty d, fun h => absurd hvj h⟩
-        · have h_tfae := (LebesgueMeasurable.finite_TFAE (A j)).out 0 7
+        · have h_tfae := (LebesgueMeasurable.finite_TFAE (A j)).out 1 8
           have h_approx := h_tfae.mp ⟨hA_meas j, hA_fin j hvj⟩
           obtain ⟨F, hF_elem, hF_bound⟩ :=
             h_approx (↑(δ / (↑n * (|v j| + 1))))
@@ -1020,11 +1020,11 @@ private lemma Box.scaled_indicator_approx_continuous {d:ℕ} (B : Box d) (c : �
     set ε₀ : ℝ := δ / (2 * |c|) with hε₀_def
     have hε₀ : 0 < ε₀ := div_pos hδ (mul_pos two_pos hc_abs_pos)
     -- Get compact K ⊆ B.toSet with measure(B.toSet \ K) ≤ ε₀
-    have h_tfae_03 := (LebesgueMeasurable.finite_TFAE B.toSet).out 0 3
+    have h_tfae_03 := (LebesgueMeasurable.finite_TFAE B.toSet).out 1 4
     obtain ⟨K, hK_compact, hK_sub, hK_bound⟩ :=
       h_tfae_03.mp ⟨hB_meas, hB_fin⟩ (↑ε₀) (EReal.coe_pos.mpr hε₀)
     -- Get open U ⊇ B.toSet with measure(U \ B.toSet) ≤ ε₀ and finite measure
-    have h_tfae_01 := (LebesgueMeasurable.finite_TFAE B.toSet).out 0 1
+    have h_tfae_01 := (LebesgueMeasurable.finite_TFAE B.toSet).out 1 2
     obtain ⟨U, hU_open, hB_sub_U, hU_fin, hU_diff_bound⟩ :=
       h_tfae_01.mp ⟨hB_meas, hB_fin⟩ (↑ε₀) (EReal.coe_pos.mpr hε₀)
     -- K ⊆ U (since K ⊆ B.toSet ⊆ U)

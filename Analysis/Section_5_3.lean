@@ -170,9 +170,9 @@ noncomputable instance Real.add_inst : Add Real where
 /-- Definition 5.3.4 (Addition of reals) -/
 theorem Real.LIM_add {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a + LIM b = LIM (a + b) := by
-  simp_rw [LIM_def ha, LIM_def hb, LIM_def (Sequence.IsCauchy.add ha hb)]
-  convert Quotient.liftOn₂_mk _ _ _ _ using 1
-  simp [LIM]; grind
+  rw [LIM_def ha, LIM_def hb]
+  change LIM ((CauchySequence.mk' ha : ℕ → ℚ) + (CauchySequence.mk' hb : ℕ → ℚ)) = _
+  simp only [CauchySequence.coe_coe]
 
 
 /-- Proposition 5.3.10 (Product of Cauchy sequences is Cauchy) -/
@@ -211,9 +211,9 @@ noncomputable instance Real.mul_inst : Mul Real where
 
 theorem Real.LIM_mul {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a * LIM b = LIM (a * b) := by
-  simp_rw [LIM_def ha, LIM_def hb, LIM_def (Sequence.IsCauchy.mul ha hb)]
-  convert Quotient.liftOn₂_mk _ _ _ _ using 1
-  simp [LIM]; grind
+  rw [LIM_def ha, LIM_def hb]
+  change LIM ((CauchySequence.mk' ha : ℕ → ℚ) * (CauchySequence.mk' hb : ℕ → ℚ)) = _
+  simp only [CauchySequence.coe_coe]
 
 instance Real.instRatCast : RatCast Real where
   ratCast := fun q ↦

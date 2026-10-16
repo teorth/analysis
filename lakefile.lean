@@ -14,14 +14,14 @@ package «Analysis» where
   -- add any additional package configuration options here
 
 meta if get_config? env = some "dev" then
-require «doc-gen4» from git "https://github.com/leanprover/doc-gen4" @ "main"
+require «doc-gen4» from git "https://github.com/leanprover/doc-gen4" @ "v4.35.0"
 
 require verso from git
-  "https://github.com/leanprover/verso" @ "main"
+  "https://github.com/leanprover/verso" @ "v4.35.0"
 
 -- Require Mathlib (the comprehensive library of mathematics in Lean)
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @ "v4.29.0-rc8"
+  "https://github.com/leanprover-community/mathlib4.git" @ "v4.35.0"
 
 
 @[default_target]

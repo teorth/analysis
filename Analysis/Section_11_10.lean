@@ -56,7 +56,7 @@ theorem PiecewiseConstantOn.RS_integ_eq_integ_of_mul_deriv
     _ = _ := by
       congr
       have hJsub (hJab : J.a ≤ J.b) : J ⊆ Ioo (J.a - 1) (J.b + 1) :=
-        (subset_Icc J).trans (by simp [subset_iff, Set.Icc_subset_Ioo_iff hJab])
+        _root_.trans (subset_Icc J) (by simp [subset_iff, Set.Icc_subset_Ioo_iff hJab])
       obtain hJab | hJab := le_iff_eq_or_lt.mp (length_nonneg J)
       . rw [(integ_on_subsingleton hJab.symm).2]
         simp [le_iff_lt_or_eq] at hJab; obtain hJab | hJab := hJab
@@ -65,7 +65,7 @@ theorem PiecewiseConstantOn.RS_integ_eq_integ_of_mul_deriv
       simp [length] at hJab
       rw [α_length_of_cts ?_ ?_ ?_ (hJsub ?_) hαcont.continuousOn ]
       . have : Icc J.a J.b ⊆ Icc a b := by
-          have := closure_mono $ (subset_iff _ _).mp $ (Ioo_subset J).trans $ P.contains _ hJ
+          have := closure_mono $ (subset_iff _ _).mp $ _root_.trans (Ioo_subset J) (P.contains _ hJ)
           simpa [closure_Ioo (show J.a ≠ J.b by linarith), subset_iff] using this
         calc
           _ = Chapter11.integ α' (Icc J.a J.b) := (hα'.mono' this).eq (subset_Icc J) rfl rfl
