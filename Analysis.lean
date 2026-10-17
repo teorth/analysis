@@ -100,6 +100,8 @@ import Analysis.MeasureTheory.Section_1_3_5
 import Analysis.MeasureTheory.Section_1_4_1
 import Analysis.MeasureTheory.Section_1_4_2
 import Analysis.MeasureTheory.Section_1_4_3
+import Analysis.MeasureTheory.Section_1_4_4
+import Analysis.MeasureTheory.Section_1_4_5
 
 /-!
  The files in this directory contain a formalization of selected portions of my text [Analysis I](https://terrytao.wordpress.com/books/analysis-i/) into [Lean](https://lean-lang.org/). The formalization is intended to be as faithful a paraphrasing as possible to the original text, while also showcasing Lean's features and syntax. In particular, the formalization is not optimized for efficiency, and in some cases may deviate from idiomatic Lean usage.
