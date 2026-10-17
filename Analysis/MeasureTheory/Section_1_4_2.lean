@@ -11,12 +11,6 @@ A companion to (the introduction to) Section 1.4.2 of the book "An introduction 
 class ConcreteSigmaAlgebra (X:Type*) extends ConcreteBooleanAlgebra X where
   countable_union_mem : ∀ E : ℕ → Set X, (∀ n, measurable (E n)) → measurable (⋃ n, E n)
 
-def ConcreteSigmaAlgebra.toMeasurableSpace {X: Type*} (B: ConcreteSigmaAlgebra X) : MeasurableSpace X :=
-  B.measurableSpace
-
-def MeasurableSpace.toConcreteSigmaAlgebra {X: Type*} (M: MeasurableSpace X) : ConcreteSigmaAlgebra X :=
-  M.sigmaAlgebra
-
 def ConcreteBooleanAlgebra.isSigmaAlgebra {X: Type*} (B: ConcreteBooleanAlgebra X) : Prop := ∀ E : ℕ → Set X, (∀ n, measurable (E n)) → measurable (⋃ n, E n)
 
 theorem ConcreteSigmaAlgebra.isSigmaAlgebra {X: Type*} (B: ConcreteSigmaAlgebra X) : B.isSigmaAlgebra :=
@@ -66,12 +60,12 @@ instance ConcreteSigmaAlgebra.instPartialOrder (X:Type*) : PartialOrder (Concret
     le_trans := fun A B C hAB hBC E hE => hBC E (hAB E hE)
     le_antisymm := by
       intro A B hAB hBA
-      have : A.measurable = B.measurable := by
-        ext E
-        exact ⟨hAB E, hBA E⟩
+      have h : A.toConcreteBooleanAlgebra = B.toConcreteBooleanAlgebra :=
+        le_antisymm hAB hBA
       cases A
       cases B
-      congr
+      cases h
+      rfl
   }
 
 instance ConcreteSigmaAlgebra.instOrderTop {X:Type*} : OrderTop (ConcreteSigmaAlgebra X) :=
@@ -275,3 +269,9 @@ def MeasurableSpace.sigmaAlgebra {X: Type*} (M: MeasurableSpace X) : ConcreteSig
 theorem BorelSigmaAlgebra.le_LebesgueSigmaAlgebra (d:ℕ) : BorelSigmaAlgebra (EuclideanSpace' d) ≤ LebesgueMeasurable.sigmaAlgebra d := by
   intro E hE
   exact hE (LebesgueMeasurable.sigmaAlgebra d) fun U hU => IsOpen.measurable hU
+
+def ConcreteSigmaAlgebra.toMeasurableSpace {X: Type*} (B: ConcreteSigmaAlgebra X) : MeasurableSpace X :=
+  B.measurableSpace
+
+def MeasurableSpace.toConcreteSigmaAlgebra {X: Type*} (M: MeasurableSpace X) : ConcreteSigmaAlgebra X :=
+  M.sigmaAlgebra
