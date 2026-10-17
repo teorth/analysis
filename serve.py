@@ -1,5 +1,5 @@
 import os
-from http.server import SimpleHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, unquote
 import urllib
 from http import HTTPStatus
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     PORT = args.port
     handler = CustomHTTPRequestHandler
-    with HTTPServer(("", PORT), handler) as httpd:
+    with ThreadingHTTPServer(("", PORT), handler) as httpd:
         print(f"Serving at http://localhost:{PORT}/analysis/")
         print(f"/analysis: {BOOK_SITE}")
         print(f"/analysis/docs: {DOCS_SITE}")
