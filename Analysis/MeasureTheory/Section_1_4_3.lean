@@ -21,8 +21,8 @@ class FinitelyAdditiveMeasure {X:Type*} (B: ConcreteBooleanAlgebra X) where
 noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMeasure (LebesgueMeasurable.boolean_algebra d) :=
   {
     measure A := Lebesgue_measure A
-    measure_pos := by sorry
-    measure_empty := by sorry
+    measure_pos := fun A _ => Lebesgue_outer_measure.nonneg A
+    measure_empty := Lebesgue_measure.empty
     measure_finite_additive := by sorry
   }
 
@@ -60,8 +60,19 @@ noncomputable def FinitelyAdditiveMeasure.dirac {X:Type*} (x₀:X) (B: ConcreteB
       split_ifs
       · exact zero_le_one
       · exact le_rfl
-    measure_empty := by simp [Set.not_mem_empty]
-    measure_finite_additive := by sorry
+    measure_empty := by simp
+    measure_finite_additive := by
+      intro E F _ _ hdisj
+      by_cases hxE : x₀ ∈ E
+      · have hxF : x₀ ∉ F := fun hxF =>
+          (Set.disjoint_left.mp hdisj hxE hxF)
+        have hxU : x₀ ∈ E ∪ F := Or.inl hxE
+        simp [hxE, hxF, hxU]
+      · by_cases hxF : x₀ ∈ F
+        · have hxU : x₀ ∈ E ∪ F := Or.inr hxF
+          simp [hxE, hxF, hxU]
+        · have hxU : x₀ ∉ E ∪ F := by simp [hxE, hxF]
+          simp [hxE, hxF, hxU]
   }
 
 /-- Example 1.4.23 (Zero measure) -/
