@@ -48,9 +48,9 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     @staticmethod
     def _join_under(root, rel_path):
-        """Join rel_path under root, rejecting path traversal via .. components."""
-        root = os.path.abspath(root)
-        candidate = os.path.abspath(os.path.join(root, rel_path))
+        """Join rel_path under root, rejecting traversal via .. components or symlinks."""
+        root = os.path.realpath(root)
+        candidate = os.path.realpath(os.path.join(root, rel_path))
         try:
             if os.path.commonpath([root, candidate]) != root:
                 return os.path.join(root, '.path-rejected')
