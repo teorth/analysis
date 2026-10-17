@@ -17,6 +17,17 @@ class FinitelyAdditiveMeasure {X:Type*} (B: ConcreteBooleanAlgebra X) where
   measure_finite_additive : ∀ E F : Set X, B.measurable E → B.measurable F → Disjoint E F →
     measure (E ∪ F) = measure E + measure F
 
+/-- Two finitely additive measures on the same algebra are equal as soon as they assign the same
+value to every set; the other fields are propositions, so proof irrelevance disposes of them.
+Tagged so that the `ext` tactic applies to these measures. -/
+@[ext] theorem FinitelyAdditiveMeasure.ext {X:Type*} {B: ConcreteBooleanAlgebra X}
+    {μ ν : FinitelyAdditiveMeasure B} (h : ∀ A, μ.measure A = ν.measure A) : μ = ν := by
+  cases μ with | mk m hpos hempty hadd =>
+  cases ν with | mk m' hpos' hempty' hadd' =>
+  have hm : m = m' := funext h
+  subst hm
+  rfl
+
 /-- Example 1.4.21 (Lebesgue measure) -/
 noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMeasure (LebesgueMeasurable.boolean_algebra d) :=
   {
@@ -118,26 +129,18 @@ noncomputable instance FinitelyAdditiveMeasure.instAddCommMonoid {X:Type*} {B: C
 {
   add_assoc := by
     intro μ ν ρ
-    cases μ; cases ν; cases ρ
-    congr 1
     ext A
     exact add_assoc _ _ _
   zero_add := by
     intro μ
-    cases μ
-    congr 1
     ext A
     exact zero_add _
   add_zero := by
     intro μ
-    cases μ
-    congr 1
     ext A
     exact add_zero _
   add_comm := by
     intro μ ν
-    cases μ; cases ν
-    congr 1
     ext A
     exact add_comm _ _
   nsmul := nsmulRec
@@ -147,27 +150,25 @@ noncomputable instance FinitelyAdditiveMeasure.instDistribMulAction {X:Type*} {B
 {
   smul_zero := by
     intro c
-    congr 1
     ext A
-    simp
-  smul_add := by
-    intro c μ ν
-    cases μ; cases ν
-    congr 1
-    ext A
-    exact left_distrib (c : EReal) _ _
+    exact mul_zero _
+  -- NOTE: `smul_add` is left open on purpose.  Pointwise it asks for
+  -- `c * (μ A + ν A) = c * μ A + c * ν A` for an *arbitrary* set `A`, but `EReal` is only
+  -- distributive on nonnegative summands ({name}`EReal.left_distrib_of_nonneg`), and
+  -- {name}`FinitelyAdditiveMeasure.measure_pos` constrains the sign of `μ A` only for
+  -- `B`-measurable `A`.  So this field is not provable as the definitions currently stand;
+  -- see the discussion on the PR that restored this file to the build.
+  smul_add := by sorry
   one_smul := by
     intro μ
-    cases μ
-    congr 1
     ext A
-    exact one_smul EReal _
+    show ((1:ENNReal):EReal) * μ.measure A = μ.measure A
+    rw [EReal.coe_ennreal_one, one_mul]
   mul_smul := by
     intro a b μ
-    cases μ
-    congr 1
     ext A
-    exact mul_assoc (a : EReal) _ _
+    show ((a * b : ENNReal):EReal) * μ.measure A = (a:EReal) * ((b:EReal) * μ.measure A)
+    rw [EReal.coe_ennreal_mul, mul_assoc]
 }
 
 /-- Example 1.4.25 (Restriction of a measure) -/
@@ -178,10 +179,11 @@ def FinitelyAdditiveMeasure.restrict {X:Type*} {B: ConcreteBooleanAlgebra X} (μ
       μ.measure_pos (Subtype.val '' E) ((B.restrict_iff hA E).mp hE)
     measure_empty := by
       simpa using μ.measure_empty
-    measure_finite_additive := fun E F hE hF hdisj =>
-      μ.measure_finite_additive (Subtype.val '' E) (Subtype.val '' F)
-        ((B.restrict_iff hA E).mp hE) ((B.restrict_iff hA F).mp hF)
-        (hdisj.image Subtype.val)
+    measure_finite_additive := fun E F hE hF hdisj => by
+      simpa [Set.image_union] using
+        μ.measure_finite_additive (Subtype.val '' E) (Subtype.val '' F)
+          ((B.restrict_iff hA E).mp hE) ((B.restrict_iff hA F).mp hF)
+          (hdisj.image Subtype.val_injective.injOn (Set.subset_univ _) (Set.subset_univ _))
   }
 
 /-- Example 1.4.26 (Counting a measure) -/
@@ -288,6 +290,18 @@ class CountablyAdditiveMeasure {X:Type*} (B: ConcreteSigmaAlgebra X) extends Fin
   measure_countable_additive : ∀ (E : ℕ → Set X), (∀ n, B.measurable (E n)) → Set.univ.PairwiseDisjoint E →
     measure (⋃ n, E n) = ∑' n, (measure (E n))
 
+/-- The analogue of {name}`FinitelyAdditiveMeasure.ext` for countably additive measures.  The
+underlying finitely additive measure is an instance-implicit parent field, so it is enough to
+know the two agree on every set. -/
+@[ext] theorem CountablyAdditiveMeasure.ext {X:Type*} {B: ConcreteSigmaAlgebra X}
+    {μ ν : CountablyAdditiveMeasure B} (h : ∀ A, μ.measure A = ν.measure A) : μ = ν := by
+  have hf : μ.toFinitelyAdditiveMeasure = ν.toFinitelyAdditiveMeasure :=
+    FinitelyAdditiveMeasure.ext h
+  cases μ with | mk hcount =>
+  cases ν with | mk hcount' =>
+  subst hf
+  rfl
+
 def FinitelyAdditiveMeasure.isCountablyAdditive {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) : Prop :=
   B.isSigmaAlgebra ∧ ∀ (E : ℕ → Set X), (∀ n, B.measurable (E n)) → Set.univ.PairwiseDisjoint E →
     μ.measure (⋃ n, E n) = ∑' n, (μ.measure (E n))
@@ -303,7 +317,8 @@ def FinitelyAdditiveMeasure.isCountablyAdditive.toCountablyAdditive {X:Type*} {B
 
 /-- Example 1.4.28 -/
 theorem FinitelyAdditiveMeasure.lebesgue_isCountablyAdditive (d:ℕ) : (FinitelyAdditiveMeasure.lebesgue d).isCountablyAdditive :=
-  ⟨LebesgueMeasurable.boolean_algebra.isSigmaAlgebra d, Lebesgue_measure.countable_union⟩
+  ⟨LebesgueMeasurable.boolean_algebra.isSigmaAlgebra d,
+    fun _ hE hdisj => Lebesgue_measure.countable_union hE hdisj⟩
 
 theorem FinitelyAdditiveMeasure.isCountablyAdditive_restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (hBB': B' ≤ B) : (μ.toFinitelyAdditiveMeasure.restrict_alg hBB').isCountablyAdditive :=
   ⟨B'.countable_union_mem, fun E hE hdisj =>
@@ -352,26 +367,18 @@ noncomputable instance CountablyAdditiveMeasure.instAddCommMonoid {X:Type*} {B: 
 {
   add_assoc := by
     intro μ ν ρ
-    cases μ; cases ν; cases ρ
-    congr 1
     ext A
     exact add_assoc _ _ _
   zero_add := by
     intro μ
-    cases μ
-    congr 1
     ext A
     exact zero_add _
   add_zero := by
     intro μ
-    cases μ
-    congr 1
     ext A
     exact add_zero _
   add_comm := by
     intro μ ν
-    cases μ; cases ν
-    congr 1
     ext A
     exact add_comm _ _
   nsmul := nsmulRec
@@ -391,27 +398,25 @@ noncomputable instance CountablyAdditiveMeasure.instDistribMulAction {X:Type*} {
 {
   smul_zero := by
     intro c
-    congr 1
     ext A
-    simp
-  smul_add := by
-    intro c μ ν
-    cases μ; cases ν
-    congr 1
-    ext A
-    exact left_distrib (c : EReal) _ _
+    exact mul_zero _
+  -- NOTE: `smul_add` is left open on purpose.  Pointwise it asks for
+  -- `c * (μ A + ν A) = c * μ A + c * ν A` for an *arbitrary* set `A`, but `EReal` is only
+  -- distributive on nonnegative summands ({name}`EReal.left_distrib_of_nonneg`), and
+  -- {name}`FinitelyAdditiveMeasure.measure_pos` constrains the sign of `μ A` only for
+  -- `B`-measurable `A`.  So this field is not provable as the definitions currently stand;
+  -- see the discussion on the PR that restored this file to the build.
+  smul_add := by sorry
   one_smul := by
     intro μ
-    cases μ
-    congr 1
     ext A
-    exact one_smul EReal _
+    show ((1:ENNReal):EReal) * μ.measure A = μ.measure A
+    rw [EReal.coe_ennreal_one, one_mul]
   mul_smul := by
     intro a b μ
-    cases μ
-    congr 1
     ext A
-    exact mul_assoc (a : EReal) _ _
+    show ((a * b : ENNReal):EReal) * μ.measure A = (a:EReal) * ((b:EReal) * μ.measure A)
+    rw [EReal.coe_ennreal_mul, mul_assoc]
 }
 
 /-- Exercise 1.4.22(ii) -/
