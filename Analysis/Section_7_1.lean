@@ -320,7 +320,7 @@ theorem sum_union_disjoint {n : ℕ} {S : Type*} [Fintype S]
   sorry
 
 /-- {given}`aᵢ` Exercise 7.1.7. Uses {lean}`Fin m` (so {lean}`aᵢ < m`) instead of the book's {lean}`aᵢ ≤ m`;
-  the bound is baked into the type, and {kw (of := «term_<_»)}`<` replaces {lit}`≤` to match the 0-indexed shift. -/
+  the bound is baked into the type, and {kw (of := «term_<_»)}`<` replaces {kw! (of := «term_≤_»)}`≤` to match the 0-indexed shift. -/
 theorem sum_finite_col_row_counts {n m : ℕ} (a : Fin n → Fin m) :
     ∑ i, (a i : ℕ) = ∑ j : Fin m, {i : Fin n | j < a i}.toFinset.card := by
   sorry

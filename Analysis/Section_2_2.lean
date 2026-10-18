@@ -177,7 +177,7 @@ lemma Nat.uniq_succ_eq (a:Nat) (ha: a.IsPos) : ∃! b, b++ = a := by
   sorry
 
 /-- Definition 2.2.11 (Ordering of the natural numbers).
-    This defines the {lit}`≤` notation on the natural numbers. -/
+    This defines the {kw! (of := «term_≤_»)}`≤` notation on the natural numbers. -/
 instance Nat.instLE : LE Nat where
   le n m := ∃ a:Nat, m = n + a
 
@@ -377,7 +377,7 @@ instance Nat.instLinearOrder : LinearOrder Nat where
 example (a b c d:Nat) (hab: a ≤ b) (hbc: b ≤ c) (hcd: c ≤ d)
         (hda: d ≤ a) : a = c := by order
 
-/-- An illustration of the {tactic}`calc` tactic with {lit}`≤`/
+/-- An illustration of the {tactic}`calc` tactic with {kw! (of := «term_≤_»)}`≤`/
     {kw (of :=«term_<_»)}`<`. -/
 example (a b c d e:Nat) (hab: a ≤ b) (hbc: b < c) (hcd: c ≤ d)
         (hde: d ≤ e) : a + 0 < e := by
