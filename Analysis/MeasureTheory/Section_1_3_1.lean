@@ -1167,7 +1167,7 @@ lemma RealSimpleFunction.disjoint_representation {d:ℕ} {f: EuclideanSpace' d �
   · rw [heq]
     exact DisjointRepr.eq_sum_atomValue_indicator c E
 
-def RealSimpleFunction.pos {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpleFunction f) : UnsignedSimpleFunction (EReal.pos_fun f) := by
+lemma RealSimpleFunction.pos {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpleFunction f) : UnsignedSimpleFunction (EReal.pos_fun f) := by
   -- Use disjoint representation: f = ∑ i, v_i • A_i.indicator' with disjoint A_i
   obtain ⟨n, v, A, hA_meas, hA_disj, heq⟩ := hf.disjoint_representation
   -- The positive part is ∑ i, (max(v_i, 0)).toEReal • EReal.indicator(A_i)
@@ -1225,7 +1225,7 @@ def RealSimpleFunction.pos {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpl
       rw [hlhs, hrhs]
       simp only [max_self, EReal.coe_zero]
 
-def RealSimpleFunction.neg {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpleFunction f) : UnsignedSimpleFunction (EReal.neg_fun f) := by
+lemma RealSimpleFunction.neg {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpleFunction f) : UnsignedSimpleFunction (EReal.neg_fun f) := by
   -- neg_fun f = pos_fun (-f), and -f = (-1) • f is a simple function
   have h : EReal.neg_fun f = EReal.pos_fun ((-1 : ℝ) • f) := by
     ext x; simp only [EReal.neg_fun, EReal.pos_fun, Pi.smul_apply, smul_eq_mul, neg_one_mul]
@@ -1234,7 +1234,7 @@ def RealSimpleFunction.neg {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpl
 
 noncomputable def RealSimpleFunction.integ {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealSimpleFunction f) : ℝ := (hf.pos).integ.toReal - (hf.neg).integ.toReal
 
-def ComplexSimpleFunction.re {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexSimpleFunction f) : RealSimpleFunction (Complex.re_fun f) := by
+lemma ComplexSimpleFunction.re {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexSimpleFunction f) : RealSimpleFunction (Complex.re_fun f) := by
   -- If f = ∑ i, c_i • Complex.indicator(E_i), then Re(f) = ∑ i, Re(c_i) • indicator'(E_i)
   obtain ⟨k, c, E, hmes, heq⟩ := hf
   use k, fun i => (c i).re, E
@@ -1249,7 +1249,7 @@ def ComplexSimpleFunction.re {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: Complex
     simp only [Complex.indicator, Real.complex_fun]
     rw [Complex.re_mul_ofReal]
 
-def ComplexSimpleFunction.im {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexSimpleFunction f) : RealSimpleFunction (Complex.im_fun f) := by
+lemma ComplexSimpleFunction.im {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexSimpleFunction f) : RealSimpleFunction (Complex.im_fun f) := by
   -- If f = ∑ i, c_i • Complex.indicator(E_i), then Im(f) = ∑ i, Im(c_i) • indicator'(E_i)
   obtain ⟨k, c, E, hmes, heq⟩ := hf
   use k, fun i => (c i).im, E

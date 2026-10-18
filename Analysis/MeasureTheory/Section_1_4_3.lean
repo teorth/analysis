@@ -30,6 +30,7 @@ Tagged so that the `ext` tactic applies to these measures. -/
   rfl
 
 /-- Example 1.4.21 (Lebesgue measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMeasure (LebesgueMeasurable.boolean_algebra d) :=
   {
     measure A := Lebesgue_measure A
@@ -39,6 +40,7 @@ noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMea
   }
 
 /-- Example 1.4.21 (restriction to a subalgebra) -/
+@[instance_reducible]
 def FinitelyAdditiveMeasure.restrict_alg {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) {B':ConcreteBooleanAlgebra X} (hBB': B' ≤ B) : FinitelyAdditiveMeasure B' :=
   {
     measure := μ.measure
@@ -49,14 +51,17 @@ def FinitelyAdditiveMeasure.restrict_alg {X:Type*} {B: ConcreteBooleanAlgebra X}
   }
 
 /-- Example 1.4.21 (Jordan measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.jordan (d:ℕ) : FinitelyAdditiveMeasure (JordanMeasurable.boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg (LebesgueMeasurable.gt_jordan_boolean_algebra d)
 
 /-- Example 1.4.21 (null sets) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.null (d:ℕ) : FinitelyAdditiveMeasure (IsNull.boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg (IsNull.lt_lebesgue_boolean_algebra d)
 
 /-- Example 1.4.21 (elementary sets) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.elem (d:ℕ) : FinitelyAdditiveMeasure (EuclideanSpace'.elementary_boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg
   (le_trans (JordanMeasurable.gt_elementary_boolean_algebra d)
@@ -64,6 +69,7 @@ noncomputable def FinitelyAdditiveMeasure.elem (d:ℕ) : FinitelyAdditiveMeasure
 
 open Classical in
 /-- Example 1.4.22 (Dirac measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.dirac {X:Type*} (x₀:X) (B: ConcreteBooleanAlgebra X) : FinitelyAdditiveMeasure B :=
   {
     measure := fun A => if x₀ ∈ A then 1 else 0
@@ -173,6 +179,7 @@ noncomputable instance FinitelyAdditiveMeasure.instDistribMulAction {X:Type*} {B
 }
 
 /-- Example 1.4.25 (Restriction of a measure) -/
+@[instance_reducible]
 def FinitelyAdditiveMeasure.restrict {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) (A:Set X) (hA:B.measurable A) : FinitelyAdditiveMeasure (B.restrict A) :=
   {
     measure := fun E => μ.measure E
@@ -188,6 +195,7 @@ def FinitelyAdditiveMeasure.restrict {X:Type*} {B: ConcreteBooleanAlgebra X} (μ
   }
 
 /-- Example 1.4.26 (Counting a measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.counting (X:Type*) : FinitelyAdditiveMeasure (⊤  : ConcreteBooleanAlgebra X) :=
   {
     measure := fun E => ENat.card E
@@ -307,6 +315,7 @@ def FinitelyAdditiveMeasure.isCountablyAdditive {X:Type*} {B: ConcreteBooleanAlg
   B.isSigmaAlgebra ∧ ∀ (E : ℕ → Set X), (∀ n, B.measurable (E n)) → Set.univ.PairwiseDisjoint E →
     μ.measure (⋃ n, E n) = ∑' n, (μ.measure (E n))
 
+@[instance_reducible]
 def FinitelyAdditiveMeasure.isCountablyAdditive.toCountablyAdditive {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) (h: μ.isCountablyAdditive) : CountablyAdditiveMeasure h.1.toSigmaAlgebra :=
   {
     measure := μ.measure
@@ -325,6 +334,7 @@ theorem FinitelyAdditiveMeasure.isCountablyAdditive_restrict_alg {X:Type*} {B B'
   ⟨B'.countable_union_mem, fun E hE hdisj =>
     μ.measure_countable_additive E (fun n => hBB' (E n) (hE n)) hdisj⟩
 
+@[instance_reducible]
 def CountablyAdditiveMeasure.restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (hBB' : B' ≤ B) : CountablyAdditiveMeasure B' :=
   {
     toFinitelyAdditiveMeasure := μ.toFinitelyAdditiveMeasure.restrict_alg hBB',
@@ -341,6 +351,7 @@ theorem FinitelyAdditiveMeasure.counting_isCountablyAdditive {X:Type*} : (Finite
   by sorry
 
 /-- Example 1.4.30 -/
+@[instance_reducible]
 def CountablyAdditiveMeasure.restrict {X:Type*} {B: ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (A:Set X) (hA:B.measurable A) : CountablyAdditiveMeasure (B.restrict A) :=
   {
     toFinitelyAdditiveMeasure := μ.toFinitelyAdditiveMeasure.restrict A hA,
@@ -421,6 +432,7 @@ noncomputable instance CountablyAdditiveMeasure.instDistribMulAction {X:Type*} {
 }
 
 /-- Exercise 1.4.22(ii) -/
+@[instance_reducible]
 noncomputable def CountablyAdditiveMeasure.sum {X:Type*} {B: ConcreteSigmaAlgebra X} (μ: ℕ → CountablyAdditiveMeasure B) : CountablyAdditiveMeasure B :=
   {
     toFinitelyAdditiveMeasure := {
@@ -449,6 +461,7 @@ noncomputable def CountablyAdditiveMeasure.toMeasure {X:Type*} {B: ConcreteSigma
 noncomputable def FinitelyAdditiveMeasure.isCountablyAdditive.toMeasure {X:Type*} {B: ConcreteBooleanAlgebra X} {μ: FinitelyAdditiveMeasure B} (h: μ.isCountablyAdditive) :
   @Measure X h.1.toSigmaAlgebra.measurableSpace := h.toCountablyAdditive.toMeasure
 
+@[instance_reducible]
 noncomputable def Measure.toCountablyAdditiveMeasure {X:Type*} [M : MeasurableSpace X] (μ: Measure X) : CountablyAdditiveMeasure M.sigmaAlgebra :=
   {
     toFinitelyAdditiveMeasure := {

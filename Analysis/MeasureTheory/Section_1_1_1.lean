@@ -278,12 +278,12 @@ lemma toSet_injective_of_nonempty {I J : BoundedInterval}
 end BoundedInterval
 
 /-- A witness for lowerBound of upperBounds -/
-def witness_lowerBound_upperBounds {X : Set ℝ} (y : ℝ) (hy : y ∈ X)
+lemma witness_lowerBound_upperBounds {X : Set ℝ} (y : ℝ) (hy : y ∈ X)
     : y ∈ lowerBounds (upperBounds X) := by
   intro u hu; simp [upperBounds] at hu; exact hu hy
 
 /-- A witness for upperBound of lowerBounds -/
-def witness_upperBound_lowerBounds {X : Set ℝ} (y : ℝ) (hy : y ∈ X)
+lemma witness_upperBound_lowerBounds {X : Set ℝ} (y : ℝ) (hy : y ∈ X)
     : y ∈ upperBounds (lowerBounds X) := by
   intro u hu; simp [lowerBounds] at hu; exact hu hy
 
