@@ -1791,7 +1791,7 @@ theorem UnsignedMeasurable.liminf {d:ℕ} {f: ℕ → EuclideanSpace' d → ERea
 theorem UnsignedMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg : Unsigned g) (heq: AlmostEverywhereEqual f g) : UnsignedMeasurable g := by
   obtain ⟨_, u, hu, huf⟩ := hf
   have h_iff : UnsignedMeasurable g ↔ ∃ u, (∀ n, UnsignedSimpleFunction (u n)) ∧
-      PointwiseAeConvergesTo u g := (UnsignedMeasurable.TFAE hg).out 0 2
+      PointwiseAeConvergesTo u g := (UnsignedMeasurable.TFAE hg).out 1 3
   refine h_iff.mpr ⟨u, hu, ?_⟩
   exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
@@ -1806,9 +1806,9 @@ theorem UnsignedMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → EReal} (g: 
 theorem UnsignedMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) {φ: EReal → EReal} (hφ: Continuous φ) (hφnn : ∀ x ≥ 0, φ x ≥ 0) : UnsignedMeasurable (φ ∘ f) := by
   have hnonneg : Unsigned (φ ∘ f) := fun x => hφnn (f x) (hf.1 x)
   have h_source : UnsignedMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (UnsignedMeasurable.TFAE hf.1).out 0 9
+    (UnsignedMeasurable.TFAE hf.1).out 1 10
   have h_target : UnsignedMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
-    (UnsignedMeasurable.TFAE hnonneg).out 0 9
+    (UnsignedMeasurable.TFAE hnonneg).out 1 10
   exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
 /-- Exercise 1.3.3(vii) -/
@@ -3356,12 +3356,12 @@ theorem ComplexMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → ℂ}:
 /-- Exercise 1.3.8(i) -/
 theorem Continuous.RealMeasurable {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: Continuous f) : RealMeasurable f := by
   have h_iff : _root_.RealMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (_root_.RealMeasurable.TFAE (f := f)).out 0 3
+    (_root_.RealMeasurable.TFAE (f := f)).out 1 4
   exact h_iff.mpr fun U hU => IsOpen.measurable (hU.preimage hf)
 
 theorem Continuous.ComplexMeasurable {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: Continuous f) : ComplexMeasurable f := by
   have h_iff : _root_.ComplexMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (_root_.ComplexMeasurable.TFAE (f := f)).out 0 4
+    (_root_.ComplexMeasurable.TFAE (f := f)).out 1 5
   exact h_iff.mpr fun U hU => IsOpen.measurable (hU.preimage hf)
 
 /-- Exercise 1.3.8(ii) -/
@@ -3374,7 +3374,7 @@ theorem RealMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: Rea
     (heq: AlmostEverywhereEqual f g) : RealMeasurable g := by
   obtain ⟨u, hu, huf⟩ := hf
   have h_iff : RealMeasurable g ↔ ∃ u, (∀ n, RealSimpleFunction (u n)) ∧
-      PointwiseAeConvergesTo u g := (RealMeasurable.TFAE (f := g)).out 0 1
+      PointwiseAeConvergesTo u g := (RealMeasurable.TFAE (f := g)).out 1 2
   refine h_iff.mpr ⟨u, hu, ?_⟩
   exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
@@ -3382,7 +3382,7 @@ theorem ComplexMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: 
     (heq: AlmostEverywhereEqual f g) : ComplexMeasurable g := by
   obtain ⟨u, hu, huf⟩ := hf
   have h_iff : ComplexMeasurable g ↔ ∃ u, (∀ n, ComplexSimpleFunction (u n)) ∧
-      PointwiseAeConvergesTo u g := (ComplexMeasurable.TFAE (f := g)).out 0 1
+      PointwiseAeConvergesTo u g := (ComplexMeasurable.TFAE (f := g)).out 1 2
   refine h_iff.mpr ⟨u, hu, ?_⟩
   exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
@@ -3398,16 +3398,16 @@ theorem ComplexMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → ℂ} (g: ℕ
 /-- Exercise 1.3.8(v) -/
 theorem RealMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) {φ: ℝ → ℝ} (hφ: Continuous φ)  : RealMeasurable (φ ∘ f) := by
   have h_source : RealMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (RealMeasurable.TFAE (f := f)).out 0 3
+    (RealMeasurable.TFAE (f := f)).out 1 4
   have h_target : RealMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
-    (RealMeasurable.TFAE (f := φ ∘ f)).out 0 3
+    (RealMeasurable.TFAE (f := φ ∘ f)).out 1 4
   exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
 theorem ComplexMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) {φ: ℂ → ℂ} (hφ: Continuous φ)  : ComplexMeasurable (φ ∘ f) := by
   have h_source : ComplexMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (ComplexMeasurable.TFAE (f := f)).out 0 4
+    (ComplexMeasurable.TFAE (f := f)).out 1 5
   have h_target : ComplexMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
-    (ComplexMeasurable.TFAE (f := φ ∘ f)).out 0 4
+    (ComplexMeasurable.TFAE (f := φ ∘ f)).out 1 5
   exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
 /-- Exercise 1.3.8(vi) (Sum of measurable functions) -/

@@ -1,3 +1,4 @@
+import Mathlib.MeasureTheory.Measure.NullMeasurable
 import Analysis.MeasureTheory.Section_1_4_2
 
 /-!
@@ -448,7 +449,7 @@ noncomputable def CountablyAdditiveMeasure.toMeasure {X:Type*} {B: ConcreteSigma
 noncomputable def FinitelyAdditiveMeasure.isCountablyAdditive.toMeasure {X:Type*} {B: ConcreteBooleanAlgebra X} {μ: FinitelyAdditiveMeasure B} (h: μ.isCountablyAdditive) :
   @Measure X h.1.toSigmaAlgebra.measurableSpace := h.toCountablyAdditive.toMeasure
 
-def Measure.toCountablyAdditiveMeasure {X:Type*} [M : MeasurableSpace X] (μ: Measure X) : CountablyAdditiveMeasure M.sigmaAlgebra :=
+noncomputable def Measure.toCountablyAdditiveMeasure {X:Type*} [M : MeasurableSpace X] (μ: Measure X) : CountablyAdditiveMeasure M.sigmaAlgebra :=
   {
     toFinitelyAdditiveMeasure := {
       measure E := μ.measureOf E

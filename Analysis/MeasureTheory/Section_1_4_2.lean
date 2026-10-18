@@ -1,4 +1,5 @@
 import Mathlib.SetTheory.Cardinal.Aleph
+import Mathlib.MeasureTheory.MeasurableSpace.Defs
 import Analysis.MeasureTheory.Section_1_4_1
 /-!
 # Introduction to Measure Theory, Section 1.4.2: $\sigma$-algebras and measurable spaces

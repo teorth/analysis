@@ -102,7 +102,7 @@ def LebesgueMeasurable.gt_jordan_boolean_algebra (d:ℕ) :
   intro E hE
   rcases hE with h | h
   · exact Jordan_measurable.lebesgue h
-  · simpa [LebesgueMeasurable.boolean_algebra] using (Jordan_measurable.lebesgue h).complement
+  · show LebesgueMeasurable E; simpa using (Jordan_measurable.lebesgue h).complement
 
 /-- Example 1.4.6 (Null algebra) -/
 def IsNull.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
@@ -138,7 +138,7 @@ def IsNull.lt_lebesgue_boolean_algebra (d:ℕ) :
   intro E hE
   rcases hE with h | h
   · exact IsNull.measurable h
-  · simpa [LebesgueMeasurable.boolean_algebra] using (IsNull.measurable h).complement
+  · show LebesgueMeasurable E; simpa using (IsNull.measurable h).complement
 
 /-- Exercise 1.4.2 (Restriction) -/
 def ConcreteBooleanAlgebra.restrict {X:Type*} (B: ConcreteBooleanAlgebra X) (A:Set X) : ConcreteBooleanAlgebra A :=
@@ -314,10 +314,10 @@ instance ConcreteBooleanAlgebra.instCompleteLattice {X:Type*} : CompleteLattice 
   }
 
 /-- Example 1.4.11 -/
-instance ConcreteBooleanAlgebra.eq_generated_by_iff {X:Type*} (F: Set (Set X)) : (∃ (B : ConcreteBooleanAlgebra X), B.measurableSets = F) ↔ (ConcreteBooleanAlgebra.generated_by F).measurableSets = F := by sorry
+theorem ConcreteBooleanAlgebra.eq_generated_by_iff {X:Type*} (F: Set (Set X)) : (∃ (B : ConcreteBooleanAlgebra X), B.measurableSets = F) ↔ (ConcreteBooleanAlgebra.generated_by F).measurableSets = F := by sorry
 
 /-- Exercise 1.4.7 (Generation by boxes) -/
-instance EuclideanSpace'.elementary_boolean_algebra_generated_by_boxes (d:ℕ) : EuclideanSpace'.elementary_boolean_algebra d =
+theorem EuclideanSpace'.elementary_boolean_algebra_generated_by_boxes (d:ℕ) : EuclideanSpace'.elementary_boolean_algebra d =
   ConcreteBooleanAlgebra.generated_by (Box.toSet '' Set.univ) := by sorry
 
 /-- Exercise 1.4.9 (Recursive definition of generated Boolean algebra). -/
