@@ -22,7 +22,7 @@ theorem BddAbove.unbounded_iff' (X:Set ℝ) : ¬ BddAbove X ↔ sSup ((fun x:ℝ
   erw [sSup_eq_top, unbounded_iff]
   constructor
   . intro h M hM; choose x hx hxM using h M.toReal
-    use x, ⟨x, hx, rfl⟩; revert M; simp [EReal.forall]; tauto
+    use x, ⟨x, hx, rfl⟩; revert M; simp [EReal.forall]
   intro h M; specialize h (M:EReal) (EReal.coe_lt_top M)
   obtain ⟨_, ⟨x, hx, rfl⟩, hMx⟩ := h; exact ⟨x, hx, EReal.coe_lt_coe_iff.mp hMx⟩
 

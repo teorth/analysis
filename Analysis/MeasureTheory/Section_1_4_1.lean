@@ -64,6 +64,7 @@ instance ConcreteBooleanAlgebra.instOrderBot {X:Type*} : OrderBot (ConcreteBoole
   }
 
 /-- Exercise 1.4.1 (Elementary algebra) -/
+@[instance_reducible]
 def EuclideanSpace'.elementary_boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => IsElementary E ∨ IsElementary Eᶜ
@@ -73,6 +74,7 @@ def EuclideanSpace'.elementary_boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra 
   }
 
 /-- Example 1.4.4 (Jordan algebra) -/
+@[instance_reducible]
 def JordanMeasurable.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => JordanMeasurable E ∨ JordanMeasurable Eᶜ
@@ -81,7 +83,7 @@ def JordanMeasurable.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (Euclidean
     union_mem := by sorry
   }
 
-def JordanMeasurable.gt_elementary_boolean_algebra (d:ℕ) :
+theorem JordanMeasurable.gt_elementary_boolean_algebra (d:ℕ) :
   JordanMeasurable.boolean_algebra d ≥ EuclideanSpace'.elementary_boolean_algebra d := by
   intro E hE
   rcases hE with h | h
@@ -89,6 +91,7 @@ def JordanMeasurable.gt_elementary_boolean_algebra (d:ℕ) :
   · exact Or.inr h.jordanMeasurable
 
 /-- Example 1.4.5 (Lebesgue algebra) -/
+@[instance_reducible]
 def LebesgueMeasurable.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => LebesgueMeasurable E
@@ -97,14 +100,15 @@ def LebesgueMeasurable.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (Euclide
     union_mem := fun _ _ hE hF => hE.union hF
   }
 
-def LebesgueMeasurable.gt_jordan_boolean_algebra (d:ℕ) :
+theorem LebesgueMeasurable.gt_jordan_boolean_algebra (d:ℕ) :
   LebesgueMeasurable.boolean_algebra d ≥ JordanMeasurable.boolean_algebra d := by
   intro E hE
   rcases hE with h | h
   · exact Jordan_measurable.lebesgue h
-  · simpa [LebesgueMeasurable.boolean_algebra] using (Jordan_measurable.lebesgue h).complement
+  · show LebesgueMeasurable E; simpa using (Jordan_measurable.lebesgue h).complement
 
 /-- Example 1.4.6 (Null algebra) -/
+@[instance_reducible]
 def IsNull.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   {
     measurable := fun E => IsNull E ∨ IsNull Eᶜ
@@ -133,14 +137,15 @@ def IsNull.boolean_algebra (d:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) 
         exact fun h => hx (Or.inl h)
   }
 
-def IsNull.lt_lebesgue_boolean_algebra (d:ℕ) :
+theorem IsNull.lt_lebesgue_boolean_algebra (d:ℕ) :
   IsNull.boolean_algebra d ≤ LebesgueMeasurable.boolean_algebra d := by
   intro E hE
   rcases hE with h | h
   · exact IsNull.measurable h
-  · simpa [LebesgueMeasurable.boolean_algebra] using (IsNull.measurable h).complement
+  · show LebesgueMeasurable E; simpa using (IsNull.measurable h).complement
 
 /-- Exercise 1.4.2 (Restriction) -/
+@[instance_reducible]
 def ConcreteBooleanAlgebra.restrict {X:Type*} (B: ConcreteBooleanAlgebra X) (A:Set X) : ConcreteBooleanAlgebra A :=
   {
     measurable := fun E => ∃ E' : Set X, B.measurable E' ∧ E = Subtype.val ⁻¹' E'
@@ -151,11 +156,12 @@ def ConcreteBooleanAlgebra.restrict {X:Type*} (B: ConcreteBooleanAlgebra X) (A:S
       ⟨E' ∪ F', B.union_mem E' F' hE' hF', by simp [hE, hF]⟩
   }
 
-def ConcreteBooleanAlgebra.restrict_iff {X:Type*} {B: ConcreteBooleanAlgebra X} {A:Set X} (h: B.measurable A) (E: Set A) :
+theorem ConcreteBooleanAlgebra.restrict_iff {X:Type*} {B: ConcreteBooleanAlgebra X} {A:Set X} (h: B.measurable A) (E: Set A) :
   (B.restrict A).measurable E ↔ B.measurable (Subtype.val '' E) :=
   by sorry
 
 /-- Remark 1.4.2: {name}`ConcreteBooleanAlgebra`s are {name}`BooleanAlgebra`s -/
+@[instance_reducible]
 def ConcreteBooleanAlgebra.toBooleanAlgebra {X:Type*} (B: ConcreteBooleanAlgebra X) : BooleanAlgebra (B.measurableSets) :=
 {
    sup := sorry
@@ -179,6 +185,7 @@ def ConcreteBooleanAlgebra.toBooleanAlgebra {X:Type*} (B: ConcreteBooleanAlgebra
 def IsPartition {I X:Type*} (parts: I → Set X) : Prop := (Set.PairwiseDisjoint Set.univ parts) ∧ (⋃ i, parts i = Set.univ)
 
 /-- Example 1.4.7 (Atomic algebra) -/
+@[instance_reducible]
 def IsPartition.to_ConcreteBooleanAlgebra {I X: Type*} {atoms: I → Set X} (h_part: IsPartition atoms) : ConcreteBooleanAlgebra X :=
   {
     measurable := fun E => ∃ J: Set I, E = ⋃ i ∈ J, atoms i
@@ -187,16 +194,16 @@ def IsPartition.to_ConcreteBooleanAlgebra {I X: Type*} {atoms: I → Set X} (h_p
     union_mem := by sorry
   }
 
-def IsPartition.discrete (X:Type*) : IsPartition (fun x:X ↦ {x}) := by
+theorem IsPartition.discrete (X:Type*) : IsPartition (fun x:X ↦ {x}) := by
   refine ⟨?_, ?_⟩
   · intro x _ y _ hxy
     exact Set.disjoint_singleton.mpr hxy
   · ext x
     simp [Set.mem_iUnion]
 
-def ConcreteBooleanAlgebra.top_atomic (X:Type*) : (IsPartition.discrete X).to_ConcreteBooleanAlgebra = ⊤ := by sorry
+theorem ConcreteBooleanAlgebra.top_atomic (X:Type*) : (IsPartition.discrete X).to_ConcreteBooleanAlgebra = ⊤ := by sorry
 
-def IsPartition.trivial (X:Type*) : IsPartition (fun (x:Unit) ↦ (Set.univ: Set X)) := by
+theorem IsPartition.trivial (X:Type*) : IsPartition (fun (x:Unit) ↦ (Set.univ: Set X)) := by
   refine ⟨?_, ?_⟩
   · intro a _ b _ hne
     exact (hne (Subsingleton.elim a b)).elim
@@ -207,22 +214,22 @@ def IsPartition.trivial (X:Type*) : IsPartition (fun (x:Unit) ↦ (Set.univ: Set
     · intro _
       exact Set.mem_iUnion.mpr ⟨(), Set.mem_univ x⟩
 
-def ConcreteBooleanAlgebra.bot_atomic (X:Type*) : (IsPartition.trivial X).to_ConcreteBooleanAlgebra = ⊥ := by sorry
+theorem ConcreteBooleanAlgebra.bot_atomic (X:Type*) : (IsPartition.trivial X).to_ConcreteBooleanAlgebra = ⊥ := by sorry
 
 def IsPartition.finer_than {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
   (_: IsPartition parts_I) (_: IsPartition parts_J) : Prop :=
   ∀ i:I, ∃ j:J, parts_I i ⊆ parts_J j
 
-def IsPartition.mono {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
+theorem IsPartition.mono {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
   (hI: IsPartition parts_I) (hJ: IsPartition parts_J)
   (h_finer: hI.finer_than hJ) :
   hI.to_ConcreteBooleanAlgebra ≥ hJ.to_ConcreteBooleanAlgebra :=
   by sorry
 
-def IsPartition.remove_empty {I X:Type*} {parts: I → Set X} (h_part: IsPartition parts) : IsPartition (fun (i:{i:I // parts i ≠ ∅}) ↦ parts i.val) :=
+theorem IsPartition.remove_empty {I X:Type*} {parts: I → Set X} (h_part: IsPartition parts) : IsPartition (fun (i:{i:I // parts i ≠ ∅}) ↦ parts i.val) :=
   by sorry
 
-def IsPartition.remove_empty_to_ConcreteBooleanAlgebra {I X:Type*} {parts: I → Set X} (h_part: IsPartition parts) :
+theorem IsPartition.remove_empty_to_ConcreteBooleanAlgebra {I X:Type*} {parts: I → Set X} (h_part: IsPartition parts) :
   h_part.to_ConcreteBooleanAlgebra =
   h_part.remove_empty.to_ConcreteBooleanAlgebra :=
   by sorry
@@ -231,49 +238,50 @@ def IsPartition.remove_empty_to_ConcreteBooleanAlgebra {I X:Type*} {parts: I →
 noncomputable def DyadicCube' {d:ℕ} (n:ℤ) (a: Fin d → ℤ) : Box d := { side := fun i ↦ BoundedInterval.Ico (a i/2^n) ((a i + 1)/2^n) }
 
 /-- Example 1.4.8 -/
-def DyadicCube'.partition (d n:ℕ) : IsPartition (fun (a: Fin d → ℤ) ↦ (DyadicCube' n a).toSet) :=
+theorem DyadicCube'.partition (d n:ℕ) : IsPartition (fun (a: Fin d → ℤ) ↦ (DyadicCube' n a).toSet) :=
   by sorry
 
+@[instance_reducible]
 def DyadicCube'.boolean_algebra (d n:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   (DyadicCube'.partition d n).to_ConcreteBooleanAlgebra
 
-def DyadicCube'.boolean_algebra_mono (d:ℕ) {m n:ℕ} (h: m ≤ n) :
+theorem DyadicCube'.boolean_algebra_mono (d:ℕ) {m n:ℕ} (h: m ≤ n) :
   DyadicCube'.boolean_algebra d m ≤ DyadicCube'.boolean_algebra d n := by sorry
 
 def IsPartition.relabels {I J X:Type*} {parts_I: I → Set X} (_: IsPartition parts_I) {parts_J : J → Set X} (_: IsPartition parts_J) : Prop := ∃ e : I ≃ J, ∀ i:I, parts_I i = parts_J (e i)
 
 /-- Exercise 1.4.3 (Non-empty atoms of an atomic algebra determined up to relabeling) -/
-def IsPartition.boolean_algebra_eq_iff {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
+theorem IsPartition.boolean_algebra_eq_iff {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
   (hI: IsPartition parts_I) (hJ: IsPartition parts_J) : hI.to_ConcreteBooleanAlgebra = hJ.to_ConcreteBooleanAlgebra ↔ hI.remove_empty.relabels hJ.remove_empty := by sorry
 
 def IsPartition.no_empty {I X:Type*} {parts: I → Set X} (_: IsPartition parts) : Prop := ∀ i:I, parts i ≠ ∅
 
-def IsPartition.boolean_algebra_eq_iff' {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
+theorem IsPartition.boolean_algebra_eq_iff' {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
   (hI: IsPartition parts_I) (hJ: IsPartition parts_J) (hIn: hI.no_empty) (hJn: hJ.no_empty) : hI.to_ConcreteBooleanAlgebra = hJ.to_ConcreteBooleanAlgebra ↔ hI.relabels hJ := by sorry
 
 def ConcreteBooleanAlgebra.isAtomic {X:Type*} (B: ConcreteBooleanAlgebra X) : Prop :=
   ∃ (I:Type*) (parts: I → Set X) (hI:IsPartition parts), B = hI.to_ConcreteBooleanAlgebra
 
 /-- Exercise 1.4.4 (Finite boolean algebras are atomic) -/
-def ConcreteBooleanAlgebra.atomic_of_finite {X:Type*} (B: ConcreteBooleanAlgebra X) (h_fin: (B.measurableSets).Finite) : B.isAtomic :=
+theorem ConcreteBooleanAlgebra.atomic_of_finite {X:Type*} (B: ConcreteBooleanAlgebra X) (h_fin: (B.measurableSets).Finite) : B.isAtomic :=
   by sorry
 
-def ConcreteBooleanAlgebra.card_of_finite {X:Type*} (B: ConcreteBooleanAlgebra X) (h_fin: (B.measurableSets).Finite) : ∃ n:ℕ, (B.measurableSets).ncard = 2^n := by sorry
+theorem ConcreteBooleanAlgebra.card_of_finite {X:Type*} (B: ConcreteBooleanAlgebra X) (h_fin: (B.measurableSets).Finite) : ∃ n:ℕ, (B.measurableSets).ncard = 2^n := by sorry
 
 /-- Exercise 1.4.5 (elementary algebra not atomic) -/
-def EuclideanSpace'.elementary_boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (EuclideanSpace'.elementary_boolean_algebra d).isAtomic :=
+theorem EuclideanSpace'.elementary_boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (EuclideanSpace'.elementary_boolean_algebra d).isAtomic :=
   by sorry
 
 /-- Exercise 1.4.5 (Jordan algebra not atomic) -/
-def JordanMeasurable.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (JordanMeasurable.boolean_algebra d).isAtomic :=
+theorem JordanMeasurable.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (JordanMeasurable.boolean_algebra d).isAtomic :=
   by sorry
 
 /-- Exercise 1.4.5 (Lebesgue algebra not atomic) -/
-def LebesgueMeasurable.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (LebesgueMeasurable.boolean_algebra d).isAtomic :=
+theorem LebesgueMeasurable.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (LebesgueMeasurable.boolean_algebra d).isAtomic :=
   by sorry
 
 /-- Exercise 1.4.5 (Null algebra not atomic) -/
-def IsNull.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (IsNull.boolean_algebra d).isAtomic :=
+theorem IsNull.boolean_algebra_not_atomic (d:ℕ) (hd: d ≥ 1) : ¬ (IsNull.boolean_algebra d).isAtomic :=
   by sorry
 
 /-- Exercise 1.4.6 (Intersection of algebras) -/
@@ -288,6 +296,7 @@ instance ConcreteBooleanAlgebra.instInfSet {X:Type*} : InfSet (ConcreteBooleanAl
         }
   }
 
+@[instance_reducible]
 def ConcreteBooleanAlgebra.generated_by {X:Type*} (F: Set (Set X)) : ConcreteBooleanAlgebra X :=
   sInf { B | ∀ E ∈ F, B.measurable E }
 
@@ -314,14 +323,14 @@ instance ConcreteBooleanAlgebra.instCompleteLattice {X:Type*} : CompleteLattice 
   }
 
 /-- Example 1.4.11 -/
-instance ConcreteBooleanAlgebra.eq_generated_by_iff {X:Type*} (F: Set (Set X)) : (∃ (B : ConcreteBooleanAlgebra X), B.measurableSets = F) ↔ (ConcreteBooleanAlgebra.generated_by F).measurableSets = F := by sorry
+theorem ConcreteBooleanAlgebra.eq_generated_by_iff {X:Type*} (F: Set (Set X)) : (∃ (B : ConcreteBooleanAlgebra X), B.measurableSets = F) ↔ (ConcreteBooleanAlgebra.generated_by F).measurableSets = F := by sorry
 
 /-- Exercise 1.4.7 (Generation by boxes) -/
-instance EuclideanSpace'.elementary_boolean_algebra_generated_by_boxes (d:ℕ) : EuclideanSpace'.elementary_boolean_algebra d =
+theorem EuclideanSpace'.elementary_boolean_algebra_generated_by_boxes (d:ℕ) : EuclideanSpace'.elementary_boolean_algebra d =
   ConcreteBooleanAlgebra.generated_by (Box.toSet '' Set.univ) := by sorry
 
 /-- Exercise 1.4.9 (Recursive definition of generated Boolean algebra). -/
-def ConcreteBooleanAlgebra.generated_by_eq {X:Type*} (F: Set (Set X)) :
+theorem ConcreteBooleanAlgebra.generated_by_eq {X:Type*} (F: Set (Set X)) :
   (ConcreteBooleanAlgebra.generated_by F).measurableSets =
   ⋃ n, Nat.rec (motive := fun _ ↦ Set (Set X)) F (fun n G ↦ { E: Set X | (∃ S: Finset G, E = ⋃ (H:S), H) ∨ (∃ S: Finset G, E = (⋃ (H:S), H)ᶜ) }) n := by sorry
 

@@ -188,10 +188,10 @@ example {X Y Z:Prop} (hXY: X ↔ Y) (hXZ: X ↔ Z) : [X,Y,Z].TFAE := by
   tfae_have 1 ↔ 3 := by exact hXZ  -- This line is optional
   tfae_finish
 
-/-- Note for the {name (full := List.TFAE.out)}`out` method that one indexes starting from 0, in
-contrast to the {tactic}`tfae_have` tactic. -/
+/-- Note that the {name (full := List.TFAE.out)}`out` method indexes starting from 1, just like
+the {tactic}`tfae_have` tactic. -/
 example {X Y Z:Prop} (h: [X,Y,Z].TFAE) : X ↔ Y := by
-  exact h.out 0 1
+  exact h.out 1 2
 
 /-- Exercise A.1.1.  Fill in the first {syntax term}`sorry` with something reasonable. -/
 example {X Y:Prop} : ¬ ((X ∨ Y) ∧ ¬ (X ∧ Y)) ↔ sorry := by sorry

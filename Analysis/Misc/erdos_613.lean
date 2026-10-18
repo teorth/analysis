@@ -18,7 +18,7 @@ def hasMonoStar {V:Type*} (G : SimpleGraph V) (color : Sym2 V → Fin 2)
     ∀ ⦃y : V⦄, y ∈ S → G.Adj x y ∧ color (s(x, y)) = col
 
 /--
-{given -show}`a, b, c : V`
+{given -show (type := "V")}`a, b, c`
 “Color-{name}`col` monochromatic triangle”: there exist {name}`a`, {name}`b`, {name}`c` with all three edges
 present in {lean}`G` and colored {name}`col`.  (Adjacency already forces distinctness.)
 -/
@@ -81,9 +81,9 @@ def GAdj : V → V → Prop
 /-- The graph {name}`G` on 16 vertices used for the n=5 counterexample. -/
 def G : SimpleGraph V where
   Adj := GAdj
-  symm := by
+  symm := ⟨by
     intro u v h
-    cases u <;> cases v <;> grind [GAdj]
+    cases u <;> cases v <;> grind [GAdj]⟩
   loopless := ⟨by intro v; cases v <;> simp [GAdj]⟩
 
 /-!
@@ -222,9 +222,7 @@ lemma degree_A1 (i : Fin 2) : G.degree (A1 i) = 7 := by
           simp [VEquiv]
           grind
         _ = 1 := by
-          fin_cases i <;> simp
-          . convert Finset.card_singleton 1
-          convert Finset.card_singleton 0
+          fin_cases i <;> decide
       . calc
         _ = Finset.card (Finset.univ : Finset (Fin 5)) := by
           congr; ext; simp
@@ -319,8 +317,7 @@ lemma degree_A2 (i : Fin 3) : G.degree (A2 i) = 8 := by
             simp [VEquiv]
             grind
           _ = _ := by
-            convert Finset.card_erase_of_mem (show i ∈ Finset.univ by simp)
-            grind
+            convert Finset.card_erase_of_mem (show i ∈ Finset.univ by simp) <;> simp [Finset.filter_ne']
       . calc
           _ = Finset.card (Finset.univ: Finset (Fin 5)) := by
             congr; ext; simp
@@ -573,7 +570,7 @@ lemma exists_block_receives_at_least_6_red
   have hsum := redBlocks_partition_card color
   -- If both blocks had ≤ 5, then the total would be ≤ 10 — contradiction.
   by_contra h
-  push_neg at h   -- h : (redBlock1 color).card ≤ 5 ∧ (redBlock2 color).card ≤ 5
+  push Not at h   -- h : (redBlock1 color).card ≤ 5 ∧ (redBlock2 color).card ≤ 5
   have hle10 : (redNeighbors color).card ≤ 10 := by
     have : (redBlock1 color).card + (redBlock2 color).card ≤ 5 + 5 := by
       grind

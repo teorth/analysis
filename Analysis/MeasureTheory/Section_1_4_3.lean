@@ -1,3 +1,4 @@
+import Mathlib.MeasureTheory.Measure.NullMeasurable
 import Analysis.MeasureTheory.Section_1_4_2
 
 /-!
@@ -29,6 +30,7 @@ Tagged so that the `ext` tactic applies to these measures. -/
   rfl
 
 /-- Example 1.4.21 (Lebesgue measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMeasure (LebesgueMeasurable.boolean_algebra d) :=
   {
     measure A := Lebesgue_measure A
@@ -38,6 +40,7 @@ noncomputable def FinitelyAdditiveMeasure.lebesgue (d:ℕ) : FinitelyAdditiveMea
   }
 
 /-- Example 1.4.21 (restriction to a subalgebra) -/
+@[instance_reducible]
 def FinitelyAdditiveMeasure.restrict_alg {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) {B':ConcreteBooleanAlgebra X} (hBB': B' ≤ B) : FinitelyAdditiveMeasure B' :=
   {
     measure := μ.measure
@@ -48,14 +51,17 @@ def FinitelyAdditiveMeasure.restrict_alg {X:Type*} {B: ConcreteBooleanAlgebra X}
   }
 
 /-- Example 1.4.21 (Jordan measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.jordan (d:ℕ) : FinitelyAdditiveMeasure (JordanMeasurable.boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg (LebesgueMeasurable.gt_jordan_boolean_algebra d)
 
 /-- Example 1.4.21 (null sets) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.null (d:ℕ) : FinitelyAdditiveMeasure (IsNull.boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg (IsNull.lt_lebesgue_boolean_algebra d)
 
 /-- Example 1.4.21 (elementary sets) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.elem (d:ℕ) : FinitelyAdditiveMeasure (EuclideanSpace'.elementary_boolean_algebra d) :=
 (FinitelyAdditiveMeasure.lebesgue d).restrict_alg
   (le_trans (JordanMeasurable.gt_elementary_boolean_algebra d)
@@ -63,6 +69,7 @@ noncomputable def FinitelyAdditiveMeasure.elem (d:ℕ) : FinitelyAdditiveMeasure
 
 open Classical in
 /-- Example 1.4.22 (Dirac measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.dirac {X:Type*} (x₀:X) (B: ConcreteBooleanAlgebra X) : FinitelyAdditiveMeasure B :=
   {
     measure := fun A => if x₀ ∈ A then 1 else 0
@@ -172,6 +179,7 @@ noncomputable instance FinitelyAdditiveMeasure.instDistribMulAction {X:Type*} {B
 }
 
 /-- Example 1.4.25 (Restriction of a measure) -/
+@[instance_reducible]
 def FinitelyAdditiveMeasure.restrict {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) (A:Set X) (hA:B.measurable A) : FinitelyAdditiveMeasure (B.restrict A) :=
   {
     measure := fun E => μ.measure E
@@ -187,6 +195,7 @@ def FinitelyAdditiveMeasure.restrict {X:Type*} {B: ConcreteBooleanAlgebra X} (μ
   }
 
 /-- Example 1.4.26 (Counting a measure) -/
+@[instance_reducible]
 noncomputable def FinitelyAdditiveMeasure.counting (X:Type*) : FinitelyAdditiveMeasure (⊤  : ConcreteBooleanAlgebra X) :=
   {
     measure := fun E => ENat.card E
@@ -206,7 +215,7 @@ lemma ConcreteBooleanAlgebra.inter_mem {X:Type*} (B: ConcreteBooleanAlgebra X) {
 /-- Boolean algebras are closed under set difference. -/
 lemma ConcreteBooleanAlgebra.diff_mem {X:Type*} (B: ConcreteBooleanAlgebra X) {E F : Set X}
     (hE : B.measurable E) (hF : B.measurable F) : B.measurable (E \ F) := by
-  rw [Set.diff_eq]
+  rw [Set.sdiff_eq]
   exact B.inter_mem hE (B.compl_mem F hF)
 
 /-- Boolean algebras are closed under finite unions. -/
@@ -224,7 +233,7 @@ lemma ConcreteBooleanAlgebra.finite_biUnion_mem {X J:Type*} (B: ConcreteBooleanA
 theorem FinitelyAdditiveMeasure.mono {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) {E F : Set X} (hE : B.measurable E) (hF : B.measurable F) (hsub : E ⊆ F) : μ.measure E ≤ μ.measure F := by
   have hdiff := B.diff_mem hF hE
   have hdisj : Disjoint E (F \ E) := Set.disjoint_left.mpr fun _ hxE hxd => hxd.2 hxE
-  have hunion : E ∪ (F \ E) = F := Set.union_diff_cancel hsub
+  have hunion : E ∪ (F \ E) = F := Set.union_sdiff_cancel hsub
   have hsum := μ.measure_finite_additive E (F \ E) hE hdiff hdisj
   rw [← hunion, hsum]
   exact le_add_of_nonneg_right (μ.measure_pos (F \ E) hdiff)
@@ -253,10 +262,10 @@ theorem FinitelyAdditiveMeasure.finite_subadditivity {X:Type*} {B: ConcreteBoole
     intro A C hA hC
     have hdiff := B.diff_mem hC hA
     have hdisj : Disjoint A (C \ A) := Set.disjoint_left.mpr fun _ hxA hxd => hxd.2 hxA
-    have hunion : A ∪ (C \ A) = A ∪ C := Set.union_diff_self
+    have hunion : A ∪ (C \ A) = A ∪ C := Set.union_sdiff_self
     have hsum := μ.measure_finite_additive A (C \ A) hA hdiff hdisj
     rw [← hunion, hsum]
-    exact add_le_add (le_refl _) (μ.mono hdiff hC Set.diff_subset)
+    exact add_le_add (le_refl _) (μ.mono hdiff hC Set.sdiff_subset)
   refine Finset.induction_on I ?empty ?step
   · simp [μ.measure_empty]
   · intro a s ha ih
@@ -272,10 +281,10 @@ theorem FinitelyAdditiveMeasure.mes_union_add_mes_inter {X:Type*} {B: ConcreteBo
   have hdisj₁ : Disjoint E (F \ E) := Set.disjoint_left.mpr fun _ hxE hxd => hxd.2 hxE
   have hdisj₂ : Disjoint (E ∩ F) (F \ E) :=
     Set.disjoint_left.mpr fun _ hx hxd => hxd.2 hx.1
-  have h₁ : E ∪ (F \ E) = E ∪ F := Set.union_diff_self
+  have h₁ : E ∪ (F \ E) = E ∪ F := Set.union_sdiff_self
   have h₂ : (E ∩ F) ∪ (F \ E) = F := by
     ext x
-    simp [Set.mem_union, Set.mem_inter_iff, Set.mem_diff]
+    simp [Set.mem_union, Set.mem_inter_iff, Set.mem_sdiff]
     tauto
   have hsum₁ := μ.measure_finite_additive E (F \ E) hE hdiff hdisj₁
   have hsum₂ := μ.measure_finite_additive (E ∩ F) (F \ E) hinter hdiff hdisj₂
@@ -306,6 +315,7 @@ def FinitelyAdditiveMeasure.isCountablyAdditive {X:Type*} {B: ConcreteBooleanAlg
   B.isSigmaAlgebra ∧ ∀ (E : ℕ → Set X), (∀ n, B.measurable (E n)) → Set.univ.PairwiseDisjoint E →
     μ.measure (⋃ n, E n) = ∑' n, (μ.measure (E n))
 
+@[instance_reducible]
 def FinitelyAdditiveMeasure.isCountablyAdditive.toCountablyAdditive {X:Type*} {B: ConcreteBooleanAlgebra X} (μ: FinitelyAdditiveMeasure B) (h: μ.isCountablyAdditive) : CountablyAdditiveMeasure h.1.toSigmaAlgebra :=
   {
     measure := μ.measure
@@ -324,6 +334,7 @@ theorem FinitelyAdditiveMeasure.isCountablyAdditive_restrict_alg {X:Type*} {B B'
   ⟨B'.countable_union_mem, fun E hE hdisj =>
     μ.measure_countable_additive E (fun n => hBB' (E n) (hE n)) hdisj⟩
 
+@[instance_reducible]
 def CountablyAdditiveMeasure.restrict_alg {X:Type*} {B B': ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (hBB' : B' ≤ B) : CountablyAdditiveMeasure B' :=
   {
     toFinitelyAdditiveMeasure := μ.toFinitelyAdditiveMeasure.restrict_alg hBB',
@@ -340,6 +351,7 @@ theorem FinitelyAdditiveMeasure.counting_isCountablyAdditive {X:Type*} : (Finite
   by sorry
 
 /-- Example 1.4.30 -/
+@[instance_reducible]
 def CountablyAdditiveMeasure.restrict {X:Type*} {B: ConcreteSigmaAlgebra X} (μ: CountablyAdditiveMeasure B) (A:Set X) (hA:B.measurable A) : CountablyAdditiveMeasure (B.restrict A) :=
   {
     toFinitelyAdditiveMeasure := μ.toFinitelyAdditiveMeasure.restrict A hA,
@@ -420,6 +432,7 @@ noncomputable instance CountablyAdditiveMeasure.instDistribMulAction {X:Type*} {
 }
 
 /-- Exercise 1.4.22(ii) -/
+@[instance_reducible]
 noncomputable def CountablyAdditiveMeasure.sum {X:Type*} {B: ConcreteSigmaAlgebra X} (μ: ℕ → CountablyAdditiveMeasure B) : CountablyAdditiveMeasure B :=
   {
     toFinitelyAdditiveMeasure := {
@@ -448,7 +461,8 @@ noncomputable def CountablyAdditiveMeasure.toMeasure {X:Type*} {B: ConcreteSigma
 noncomputable def FinitelyAdditiveMeasure.isCountablyAdditive.toMeasure {X:Type*} {B: ConcreteBooleanAlgebra X} {μ: FinitelyAdditiveMeasure B} (h: μ.isCountablyAdditive) :
   @Measure X h.1.toSigmaAlgebra.measurableSpace := h.toCountablyAdditive.toMeasure
 
-def Measure.toCountablyAdditiveMeasure {X:Type*} [M : MeasurableSpace X] (μ: Measure X) : CountablyAdditiveMeasure M.sigmaAlgebra :=
+@[instance_reducible]
+noncomputable def Measure.toCountablyAdditiveMeasure {X:Type*} [M : MeasurableSpace X] (μ: Measure X) : CountablyAdditiveMeasure M.sigmaAlgebra :=
   {
     toFinitelyAdditiveMeasure := {
       measure E := μ.measureOf E

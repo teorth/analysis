@@ -52,7 +52,6 @@ lemma Fin.prod_add_eq_sum_prod_choice (d : ℕ) (a b : Fin d → ℝ) :
         · intro c' _
           simp only [Finset.mem_filter, Finset.mem_univ, Fin.cons_zero, true_and]
         · intro c₁ _ c₂ _ heq
-          simp only at heq
           funext i
           have h : (Fin.cons true c₁ : Fin (d+1) → Bool) i.succ =
                    (Fin.cons true c₂ : Fin (d+1) → Bool) i.succ := by rw [heq]
@@ -86,7 +85,6 @@ lemma Fin.prod_add_eq_sum_prod_choice (d : ℕ) (a b : Fin d → ℝ) :
           simp only [Finset.mem_filter, Finset.mem_univ, Fin.cons_zero]
           trivial
         · intro c₁ _ c₂ _ heq
-          simp only at heq
           funext i
           have h : (Fin.cons false c₁ : Fin (d+1) → Bool) i.succ =
                    (Fin.cons false c₂ : Fin (d+1) → Bool) i.succ := by rw [heq]

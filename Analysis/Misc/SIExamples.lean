@@ -41,10 +41,10 @@ abbrev SqrtFrequency := Scalar half_frequency_unit
 abbrev sqrt_hertz:SqrtFrequency := StandardUnit _
 
 example : sqrt_hertz**2 = hertz := by
-  simp [←Scalar.val_inj, half_frequency_unit, frequency_unit, sqrt_hertz]
+  simp [half_frequency_unit, frequency_unit, sqrt_hertz]; rfl
 
 example {w : SqrtFrequency} (hw : w = 2 • sqrt_hertz) : hertz.in (w**2) = 4 := by
-  simp [half_frequency_unit, frequency_unit, hw]
+  simp [half_frequency_unit, frequency_unit, hw, Scalar.in]
   norm_num
 
 /-- An example of a non-negative scalar type -/

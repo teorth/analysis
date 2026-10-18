@@ -44,9 +44,10 @@ open PSet in
 the natural numbers. -/
 noncomputable def ZFSet.nat_equiv : ℕ ≃ omega.{u} := Equiv.ofBijective (fun n => ⟨mk (ofNat.{u} n),mk_mem_iff.mpr (Mem.mk _ (ULift.up n))⟩) (by
   constructor
-  · intro _ _; simp [eq]; apply eq_of_ofNat_equiv_ofNat
+  · intro _ _ h; exact eq_of_ofNat_equiv_ofNat _ _ (eq.mp (Subtype.mk.inj h))
   · intro ⟨x,hx⟩; rw [←mk_out x, omega] at hx; erw [mk_mem_iff] at hx; obtain ⟨n,hn⟩ := hx
-    simp [mk_func, PSet.omega] at *; use n.down; rw [←mk_out x, eq]; exact hn.symm
+    simp [PSet.omega] at *; use n.down; apply Subtype.ext; simp only; rw [←mk_out x, eq]
+    exact hn.symm
   )
 
 open Classical in
@@ -57,7 +58,7 @@ power set axiom also requiring some technical manipulation). -/
 noncomputable instance ZFSet.inst_SetTheory : Chapter3.SetTheory.{u + 1,u + 1} where
   Set := ZFSet
   Object := ZFSet
-  set_to_object := { toFun ⦃a₁⦄ := a₁, inj' _ _ h := h}
+  set_to_object := { toFun ⦃a₁⦄ := a₁, inj' := show Function.Injective _ from fun _ _ h ↦ h }
   mem o s := o ∈ s
   extensionality _ _ := ext
   emptyset := ∅
@@ -75,7 +76,7 @@ noncomputable instance ZFSet.inst_SetTheory : Chapter3.SetTheory.{u + 1,u + 1} w
     · intro ⟨z, ⟨hzA, hz⟩, hz'⟩; use z, hzA; simp [hzA, hz hzA] at hz'
       simp [←hz', Exists.choose_spec]
     · intro ⟨z, hzA, hz'⟩; use z, ⟨hzA, by aesop⟩
-      apply hp ⟨_, hzA⟩; rw [dif_pos ⟨hzA, ⟨_, hz'⟩⟩]; use Exists.choose_spec _
+      apply hp ⟨_, hzA⟩; rw [dite_eq_left ⟨hzA, ⟨_, hz'⟩⟩]; use Exists.choose_spec _
   nat := omega
   nat_equiv := nat_equiv
   regularity_axiom A := by
@@ -85,8 +86,8 @@ noncomputable instance ZFSet.inst_SetTheory : Chapter3.SetTheory.{u + 1,u + 1} w
   pow X Y := funs Y X
   function_to_object X Y := {
     toFun f := @map (fun s ↦ if h : s ∈ X then f ⟨s,h⟩ else ∅) (allZFSetDefinable _) X
-    inj' x _ h := by
-      ext ⟨s, hs⟩; simp_rw [ZFSet.ext_iff, mem_map] at h
+    inj' := show Function.Injective _ by
+      intro x _ h; ext ⟨s, hs⟩; simp_rw [ZFSet.ext_iff, mem_map] at h
       specialize h (s.pair (x ⟨_,hs⟩)); aesop}
   powerset_axiom X Y F := by
     simp [IsFunc]; constructor

@@ -1,5 +1,5 @@
 import Mathlib.Tactic
-import Mathlib.Algebra.Field.Power
+import Mathlib.Algebra.Ring.Int.Parity
 
 /-!
 # Analysis I, Section 7.2: Infinite series

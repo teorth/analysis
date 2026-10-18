@@ -88,7 +88,7 @@ private lemma ii_imp_iii : stmt_ii f → stmt_iii f := by
   simp only [PointwiseAeConvergesTo, AlmostAlways]
   have h_empty : {x | ¬Filter.atTop.Tendsto (fun n ↦ g n x) (nhds (f x))} = ∅ := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_not]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_not]
     exact hg_conv x
   rw [h_empty]
   exact Lebesgue_outer_measure.of_empty d
@@ -109,14 +109,14 @@ private lemma iv_imp_ii : stmt_iv f → stmt_ii f := by
 private lemma Set.indicator'_eq_one' {X : Type*} {E : Set X} {x : X} (hx : x ∈ E) :
     ((E.indicator' x : ℝ) : EReal) = 1 := by
   classical
-  rw [Set.indicator'_apply, if_pos hx]
+  rw [Set.indicator'_apply, ite_eq_left hx]
   rfl
 
 -- Helper: Set.indicator' equals 0 when x ∉ E
 private lemma Set.indicator'_eq_zero' {X : Type*} {E : Set X} {x : X} (hx : x ∉ E) :
     ((E.indicator' x : ℝ) : EReal) = 0 := by
   classical
-  rw [Set.indicator'_apply, if_neg hx]
+  rw [Set.indicator'_apply, ite_eq_right hx]
   rfl
 
 -- Level sets of simple functions are Lebesgue measurable
@@ -182,7 +182,7 @@ private lemma UnsignedSimpleFunction.levelset_gt_LebesgueMeasurable
   -- {g > t} = ⋃_{S : ∑_{i ∈ S} c_i > t} R_S
   have h_eq : {x | g x > t} = ⋃ S ∈ (Finset.univ : Finset (Finset (Fin k))).filter (fun S => ∑ i ∈ S, c i > t), R S := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_filter, Finset.mem_univ, true_and]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_filter, Finset.mem_univ, true_and]
     constructor
     · intro hgx
       obtain ⟨S, hxS, _⟩ := h_partition x
@@ -207,9 +207,9 @@ private lemma limsupSet_LebesgueMeasurable {g : ℕ → EuclideanSpace' d → ER
   intro n
   by_cases hn : n ≥ N
   · convert UnsignedSimpleFunction.levelset_gt_LebesgueMeasurable (hg n) (t + 1 / (M + 1))
-    ext x; simp only [Set.mem_iUnion, Set.mem_setOf_eq, exists_prop, and_iff_right_iff_imp]; intro _; exact hn
+    ext x; simp only [Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop, and_iff_right_iff_imp]; intro _; exact hn
   · convert LebesgueMeasurable.empty
-    ext x; simp only [Set.mem_iUnion, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_exists]
+    ext x; simp only [Set.mem_iUnion, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists]
     intro h; exact absurd h hn
 
 -- This is the main technical work of the proof
@@ -226,15 +226,15 @@ private lemma iii_imp_v : stmt_iii f → stmt_v f := by
   -- So {f > λ} = ⋃_{M≥1} ⋂_{N≥1} ⋃_{n≥N} {g_n > λ + 1/M} outside a null set
   have h_ae_eq : {x | f x > t} ∩ Nᶜ = E ∩ Nᶜ := by
     ext x
-    simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq, N]
-    push_neg
+    simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_ofPred_eq, N]
+    push Not
     constructor
     · -- f x > t ∧ converges → x ∈ E ∧ converges
       intro ⟨hfx, hconv⟩
       refine ⟨?_, hconv⟩
       -- Since f(x) > t and g_n(x) → f(x), we can find M such that f(x) > t + 1/M
       -- Then eventually g_n(x) > t + 1/M, which means x ∈ limsupSet
-      simp only [E, limsupSet, Set.mem_iUnion, Set.mem_iInter, Set.mem_setOf_eq]
+      simp only [E, limsupSet, Set.mem_iUnion, Set.mem_iInter, Set.mem_ofPred_eq]
       -- The detailed analysis argument uses Filter.Tendsto properties
       -- For a limit f(x), if f(x) > t, then ∃ε>0 with f(x) > t+ε
       -- Choose M with 1/M < ε, then eventually g_n(x) > t + 1/M
@@ -339,7 +339,7 @@ private lemma iii_imp_v : stmt_iii f → stmt_v f := by
       refine ⟨?_, hconv⟩
       -- If x ∈ limsupSet g t, then for some M, infinitely often g_n(x) > t + 1/M
       -- Since g_n(x) → f(x), limsup g_n(x) = f(x), so f(x) ≥ t + 1/M > t
-      simp only [E, limsupSet, Set.mem_iUnion, Set.mem_iInter, Set.mem_setOf_eq] at hE_mem
+      simp only [E, limsupSet, Set.mem_iUnion, Set.mem_iInter, Set.mem_ofPred_eq] at hE_mem
       -- hE_mem : ∃ M, ∀ N, ∃ n ≥ N, g n x > t + 1/(M+1)
       obtain ⟨M, hM⟩ := hE_mem
       -- Set threshold := t + 1/(M+1)
@@ -378,7 +378,7 @@ private lemma iii_imp_v : stmt_iii f → stmt_v f := by
         -- g n x ≥ 0 for all n, and g n x → f x, so f x ≥ 0
         have h_limit_nonneg : f x ≥ 0 := by
           by_contra h_neg
-          push_neg at h_neg
+          push Not at h_neg
           have h_mem : Set.Iio 0 ∈ nhds (f x) := Iio_mem_nhds h_neg
           have h_event : ∀ᶠ n in Filter.atTop, g n x < 0 := hconv h_mem
           rw [Filter.eventually_atTop] at h_event
@@ -389,7 +389,7 @@ private lemma iii_imp_v : stmt_iii f → stmt_v f := by
              _ ≤ f x := h_limit_nonneg
       -- Now ⊥ < t < ⊤ (t is a finite real)
       by_contra h_not_gt
-      push_neg at h_not_gt
+      push Not at h_not_gt
       -- h_not_gt : f x ≤ t
       -- Derive contradiction: if f x ≤ t, eventually g_n x < threshold, but frequently > threshold
       have h_denom_ne_top : (M : EReal) + 1 ≠ ⊤ := EReal.add_ne_top (EReal.natCast_ne_top M) (EReal.coe_ne_top 1)
@@ -454,7 +454,7 @@ private lemma v_imp_vi : stmt_v f → stmt_vi f := by
   · -- t = ⊤: {f ≥ ⊤} = {f = ⊤} = ⋂_{n ∈ ℕ} {f > n}
     have h_eq : {x | f x ≥ ⊤} = ⋂ (n : ℕ), {x | f x > n} := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_iInter, ge_iff_le]
+      simp only [Set.mem_ofPred_eq, Set.mem_iInter, ge_iff_le]
       constructor
       · intro hfx n
         simp only [gt_iff_lt, top_le_iff.mp hfx]
@@ -471,7 +471,7 @@ private lemma v_imp_vi : stmt_v f → stmt_vi f := by
       -- Use {f ≥ t'} = ⋂_n {f > (t' - 1/(n+1) : ℝ)}
       have h_eq : {x | f x ≥ (t' : EReal)} = ⋂ (n : ℕ), {x | f x > ((t' - 1 / (n + 1)) : ℝ)} := by
         ext x
-        simp only [Set.mem_setOf_eq, Set.mem_iInter, ge_iff_le, gt_iff_lt]
+        simp only [Set.mem_ofPred_eq, Set.mem_iInter, ge_iff_le, gt_iff_lt]
         constructor
         · intro hfx n
           have h1 : (0 : ℝ) < 1 / (n + 1) := by positivity
@@ -480,7 +480,7 @@ private lemma v_imp_vi : stmt_v f → stmt_vi f := by
           exact lt_of_lt_of_le h3 hfx
         · intro hfx
           by_contra h
-          push_neg at h
+          push Not at h
           -- f x < t'
           have hfx_lt_t' : f x < (t' : EReal) := h
           -- Get a witness for f x being a real
@@ -533,14 +533,14 @@ private lemma vi_imp_v : stmt_vi f → stmt_v f := by
     | none => ∅ := fun _ => rfl
   have h_eq : {x | f x > t} = ⋃ n, F n := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
     constructor
     · intro hfx
       -- f x > t, so there exists q ∈ ℚ with t < q < f x
       obtain ⟨q, hq1, hq2⟩ := EReal.exists_rat_btwn_of_lt hfx
       use Encodable.encode q  -- encode q as ℕ
       rw [hF_eq, Encodable.encodek]
-      simp only [hq1, ite_true, Set.mem_setOf_eq]
+      simp only [hq1, ite_true, Set.mem_ofPred_eq]
       exact le_of_lt hq2
     · intro ⟨n, hn⟩
       rw [hF_eq] at hn
@@ -549,7 +549,7 @@ private lemma vi_imp_v : stmt_vi f → stmt_v f := by
       | some q =>
         simp only [hd] at hn
         by_cases h : t < ((q : ℝ) : EReal)
-        · simp only [h, ite_true, Set.mem_setOf_eq] at hn
+        · simp only [h, ite_true, Set.mem_ofPred_eq] at hn
           calc t < ((q : ℝ) : EReal) := h
             _ ≤ f x := hn
         · simp only [h, ite_false, Set.mem_empty_iff_false] at hn
@@ -609,7 +609,7 @@ private lemma v_to_viii_imp_ix (hv : stmt_v f) (hvi : stmt_vi f) (hvii : stmt_vi
     have h_eq : f⁻¹' (Real.toEReal '' Set.Ioo a b) = {x | f x > a} ∩ {x | f x < b} := by
       rw [EReal.image_coe_Ioo]
       ext x
-      simp only [Set.mem_preimage, Set.mem_Ioo, Set.mem_inter_iff, Set.mem_setOf_eq, gt_iff_lt]
+      simp only [Set.mem_preimage, Set.mem_Ioo, Set.mem_inter_iff, Set.mem_ofPred_eq, gt_iff_lt]
     rw [h_eq]
     exact (hv _).inter (hvii _)
   | Icc a b =>
@@ -617,7 +617,7 @@ private lemma v_to_viii_imp_ix (hv : stmt_v f) (hvi : stmt_vi f) (hvii : stmt_vi
     have h_eq : f⁻¹' (Real.toEReal '' Set.Icc a b) = {x | f x ≥ a} ∩ {x | f x ≤ b} := by
       rw [EReal.image_coe_Icc]
       ext x
-      simp only [Set.mem_preimage, Set.mem_Icc, Set.mem_inter_iff, Set.mem_setOf_eq, ge_iff_le]
+      simp only [Set.mem_preimage, Set.mem_Icc, Set.mem_inter_iff, Set.mem_ofPred_eq, ge_iff_le]
     rw [h_eq]
     exact (hvi _).inter (hviii _)
   | Ioc a b =>
@@ -625,7 +625,7 @@ private lemma v_to_viii_imp_ix (hv : stmt_v f) (hvi : stmt_vi f) (hvii : stmt_vi
     have h_eq : f⁻¹' (Real.toEReal '' Set.Ioc a b) = {x | f x > a} ∩ {x | f x ≤ b} := by
       rw [EReal.image_coe_Ioc]
       ext x
-      simp only [Set.mem_preimage, Set.mem_Ioc, Set.mem_inter_iff, Set.mem_setOf_eq, gt_iff_lt]
+      simp only [Set.mem_preimage, Set.mem_Ioc, Set.mem_inter_iff, Set.mem_ofPred_eq, gt_iff_lt]
     rw [h_eq]
     exact (hv _).inter (hviii _)
   | Ico a b =>
@@ -633,7 +633,7 @@ private lemma v_to_viii_imp_ix (hv : stmt_v f) (hvi : stmt_vi f) (hvii : stmt_vi
     have h_eq : f⁻¹' (Real.toEReal '' Set.Ico a b) = {x | f x ≥ a} ∩ {x | f x < b} := by
       rw [EReal.image_coe_Ico]
       ext x
-      simp only [Set.mem_preimage, Set.mem_Ico, Set.mem_inter_iff, Set.mem_setOf_eq, ge_iff_le]
+      simp only [Set.mem_preimage, Set.mem_Ico, Set.mem_inter_iff, Set.mem_ofPred_eq, ge_iff_le]
     rw [h_eq]
     exact (hvi _).inter (hvii _)
 
@@ -683,13 +683,13 @@ private lemma ereal_top_singleton_eq : ({⊤} : Set EReal) = (Set.range Real.toE
   constructor
   · intro hx
     rw [hx]
-    push_neg
+    push Not
     constructor
     · intro r hr
       exact EReal.coe_ne_top r hr
     · intro h; exact absurd h.symm (ne_of_lt bot_lt_top)
   · intro hx
-    push_neg at hx
+    push Not at hx
     induction x using EReal.rec with
     | bot => exact (hx.2 rfl).elim
     | top => rfl
@@ -1035,7 +1035,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
   swap
   · -- v not in range: level set is empty
     convert LebesgueMeasurable.empty
-    ext x; simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    ext x; simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     intro h; exact hv_range ⟨x, h⟩
 
   -- v is in range: the level set is a Boolean combination of measurable sets
@@ -1043,7 +1043,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
   have h_split : {x | approx_fn f n x = v} =
       ({x | ‖x‖ ≤ (n:ℝ)} ∩ {x | approx_fn f n x = v}) ∪
       ({x | ‖x‖ > (n:ℝ)} ∩ {x | approx_fn f n x = v}) := by
-    ext x; simp only [Set.mem_union, Set.mem_inter_iff, Set.mem_setOf_eq]
+    ext x; simp only [Set.mem_union, Set.mem_inter_iff, Set.mem_ofPred_eq]
     by_cases h : ‖x‖ ≤ n <;> simp [h, lt_of_not_ge]
   rw [h_split]
   apply LebesgueMeasurable.union
@@ -1066,7 +1066,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
         rw [← EReal.coe_div]; congr 1; field_simp
       have h_eq : {x | ‖x‖ ≤ (n:ℝ)} ∩ {x | approx_fn f n x = v} =
           {x | ‖x‖ ≤ n} ∩ {x | f x ≥ (n : EReal)} := by
-        ext x; simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+        ext x; simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
         constructor
         · intro ⟨hnorm, hval⟩
           rw [hv_eq_n] at hval
@@ -1101,9 +1101,9 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
             have h_min_le : (min (f x) ↑n).toReal ≤ n := by
               have h_le := min_le_right (f x) ↑n
               have := EReal.toReal_le_toReal h_le hbot (EReal.coe_ne_top n)
-              simp only at this; exact this
+              exact this
             have h_min_eq_n : (min (f x) ↑n).toReal = n := le_antisymm h_min_le h_toReal_ge
-            by_contra hcontra; push_neg at hcontra
+            by_contra hcontra; push Not at hcontra
             have h_min_eq : min (f x) ↑n = f x := min_eq_left (le_of_lt hcontra)
             rw [h_min_eq] at h_min_eq_n
             have h_fx_ne_top : f x ≠ ⊤ := by intro heq; rw [heq] at hcontra; exact not_lt.mpr le_top hcontra
@@ -1145,7 +1145,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
       have h_eq : {x | ‖x‖ ≤ (n:ℝ)} ∩ {x | approx_fn f n x = v} =
           {x | ‖x‖ ≤ n} ∩ ({x | f x ≥ (((k : ℕ) : ℝ) / (2^n : ℝ) : EReal)} ∩
           {x | f x < ((((k + 1) : ℕ) : ℝ) / (2^n : ℝ) : EReal)}) := by
-        ext x; simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+        ext x; simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
         constructor
         · intro ⟨hnorm, hval⟩
           rw [hv_eq] at hval
@@ -1206,7 +1206,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
                     _ = ((k + 1) : ℕ) / 2^n := by rw [h_k1_eq]
                     _ ≤ n := h_val_le_n'
               · -- h_fx_le_n : ¬(f x ≤ n), i.e., n < f x
-                push_neg at h_fx_le_n
+                push Not at h_fx_le_n
                 -- min(f x, n) = n when f x > n
                 have h_min : min (f x) ↑n = ↑n := min_eq_right (le_of_lt h_fx_le_n)
                 -- h_toReal_lt : (min (f x) n).toReal < (↑k + 1) / 2^n
@@ -1295,7 +1295,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
   · have h_eq : {x | ‖x‖ > (n:ℝ)} ∩ {x | approx_fn f n x = v} =
         if v = 0 then {x | ‖x‖ > (n:ℝ)} else ∅ := by
       ext x
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, approx_fn]
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, approx_fn]
       constructor
       · intro ⟨hn, hv⟩
         have hn' : ¬ ‖x‖ ≤ (n:ℝ) := not_le.mpr hn
@@ -1347,14 +1347,13 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
         have h_unique : ∃! i : Fin K, x ∈ E i := by
           by_cases hk_max : k = n * 2^n
           · use ⟨n * 2^n, by omega⟩
-            simp only [E, c, Set.mem_setOf_eq]
+            simp only [E, c, Set.mem_ofPred_eq]
             constructor
             · simp only [hk_max] at hk_eq
               simp only [ite_true]
               rw [hk_eq]
               -- Use helper lemma, then normalize coercions
-              convert mul_pow2_div_pow2_eq n using 2
-              simp only [← EReal.coe_natCast, Nat.cast_pow, Nat.cast_ofNat, EReal.coe_pow]
+              convert mul_pow2_div_pow2_eq n using 2 <;> norm_cast
             · intro j hj
               -- hj : approx_fn f n x = if ↑j = n * 2^n then ↑n else ↑↑↑j / ↑(2^n)
               -- The simp didn't make progress because E is not in scope for hj after previous simp
@@ -1370,7 +1369,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
                   convert hj.symm.trans hk_eq using 2 <;> norm_cast
                 exact ereal_div_pow2_eq_imp_eq j.val (n * 2^n) n h_eq_ereal
           · use ⟨k, by omega⟩
-            simp only [E, c, Set.mem_setOf_eq]
+            simp only [E, c, Set.mem_ofPred_eq]
             constructor
             · have h_c_val : (if k = n * 2^n then (n : EReal) else ((k : ℕ) : ℝ) / (2^n : ℝ)) = ((k : ℕ) : ℝ) / (2^n : ℝ) := by simp [hk_max]
               simp only [h_c_val]
@@ -1385,7 +1384,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
                   convert hk_eq.symm.trans hj using 2; all_goals norm_cast
                 have h_eq : (((k : ℕ) : ℝ) : EReal) / ((2^n : ℕ) : EReal) =
                             (((n * 2^n : ℕ) : ℝ) : EReal) / ((2^n : ℕ) : EReal) := by
-                  rw [h_k_val]; convert (mul_pow2_div_pow2_eq n).symm using 2
+                  rw [h_k_val]; convert (mul_pow2_div_pow2_eq n).symm using 2 <;> norm_cast
                 exact absurd (ereal_div_pow2_eq_imp_eq k (n * 2^n) n h_eq) hk_max
               · -- Both j and k are not n*2^n
                 simp only [hj_max, ↓reduceIte] at hj
@@ -1436,7 +1435,7 @@ private lemma v_to_xi_imp_iv (hf : Unsigned f) (hvi : stmt_vi f) (hvii : stmt_vi
         intro x hx
         simp only [Support] at hx
         by_contra h
-        simp only [Set.mem_setOf_eq, not_le] at h
+        simp only [Set.mem_ofPred_eq, not_le] at h
         -- When ‖x‖ > n, approx_fn f n x = 0
         have h' : ¬(‖x‖ ≤ (n : ℝ)) := not_le.mpr h
         have h_eq : approx_fn f n x = 0 := by
@@ -1716,7 +1715,7 @@ theorem UnsignedMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Un
 /-- Exercise 1.3.3(i) -/
 theorem Continuous.UnsignedMeasurable {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: Continuous f) (hnonneg: Unsigned f): _root_.UnsignedMeasurable f := by
   have h_iff : _root_.UnsignedMeasurable f ↔ ∀ U : Set EReal, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (_root_.UnsignedMeasurable.TFAE hnonneg).out 0 9
+    (_root_.UnsignedMeasurable.TFAE hnonneg).out 1 10
   apply h_iff.mpr
   intro U hU
   exact IsOpen.measurable (hU.preimage hf)
@@ -1746,7 +1745,7 @@ theorem UnsignedMeasurable.sup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
     exact le_trans ((hf 0).1 x) (le_iSup (fun n ↦ f n x) 0)
   have h_iff : UnsignedMeasurable (fun x ↦ iSup (fun n ↦ f n x)) ↔
       ∀ t, LebesgueMeasurable {x | iSup (fun n ↦ f n x) > t} :=
-    (UnsignedMeasurable.TFAE hnonneg).out 0 4
+    (UnsignedMeasurable.TFAE hnonneg).out 1 5
   apply h_iff.mpr
   intro t
   have h_eq : {x | iSup (fun n ↦ f n x) > t} = ⋃ n, {x | f n x > t} := by
@@ -1755,7 +1754,7 @@ theorem UnsignedMeasurable.sup {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
   rw [h_eq]
   refine LebesgueMeasurable.countable_union fun n => ?_
   have hn : UnsignedMeasurable (f n) ↔ ∀ t, LebesgueMeasurable {x | f n x > t} :=
-    (UnsignedMeasurable.TFAE (hf n).1).out 0 4
+    (UnsignedMeasurable.TFAE (hf n).1).out 1 5
   exact hn.mp (hf n) t
 
 /-- Exercise 1.3.3(iii) -/
@@ -1765,17 +1764,17 @@ theorem UnsignedMeasurable.inf {d:ℕ} {f: ℕ → EuclideanSpace' d → EReal} 
     exact le_iInf fun n => (hf n).1 x
   have h_iff : UnsignedMeasurable (fun x ↦ iInf (fun n ↦ f n x)) ↔
       ∀ t, LebesgueMeasurable {x | iInf (fun n ↦ f n x) ≥ t} :=
-    (UnsignedMeasurable.TFAE hnonneg).out 0 5
+    (UnsignedMeasurable.TFAE hnonneg).out 1 6
   apply h_iff.mpr
   intro t
   have h_eq : {x | iInf (fun n ↦ f n x) ≥ t} = ⋂ n, {x | f n x ≥ t} := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iInter]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter]
     exact le_iInf_iff
   rw [h_eq]
   refine LebesgueMeasurable.countable_inter fun n => ?_
   have hn : UnsignedMeasurable (f n) ↔ ∀ t, LebesgueMeasurable {x | f n x ≥ t} :=
-    (UnsignedMeasurable.TFAE (hf n).1).out 0 5
+    (UnsignedMeasurable.TFAE (hf n).1).out 1 6
   exact hn.mp (hf n) t
 
 /-- Exercise 1.3.3(iii) -/
@@ -1792,7 +1791,7 @@ theorem UnsignedMeasurable.liminf {d:ℕ} {f: ℕ → EuclideanSpace' d → ERea
 theorem UnsignedMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) (hg : Unsigned g) (heq: AlmostEverywhereEqual f g) : UnsignedMeasurable g := by
   obtain ⟨_, u, hu, huf⟩ := hf
   have h_iff : UnsignedMeasurable g ↔ ∃ u, (∀ n, UnsignedSimpleFunction (u n)) ∧
-      PointwiseAeConvergesTo u g := (UnsignedMeasurable.TFAE hg).out 0 2
+      PointwiseAeConvergesTo u g := (UnsignedMeasurable.TFAE hg).out 1 3
   refine h_iff.mpr ⟨u, hu, ?_⟩
   exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
@@ -1807,9 +1806,9 @@ theorem UnsignedMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → EReal} (g: 
 theorem UnsignedMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → EReal} (hf: UnsignedMeasurable f) {φ: EReal → EReal} (hφ: Continuous φ) (hφnn : ∀ x ≥ 0, φ x ≥ 0) : UnsignedMeasurable (φ ∘ f) := by
   have hnonneg : Unsigned (φ ∘ f) := fun x => hφnn (f x) (hf.1 x)
   have h_source : UnsignedMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (UnsignedMeasurable.TFAE hf.1).out 0 9
+    (UnsignedMeasurable.TFAE hf.1).out 1 10
   have h_target : UnsignedMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
-    (UnsignedMeasurable.TFAE hnonneg).out 0 9
+    (UnsignedMeasurable.TFAE hnonneg).out 1 10
   exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
 /-- Exercise 1.3.3(vii) -/
@@ -1896,7 +1895,7 @@ lemma binaryDigit_le_one (x : ℝ) (j : ℕ) : binaryDigit x j ≤ 1 := by
 lemma binaryDigit_zero (j : ℕ) : binaryDigit 0 j = 0 := by
   simp only [binaryDigit]
   have h0' : (0:ℝ) ∈ Set.Ico 0 1 := ⟨le_refl 0, by norm_num⟩
-  rw [if_pos h0']
+  rw [ite_eq_left h0']
   simp [mul_zero]
 
 /-- Binary digits of 1 are all 1. -/
@@ -2075,7 +2074,7 @@ lemma binaryDigit_exists_one_of_pos {x : ℝ} (hx_pos : 0 < x) (hx_lt : x < 1) :
     constructor
     · simp only [Nat.cast_one]; exact hj_ge
     · simp only [Nat.cast_one]; linarith
-  exact ⟨j, by simp only [binaryDigit, if_pos hx_Ico, h_floor_eq]⟩
+  exact ⟨j, by simp only [binaryDigit, ite_eq_left hx_Ico, h_floor_eq]⟩
 
 /-- The partial sum bounds x from below: Sₙ(x) ≤ x -/
 lemma binaryDigit_partial_sum_le {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (n : ℕ) :
@@ -2099,7 +2098,7 @@ lemma binaryDigit_partial_sum_lt (x : ℝ) (n : ℕ) :
 lemma binaryDigit_one_implies_lower_bound {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (k : ℕ)
     (hbk : binaryDigit x (k + 1) = 1) :
     (⌊(2:ℝ)^k * x⌋₊ : ℝ) / (2:ℝ)^k + (1:ℝ) / (2:ℝ)^(k + 1) ≤ x := by
-  simp only [binaryDigit, if_pos hx] at hbk
+  simp only [binaryDigit, ite_eq_left hx] at hbk
   have heq : (2:ℝ)^(k+1) * x = 2 * ((2:ℝ)^k * x) := by ring
   have h_floor_odd : ⌊2 * ((2:ℝ)^k * x)⌋₊ % 2 = 1 := by rw [← heq]; exact hbk
   have h2k1_pos : (0:ℝ) < 2^(k+1) := by positivity
@@ -2119,7 +2118,7 @@ lemma binaryDigit_one_implies_lower_bound {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 
 lemma binaryDigit_zero_implies_upper_bound {y : ℝ} (hy : y ∈ Set.Ico (0:ℝ) 1) (k : ℕ)
     (hbk : binaryDigit y (k + 1) = 0) :
     y < (⌊(2:ℝ)^k * y⌋₊ : ℝ) / (2:ℝ)^k + (1:ℝ) / (2:ℝ)^(k + 1) := by
-  simp only [binaryDigit, if_pos hy] at hbk
+  simp only [binaryDigit, ite_eq_left hy] at hbk
   have heq : (2:ℝ)^(k+1) * y = 2 * ((2:ℝ)^k * y) := by ring
   have h_floor_even : ⌊2 * ((2:ℝ)^k * y)⌋₊ % 2 = 0 := by rw [← heq]; exact hbk
   have h2k1_pos : (0:ℝ) < 2^(k+1) := by positivity
@@ -2151,7 +2150,7 @@ lemma floor_eq_of_binaryDigit_eq {x y : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (hy 
   | succ n ih =>
     have h_prev : ∀ j < n, binaryDigit x (j + 1) = binaryDigit y (j + 1) := fun j hj => heq j (Nat.lt_succ_of_lt hj)
     have ih' := ih h_prev
-    simp only [binaryDigit, if_pos hx, if_pos hy] at heq
+    simp only [binaryDigit, ite_eq_left hx, ite_eq_left hy] at heq
     have hmod_eq := heq n (Nat.lt_succ_self n)
     have hx_nonneg : 0 ≤ (2:ℝ)^n * x := mul_nonneg (by positivity) hx.1
     have hy_nonneg : 0 ≤ (2:ℝ)^n * y := mul_nonneg (by positivity) hy.1
@@ -2169,7 +2168,7 @@ lemma binaryDigit_first_diff {x y : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (hy : y 
          ∀ j < k, binaryDigit x (j + 1) = binaryDigit y (j + 1) := by
   have h_exists_diff : ∃ j, binaryDigit x (j + 1) ≠ binaryDigit y (j + 1) := by
     by_contra h_all_eq
-    push_neg at h_all_eq
+    push Not at h_all_eq
     have h_floor_eq : ∀ n, ⌊(2:ℝ)^n * x⌋₊ = ⌊(2:ℝ)^n * y⌋₊ := by
       intro n
       exact floor_eq_of_binaryDigit_eq hx hy (fun j _ => h_all_eq j)
@@ -2199,7 +2198,7 @@ lemma binaryDigit_first_diff {x y : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (hy : y 
   have hby := binaryDigit_le_one y (k + 1)
   by_cases h : binaryDigit x (k + 1) < binaryDigit y (k + 1)
   · exact ⟨k, h, hk_first⟩
-  · push_neg at h
+  · push Not at h
     have hbx_eq : binaryDigit x (k + 1) = 1 := by omega
     have hby_eq : binaryDigit y (k + 1) = 0 := by omega
     exfalso
@@ -2219,7 +2218,7 @@ lemma binaryToTernary_lt_of_digit_lt {x y : ℝ}
   have hby_le := binaryDigit_le_one y (k + 1)
   have hbx_zero : binaryDigit x (k + 1) = 0 := by omega
   have hby_one : binaryDigit y (k + 1) = 1 := by omega
-  simp only [binaryToTernaryFn, if_pos hx, if_pos hy]
+  simp only [binaryToTernaryFn, ite_eq_left hx, ite_eq_left hy]
   let fx := fun j => (2 * binaryDigit x (j + 1) : ℝ) * (1/3:ℝ)^(j + 1)
   let fy := fun j => (2 * binaryDigit y (j + 1) : ℝ) * (1/3:ℝ)^(j + 1)
   have h_first_eq : ∑ j ∈ Finset.range k, fx j = ∑ j ∈ Finset.range k, fy j := by
@@ -2288,7 +2287,7 @@ lemma ternary_02_expansion_unique {d e : ℕ → ℕ}
     (heq : ∑' j, (d j : ℝ) * (1/3:ℝ)^(j + 1) = ∑' j, (e j : ℝ) * (1/3:ℝ)^(j + 1)) :
     ∀ j, d j = e j := by
   by_contra h_ne
-  push_neg at h_ne
+  push Not at h_ne
   have h_exists : ∃ k, d k ≠ e k := h_ne
   let k := Nat.find h_exists
   have hk_ne : d k ≠ e k := Nat.find_spec h_exists
@@ -2417,7 +2416,7 @@ private lemma partial_sum_eq_floor {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) (n :
     have h2n_pos : (0:ℝ) < 2^n := by positivity
     have hx_nonneg : 0 ≤ x := hx.1
     have hb : binaryDigit x (n + 1) = ⌊(2:ℝ)^(n+1) * x⌋₊ % 2 := by
-      simp only [binaryDigit, if_pos hx]
+      simp only [binaryDigit, ite_eq_left hx]
     have h_floor : ⌊(2:ℝ)^(n+1) * x⌋₊ = 2 * ⌊(2:ℝ)^n * x⌋₊ + ⌊(2:ℝ)^(n+1) * x⌋₊ % 2 := by
       have h2 : (2:ℝ)^(n+1) * x = 2 * ((2:ℝ)^n * x) := by ring
       rw [h2]
@@ -2446,7 +2445,7 @@ private lemma binary_summable {x : ℝ} (hx : x ∈ Set.Ico (0:ℝ) 1) :
   · intro j
     have h1 : (binaryDigit x (j + 1) : ℝ) ≤ 1 := by
       have : binaryDigit x (j + 1) ≤ 1 := by
-        simp only [binaryDigit, if_pos hx]
+        simp only [binaryDigit, ite_eq_left hx]
         omega
       exact_mod_cast this
     calc (binaryDigit x (j + 1) : ℝ) * (1/2:ℝ)^(j + 1)
@@ -2544,7 +2543,7 @@ lemma mem_CantorSet_of_ternary_02 {y : ℝ} (d : ℕ → ℕ)
     apply Finset.sum_congr rfl
     intro j hj
     simp only [Finset.mem_range] at hj
-    rw [dif_pos hj]
+    rw [dite_eq_left hj]
     simp only [a]
     field_simp; ring_nf; simp
   have h_tail_nonneg : 0 ≤ ∑' j, (d (n + j) : ℝ) * (1/3:ℝ)^(n + j + 1) := by
@@ -2610,18 +2609,18 @@ lemma binaryToTernary_exists : ∃ g : ℝ → ℝ, BinaryToTernaryProperties g 
       · norm_num
     zero_outside := by
       intro x hx
-      simp only [binaryToTernaryFn, if_neg hx]
+      simp only [binaryToTernaryFn, ite_eq_right hx]
     zero_at_zero := by
       simp only [binaryToTernaryFn]
       have h0 : (0:ℝ) ∈ Set.Icc 0 1 := ⟨le_refl 0, by norm_num⟩
-      rw [if_pos h0]
+      rw [ite_eq_left h0]
       simp only [binaryDigit_zero, Nat.cast_zero, mul_zero, zero_mul, tsum_zero]
     zero_set_countable := by
       apply Set.Countable.mono _ (Set.countable_singleton 0)
       intro x hx
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_singleton_iff] at hx ⊢
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_singleton_iff] at hx ⊢
       obtain ⟨hx_in, hgx⟩ := hx
-      simp only [binaryToTernaryFn, if_pos hx_in] at hgx
+      simp only [binaryToTernaryFn, ite_eq_left hx_in] at hgx
       by_contra hx_ne
       have hx_pos : 0 < x := by
         rcases eq_or_lt_of_le hx_in.1 with rfl | hpos
@@ -2652,17 +2651,17 @@ lemma binaryToTernary_exists : ∃ g : ℝ → ℝ, BinaryToTernaryProperties g 
           subst hy1
           have h_exists_k : ∃ k, binaryDigit x (k + 1) = 0 := by
             by_contra h_all_one
-            push_neg at h_all_one
+            push Not at h_all_one
             have h_all_eq_one : ∀ j, binaryDigit x (j + 1) = 1 := by
               intro j
               have h := binaryDigit_le_one x (j + 1)
               have hne := h_all_one j
               omega
             by_cases hx_dyadic : x ∈ DyadicRationals
-            · simp only [DyadicRationals, Set.mem_setOf_eq] at hx_dyadic
+            · simp only [DyadicRationals, Set.mem_ofPred_eq] at hx_dyadic
               obtain ⟨k, n, hx_eq, _⟩ := hx_dyadic
               have h_zero_after : binaryDigit x (n + 1) = 0 := by
-                simp only [binaryDigit, if_pos hx_Ico]
+                simp only [binaryDigit, ite_eq_left hx_Ico]
                 rw [hx_eq]
                 have h_calc : (2:ℝ)^(n + 1) * (k / (2:ℝ)^n) = 2 * k := by field_simp; ring
                 rw [h_calc]
@@ -2705,7 +2704,7 @@ lemma binaryToTernary_exists : ∃ g : ℝ → ℝ, BinaryToTernaryProperties g 
     image_in_cantor := by
       intro y hy
       obtain ⟨x, hx, rfl⟩ := hy
-      simp only [binaryToTernaryFn, if_pos hx]
+      simp only [binaryToTernaryFn, ite_eq_left hx]
       let d : ℕ → ℕ := fun j => 2 * binaryDigit x (j + 1)
       have hd : ∀ j, d j ∈ ({0, 2} : Set ℕ) := by
         intro j
@@ -2723,14 +2722,14 @@ lemma binaryToTernary_exists : ∃ g : ℝ → ℝ, BinaryToTernaryProperties g 
     injective_on_nonterminating := by
       let A := Set.Icc (0:ℝ) 1 \ DyadicRationals
       use A
-      refine ⟨Set.diff_subset, ?_, ?_, ?_⟩
+      refine ⟨Set.sdiff_subset, ?_, ?_, ?_⟩
       · have h_sdiff : Set.Icc (0:ℝ) 1 \ A = DyadicRationals ∩ Set.Icc 0 1 := by
-          simp only [A, Set.diff_diff_right, Set.diff_self, Set.empty_union, Set.inter_comm]
+          simp only [A, Set.sdiff_sdiff_right, Set.sdiff_self, Set.empty_union, Set.inter_comm]
         rw [h_sdiff]
         exact DyadicRationals.countable.mono Set.inter_subset_left
       · intro x₁ hx₁ x₂ hx₂ heq
-        simp only [A, Set.mem_diff] at hx₁ hx₂
-        simp only [binaryToTernaryFn, if_pos hx₁.1, if_pos hx₂.1] at heq
+        simp only [A, Set.mem_sdiff] at hx₁ hx₂
+        simp only [binaryToTernaryFn, ite_eq_left hx₁.1, ite_eq_left hx₂.1] at heq
         let d₁ : ℕ → ℕ := fun j => 2 * binaryDigit x₁ (j + 1)
         let d₂ : ℕ → ℕ := fun j => 2 * binaryDigit x₂ (j + 1)
         have hd₁ : ∀ j, d₁ j ∈ ({0, 2} : Set ℕ) := by
@@ -2762,13 +2761,13 @@ lemma binaryToTernary_exists : ∃ g : ℝ → ℝ, BinaryToTernaryProperties g 
         intro j
         rcases j with _ | j
         ·
-          simp only [binaryDigit, if_pos hx₁_Ico, if_pos hx₂_Ico, pow_zero, one_mul]
+          simp only [binaryDigit, ite_eq_left hx₁_Ico, ite_eq_left hx₂_Ico, pow_zero, one_mul]
           have h1 : ⌊x₁⌋₊ = 0 := Nat.floor_eq_zero.mpr hx₁_Ico.2
           have h2 : ⌊x₂⌋₊ = 0 := Nat.floor_eq_zero.mpr hx₂_Ico.2
           simp [h1, h2]
         · exact hbinary_eq j
       · ext x
-        simp only [A, Set.mem_inter_iff, Set.mem_diff, Set.mem_empty_iff_false, iff_false, not_and]
+        simp only [A, Set.mem_inter_iff, Set.mem_sdiff, Set.mem_empty_iff_false, iff_false, not_and]
         intro ⟨_, hx_not_dyadic⟩ hx_dyadic
         exact hx_not_dyadic hx_dyadic
   }
@@ -2793,7 +2792,7 @@ lemma binaryToTernary_eq_zero_iff {x : ℝ} (hx : x ∈ Set.Icc (0:ℝ) 1) :
       intro y hy
       constructor
       · exact ⟨hy.1, le_trans hy.2 hx.2⟩
-      · simp only [Set.mem_setOf_eq]
+      · simp only [Set.mem_ofPred_eq]
         have h0y : (0:ℝ) ∈ Set.Icc 0 1 := ⟨le_refl 0, by norm_num⟩
         have hy_in : y ∈ Set.Icc 0 1 := ⟨hy.1, le_trans hy.2 hx.2⟩
         have h_mono1 := binaryToTernary_props.monotone_on h0y hy_in hy.1
@@ -2853,7 +2852,7 @@ lemma f_lifted_zero_set_measurable : LebesgueMeasurable {x : EuclideanSpace' 1 |
       (Real.equiv_EuclideanSpace' '' (Set.Icc 0 1)ᶜ) ∪
       (Real.equiv_EuclideanSpace' '' (Set.Icc 0 1 ∩ {x | binaryToTernary x = 0})) := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_image]
+    simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_image]
     constructor
     · intro hfx
       simp only [f_lifted] at hfx
@@ -2870,7 +2869,7 @@ lemma f_lifted_zero_set_measurable : LebesgueMeasurable {x : EuclideanSpace' 1 |
       by_cases h_in : EuclideanSpace'.equiv_Real x ∈ Set.Icc 0 1
       · right
         use EuclideanSpace'.equiv_Real x
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
         constructor
         · exact ⟨h_in, hbinary_eq⟩
         · exact EuclideanSpace'.equiv_Real.symm_apply_apply x
@@ -2917,7 +2916,7 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
       (Real.equiv_EuclideanSpace' '' Set.Ioi 1) ∪
       {x : EuclideanSpace' 1 | EuclideanSpace'.equiv_Real x ∈ Set.Icc 0 1 ∧ f_lifted x ≤ t} := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_image]
+    simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_image]
     constructor
     · intro hfx
       by_cases h_neg : EuclideanSpace'.equiv_Real x < 0
@@ -2929,7 +2928,7 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
           use EuclideanSpace'.equiv_Real x
           exact ⟨h_big, EuclideanSpace'.equiv_Real.symm_apply_apply x⟩
         · right
-          push_neg at h_neg h_big
+          push Not at h_neg h_big
           exact ⟨⟨h_neg, h_big⟩, hfx⟩
     · intro h
       rcases h with (⟨r, hr, hrx⟩ | ⟨r, hr, hrx⟩) | ⟨h_in, hfx⟩
@@ -2983,7 +2982,7 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
     have h_set_eq : {x : EuclideanSpace' 1 | EuclideanSpace'.equiv_Real x ∈ Set.Icc 0 1 ∧ f_lifted x ≤ ↑t'} =
         Real.equiv_EuclideanSpace' '' S := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_image, S]
+      simp only [Set.mem_ofPred_eq, Set.mem_image, S]
       constructor
       · intro ⟨h_in, hfx⟩
         use EuclideanSpace'.equiv_Real x
@@ -3004,7 +3003,7 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
     have h_ordConnected : S.OrdConnected := Convex.ordConnected h_convex
     by_cases hS_empty : S = ∅
     · rw [hS_empty]; simp only [Set.image_empty]; exact LebesgueMeasurable.empty
-    push_neg at hS_empty
+    push Not at hS_empty
     have h_zero_in_S : (0:ℝ) ∈ S := by
       simp only [S, Set.mem_Icc]
       constructor
@@ -3028,7 +3027,7 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
     have h_S_subset_Icc : S ⊆ Set.Icc 0 a := fun x hx => ⟨hx.1.1, le_csSup h_bdd_above hx⟩
     have h_image_Icc : Real.equiv_EuclideanSpace' '' Set.Icc 0 a =
         {x : EuclideanSpace' 1 | EuclideanSpace'.equiv_Real x ∈ Set.Icc 0 a} := by
-      ext x; simp only [Set.mem_image, Set.mem_setOf_eq]
+      ext x; simp only [Set.mem_image, Set.mem_ofPred_eq]
       constructor
       · intro ⟨r, hr, hrx⟩
         rw [← hrx, EuclideanSpace'.equiv_Real.apply_symm_apply]; exact hr
@@ -3061,7 +3060,7 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
       rw [h_S_eq]
       have h_image_Ico : Real.equiv_EuclideanSpace' '' Set.Ico 0 a =
           {x : EuclideanSpace' 1 | EuclideanSpace'.equiv_Real x ∈ Set.Ico 0 a} := by
-        ext x; simp only [Set.mem_image, Set.mem_setOf_eq]
+        ext x; simp only [Set.mem_image, Set.mem_ofPred_eq]
         constructor
         · intro ⟨r, hr, hrx⟩
           rw [← hrx, EuclideanSpace'.equiv_Real.apply_symm_apply]; exact hr
@@ -3069,11 +3068,11 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
           exact ⟨EuclideanSpace'.equiv_Real x, hx, EuclideanSpace'.equiv_Real.symm_apply_apply x⟩
       -- [0, a) = [0, a] \ {a}
       have h_diff : Set.Ico 0 a = Set.Icc 0 a \ {a} := by
-        ext x; simp only [Set.mem_Ico, Set.mem_diff, Set.mem_Icc, Set.mem_singleton_iff]
+        ext x; simp only [Set.mem_Ico, Set.mem_sdiff, Set.mem_Icc, Set.mem_singleton_iff]
         constructor
         · intro ⟨h1, h2⟩; exact ⟨⟨h1, le_of_lt h2⟩, ne_of_lt h2⟩
         · intro ⟨⟨h1, h2⟩, h3⟩; exact ⟨h1, lt_of_le_of_ne h2 h3⟩
-      rw [h_diff, Set.image_diff Real.equiv_EuclideanSpace'.injective, Set.diff_eq]
+      rw [h_diff, Set.image_sdiff Real.equiv_EuclideanSpace'.injective, Set.sdiff_eq]
       apply LebesgueMeasurable.inter h_meas_Icc
       apply LebesgueMeasurable.complement
       apply IsNull.measurable
@@ -3082,26 +3081,26 @@ lemma sublevel_set_measurable (t : EReal) (ht_pos : 0 < t) (ht_lt_one : t < 1) :
 lemma f_lifted_measurable : UnsignedMeasurable f_lifted := by
   -- Apply Lemma 1.3.9(viii): f is measurable iff ∀ t, {x | f(x) ≤ t} is measurable
   have h_iff : UnsignedMeasurable f_lifted ↔ (∀ t, LebesgueMeasurable {x | f_lifted x ≤ t}) :=
-    (UnsignedMeasurable.TFAE f_lifted_unsigned).out 0 7
+    (UnsignedMeasurable.TFAE f_lifted_unsigned).out 1 8
   apply h_iff.mpr
   intro t
   rcases lt_trichotomy t 0 with ht_neg | ht_zero | ht_pos
   · have h_empty : {x | f_lifted x ≤ t} = ∅ := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_le]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le]
       exact lt_of_lt_of_le ht_neg (f_lifted_unsigned x)
     rw [h_empty]; exact LebesgueMeasurable.empty
   · subst ht_zero
     have h_eq : {x | f_lifted x ≤ (0 : EReal)} = {x | f_lifted x = 0} := by
       ext x
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       constructor
       · intro hle; exact le_antisymm hle (f_lifted_unsigned x)
       · intro heq; rw [heq]
     rw [h_eq]; exact f_lifted_zero_set_measurable
   · rcases le_or_gt 1 t with ht_ge_one | ht_lt_one
     · have h_univ : {x | f_lifted x ≤ t} = Set.univ := by
-        ext x; simp only [Set.mem_setOf_eq, Set.mem_univ, iff_true]
+        ext x; simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
         exact le_trans (f_lifted_le_one x) ht_ge_one
       rw [h_univ]; exact IsOpen.measurable isOpen_univ
     · exact sublevel_set_measurable t ht_pos ht_lt_one
@@ -3140,7 +3139,7 @@ lemma exists_nonmeasurable_with_cantor_image :
   case hF_nonmeas =>
     intro hF_meas
     have hV_decomp : VitaliSet = F ∪ (VitaliSet \ A) := by
-      ext x; simp only [F, Set.mem_inter_iff, Set.mem_union, Set.mem_diff]
+      ext x; simp only [F, Set.mem_inter_iff, Set.mem_union, Set.mem_sdiff]
       constructor
       · intro hx
         by_cases hxA : x ∈ A
@@ -3253,7 +3252,7 @@ example : ∃ (f: EuclideanSpace' 1 → EReal) (_hf: UnsignedMeasurable f) (E: S
       have h_diff_null : IsNull (Icc' \ A') := by
         apply Countable.Lebesgue_measure Nat.one_pos
         have : Icc' \ A' = Real.equiv_EuclideanSpace' '' (Set.Icc 0 1 \ A) := by
-          ext x; simp only [Set.mem_diff, Set.mem_image, Icc', A']
+          ext x; simp only [Set.mem_sdiff, Set.mem_image, Icc', A']
           constructor
           · rintro ⟨⟨r, hr, rfl⟩, hn⟩
             exact ⟨r, ⟨hr, fun ha => hn ⟨r, ha, rfl⟩⟩, rfl⟩
@@ -3264,10 +3263,10 @@ example : ∃ (f: EuclideanSpace' 1 → EReal) (_hf: UnsignedMeasurable f) (E: S
       have h_A'_sub : A' ⊆ Icc' := by rintro _ ⟨a, ha, rfl⟩; exact ⟨a, hA_sub ha, rfl⟩
       -- A' ∩ (Icc' \ A')ᶜ = Icc' ∩ (Icc' \ A')ᶜ = A' (since A' ⊆ Icc')
       refine LebesgueMeasurable.of_ae_eq hIcc'_meas h_diff_null ?_
-      ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_diff]
+      ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_sdiff]
       constructor
       · intro ⟨hx, _⟩; exact ⟨h_A'_sub hx, fun ⟨_, h⟩ => h hx⟩
-      · intro ⟨hi, hn⟩; push_neg at hn; exact ⟨hn hi, fun ⟨_, h⟩ => h (hn hi)⟩
+      · intro ⟨hi, hn⟩; push Not at hn; exact ⟨hn hi, fun ⟨_, h⟩ => h (hn hi)⟩
     -- F' = f⁻¹'(...) ∩ A' is measurable
     have : F' = Remark_1_3_10.f_lifted ⁻¹' (Real.toEReal '' (Remark_1_3_10.binaryToTernary '' F)) ∩ A' :=
       h_preimage_inter.symm
@@ -3357,12 +3356,12 @@ theorem ComplexMeasurable.TFAE {d:ℕ} {f: EuclideanSpace' d → ℂ}:
 /-- Exercise 1.3.8(i) -/
 theorem Continuous.RealMeasurable {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: Continuous f) : RealMeasurable f := by
   have h_iff : _root_.RealMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (_root_.RealMeasurable.TFAE (f := f)).out 0 3
+    (_root_.RealMeasurable.TFAE (f := f)).out 1 4
   exact h_iff.mpr fun U hU => IsOpen.measurable (hU.preimage hf)
 
 theorem Continuous.ComplexMeasurable {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: Continuous f) : ComplexMeasurable f := by
   have h_iff : _root_.ComplexMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (_root_.ComplexMeasurable.TFAE (f := f)).out 0 4
+    (_root_.ComplexMeasurable.TFAE (f := f)).out 1 5
   exact h_iff.mpr fun U hU => IsOpen.measurable (hU.preimage hf)
 
 /-- Exercise 1.3.8(ii) -/
@@ -3375,7 +3374,7 @@ theorem RealMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℝ} (hf: Rea
     (heq: AlmostEverywhereEqual f g) : RealMeasurable g := by
   obtain ⟨u, hu, huf⟩ := hf
   have h_iff : RealMeasurable g ↔ ∃ u, (∀ n, RealSimpleFunction (u n)) ∧
-      PointwiseAeConvergesTo u g := (RealMeasurable.TFAE (f := g)).out 0 1
+      PointwiseAeConvergesTo u g := (RealMeasurable.TFAE (f := g)).out 1 2
   refine h_iff.mpr ⟨u, hu, ?_⟩
   exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
@@ -3383,7 +3382,7 @@ theorem ComplexMeasurable.aeEqual {d:ℕ} {f g: EuclideanSpace' d → ℂ} (hf: 
     (heq: AlmostEverywhereEqual f g) : ComplexMeasurable g := by
   obtain ⟨u, hu, huf⟩ := hf
   have h_iff : ComplexMeasurable g ↔ ∃ u, (∀ n, ComplexSimpleFunction (u n)) ∧
-      PointwiseAeConvergesTo u g := (ComplexMeasurable.TFAE (f := g)).out 0 1
+      PointwiseAeConvergesTo u g := (ComplexMeasurable.TFAE (f := g)).out 1 2
   refine h_iff.mpr ⟨u, hu, ?_⟩
   exact AlmostAlways.mp heq fun x hx => hx ▸ huf x
 
@@ -3399,16 +3398,16 @@ theorem ComplexMeasurable.aeLimit {d:ℕ} {f: EuclideanSpace' d → ℂ} (g: ℕ
 /-- Exercise 1.3.8(v) -/
 theorem RealMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℝ} (hf: RealMeasurable f) {φ: ℝ → ℝ} (hφ: Continuous φ)  : RealMeasurable (φ ∘ f) := by
   have h_source : RealMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (RealMeasurable.TFAE (f := f)).out 0 3
+    (RealMeasurable.TFAE (f := f)).out 1 4
   have h_target : RealMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
-    (RealMeasurable.TFAE (f := φ ∘ f)).out 0 3
+    (RealMeasurable.TFAE (f := φ ∘ f)).out 1 4
   exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
 theorem ComplexMeasurable.comp_cts {d:ℕ} {f: EuclideanSpace' d → ℂ} (hf: ComplexMeasurable f) {φ: ℂ → ℂ} (hφ: Continuous φ)  : ComplexMeasurable (φ ∘ f) := by
   have h_source : ComplexMeasurable f ↔ ∀ U, IsOpen U → LebesgueMeasurable (f ⁻¹' U) :=
-    (ComplexMeasurable.TFAE (f := f)).out 0 4
+    (ComplexMeasurable.TFAE (f := f)).out 1 5
   have h_target : ComplexMeasurable (φ ∘ f) ↔ ∀ U, IsOpen U → LebesgueMeasurable ((φ ∘ f) ⁻¹' U) :=
-    (ComplexMeasurable.TFAE (f := φ ∘ f)).out 0 4
+    (ComplexMeasurable.TFAE (f := φ ∘ f)).out 1 5
   exact h_target.mpr fun U hU => h_source.mp hf (φ ⁻¹' U) (hU.preimage hφ)
 
 /-- Exercise 1.3.8(vi) (Sum of measurable functions) -/

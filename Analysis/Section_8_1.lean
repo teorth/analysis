@@ -93,8 +93,8 @@ theorem CountablyInfinite.iff_image_inj {A:Type} (X: Set A) : CountablyInfinite 
     refine ⟨ ⟨ Subtype.val ∘ f, ?_ ⟩, ?_ ⟩
     . intro x y hxy; apply hright.injective; simp_all [Subtype.val_inj]
     ext; simp; constructor
-    . intro hx; use g ⟨ _, hx ⟩; simp [hleft _]
-    rintro ⟨ _, rfl ⟩; aesop
+    . intro hx; use g ⟨ _, hx ⟩; exact congrArg Subtype.val (hleft _)
+    rintro ⟨ _, rfl ⟩; exact (f _).property
   intro ⟨ f, hf ⟩
   have := Function.leftInverse_invFun (Function.Embedding.injective f)
   use (Function.invFun f) ∘ Subtype.val; split_ands
@@ -143,7 +143,7 @@ theorem Nat.min_eq_sInf {X : Set ℕ} (hX : X.Nonempty) : min X = sInf X := by
 open Classical in
 /-- Equivalence with Mathlib's {name}`Nat.find` method -/
 theorem Nat.min_eq_find {X : Set ℕ} (hX : X.Nonempty) : min X = Nat.find hX := by
-  symm; rw [Nat.find_eq_iff]; have := min_spec hX; grind
+  symm; rw [Nat.find_eq_iff hX]; have := min_spec hX; grind
 
 /-- Proposition 8.1.5 -/
 theorem Nat.monotone_enum_of_infinite (X : Set ℕ) [Infinite X] : ∃! f : ℕ → X, Function.Bijective f ∧ StrictMono f := by
@@ -227,12 +227,12 @@ theorem Int.countablyInfinite : CountablyInfinite ℤ := by
   -- This proof is written to follow the structure of the original text.
   have h1 : CountablyInfinite {n:ℤ | n ≥ 0} := by
     rw [CountablyInfinite.iff_image_inj]
-    use ⟨ (↑·:ℕ → ℤ), by intro _ _ _; simp_all ⟩
+    use ⟨ (↑·:ℕ → ℤ), Nat.cast_injective ⟩
     ext n; simp; refine ⟨ ?_, by aesop ⟩
     . intro h; use n.toNat; simp [h]
   have h2 : CountablyInfinite {n:ℤ | n ≤ 0} := by
     rw [CountablyInfinite.iff_image_inj]
-    use ⟨ (-↑·:ℕ → ℤ), by intro _ _ _; simp_all ⟩
+    use ⟨ Neg.neg ∘ (↑·:ℕ → ℤ), neg_injective.comp Nat.cast_injective ⟩
     ext n; simp; refine ⟨ ?_, by aesop ⟩
     intro h; use (-n).toNat; simp [h]
   have : CountablyInfinite (.univ : Set ℤ) := by

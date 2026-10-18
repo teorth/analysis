@@ -76,7 +76,7 @@ abbrev Function.mk_fn {X Y: Set} (f: X → Y) : Function X Y :=
 
 /-- Definition 3.3.1 -/
 theorem Function.eval {X Y: Set} (f: Function X Y) (x: X) (y: Y) : y = f x ↔ f.P x y := by
-  convert ((f.unique x).choose_iff y).symm
+  exact ((f.unique x).choose_iff y).symm
 
 @[simp]
 theorem Function.eval_of {X Y: Set} (f: X → Y) (x:X) : (Function.mk_fn f) x = f x := by
@@ -90,7 +90,7 @@ theorem SetTheory.Set.P_3_3_3a_existsUnique (x: Nat) : ∃! y: Nat, P_3_3_3a x y
   apply ExistsUnique.intro ((x+1:ℕ):Nat)
   . simp [P_3_3_3a]
   intro y h
-  simpa [P_3_3_3a, Equiv.symm_apply_eq] using h
+  simp [P_3_3_3a, Equiv.symm_apply_eq] at h; exact h
 
 abbrev SetTheory.Set.f_3_3_3a : Function Nat Nat := Function.mk P_3_3_3a P_3_3_3a_existsUnique
 
@@ -314,7 +314,7 @@ theorem Function.onto_iff {X Y: Set} (f: Function X Y) : f.onto ↔ Function.Sur
 
 /-- Example 3.3.21 (using Mathlib) -/
 example : ¬ Function.Surjective (fun (n:ℤ) ↦ n^2) := by
-  unfold Function.Surjective; push_neg
+  unfold Function.Surjective; push Not
   use (-1); intro a
   linarith [sq_nonneg a]
 
@@ -368,7 +368,7 @@ example : Function.Bijective (fun n ↦ ⟨ n+1, by omega⟩ : ℕ → { n:ℕ /
 
 example : ¬ Function.Bijective (fun n ↦ n+1) := by
   suffices h : ¬ Function.Surjective (fun n ↦ n+1) by unfold Function.Bijective; tauto
-  unfold Function.Surjective; push_neg
+  unfold Function.Surjective; push Not
   use 0; intros
   symm; apply Nat.zero_ne_add_one
 
@@ -385,7 +385,7 @@ theorem Function.bijective_incorrect_def :
   rw [Function.bijective]
   suffices h : ¬ f.one_to_one by tauto
   rw [Function.one_to_one_iff]
-  push_neg; use 0, 1; simp [f]
+  push Not; use 0, 1; simp [f]
 
 /--
   We cannot use the notation {syntax term}`f⁻¹` for the inverse because in Mathlib's {name}`Inv` class, the inverse
@@ -398,7 +398,7 @@ abbrev Function.inverse {X Y: Set} (f: Function X Y) (h: f.bijective) :
     intros
     apply existsUnique_of_exists_of_unique
     . aesop
-    intro _ _ hx hx'; simp at hx hx'
+    intro _ _ hx hx'
     rw [←hx'] at hx
     apply f.one_to_one_iff.mp h.1
     simp [hx]

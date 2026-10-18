@@ -1,4 +1,5 @@
 import Mathlib.Tactic
+import Mathlib.Analysis.Calculus.Deriv.Basic
 import Analysis.Section_9_6
 /-!
 # Analysis I, Section 10.2: Local maxima, local minima, and derivatives

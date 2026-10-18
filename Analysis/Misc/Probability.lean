@@ -14,7 +14,7 @@ namespace FinitelyAdditive
 
 instance instFunLike (A:Type*) [BooleanAlgebra A] : FunLike (FinitelyAdditive A) A ℝ where
   coe ℙ := ℙ.prob
-  coe_injective' f g h := by { cases f; cases g; congr }
+  coe_injective f g h := by { cases f; cases g; congr }
 
 variable {A:Type*} [BooleanAlgebra A] (ℙ: FinitelyAdditive A)
          {A':Type*} [BooleanAlgebra A'] (ℙ': FinitelyAdditive A')
@@ -88,8 +88,8 @@ class ExampleProb {A:Type*} [BooleanAlgebra A] (ℙ: FinitelyAdditive A) where
   prob_E := by simp [hf, Ω.prob_E]
   prob_EF := by simp [hf, Ω.prob_EF, ←map_sup]
   prob_EF' := by simp [hf, Ω.prob_EF', ←map_inf]
-  prob_EG := by simp [hf, Ω.prob_EG, ←map_sdiff']
-  prob_G := by simp [hf, Ω.prob_G, ←map_compl']
+  prob_EG := by rw [←map_sdiff', hf.map, Ω.prob_EG]
+  prob_G := by rw [←map_compl', hf.map, Ω.prob_G]
 
 
 end FinitelyAdditive

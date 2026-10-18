@@ -34,7 +34,7 @@ example : (3:ℤ) = 2 → (3:ℤ)^2 = 4 := example_A_2_1 3
 
 example : (-2:ℤ) = 2 → (-2:ℤ)^2 = 4 := example_A_2_1 (-2)
 
-#check _root_.not_imp
+#check Classical.not_imp
 
 example : ¬ ((2+2=4) → (4+4)=2) := by
   rw [Classical.not_imp]
@@ -66,7 +66,7 @@ example : ((2+2:ℤ)=5) → (4=(10-4:ℤ)) := by
   intro h
   have : (4 + 4:ℤ) = 10 := by
     replace h := congr(2*$h)
-    convert h using 1
+    convert h using 1 <;> norm_num
   rwa [←eq_sub_iff_add_eq] at this
 
 /-- Theorem A.2.4 -/
