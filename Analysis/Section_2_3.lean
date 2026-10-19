@@ -136,7 +136,7 @@ theorem Nat.mul_lt_mul_of_pos_right {a b c: Nat} (h: a < b) (hc: c.IsPos) : a * 
   rw [lt_iff_add_pos]
   use d*c
 
-/-- Proposition 2.3.6 (Multiplication preserves order) -/
+/-- Proposition 2.3.6 (Multiplication preserves order, on the right) -/
 theorem Nat.mul_gt_mul_of_pos_right {a b c: Nat} (h: a > b) (hc: c.IsPos) :
     a * c > b * c := mul_lt_mul_of_pos_right h hc
 
@@ -146,7 +146,7 @@ theorem Nat.mul_lt_mul_of_pos_left {a b c: Nat} (h: a < b) (hc: c.IsPos) : c * a
   simp [mul_comm]
   exact mul_lt_mul_of_pos_right h hc
 
-/-- Proposition 2.3.6 (Multiplication preserves order) -/
+/-- Proposition 2.3.6 (Multiplication preserves order, on the left) -/
 theorem Nat.mul_gt_mul_of_pos_left {a b c: Nat} (h: a > b) (hc: c.IsPos) :
     c * a > c * b := mul_lt_mul_of_pos_left h hc
 
@@ -195,7 +195,7 @@ Compare with Mathlib's {name}`Nat.pow_zero` -/
 @[simp]
 theorem Nat.pow_zero (m: Nat) : m ^ (0:Nat) = 1 := recurse_zero (fun _ prod ↦ prod * m) _
 
-/-- Definition 2.3.11 (Exponentiation for natural numbers) -/
+/-- Definition 2.3.11 (Exponentiation for natural numbers, successor) -/
 @[simp]
 theorem Nat.zero_pow_zero : (0:Nat) ^ 0 = 1 := recurse_zero (fun _ prod ↦ prod * 0) _
 

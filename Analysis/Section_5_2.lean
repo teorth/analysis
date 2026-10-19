@@ -46,11 +46,11 @@ example : ¬ (0.1:ℚ).Steady ((fun n:ℕ ↦ ((-1)^n:ℚ)):Sequence) := by sorr
 /-- Example 5.2.2 (c) -/
 example : ¬ (0.1:ℚ).Steady ((fun n:ℕ ↦ ((1.1:ℚ) * (-1)^n)):Sequence) := by sorry
 
-/-- Definition 5.2.3 (Eventually ε-close sequences) -/
+/-- Definition 5.2.3 (Eventually ε-close sequences, unfolded) -/
 lemma Rat.eventuallyClose_def (ε: ℚ) (a b: Sequence) :
     ε.EventuallyClose a b ↔ ∃ N, ε.CloseSeq (a.from N) (b.from N) := by rfl
 
-/-- Definition 5.2.3 (Eventually ε-close sequences) -/
+/-- Definition 5.2.3 (Eventually ε-close sequences, in terms of the terms) -/
 lemma Rat.eventuallyClose_iff (ε: ℚ) (a b: ℕ → ℚ) :
     ε.EventuallyClose (a:Sequence) (b:Sequence) ↔ ∃ N, ∀ n ≥ N, |a n - b n| ≤ ε := by sorry
 
@@ -68,11 +68,11 @@ example : (0.01:ℚ).EventuallyClose ((fun n:ℕ ↦ (1:ℚ)+10^(-(n:ℤ)-1)):Se
 abbrev Sequence.Equiv (a b: ℕ → ℚ) : Prop :=
   ∀ ε > (0:ℚ), ε.EventuallyClose (a:Sequence) (b:Sequence)
 
-/-- Definition 5.2.6 (Equivalent sequences) -/
+/-- Definition 5.2.6 (Equivalent sequences, unfolded) -/
 lemma Sequence.equiv_def (a b: ℕ → ℚ) :
     Equiv a b ↔ ∀ (ε:ℚ), ε > 0 → ε.EventuallyClose (a:Sequence) (b:Sequence) := by rfl
 
-/-- Definition 5.2.6 (Equivalent sequences) -/
+/-- Definition 5.2.6 (Equivalent sequences, in terms of the terms) -/
 lemma Sequence.equiv_iff (a b: ℕ → ℚ) : Equiv a b ↔ ∀ ε > 0, ∃ N, ∀ n ≥ N, |a n - b n| ≤ ε := by
   sorry
 
