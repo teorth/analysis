@@ -183,7 +183,7 @@ theorem integ_eq_antideriv_sub {a b:ℝ} (h:a ≤ b) {f F: ℝ → ℝ}
                   . rw [bddAbove_def]
                     choose M hM using hf.1; use M
                     simp [abs_le', -Set.mem_Icc] at hM ⊢
-                    intro x hx; rw [subset_iff] at hJ; specialize hM x (hJ hx); tauto
+                    intro x hx; rw [subset_iff] at hJ; specialize hM x (hJ hx); linarith
                   simp; use e; simp; exact ((subset_iff _ _).mp (Ioo_subset J)) he
             rw [←mem_closure_iff_clusterPt]
             apply closure_mono (s := .Ioo e d)

@@ -25,6 +25,8 @@ Users of the companion who have completed the exercises in this section are welc
 
 namespace Chapter5
 
+open scoped Pointwise
+
 /-- Definition 5.5.1 (upper bounds). Here we use the {name}`upperBounds` set defined in Mathlib. -/
 theorem Real.upperBound_def (E: Set Real) (M: Real) : M ∈ upperBounds E ↔ ∀ x ∈ E, x ≤ M :=
   mem_upperBounds

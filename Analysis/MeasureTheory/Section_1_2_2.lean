@@ -920,9 +920,11 @@ theorem Jordan_measurable.lebesgue {d:ℕ} {E: Set (EuclideanSpace' d)} (hE: Jor
 
 open BoundedInterval
 
+noncomputable section
 abbrev CantorInterval (n:ℕ) : Set ℝ := ⋃ a : Fin n → ({0, 2}:Set ℕ), (Icc (∑ i, (a i)/(3:ℝ)^(i.val+1)) (∑ i, a i/(3:ℝ)^(i.val+1) + 1/(3:ℝ)^n)).toSet
 
 abbrev CantorSet : Set ℝ := ⋂ n : ℕ, CantorInterval n
+end
 
 /-- Exercise 1.2.9 (Middle thirds Cantor set ) -/
 theorem CantorSet.compact : IsCompact CantorSet := by

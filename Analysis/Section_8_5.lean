@@ -283,7 +283,7 @@ theorem WellFoundedLT.partialOrder {X:Type} [PartialOrder X] (x₀ : X) : ∃ Y 
     intro x hx hxx₀
     rcases hx with rfl | hx
     . unfold sY_infty; congr 1
-      symm; apply Subtype.val_injective; convert hF _
+      symm; apply Subtype.val_injective; convert hF _ using 1
       . ext; simp; constructor
         . grind
         rintro ⟨ _ | _, _ ⟩

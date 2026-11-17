@@ -105,7 +105,7 @@ example : (2+2=4) ∨ (2353 + 5931 = 7284) := by
   left
   norm_num
 
-#check Xor'
+#check Xor
 
 /-- Negation -/
 example {X:Prop} : (¬ X = true) ↔ (X = false) := by simp

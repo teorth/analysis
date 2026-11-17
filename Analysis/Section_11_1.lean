@@ -210,6 +210,9 @@ structure Partition (I: BoundedInterval) where
 instance Partition.instMembership (I: BoundedInterval) : Membership BoundedInterval (Partition I) where
   mem P J := J ∈ P.intervals
 
+theorem Partition.mem_def {I: BoundedInterval} (P: Partition I) (J: BoundedInterval) :
+  J ∈ P ↔ J ∈ P.intervals := by rfl
+
 instance Partition.instBot (I: BoundedInterval) : Bot (Partition I) where
   bot := {
     intervals := {I}
@@ -371,7 +374,7 @@ theorem Partition.sum_of_length  (I: BoundedInterval) (P: Partition I) :
     cases I with
     | Ioo a₁ b₁ =>
       obtain hK | hK := hK <;> simp_all [mem_iff]
-      . use Ioo c b₁, hK, Ioc a₁ c; apply join_Ioc_Ioo <;> tauto
+      . use Ioo c b₁, hK, Ioc a₁ c; apply join_Ioc_Ioo <;> simp_all
       use Ico c b₁, hK, Ioo a₁ c
       apply P.contains at hK; simp [subset_iff] at hK
       have : c ∈ Set.Ico c b₁ := by grind

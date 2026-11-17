@@ -242,7 +242,7 @@ theorem DyadicCube'.partition (d n:ℕ) : IsPartition (fun (a: Fin d → ℤ) �
   by sorry
 
 @[instance_reducible]
-def DyadicCube'.boolean_algebra (d n:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
+noncomputable def DyadicCube'.boolean_algebra (d n:ℕ) : ConcreteBooleanAlgebra (EuclideanSpace' d) :=
   (DyadicCube'.partition d n).to_ConcreteBooleanAlgebra
 
 theorem DyadicCube'.boolean_algebra_mono (d:ℕ) {m n:ℕ} (h: m ≤ n) :

@@ -474,32 +474,36 @@ noncomputable def Measure.toCountablyAdditiveMeasure {X:Type*} [M : MeasurableSp
   }
 
 /-- Exercise 1.4.23(i) -/
-theorem Measure.countable_subadditivity {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, Measurable (E n)) :
+theorem Measure.countable_subadditivity {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, MeasurableSet (E n)) :
   μ.measureOf (⋃ n, E n) ≤ ∑' n, μ.measureOf (E n) := by sorry
 
 /-- Exercise 1.4.23(ii) -/
-theorem Measure.upwards_mono {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, Measurable (E n))
+theorem Measure.upwards_mono {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, MeasurableSet (E n))
   (hmono : Monotone E) : μ (⋃ n, E n) = ⨆ n, μ.measureOf (E n) := by sorry
 
 /-- Exercise 1.4.23(iii) -/
-theorem Measure.downwards_mono {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, Measurable (E n))
+theorem Measure.downwards_mono {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, MeasurableSet (E n))
   (hmono : Antitone E) (hfin : ∃ n, μ (E n) < ⊤) : μ (⋂ n, E n) = ⨅ n, μ.measureOf (E n) := by sorry
 
-theorem Measure.downwards_mono_counter : ∃ (X:Type) (M: MeasurableSpace X) (μ: Measure X) (E : ℕ → Set X) (hE: ∀ n, Measurable (E n))
+theorem Measure.downwards_mono_counter : ∃ (X:Type) (M: MeasurableSpace X) (μ: Measure X) (E : ℕ → Set X) (hE: ∀ n, MeasurableSet (E n))
   (hmono : Antitone E), μ (⋂ n, E n) ≠ ⨅ n, μ.measureOf (E n) := by sorry
 
+/-- A sequence of sets converges pointwise to a set when their indicator functions converge pointwise. -/
+def Set.PointwiseConvergesTo {X:Type*} (E : ℕ → Set X) (E' : Set X) : Prop :=
+  _root_.PointwiseConvergesTo (fun n ↦ (E n).indicator (1 : X → ℝ)) (E'.indicator 1)
+
 /-- Exercise 1.4.24 (i) (Dominated convergence for sets) -/
-theorem Measure.measurable_of_lim {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, Measurable (E n))
-  {E' : Set X} (hlim : PointwiseConvergesTo E E') : Measurable E' := by sorry
+theorem Measure.measurable_of_lim {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, MeasurableSet (E n))
+  {E' : Set X} (hlim : Set.PointwiseConvergesTo E E') : MeasurableSet E' := by sorry
 
 /-- Exercise 1.4.24 (ii) (Dominated convergence for sets) -/
-theorem Measure.measure_of_lim {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, Measurable (E n))
-  {E' F : Set X} (hlim : PointwiseConvergesTo E E') (hF : Measurable F) (hfin : μ F < ⊤) (hcon : ∀ n, E n ⊆ F) :
+theorem Measure.measure_of_lim {X:Type*} [MeasurableSpace X] (μ: Measure X) {E : ℕ → Set X} (hE: ∀ n, MeasurableSet (E n))
+  {E' F : Set X} (hlim : Set.PointwiseConvergesTo E E') (hF : MeasurableSet F) (hfin : μ F < ⊤) (hcon : ∀ n, E n ⊆ F) :
   Filter.atTop.Tendsto (fun n ↦ μ (E n)) (nhds (μ E')) := by sorry
 
 /-- Exercise 1.4.24 (iii) (Dominated convergence for sets) -/
-theorem Measure.measure_of_lim_counter : ∃ (X:Type) (M:MeasurableSpace X) (μ: Measure X) (E : ℕ → Set X) (hE: ∀ n, Measurable (E n))
-  (E' F : Set X) (hlim : PointwiseConvergesTo E E') (hF : Measurable F) (hcon : ∀ n, E n ⊆ F),
+theorem Measure.measure_of_lim_counter : ∃ (X:Type) (M:MeasurableSpace X) (μ: Measure X) (E : ℕ → Set X) (hE: ∀ n, MeasurableSet (E n))
+  (E' F : Set X) (hlim : Set.PointwiseConvergesTo E E') (hF : MeasurableSet F) (hcon : ∀ n, E n ⊆ F),
   ¬ Filter.atTop.Tendsto (fun n ↦ μ (E n)) (nhds (μ E')) := by sorry
 
 /-- Exercise 1.4.25 -/

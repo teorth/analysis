@@ -709,7 +709,7 @@ example : ({1, 2}:Set) ∩ {3,4} = ∅ := by
 example : ¬ Disjoint ({1, 2, 3}:Set) {2,3,4} := by
   rw [disjoint_iff]
   intro h
-  change {1, 2, 3} ∩ {2, 3, 4} = ∅ at h
+  change ({1, 2, 3}:Set) ∩ {2, 3, 4} = ∅ at h
   rw [eq_empty_iff_forall_notMem] at h
   aesop
 

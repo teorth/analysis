@@ -74,7 +74,7 @@ theorem NNRealDecimal.surj (x:NNReal) : ∃ d:NNRealDecimal, x = d := by
     . simp
     convert tendsto_pow_atTop_nhds_zero_of_lt_one (?_:(1/10:NNReal) < 1) with n
     . rw [←rpow_natCast, one_div, inv_rpow, rpow_neg]
-    apply div_lt_one_of_lt; bound
+    apply div_lt_one_of_lt; norm_num
   . exact tendsto_const_nhds
   . intro n; simp; calc
     _ = (x * 10^n) * (10:NNReal)^(-n:ℝ) := by

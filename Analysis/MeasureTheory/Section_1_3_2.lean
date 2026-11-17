@@ -206,7 +206,7 @@ private lemma limsupSet_LebesgueMeasurable {g : ℕ → EuclideanSpace' d → ER
   apply LebesgueMeasurable.countable_union
   intro n
   by_cases hn : n ≥ N
-  · convert UnsignedSimpleFunction.levelset_gt_LebesgueMeasurable (hg n) (t + 1 / (M + 1))
+  · convert UnsignedSimpleFunction.levelset_gt_LebesgueMeasurable (hg n) (t + 1 / (M + 1)) using 1
     ext x; simp only [Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop, and_iff_right_iff_imp]; intro _; exact hn
   · convert LebesgueMeasurable.empty
     ext x; simp only [Set.mem_iUnion, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists]
@@ -1034,7 +1034,7 @@ private lemma approx_fn_levelset_LebesgueMeasurable (hf : Unsigned f) (hvi : stm
   by_cases hv_range : v ∈ Set.range (approx_fn f n)
   swap
   · -- v not in range: level set is empty
-    convert LebesgueMeasurable.empty
+    convert LebesgueMeasurable.empty using 1
     ext x; simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     intro h; exact hv_range ⟨x, h⟩
 

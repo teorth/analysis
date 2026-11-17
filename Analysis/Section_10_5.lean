@@ -75,8 +75,10 @@ theorem _root_.Filter.Tendsto.of_div' {a b L:ℝ} (hab: a < b) {f g f' g': ℝ �
         rw [hf']; apply (hf _ _).hasDerivWithinAt.mono <;> grind
       have h2 : HasDerivWithinAt g (g' yn) (.Ioo a (x n)) yn := by
         rw [hg']; apply (hg _ _).hasDerivWithinAt.mono <;> grind
-      observe h3 : HasDerivWithinAt (fun x' ↦ (f x') * (g (x n))) ((f' yn)*(g (x n))) (.Ioo a (x n)) yn
-      observe h4 : HasDerivWithinAt (fun x' ↦ (g x') * (f (x n))) ((g' yn)*(f (x n))) (.Ioo a (x n)) yn
+      have h3 : HasDerivWithinAt (fun x' ↦ (f x') * (g (x n))) ((f' yn)*(g (x n))) (.Ioo a (x n)) yn :=
+        h1.mul_const _
+      have h4 : HasDerivWithinAt (fun x' ↦ (g x') * (f (x n))) ((g' yn)*(f (x n))) (.Ioo a (x n)) yn :=
+        h2.mul_const _
       have h5 : HasDerivWithinAt h (f' yn * g (x n) - g' yn * f (x n)) (.Ioo a (x n)) yn := by
         simp [h]; exact h3.sub h4
       have h6 : f' yn * g (x n) - g' yn * f (x n) = 0 := by

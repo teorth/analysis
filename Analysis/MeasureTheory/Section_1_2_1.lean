@@ -5516,7 +5516,7 @@ theorem Lebesgue_outer_measure.eq {d:ℕ} (E: Set (EuclideanSpace' d)) : Lebesgu
         norm_cast
       calc ∑' n, (B' n).volume.toEReal
           ≤ ∑' n, ((B n).volume + (ε/2) / 2^(n+1)).toEReal := h_step1
-        _ = (∑' n, (B n).volume.toEReal) + (∑' n, ((ε/2) / 2^(n+1)).toEReal) := h_step2
+        _ = (∑' n, (B n).volume.toEReal) + (∑' n, ((ε/2) / 2^(n+1)).toEReal) := by exact h_step2
         _ = (∑' n, (B n).volume.toEReal) + (ε/2 : EReal) := by rw [h_geom_sum]
     -- Combine: m*(U) ≤ m*(E) + ε
     have hU_bound : Lebesgue_outer_measure U ≤ Lebesgue_outer_measure E + ε := by
