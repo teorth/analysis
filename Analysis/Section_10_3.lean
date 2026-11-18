@@ -1,4 +1,6 @@
 import Mathlib.Tactic
+import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
 /-!
 # Analysis I, Section 10.3: Monotone functions and derivatives

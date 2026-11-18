@@ -62,8 +62,10 @@ theorem Sum.eq {X: Type} {f:X → ℝ} {g:ℕ → X} (h: Bijective g) (hfg: (f �
   set g' := this.choose
   choose g'_inv hleft hright using bijective_iff_has_inverse.mp hbij
   convert convergesTo_sum (converges_of_absConverges hfg) using 1
+  . rfl
   have hG : Bijective (g'_inv ∘ g) := .comp ⟨hright.injective, hleft.surjective⟩ h
   convert (absConverges_of_permute hconv hG).2 using 4 with _ n
+  . rfl
   by_cases hn : n ≥ 0 <;> simp [hn, hright (g n.toNat)]
 
 theorem Sum.of_comp {X Y:Type} {f:X → ℝ} (h: AbsConvergent f) {g: Y → X} (hbij: Bijective g) : AbsConvergent (f ∘ g) ∧ Sum f = Sum (f ∘ g) := by
@@ -71,8 +73,8 @@ theorem Sum.of_comp {X Y:Type} {f:X → ℝ} (h: AbsConvergent f) {g: Y → X} (
   choose g_inv hleft hright using bijective_iff_has_inverse.mp hbij
   have hbij_g_inv_g' : Bijective (g_inv ∘ g') := .comp ⟨hright.injective, hleft.surjective⟩ hbij'
   have hident : (f ∘ g) ∘ g_inv ∘ g' = f ∘ g' := by ext n; simp [hright (g' n)]
-  refine ⟨ ⟨ g_inv ∘ g', ⟨ hbij_g_inv_g', by convert hconv' ⟩ ⟩, ?_ ⟩
-  have h := eq (f := f ∘ g) hbij_g_inv_g' (by convert hconv')
+  refine ⟨ ⟨ g_inv ∘ g', ⟨ hbij_g_inv_g', by convert hconv'; exact congrFun hident _ ⟩ ⟩, ?_ ⟩
+  have h := eq (f := f ∘ g) hbij_g_inv_g' (by convert hconv'; exact congrFun hident _)
   rw [hident] at h
   solve_by_elim [convergesTo_uniq, eq]
 
@@ -119,7 +121,7 @@ theorem sum_of_sum_of_AbsConvergent_nonneg {f:ℕ × ℕ → ℝ} (hf:AbsConverg
     . simp [a, sum_product, Series.partial]
     solve_by_elim
   replace (N:ℤ) : ∑ n ∈ Icc 0 N, (a n.toNat).sum ≤ L := by
-    apply le_of_tendsto' (x := .atTop) (tendsto_finset_sum _ _) (this N)
+    apply le_of_tendsto' (x := .atTop) (tendsto_finsetSum _ _) (this N)
     solve_by_elim [convergesTo_sum]
   replace (N:ℤ) : (fun n ↦ (a n).sum:Series).partial N ≤ L := by
     convert this N with n hn; simp_all
@@ -174,7 +176,7 @@ theorem sum_of_sum_of_AbsConvergent {f:ℕ × ℕ → ℝ} (hf:AbsConvergent f) 
       - (fun n ↦ ((fun m ↦ (fminus) (n, m)):Series).sum:Series)
     convert_to (fun n ↦ ((fun m ↦ (fplus - fminus) (n, m)):Series).sum:Series) =
       (((fun n ↦ ((fun m ↦ fplus (n, m)):Series).sum) - (fun n ↦ ((fun m ↦ (fminus) (n, m)):Series).sum):ℕ → ℝ):Series)
-    . convert sub_coe _ _
+    . exact sub_coe (fun n ↦ ((fun m ↦ fplus (n, m)):Series).sum) (fun n ↦ ((fun m ↦ fminus (n, m)):Series).sum)
     rcongr _ n; simp
     convert (sub _ _).2 with m; rfl
     split_ifs with h <;> simp [h, HSub.hSub, Sub.sub]
@@ -186,7 +188,9 @@ theorem sum_of_sum_of_AbsConvergent {f:ℕ × ℕ → ℝ} (hf:AbsConvergent f) 
   have hminus := Sum.eq hg (hfminus_conv.comp hg)
   apply convergesTo_uniq h1 _
   convert (convergesTo.sub hplus hminus) using 3 with n
-  split_ifs with h <;> simp [h, hdiff, HSub.hSub, Sub.sub]
+  . rfl
+  change _ = (if n ≥ 0 then (fplus ∘ g) n.toNat else 0) - (if n ≥ 0 then (fminus ∘ g) n.toNat else 0)
+  split_ifs with h <;> simp [hdiff]
 
 /-- Theorem 8.2.2, third version -/
 theorem sum_of_sum_of_AbsConvergent' {f:ℕ × ℕ → ℝ} (hf:AbsConvergent f) :
@@ -196,9 +200,12 @@ theorem sum_of_sum_of_AbsConvergent' {f:ℕ × ℕ → ℝ} (hf:AbsConvergent f)
   have hπ: Bijective π := Involutive.bijective (congrFun rfl)
   have ⟨ g, hg, hconv ⟩ := hf
   convert sum_of_sum_of_AbsConvergent (f := f ∘ π) _ using 2
+  . rfl
+  . rfl
   . exact (Sum.of_comp hf hπ).2
   refine ⟨ _, hπ.comp hg, ?_ ⟩
   convert hconv using 2
+  rfl
 
 /-- Theorem 8.2.2, fourth version -/
 theorem sum_comm {f:ℕ × ℕ → ℝ} (hf:AbsConvergent f) :
@@ -359,7 +366,7 @@ theorem AbsConvergent'.iff_Summable {X:Type} (f:X → ℝ) : AbsConvergent' f �
   rw [bddAbove_def]
   use ∑ x ∈ S, |f x| + 1; simp; intro T
   calc
-    _ = ∑ x ∈ (T ∩ S), |f x| + ∑ x ∈ (T \ S), |f x| := (sum_inter_add_sum_diff _ _ _).symm
+    _ = ∑ x ∈ (T ∩ S), |f x| + ∑ x ∈ (T \ S), |f x| := (sum_inter_add_sum_sdiff _ _ _).symm
     _ ≤ _ := by
       gcongr
       . exact inter_subset_right
@@ -395,6 +402,7 @@ theorem Sum'.eq_tsum {X:Type} (f:X → ℝ) (h: AbsConvergent' f) :
       exact h.subtype E
     replace this := Sum.eq hg this
     convert convergesTo_uniq this _ using 1
+    · rfl
     · replace : ∑' x, f x = ∑' n, f (g n) := calc
         _ = ∑' x:E, f x := by
           exact (tsum_subtype_eq_of_support_subset (fun x hx => hx)).symm

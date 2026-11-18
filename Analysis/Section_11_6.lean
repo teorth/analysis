@@ -38,7 +38,8 @@ theorem integ_of_monotone {a b:ℝ} {f:ℝ → ℝ} (hf: MonotoneOn f (Icc a b))
     have hbeq : b = a + δ*N := by simp [δ]; field_simp; linarith
     set e : ℕ ↪ BoundedInterval := {
       toFun j := Ico (a + δ*j) (a + δ*(j+1))
-      inj' j k hjk := by simp at hjk; obtain _ | _ := hjk <;> linarith
+      inj' := show Function.Injective _ by
+        intro j k hjk; simp at hjk; obtain _ | _ := hjk <;> linarith
     }
     set P : Partition I := {
       intervals := insert (Icc b b) (.map e (.range N))

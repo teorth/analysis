@@ -42,7 +42,7 @@ instance BoundedInterval.instEmpty : EmptyCollection BoundedInterval where
 
 @[simp]
 theorem BoundedInterval.coe_empty : ((∅ : BoundedInterval):Set ℝ) = ∅ := by
-  simp [toSet]
+  show toSet (Ioo 0 0) = ∅; simp [toSet]
 
 open Classical in
 /-- This is to make {name}`Finset`s of {name}`BoundedInterval`s work properly -/
@@ -210,6 +210,9 @@ structure Partition (I: BoundedInterval) where
 instance Partition.instMembership (I: BoundedInterval) : Membership BoundedInterval (Partition I) where
   mem P J := J ∈ P.intervals
 
+theorem Partition.mem_def {I: BoundedInterval} (P: Partition I) (J: BoundedInterval) :
+  J ∈ P ↔ J ∈ P.intervals := by rfl
+
 instance Partition.instBot (I: BoundedInterval) : Bot (Partition I) where
   bot := {
     intervals := {I}
@@ -240,8 +243,8 @@ noncomputable abbrev Partition.join {I J K:BoundedInterval} (P: Partition I) (Q:
     all_goals grind
   contains L hL := by
     simp at hL; obtain hLP | hLQ := hL
-    . apply (P.contains _ hLP).trans; simp [h, subset_iff]
-    apply (Q.contains _ hLQ).trans; simp [h, subset_iff]
+    . apply _root_.trans (P.contains _ hLP); simp [h, subset_iff]
+    apply _root_.trans (Q.contains _ hLQ); simp [h, subset_iff]
 }
 
 @[simp]
@@ -338,7 +341,7 @@ theorem Partition.sum_of_length  (I: BoundedInterval) (P: Partition I) :
         | Ioc a b => use (Icc b b), hK, Ioo a b; apply join_Ioo_Icc <;> order
         | Ico _ _ => simp at hI'
       simp [length_of_subsingleton, -Set.subsingleton_coe] at hsub
-      have hKI' := (K.Ioo_subset.trans hKI).trans I.subset_Icc
+      have hKI' := _root_.trans (_root_.trans K.Ioo_subset hKI) I.subset_Icc
       simp only [subset_iff] at hKI'
       have hKb : K.b = I.b := by
         rw [le_antisymm_iff]; split_ands
@@ -371,7 +374,7 @@ theorem Partition.sum_of_length  (I: BoundedInterval) (P: Partition I) :
     cases I with
     | Ioo a₁ b₁ =>
       obtain hK | hK := hK <;> simp_all [mem_iff]
-      . use Ioo c b₁, hK, Ioc a₁ c; apply join_Ioc_Ioo <;> tauto
+      . use Ioo c b₁, hK, Ioc a₁ c; apply join_Ioc_Ioo <;> simp_all
       use Ico c b₁, hK, Ioo a₁ c
       apply P.contains at hK; simp [subset_iff] at hK
       have : c ∈ Set.Ico c b₁ := by grind

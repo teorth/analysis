@@ -318,7 +318,7 @@ theorem Sequence.IsCauchy.harmonic : (mk' 1 (fun n ↦ (1:ℚ)/n)).IsCauchy := b
   obtain ⟨ N, hN : N > 1/ε ⟩ := exists_nat_gt (1 / ε)
   have hN' : N > 0 := by
     observe : (1/ε) > 0
-    observe : (N:ℚ) > 0
+    have : (N:ℚ) > 0 := lt_trans this hN
     norm_cast at this
   refine ⟨ N, by norm_cast, ?_ ⟩
   intro j hj k hk

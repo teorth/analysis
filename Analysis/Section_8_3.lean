@@ -139,7 +139,6 @@ theorem Uncountable.real : Uncountable ℝ := by
         calc
           _ = ∑' j:ℕ, (10:ℝ)^(-1-n₀:ℝ) * (1/(10:ℝ))^j := by
             apply tsum_congr; intro j
-            simp only [Equiv.ofBijective, DFunLike.coe, EquivLike.coe]
             rw [pow_add, pow_add, rpow_sub, rpow_neg, rpow_one, rpow_natCast] <;> try positivity
             simp; congr
           _ = (10:ℝ)^(-1-n₀:ℝ) * ∑' j:ℕ, (1/(10:ℝ))^j := tsum_mul_left

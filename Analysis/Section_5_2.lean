@@ -38,7 +38,7 @@ lemma Rat.closeSeq_def (ε: ℚ) (a b: Sequence) :
 
 /-- Example 5.2.2 (a) -/
 example : (0.1:ℚ).CloseSeq ((fun n:ℕ ↦ ((-1)^n:ℚ)):Sequence)
-((fun n:ℕ ↦ ((1.1:ℚ) * (-1)^n)):Sequence) := by sorry
+    ((fun n:ℕ ↦ ((1.1:ℚ) * (-1)^n)):Sequence) := by sorry
 
 /-- Example 5.2.2 (b) -/
 example : ¬ (0.1:ℚ).Steady ((fun n:ℕ ↦ ((-1)^n:ℚ)):Sequence) := by sorry

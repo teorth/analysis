@@ -48,6 +48,23 @@ jobs:
           fi
       - name: Build project
         run: lake build
+      # doc-gen runs many processes in parallel and can exceed the
+      # runner's RAM, so give it swap space to fall back on. Lake also
+      # spawns git subprocesses from a very large process, which the
+      # default overcommit heuristic can refuse (ENOMEM), so allow it.
+      - name: Add swap space and allow memory overcommit
+        run: |
+          sudo sysctl -w vm.overcommit_memory=1
+          SWAPFILE=/mnt/swapfile
+          mountpoint -q /mnt || SWAPFILE=/swapfile
+          sudo swapoff -a
+          sudo rm -f /mnt/swapfile /swapfile
+          sudo fallocate -l 16G "$SWAPFILE"
+          sudo chmod 600 "$SWAPFILE"
+          sudo mkswap "$SWAPFILE"
+          sudo swapon "$SWAPFILE"
+          free -h
+          df -h / /mnt
       - name: Build doc-gen
         run: lake -R -Kenv=dev build Analysis:docs
       - name: Build book

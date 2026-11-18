@@ -128,7 +128,7 @@ namespace Chapter5
 noncomputable abbrev Real.equivR : Real ≃ ℝ := Real.equivCut.trans _root_.Real.equivCut.symm
 
 lemma Real.equivR_iff (x : Real) (y : ℝ) : y = Real.equivR x ↔ y.toCut = x.toCut := by
-  simp only [equivR, Equiv.trans_apply, ←Equiv.apply_eq_iff_eq_symm_apply]
+  simp only [equivR, Equiv.trans_apply, Equiv.eq_symm_apply]
   rfl
 
 -- In order to use this definition, we need some machinery

@@ -191,7 +191,7 @@ theorem UniformContinuousOn.of_continuousOn {a b:ℝ} {f:ℝ → ℝ}
       sorry
     sorry
   observe : Countable E
-  set n : ℕ → ℕ := Nat.nth E
+  set n : ℕ → ℕ := Nat.nth (· ∈ E)
   rw [Set.infinite_coe_iff] at hE
   have hmono : StrictMono n := by apply_rules [Nat.nth_strictMono]
   have hmem (j:ℕ) : n j ∈ E := j.nth_mem_of_infinite hE

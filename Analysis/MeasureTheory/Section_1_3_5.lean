@@ -37,7 +37,7 @@ private lemma unsigned_approx_from_sup {d:ℕ} {f: EuclideanSpace' d → EReal}
       ∃ hg : UnsignedSimpleFunction g, ∀ x, g x ≤ f x ∧ R = hg.integ },
       L - (ε : EReal) < R := by
     by_contra h_all
-    push_neg at h_all
+    push Not at h_all
     have h_le : L ≤ L - (ε : EReal) := by
       conv_lhs => rw [hL_def, UnsignedLebesgueIntegral, LowerUnsignedLebesgueIntegral]
       exact sSup_le fun R hR => h_all R hR
@@ -634,7 +634,7 @@ private lemma RealAbsolutelyIntegrable.smul_indicator {d:ℕ}
     exact h_simple.absolutelyIntegrable_iff'.mp (h_simple.absolutelyIntegrable_iff.mpr (by
       calc Lebesgue_measure (Support (c • E.indicator'))
           ≤ Lebesgue_outer_measure E := Lebesgue_outer_measure.mono (fun x hx => by
-            rw [Support, Set.mem_setOf_eq, Pi.smul_apply, smul_eq_mul] at hx
+            rw [Support, Set.mem_ofPred_eq, Pi.smul_apply, smul_eq_mul] at hx
             by_contra h_not
             exact hx (by rw [Set.indicator'_of_notMem h_not, mul_zero]))
         _ < ⊤ := hfin hc))
@@ -724,7 +724,7 @@ private lemma RealSimpleFunction.approx_by_step_aux {d:ℕ} {g : EuclideanSpace'
     -- Step 3: For each j with v j ≠ 0, A j ⊆ Support g, hence finite measure
     have hA_sub_support : ∀ j, v j ≠ 0 → A j ⊆ Support g := by
       intro j hvj x hx
-      rw [Support, Set.mem_setOf_eq, hg_eq']
+      rw [Support, Set.mem_ofPred_eq, hg_eq']
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
       rw [Finset.sum_eq_single j]
       · exact mul_ne_zero hvj (Set.indicator'_of_mem hx ▸ one_ne_zero)
@@ -762,7 +762,7 @@ private lemma RealSimpleFunction.approx_by_step_aux {d:ℕ} {g : EuclideanSpace'
         intro j
         by_cases hvj : v j = 0
         · exact ⟨∅, IsElementary.empty d, fun h => absurd hvj h⟩
-        · have h_tfae := (LebesgueMeasurable.finite_TFAE (A j)).out 0 7
+        · have h_tfae := (LebesgueMeasurable.finite_TFAE (A j)).out 1 8
           have h_approx := h_tfae.mp ⟨hA_meas j, hA_fin j hvj⟩
           obtain ⟨F, hF_elem, hF_bound⟩ :=
             h_approx (↑(δ / (↑n * (|v j| + 1))))
@@ -794,9 +794,9 @@ private lemma RealSimpleFunction.approx_by_step_aux {d:ℕ} {g : EuclideanSpace'
           ((hh_simple.absolutelyIntegrable_iff).mpr (by
             have h_support_sub : Support h ⊆ ⋃ j : Fin n, F j := by
               intro x hx
-              rw [Support, Set.mem_setOf_eq] at hx
+              rw [Support, Set.mem_ofPred_eq] at hx
               rw [Set.mem_iUnion]
-              by_contra h_not; push_neg at h_not; apply hx
+              by_contra h_not; push Not at h_not; apply hx
               rw [hh_def]; simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
               exact Finset.sum_eq_zero fun j _ =>
                 by rw [Set.indicator'_of_notMem (h_not j)]; ring
@@ -1020,11 +1020,11 @@ private lemma Box.scaled_indicator_approx_continuous {d:ℕ} (B : Box d) (c : �
     set ε₀ : ℝ := δ / (2 * |c|) with hε₀_def
     have hε₀ : 0 < ε₀ := div_pos hδ (mul_pos two_pos hc_abs_pos)
     -- Get compact K ⊆ B.toSet with measure(B.toSet \ K) ≤ ε₀
-    have h_tfae_03 := (LebesgueMeasurable.finite_TFAE B.toSet).out 0 3
+    have h_tfae_03 := (LebesgueMeasurable.finite_TFAE B.toSet).out 1 4
     obtain ⟨K, hK_compact, hK_sub, hK_bound⟩ :=
       h_tfae_03.mp ⟨hB_meas, hB_fin⟩ (↑ε₀) (EReal.coe_pos.mpr hε₀)
     -- Get open U ⊇ B.toSet with measure(U \ B.toSet) ≤ ε₀ and finite measure
-    have h_tfae_01 := (LebesgueMeasurable.finite_TFAE B.toSet).out 0 1
+    have h_tfae_01 := (LebesgueMeasurable.finite_TFAE B.toSet).out 1 2
     obtain ⟨U, hU_open, hB_sub_U, hU_fin, hU_diff_bound⟩ :=
       h_tfae_01.mp ⟨hB_meas, hB_fin⟩ (↑ε₀) (EReal.coe_pos.mpr hε₀)
     -- K ⊆ U (since K ⊆ B.toSet ⊆ U)
@@ -1277,7 +1277,7 @@ private lemma RealStepFunction.approx_by_continuous_compact_aux {d:ℕ}
     refine ⟨g, ?_, ?_, ?_, ?_⟩
     -- g is continuous
     · show Continuous g
-      apply continuous_finset_sum
+      apply continuous_finsetSum
       intro B _
       exact hg_cont B
     -- g is compactly supported
@@ -1288,7 +1288,7 @@ private lemma RealStepFunction.approx_by_continuous_compact_aux {d:ℕ}
       · exact isCompact_iUnion (fun B => (hK_compact B))
       · intro x hx
         rw [Set.mem_iUnion] at hx
-        push_neg at hx
+        push Not at hx
         simp only [hg_def]
         exact Finset.sum_eq_zero (fun B _ => hK_support B x (hx B))
     -- g is AI (sum of AI functions)
@@ -1427,7 +1427,7 @@ theorem ComplexAbsolutelyIntegrable.approx_by_continuous_compact {d:ℕ} {f: Euc
     obtain ⟨K_re, hK_re_compact, hK_re_supp⟩ := hg_re_cs
     obtain ⟨K_im, hK_im_compact, hK_im_supp⟩ := hg_im_cs
     refine ⟨K_re ∪ K_im, hK_re_compact.union hK_im_compact, fun x hx => ?_⟩
-    rw [Set.mem_union] at hx; push_neg at hx
+    rw [Set.mem_union] at hx; push Not at hx
     simp only [hg_def, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Real.complex_fun]
     rw [hK_re_supp x hx.1, hK_im_supp x hx.2]
     simp

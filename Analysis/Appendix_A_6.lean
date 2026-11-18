@@ -1,6 +1,7 @@
 import Mathlib.Tactic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
 /-!
 # Analysis I, Appendix A.6: Some examples of proofs and quantifiers

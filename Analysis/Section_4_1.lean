@@ -45,7 +45,7 @@ instance PreInt.instSetoid : Setoid PreInt where
     trans := by
       -- This proof is written to follow the structure of the original text.
       intro ⟨ a,b ⟩ ⟨ c,d ⟩ ⟨ e,f ⟩ h1 h2; simp_all
-      have h3 := congrArg₂ (· + ·) h1 h2; simp at h3
+      have h3 := congrArg₂ (· + ·) h1 h2
       have : (a + f) + (c + d) = (e + b) + (c + d) := calc
         (a + f) + (c + d) = a + d + (c + f) := by abel
         _ = c + b + (e + d) := h3

@@ -111,13 +111,13 @@ lemma lt_of_gt_upper_integral {f:ℝ → ℝ} {I: BoundedInterval} (hf: BddOn f 
   {X:ℝ} (hX: upper_integral f I < X ) :
   ∃ g, MajorizesOn g f I ∧ PiecewiseConstantOn g I ∧ PiecewiseConstantOn.integ g I < X := by
   choose Y hY hYX using exists_lt_of_csInf_lt (integral_bound_upper_nonempty hf) hX
-  simp at hY; peel hY; simp_all; tauto
+  simp at hY; aesop
 
 lemma gt_of_lt_lower_integral {f:ℝ → ℝ} {I: BoundedInterval} (hf: BddOn f I)
   {X:ℝ} (hX: X < lower_integral f I) :
   ∃ h, MinorizesOn h f I ∧ PiecewiseConstantOn h I ∧ X < PiecewiseConstantOn.integ h I := by
   choose Y hY hYX using exists_lt_of_lt_csSup (integral_bound_lower_nonempty hf) hX
-  simp at hY; peel hY; simp_all; tauto
+  simp at hY; aesop
 
 /-- Definition 11.3.4 (Riemann integral)
 As we permit junk values, the simplest definition for the Riemann integral is the upper integral. -/

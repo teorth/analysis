@@ -19,6 +19,7 @@ Main constructions and results of this section:
 -/
 
 open EReal
+open scoped Pointwise
 
 /-- Definition 6.2.1 -/
 theorem EReal.def (x:EReal) : (∃ (y:Real), y = x) ∨ x = ⊤ ∨ x = ⊥ := by
@@ -125,7 +126,7 @@ theorem EReal.sup_of_empty : sSup (∅:Set EReal) = ⊥ := sSup_empty
 theorem EReal.sup_of_infty_mem {E: Set EReal} (hE: ⊤ ∈ E) : sSup E = ⊤ := csSup_eq_top_of_top_mem hE
 
 /-- Definition 6.2.6 -/
-theorem EReal.sup_of_neg_infty_mem {E: Set EReal} : sSup E = sSup (E \ {⊥}) := (sSup_diff_singleton_bot _).symm
+theorem EReal.sup_of_neg_infty_mem {E: Set EReal} : sSup E = sSup (E \ {⊥}) := (sSup_sdiff_singleton_bot _).symm
 
 theorem EReal.inf_eq_neg_sup (E: Set EReal) : sInf E = - sSup (-E) := by
   simp_rw [←isGLB_iff_sInf_eq, isGLB_iff_le_iff, EReal.le_neg]
@@ -133,7 +134,7 @@ theorem EReal.inf_eq_neg_sup (E: Set EReal) : sInf E = - sSup (-E) := by
   simp [lowerBounds]
 
 /-- Example 6.2.7 -/
-abbrev Example_6_2_7 : Set EReal := { x | ∃ n:ℕ, x = -((n+1):EReal)} ∪ {⊥}
+noncomputable abbrev Example_6_2_7 : Set EReal := { x | ∃ n:ℕ, x = -((n+1):EReal)} ∪ {⊥}
 
 example : sSup Example_6_2_7 = -1 := by
   rw [EReal.sup_of_neg_infty_mem]

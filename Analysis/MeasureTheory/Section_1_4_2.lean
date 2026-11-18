@@ -1,4 +1,5 @@
 import Mathlib.SetTheory.Cardinal.Aleph
+import Mathlib.MeasureTheory.MeasurableSpace.Defs
 import Analysis.MeasureTheory.Section_1_4_1
 /-!
 # Introduction to Measure Theory, Section 1.4.2: $\sigma$-algebras and measurable spaces
@@ -16,23 +17,26 @@ def ConcreteBooleanAlgebra.isSigmaAlgebra {X: Type*} (B: ConcreteBooleanAlgebra 
 theorem ConcreteSigmaAlgebra.isSigmaAlgebra {X: Type*} (B: ConcreteSigmaAlgebra X) : B.isSigmaAlgebra :=
   B.countable_union_mem
 
+@[instance_reducible]
 def ConcreteBooleanAlgebra.isSigmaAlgebra.toSigmaAlgebra {X: Type*} {B: ConcreteBooleanAlgebra X} (h: B.isSigmaAlgebra) : ConcreteSigmaAlgebra X :=
   { countable_union_mem := h }
 
 /-- Exercise 1.4.10 -/
-def ConcreteBooleanAlgebra.isAtomic.isSigmaAlgebra {X: Type*} {B: ConcreteBooleanAlgebra X} (h: B.isAtomic) : B.isSigmaAlgebra :=
+theorem ConcreteBooleanAlgebra.isAtomic.isSigmaAlgebra {X: Type*} {B: ConcreteBooleanAlgebra X} (h: B.isAtomic) : B.isSigmaAlgebra :=
   by sorry
 
 /-- Exercise 1.4.11 -/
 theorem LebesgueMeasurable.boolean_algebra.isSigmaAlgebra (d:ℕ) : (LebesgueMeasurable.boolean_algebra d).isSigmaAlgebra :=
   fun E hE => LebesgueMeasurable.countable_union hE
 
+@[instance_reducible]
 def LebesgueMeasurable.sigmaAlgebra (d:ℕ) : ConcreteSigmaAlgebra (EuclideanSpace' d) :=
   (LebesgueMeasurable.boolean_algebra.isSigmaAlgebra d).toSigmaAlgebra
 
 theorem IsNull.boolean_algebra.isSigmaAlgebra (d:ℕ) : (IsNull.boolean_algebra d).isSigmaAlgebra :=
   by sorry
 
+@[instance_reducible]
 def IsNull.sigmaAlgebra (d:ℕ) : ConcreteSigmaAlgebra (EuclideanSpace' d) :=
   (IsNull.boolean_algebra.isSigmaAlgebra d).toSigmaAlgebra
 
@@ -49,6 +53,7 @@ theorem ConcreteSigmaAlgebra.restrict_is_sigma {X:Type*} (B: ConcreteSigmaAlgebr
   ext x
   simp [heq]
 
+@[instance_reducible]
 def ConcreteSigmaAlgebra.restrict {X:Type*} (B: ConcreteSigmaAlgebra X) (A:Set X) : ConcreteSigmaAlgebra A := (B.restrict_is_sigma A).toSigmaAlgebra
 
 instance ConcreteSigmaAlgebra.instLE (X:Type*) : LE (ConcreteSigmaAlgebra X) :=
@@ -122,6 +127,7 @@ instance ConcreteSigmaAlgebra.instInfSet {X:Type*} : InfSet (ConcreteSigmaAlgebr
         }
   }
 
+@[instance_reducible]
 def ConcreteSigmaAlgebra.generated_by {X:Type*} (F: Set (Set X)) : ConcreteSigmaAlgebra X :=
   sInf { B | ∀ E ∈ F, B.measurable E }
 
@@ -160,6 +166,7 @@ theorem ConcreteSigmaAlgebra.induction {X:Type*} {F: Set (Set X)} {P: Set X → 
   by sorry
 
 /-- Definition 1.4.16 (Borel σ-algebra) -/
+@[instance_reducible]
 def BorelSigmaAlgebra (X:Type*) [TopologicalSpace X] : ConcreteSigmaAlgebra X :=
   ConcreteSigmaAlgebra.generated_by { U : Set X | IsOpen U }
 
@@ -183,7 +190,7 @@ theorem BorelSigmaAlgebra.generated_by_elementary (d:ℕ) : BorelSigmaAlgebra (E
 
 open Ordinal in
 /-- Exercise 1.4.15 (Recursive definition of generated sigma-algebra). -/
-def ConcreteSigmaAlgebra.generated_by_eq {X:Type*} (F: Set (Set X)) :
+theorem ConcreteSigmaAlgebra.generated_by_eq {X:Type*} (F: Set (Set X)) :
   (ConcreteSigmaAlgebra.generated_by F).measurableSets =
   ⋃ α < ω₁,
   Ordinal.limitRecOn (motive := fun _ ↦ Set (Set X)) α F (fun n G ↦ { E: Set X | (∃ S: Set G, Countable S ∧ E = ⋃ (H:S), H) ∨ (∃ S: Set G, Countable S ∧ E = (⋃ (H:S), H)ᶜ) }) (fun α _ G ↦ ⋃ (β : Ordinal) (h : β < α), G β h) := by sorry
@@ -235,6 +242,7 @@ theorem LebesgueMeasurable.sigmaAlgebra_generated_by {d:ℕ} :
   LebesgueMeasurable.sigmaAlgebra d = ConcreteSigmaAlgebra.generated_by ( (BorelSigmaAlgebra (EuclideanSpace' d)).measurableSets ∪ (IsNull.sigmaAlgebra d).measurableSets) :=
   by sorry
 
+@[instance_reducible]
 def ConcreteSigmaAlgebra.measurableSpace {X: Type*} (B: ConcreteSigmaAlgebra X) : MeasurableSpace X := {
   MeasurableSet' := B.measurable
   measurableSet_empty := B.empty_mem
@@ -242,6 +250,7 @@ def ConcreteSigmaAlgebra.measurableSpace {X: Type*} (B: ConcreteSigmaAlgebra X) 
   measurableSet_iUnion := B.countable_union_mem
 }
 
+@[instance_reducible]
 def MeasurableSpace.sigmaAlgebra {X: Type*} (M: MeasurableSpace X) : ConcreteSigmaAlgebra X := {
   measurable := M.MeasurableSet'
   empty_mem := M.measurableSet_empty
@@ -270,8 +279,10 @@ theorem BorelSigmaAlgebra.le_LebesgueSigmaAlgebra (d:ℕ) : BorelSigmaAlgebra (E
   intro E hE
   exact hE (LebesgueMeasurable.sigmaAlgebra d) fun U hU => IsOpen.measurable hU
 
+@[instance_reducible]
 def ConcreteSigmaAlgebra.toMeasurableSpace {X: Type*} (B: ConcreteSigmaAlgebra X) : MeasurableSpace X :=
   B.measurableSpace
 
+@[instance_reducible]
 def MeasurableSpace.toConcreteSigmaAlgebra {X: Type*} (M: MeasurableSpace X) : ConcreteSigmaAlgebra X :=
   M.sigmaAlgebra
