@@ -228,7 +228,7 @@ theorem ConcreteBooleanAlgebra.bot_atomic (X:Type*) : (IsPartition.trivial X).to
       simp only [Set.mem_iUnion, Set.mem_empty_iff_false, exists_prop, iff_false]
       rintro ⟨i, hi⟩
       exact hJ (by simpa using hi)
-  · exact bot_le _
+  · exact bot_le
 
 def IsPartition.finer_than {I J X:Type*} {parts_I: I → Set X} {parts_J: J → Set X}
   (_: IsPartition parts_I) (_: IsPartition parts_J) : Prop :=
