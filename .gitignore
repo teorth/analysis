@@ -21,6 +21,10 @@ Claude.md
 **/.aider.conf.yml
 **/.formalize
 
+# Python bytecode (the tests/ suite generates these when run locally)
+__pycache__/
+*.py[cod]
+
 # miscellaneous files
 **/tobeIgnored/
 **/tmp

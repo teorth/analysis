@@ -192,7 +192,7 @@ theorem integ_of_bdd_cts {I: BoundedInterval} {f:ℝ → ℝ} (hbound: BddOn f I
       rw [PiecewiseConstantOn.integ_congr g'const_right, integ_const, Irightlen]
     have g'integ5 : PiecewiseConstantOn.integ g' I' = PiecewiseConstantOn.integ g I' := by
       apply PiecewiseConstantOn.integ_congr; grind [mem_iff]
-    grind
+    linarith
   exact ⟨ hbound, by linarith [nonneg_of_le_const_mul_eps this] ⟩
 
 /-- Definition 11.5.4 -/

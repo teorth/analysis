@@ -15,7 +15,7 @@ that are not specific to measure theory but are used throughout the formalizatio
 lemma max_div_two (x : ℝ) : max x 0 / 2 = max (x / 2) 0 := by
   by_cases hx : 0 ≤ x
   · simp [max_eq_left hx, max_eq_left (div_nonneg hx (by norm_num : (0:ℝ) < 2).le)]
-  · push_neg at hx
+  · push Not at hx
     simp [max_eq_right (le_of_lt hx), max_eq_right (by linarith : x / 2 ≤ 0)]
 
 /-- The square root function is subadditive: {lean}`√(x + y) ≤ √x + √y` for non-negative reals.
@@ -77,7 +77,7 @@ lemma EReal.le_of_forall_pos_le_add' {a b : EReal}
   by_cases hb : b = ⊤
   · subst hb; exact le_top
   · by_contra ha_gt
-    push_neg at ha_gt
+    push Not at ha_gt
     -- a > b and b ≠ ⊤
     induction a using EReal.rec with
     | bot => simp at ha_gt

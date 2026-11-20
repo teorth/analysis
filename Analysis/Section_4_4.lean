@@ -115,7 +115,7 @@ theorem Rat.not_exist_sqrt_two : ¬ ∃ x:ℚ, x^2 = 2 := by
     | succ n ih => exact (hf _ ih).2
   have hlt (n:ℕ) : a (n+1) < a n := by
     have : a (n+1) = f (a n) := n.rec_add_one p (fun n p ↦ f p)
-    grind
+    rw [this]; exact (hf _ (ha n)).1
   exact Nat.no_infinite_descent ⟨ a, hlt ⟩
 
 

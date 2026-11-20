@@ -25,7 +25,7 @@ theorem LowerUnsignedLebesgueIntegral.eq {d:ℕ} {f: EuclideanSpace' d → EReal
   -- (∀ x, g x ≤ f x) ∧ R = hg.integ (since R = hg.integ is constant in x)
   congr 1
   ext R
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · intro ⟨g, hg, hcond⟩
     -- Extract the pointwise bound and the equality
@@ -88,10 +88,10 @@ theorem LowerUnsignedLebesgueIntegral.eq {d:ℕ} {f: EuclideanSpace' d → EReal
         rw [Set.indicator'_of_notMem hnotmem, EReal.coe_zero, mul_zero]
         exact hf x
       · -- On Nᶜ: g' x = g x * 1 = g x ≤ f x (by definition of N)
-        simp only [N, Set.mem_setOf_eq] at hx
-        push_neg at hx
+        simp only [N, Set.mem_ofPred_eq] at hx
+        push Not at hx
         simp only [g', EReal.indicator, Real.EReal_fun]
-        have hmem : x ∈ Nᶜ := by simp only [Set.mem_compl_iff, N, Set.mem_setOf_eq, hx, not_true_eq_false, not_false_eq_true]
+        have hmem : x ∈ Nᶜ := by simp only [Set.mem_compl_iff, N, Set.mem_ofPred_eq, hx, not_true_eq_false, not_false_eq_true]
         rw [Set.indicator'_of_mem hmem, EReal.coe_one, mul_one]
         exact hx
     -- g' = g almost everywhere (they differ only on N which is null)
@@ -100,10 +100,10 @@ theorem LowerUnsignedLebesgueIntegral.eq {d:ℕ} {f: EuclideanSpace' d → EReal
       -- {x | g' x ≠ g x} ⊆ N, and N is null
       have hsub : {x | g' x ≠ g x} ⊆ N := by
         intro x hx
-        simp only [Set.mem_setOf_eq] at hx
+        simp only [Set.mem_ofPred_eq] at hx
         by_contra hxN
         -- If x ∉ N, then g' x = g x * 1 = g x
-        have hmem : x ∈ Nᶜ := by simp only [Set.mem_compl_iff, N, Set.mem_setOf_eq]; exact hxN
+        have hmem : x ∈ Nᶜ := by simp only [Set.mem_compl_iff, N, Set.mem_ofPred_eq]; exact hxN
         simp only [g', EReal.indicator, Real.EReal_fun, Set.indicator'_of_mem hmem,
                    EReal.coe_one, mul_one] at hx
         exact hx rfl
@@ -326,7 +326,8 @@ theorem UnsignedLebesgueIntegral.comp_linear {d:ℕ} {f: EuclideanSpace' d → E
     UnsignedLebesgueIntegral (fun x ↦ f (A x)) = |A.det|⁻¹ * hf.integ := by sorry
 
 /-- Exercise 1.3.17 (Compatibility with the Riemann integral). -/
-theorem RiemannIntegral.eq_UnsignedLebesgueIntegral {I: BoundedInterval} {f: ℝ → ℝ} (hf: RiemannIntegrableOn f I) :
+theorem RiemannIntegral.eq_UnsignedLebesgueIntegral {I: BoundedInterval} {f: ℝ → ℝ}
+    (hf: RiemannIntegrableOn f I) (hnonneg: ∀ x ∈ I.toSet, 0 ≤ f x) :
     (riemannIntegral f I : EReal) = UnsignedLebesgueIntegral (Real.toEReal ∘ (fun x ↦ (f x) * (I.toSet.indicator' x)) ∘ EuclideanSpace'.equiv_Real) := by sorry
 
 /-- Lemma 1.3.15 (Markov's inequality) -/

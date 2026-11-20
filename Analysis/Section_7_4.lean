@@ -17,6 +17,7 @@ theorem Series.sum_eq_sum (b:ℕ → ℝ) {N:ℤ} (hN: N ≥ 0) : ∑ n ∈ .Icc
       ext x; simp; constructor
       . intro ⟨ _, _ ⟩; use x.toNat; omega
       grind
+      simp
 
 /-- Proposition 7.4.1 -/
 theorem Series.converges_of_permute_nonneg {a:ℕ → ℝ} (ha: (a:Series).nonneg) (hconv: (a:Series).converges)
@@ -53,6 +54,7 @@ theorem Series.converges_of_permute_nonneg {a:ℕ → ℝ} (ha: (a:Series).nonne
     . have hM' : M < 0 := by linarith
       simp [T, Series.partial, hM']
       convert le_ciSup (f := S) ?_ (-1)
+      . simp [S, Series.partial]
       simp [BddAbove, Set.Nonempty, upperBounds, hSBound]
     set Y := Finset.Iic M.toNat
     have hN : ∃ N, ∀ m ∈ Y, f m ≤ N := by
@@ -76,6 +78,7 @@ theorem Series.converges_of_permute_nonneg {a:ℕ → ℝ} (ha: (a:Series).nonne
     . have hN' : N < 0 := by linarith
       simp [S, Series.partial, hN']
       convert le_ciSup (f := T) ?_ (-1)
+      . simp [T, Series.partial]
       simp [BddAbove, Set.Nonempty, upperBounds, hTbound]
     set X := Finset.Iic N.toNat
     have hM : ∃ M, ∀ n ∈ X, ∃ m, f m = n ∧ m ≤ M := by
@@ -91,6 +94,7 @@ theorem Series.converges_of_permute_nonneg {a:ℕ → ℝ} (ha: (a:Series).nonne
       ext x; simp; constructor
       . intro ⟨ _, _ ⟩; use x.toNat; omega
       grind
+      simp
     calc
       _ = ∑ n ∈ X, a n := by simp [S, sum_eq_sum, hN, X]
       _ = ∑ n ∈ ((Finset.Iic M).filter (f · ∈ X)).image f, a n := by
@@ -178,6 +182,7 @@ theorem Series.absConverges_of_permute {a:ℕ → ℝ} (ha : (a:Series).absConve
       ext x; simp; constructor
       . intro ⟨ _, _ ⟩; use x.toNat; omega
       grind
+      simp
   calc
     _ ≤ |(af:Series).partial M' - (a:Series).partial N| + |(a:Series).partial N - L'| := abs_sub_le _ _ _
     _ < |(af:Series).partial M' - (a:Series).partial N| + ε/2 := by gcongr

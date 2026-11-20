@@ -1,5 +1,6 @@
 import Mathlib.Tactic
 import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Topology.Instances.Real.Lemmas
 import Analysis.Section_6_4
 /-!
 # Analysis I, Section 9.1: Subsets of the real line
@@ -262,8 +263,9 @@ theorem mem_Icc_isLimit {a b x:ℝ} (h: a < b) (hx: x ∈ Set.Icc a b) : LimitPt
       have : (n + (b - x)⁻¹)⁻¹ ≤ b-x := by rwa [inv_le_comm₀ ?_ ?_] <;> positivity
       grind
     convert (Filter.Tendsto.const_add x (a := 0) ?_) using 1; · simp
-    convert Filter.Tendsto.comp (f := fun (k:ℕ) ↦ (k:ℝ)) (g := fun k ↦ 1/(k+(b-x)⁻¹)) ?_ tendsto_natCast_atTop_atTop
-    convert tendsto_mul_add_inv_atTop_nhds_zero 1 (b - x)⁻¹ (by norm_num) using 2 with n; simp
+    have h1 : Filter.atTop.Tendsto (fun k:ℝ ↦ 1/(k+(b-x)⁻¹)) (nhds 0) := by
+      convert tendsto_mul_add_inv_atTop_nhds_zero 1 (b - x)⁻¹ (by norm_num) using 2 with n; simp
+    exact h1.comp tendsto_natCast_atTop_atTop
   sorry
 
 theorem mem_Ico_isLimit {a b x:ℝ} (hx: x ∈ Set.Ico a b) : LimitPt x (.Ico a b) := by

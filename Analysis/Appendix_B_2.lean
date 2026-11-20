@@ -67,13 +67,14 @@ theorem NNRealDecimal.surj (x:NNReal) : ∃ d:NNRealDecimal, x = d := by
   have := (d.toNNReal_conv.tendsto_sum_tsum_nat).const_add (s 0:NNReal)
   convert_to Filter.atTop.Tendsto (fun n ↦ s n * (10:NNReal)^(-n:ℝ)) (nhds (d:NNReal)) at this
   . ext n; rw [hsum n]
+  . rfl
   apply tendsto_nhds_unique _ this
   apply Filter.Tendsto.squeeze (g := fun n:ℕ ↦ x - (10:NNReal)^(-n:ℝ)) (h := fun _ ↦ x)
   . convert Filter.Tendsto.const_sub (c := 0) x _
     . simp
     convert tendsto_pow_atTop_nhds_zero_of_lt_one (?_:(1/10:NNReal) < 1) with n
     . rw [←rpow_natCast, one_div, inv_rpow, rpow_neg]
-    apply div_lt_one_of_lt; bound
+    apply div_lt_one_of_lt; norm_num
   . exact tendsto_const_nhds
   . intro n; simp; calc
     _ = (x * 10^n) * (10:NNReal)^(-n:ℝ) := by

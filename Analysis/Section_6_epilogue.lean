@@ -1,4 +1,5 @@
 import Mathlib.Tactic
+import Mathlib.Topology.MetricSpace.CauSeqFilter
 import Analysis.Section_6_7
 
 /-!
@@ -81,7 +82,7 @@ theorem Chapter6.Sequence.isBounded_iff_isBounded_range (a:ℕ → ℝ):
     calc
       _ = |a n - a m| := Real.dist_eq _ _
       _ ≤ |a n| + |a m| := abs_sub _ _
-      _ ≤ M + M := by gcongr; convert h n; convert h m
+      _ ≤ M + M := by gcongr; simpa using h n; simpa using h m
       _ = _ := by ring
   intro ⟨ C, h ⟩
   have : C ≥ 0 := by specialize h 0 0; simpa using h
@@ -116,7 +117,7 @@ theorem Chapter6.Sequence.limit_point_iff (a:ℕ → ℝ) (L:ℝ) :
   . intro h s ⟨ ε, hε, hεs ⟩ N
     have ⟨ n, hn1, hn2 ⟩ := h _ (half_pos hε) N (by positivity)
     have hn : n ≥ 0 := by grind
-    refine ⟨ n.toNat, by rwa [ge_iff_le, Int.le_toNat hn], ?_ ⟩
+    refine ⟨ n.toNat, by rwa [Int.le_toNat hn], ?_ ⟩
     apply hεs; simp [Real.dist_eq, hn] at *; linarith
   intro h ε hε N _
   have ⟨ n, hn1, hn2 ⟩ := h (Metric.ball L ε) ⟨ _, hε, by aesop ⟩ N.toNat

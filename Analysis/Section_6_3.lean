@@ -20,10 +20,10 @@ Main constructions and results of this section:
 
 namespace Chapter6
 
-/-- Definition 6.3.1 -/
+/-- Definition 6.3.1 (supremum of a sequence) -/
 noncomputable abbrev Sequence.sup (a:Sequence) : EReal := sSup { x | ∃ n ≥ a.m, x = a n }
 
-/-- Definition 6.3.1 -/
+/-- Definition 6.3.1 (infimum of a sequence) -/
 noncomputable abbrev Sequence.inf (a:Sequence) : EReal := sInf { x | ∃ n ≥ a.m, x = a n }
 
 /-- Example 6.3.3 (a) -/

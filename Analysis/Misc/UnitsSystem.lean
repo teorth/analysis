@@ -104,9 +104,7 @@ the {tactic}`simp` and {tactic}`norm_cast` tags. -/
 theorem Scalar.toFormal_inj {d: Dimensions} (q₁ q₂:Scalar d) :
   (q₁:Formal) = (q₂:Formal) ↔ q₁ = q₂ := by
   constructor
-  . simp [toFormal, ←val_inj]; intro h
-    replace h := congr($h d)
-    simpa using h
+  . simp [toFormal, ←val_inj]
   intro h; simp [h]
 
 /-- Conveniently, casts from one scalar to another will automatically disappear when moving to
@@ -144,8 +142,7 @@ theorem Scalar.val_add {d:Dimensions} (q₁ q₂:Scalar d) : (q₁ + q₂).val =
 /-- Note how the {tactic}`simp` lemma is in the direction of pushing coercions inward. -/
 @[simp,norm_cast]
 theorem Scalar.toFormal_add {d:Dimensions} (q₁ q₂:Scalar d) : ((q₁ + q₂:Scalar d):Formal) = (q₁:Formal) + (q₂:Formal) := by
-  simp only [toFormal, val_add, Finsupp.single_add]
-  rfl
+  simp only [toFormal, val_add, AddMonoidAlgebra.single_add]
 
 instance Scalar.instNeg {d:Dimensions} : Neg (Scalar d) where
   neg q := ⟨-q.val⟩
@@ -159,7 +156,7 @@ instance Scalar.instNeZero_neg {d:Dimensions} (q:Scalar d) [h:NeZero q] : NeZero
 
 @[simp,norm_cast]
 theorem Scalar.toFormal_neg {d:Dimensions} (q:Scalar d) : ((-q:Scalar d):Formal) = -(q:Formal) := by
-  simp only [toFormal, val_neg, Finsupp.single_neg]; rfl
+  simp only [toFormal, val_neg, AddMonoidAlgebra.single_neg]
 
 instance Scalar.instSub {d:Dimensions} : Sub (Scalar d) where
   sub q₁ q₂ := ⟨q₁.val - q₂.val⟩
@@ -169,7 +166,7 @@ theorem Scalar.val_sub {d:Dimensions} (q₁ q₂ : Scalar d) : (q₁ - q₂).val
 
 @[simp,norm_cast]
 theorem Scalar.toFormal_sub {d:Dimensions} (q₁ q₂ :Scalar d) : ((q₁ - q₂ :Scalar d):Formal) = (q₁:Formal) - q₂ := by
-  simp only [toFormal, val_sub, Finsupp.single_sub]; rfl
+  simp only [toFormal, val_sub, AddMonoidAlgebra.single_sub]
 
 instance Scalar.instSMul {α} {d:Dimensions} [SMul α ℝ] : SMul α (Scalar d) where
   smul c q := ⟨c • q.val⟩
@@ -340,7 +337,7 @@ theorem Scalar.inv_coe (r:ℝ) :  ((r:Scalar 0).inv:Formal) = ((r⁻¹:ℝ):Scal
 
 @[simp]
 theorem Scalar.mul_inv {d₁ d₂:Dimensions} (q₁:Scalar d₁) (q₂:Scalar d₂) : (q₁ * q₂).inv = ((q₁.inv) * (q₂.inv)).cast := by
-  simp [←toFormal_inj, toFormal]; congr 1; ring
+  simp [←toFormal_inj, toFormal]; ring
 
 @[simp]
 theorem Scalar.pow_inv {d:Dimensions} (q:Scalar d) (n:ℕ) : (q ** n).inv = (q.inv ** n).cast := by

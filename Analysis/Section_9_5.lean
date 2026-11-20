@@ -1,5 +1,5 @@
 import Mathlib.Tactic
-import Mathlib.Data.Real.Sign
+import Mathlib.Basic.Real.Sign
 import Analysis.Section_9_3
 import Analysis.Section_9_4
 
@@ -85,7 +85,7 @@ theorem ContinuousAt.iff_eq_left_right_limit {X: Set ℝ} {f: ℝ → ℝ} {x₀
   . sorry
   intro ⟨ ⟨ hre, hright⟩, ⟨ hle, lheft ⟩ ⟩
   set L := f x₀
-  have := (ContinuousWithinAt.tfae X f x₀).out 0 2
+  have := (ContinuousWithinAt.tfae X f x₀).out 1 3
   rw [this]
   intro ε hε
   apply right_limit.eq' at hre

@@ -175,11 +175,11 @@ theorem Real.ratPow_neg {x:ℝ} (hx: x > 0) (q:ℝ) : rpow x (-q) = 1 / rpow x q
 theorem Real.ratPow_mono {x y:ℝ} (hx: x > 0) (hy: y > 0) {q:ℝ} (h: q > 0) : x > y ↔ rpow x q > rpow y q := by
   sorry
 
-/-- Proposition 6.7.3(e) / Exercise 6.7.1 -/
+/-- Proposition 6.7.3(e) (base greater than one) / Exercise 6.7.1 -/
 theorem Real.ratPow_mono_of_gt_one {x:ℝ} (hx: x > 1) {q r:ℝ} : rpow x q > rpow x r ↔ q > r := by
   sorry
 
-/-- Proposition 6.7.3(e) / Exercise 6.7.1 -/
+/-- Proposition 6.7.3(e) (base less than one) / Exercise 6.7.1 -/
 theorem Real.ratPow_mono_of_lt_one {x:ℝ} (hx0: 0 < x) (hx: x < 1) {q r:ℝ} : rpow x q > rpow x r ↔ q < r := by
   sorry
 

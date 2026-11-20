@@ -1,26 +1,29 @@
 import os
-from http.server import SimpleHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, unquote
 import urllib
 from http import HTTPStatus
 
-BOOK_SITE = os.path.abspath('./.lake/build/literate-html')
-DOCS_SITE = os.path.abspath('./.lake/build/doc')
+ROOT = os.path.dirname(os.path.abspath(__file__))
+BOOK_SITE = os.path.join(ROOT, '.lake', 'build', 'literate-html')
+DOCS_SITE = os.path.join(ROOT, '.lake', 'build', 'doc')
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
-    # Avoid spurious error messages from /favicon.ico
-    def do_GET(self):
-        if self.path == '/favicon.ico':
-            self.send_response(204)
+    def send_head(self):
+        parsed = urlparse(self.path)
+        # GET and HEAD share the same routing and response headers.
+        if parsed.path == '/favicon.ico':
+            self.send_response(HTTPStatus.NO_CONTENT)
             self.end_headers()
-            return
-        elif self.path in ('/', '/analysis'):
-            self.send_response(301)
-            self.send_header('Location', '/analysis/')
+            return None
+        elif parsed.path in ('/', '/analysis'):
+            self.send_response(HTTPStatus.MOVED_PERMANENTLY)
+            self.send_header('Location', parsed._replace(path='/analysis/').geturl())
+            self.send_header('Content-Length', '0')
             self.end_headers()
-            return
+            return None
 
-        super().do_GET()
+        return super().send_head()
 
 
     def translate_path(self, path):
@@ -45,9 +48,9 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     @staticmethod
     def _join_under(root, rel_path):
-        """Join rel_path under root, rejecting path traversal via .. components."""
-        root = os.path.abspath(root)
-        candidate = os.path.abspath(os.path.join(root, rel_path))
+        """Join rel_path under root, rejecting traversal via .. components or symlinks."""
+        root = os.path.realpath(root)
+        candidate = os.path.realpath(os.path.join(root, rel_path))
         try:
             if os.path.commonpath([root, candidate]) != root:
                 return os.path.join(root, '.path-rejected')
@@ -68,7 +71,7 @@ if __name__ == '__main__':
 
     PORT = args.port
     handler = CustomHTTPRequestHandler
-    with HTTPServer(("", PORT), handler) as httpd:
+    with ThreadingHTTPServer(("", PORT), handler) as httpd:
         print(f"Serving at http://localhost:{PORT}/analysis/")
         print(f"/analysis: {BOOK_SITE}")
         print(f"/analysis/docs: {DOCS_SITE}")

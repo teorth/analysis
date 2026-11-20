@@ -56,7 +56,7 @@ abbrev Digit.mk {n:ℕ} (h: n < 10) : Digit := ⟨n, h⟩
 theorem Digit.toNat_mk {n:ℕ} (h: n < 10) : (Digit.mk h:ℕ) = n := rfl
 
 @[simp]
-theorem Digit.inj (d d':Digit) : d = d' ↔ (d:ℕ) = d' := by grind
+theorem Digit.inj (d d':Digit) : d = d' ↔ (d:ℕ) = d' := Fin.ext_iff
 
 theorem Digit.mk_eq_iff (d:Digit) {n:ℕ} (h: n < 10) : d = mk h ↔ (d:ℕ) = n := by
   convert Digit.inj d (mk h)
@@ -72,7 +72,7 @@ theorem Digit.mk_eq_iff (d:Digit) {n:ℕ} (h: n < 10) : d = mk h ↔ (d:ℕ) = n
 #check (9:Digit)
 
 theorem Digit.eq (n: Digit) : n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 3 ∨ n = 4 ∨ n = 5 ∨ n = 6 ∨ n = 7 ∨ n = 8 ∨ n = 9 := by
-  fin_cases n <;> simp +decide
+  decide +revert
 
 /-- Definition B.1.2 -/
 structure PosintDecimal where
@@ -134,7 +134,7 @@ theorem PosintDecimal.ten_eq_ten : (mk' 1 [0] (by decide):ℕ) = 10 := by
   decide
 
 theorem PosintDecimal.digit_eq {d:Digit} (h: d ≠ 0) : (mk' d [] h:ℕ) = d := by
-  simp [toNat, mk']
+  decide +revert
 
 theorem PosintDecimal.pos (p:PosintDecimal) : 0 < (p:ℕ) := by
   simp [toNat]
@@ -188,6 +188,7 @@ theorem PosintDecimal.eq_append {p:PosintDecimal} (h: 2 ≤ p.digits.length) : �
   rw [←p.digits.cons_head_tail p.nonempty]
   congr 1
   convert (List.dropLast_append_getLast _).symm using 2; grind
+  rw [List.getLast_tail]
   simp [←List.length_pos_iff]; omega
 
 /-- Theorem B.1.4 (Uniqueness and existence of decimal representations) -/
@@ -198,8 +199,8 @@ theorem PosintDecimal.exists_unique (n:ℕ) : n > 0 → ∃! p:PosintDecimal, (p
   -- note: the variable `m` in the text is referred to as `m+1` here.
   clear n; intro m hind _
   obtain hm | hm := lt_or_ge m 9
-  . apply ExistsUnique.intro (mk' (.mk (show m+1 < 10 by omega)) [] (by simp [Digit.mk]))
-    . simp [mk', Digit.mk, toNat, Digit.toNat]
+  . apply ExistsUnique.intro (mk' (.mk (show m+1 < 10 by omega)) [] (Fin.ne_of_val_ne m.succ_ne_zero))
+    . simp [mk', Digit.mk, toNat, Digit.toNat]; rfl
     intro d hd
     obtain hdl | hdl := lt_or_ge d.digits.length 2
     . replace hdl : d.digits.length = 1 := by linarith [d.length_pos]
@@ -210,18 +211,18 @@ theorem PosintDecimal.exists_unique (n:ℕ) : n > 0 → ∃! p:PosintDecimal, (p
       . simp [hdl, mk']
       intro i hi₁ hi₂
       replace hi₁ : i = 0 := by omega
-      simp [hi₁, mk', Digit.mk, hd]
+      simp [hi₁, mk', Digit.mk, hd]; rfl
     have : d.toNat ≥ 10 := calc
       _ ≥ (d.head:ℕ) * 10^(d.digits.length-1) := by
         set a : Fin d.digits.length := ⟨ d.digits.length - 1, by omega ⟩
+        simp only [ge_iff_le, toNat]
         convert Finset.single_le_sum _ (Finset.mem_univ a)
         . simp [a, head, List.head_eq_getElem]
         . infer_instance
         intros; positivity
       _ ≥ 1 * 10^(2-1) := by
         gcongr
-        . have := d.head_ne_zero'; omega
-        norm_num
+        have := d.head_ne_zero'; omega
       _ = 10 := by norm_num
     linarith
   have := (m+1).mod_add_div 10

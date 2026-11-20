@@ -177,7 +177,7 @@ lemma Nat.uniq_succ_eq (a:Nat) (ha: a.IsPos) : ∃! b, b++ = a := by
   sorry
 
 /-- Definition 2.2.11 (Ordering of the natural numbers).
-    This defines the {kw (of := «term_≤_»)}`≤` notation on the natural numbers. -/
+    This defines the {kw! (of := «term_≤_»)}`≤` notation on the natural numbers. -/
 instance Nat.instLE : LE Nat where
   le n m := ∃ a:Nat, m = n + a
 
@@ -246,19 +246,19 @@ theorem Nat.le_trans {a b c:Nat} (hab: a ≤ b) (hbc: b ≤ c) : a ≤ c := Nat.
 theorem Nat.ge_antisymm {a b:Nat} (hab: a ≥ b) (hba: b ≥ a) : a = b := by
   sorry
 
-/-- (d) (Addition preserves order).  Compare with Mathlib's {name}`Nat.add_le_add_right`. -/
+/-- (d) (Addition preserves order, ≥).  Compare with Mathlib's {name}`Nat.add_le_add_right`. -/
 theorem Nat.add_ge_add_right (a b c:Nat) : a ≥ b ↔ a + c ≥ b + c := by
   sorry
 
-/-- (d) (Addition preserves order).  Compare with Mathlib's {name}`Nat.add_le_add_left`.  -/
+/-- (d) (Addition preserves order, ≥).  Compare with Mathlib's {name}`Nat.add_le_add_left`.  -/
 theorem Nat.add_ge_add_left (a b c:Nat) : a ≥ b ↔ c + a ≥ c + b := by
   simp only [add_comm]
   exact add_ge_add_right _ _ _
 
-/-- (d) (Addition preserves order).  Compare with Mathlib's {name}`Nat.add_le_add_right`.  -/
+/-- (d) (Addition preserves order, ≤).  Compare with Mathlib's {name}`Nat.add_le_add_right`.  -/
 theorem Nat.add_le_add_right (a b c:Nat) : a ≤ b ↔ a + c ≤ b + c := add_ge_add_right _ _ _
 
-/-- (d) (Addition preserves order).  Compare with Mathlib's {name}`Nat.add_le_add_left`.  -/
+/-- (d) (Addition preserves order, ≤).  Compare with Mathlib's {name}`Nat.add_le_add_left`.  -/
 theorem Nat.add_le_add_left (a b c:Nat) : a ≤ b ↔ c + a ≤ c + b := add_ge_add_left _ _ _
 
 /-- (e) a < b iff a++ ≤ b.  Compare with Mathlib's {name}`Nat.succ_le_iff`. -/
@@ -377,7 +377,7 @@ instance Nat.instLinearOrder : LinearOrder Nat where
 example (a b c d:Nat) (hab: a ≤ b) (hbc: b ≤ c) (hcd: c ≤ d)
         (hda: d ≤ a) : a = c := by order
 
-/-- An illustration of the {tactic}`calc` tactic with {kw (of := «term_≤_»)}`≤`/
+/-- An illustration of the {tactic}`calc` tactic with {kw! (of := «term_≤_»)}`≤`/
     {kw (of :=«term_<_»)}`<`. -/
 example (a b c d e:Nat) (hab: a ≤ b) (hbc: b < c) (hcd: c ≤ d)
         (hde: d ≤ e) : a + 0 < e := by

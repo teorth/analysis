@@ -97,7 +97,7 @@ noncomputable abbrev LIM (a:ℕ → ℚ) : Real :=
 
 theorem LIM_def {a:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) :
     LIM a = Quotient.mk _ (CauchySequence.mk' ha) := by
-  rw [LIM, dif_pos ha]
+  rw [LIM, dite_eq_left ha]
 
 /-- Definition 5.3.1 (Real numbers) -/
 theorem Real.eq_lim (x:Real) : ∃ (a:ℕ → ℚ), (a:Sequence).IsCauchy ∧ x = LIM a := by
@@ -112,9 +112,9 @@ theorem Real.LIM_eq_LIM {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Se
   LIM a = LIM b ↔ Sequence.Equiv a b := by
   constructor
   . intro h; replace h := Quotient.exact h
-    rwa [dif_pos ha, dif_pos hb, CauchySequence.equiv_iff] at h
+    rwa [dite_eq_left ha, dite_eq_left hb, CauchySequence.equiv_iff] at h
   intro h; apply Quotient.sound
-  rwa [dif_pos ha, dif_pos hb, CauchySequence.equiv_iff]
+  rwa [dite_eq_left ha, dite_eq_left hb, CauchySequence.equiv_iff]
 
 /-- Lemma 5.3.6 (Sum of Cauchy sequences is Cauchy). -/
 theorem Sequence.IsCauchy.add {a b:ℕ → ℚ}  (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
@@ -170,9 +170,9 @@ noncomputable instance Real.add_inst : Add Real where
 /-- Definition 5.3.4 (Addition of reals) -/
 theorem Real.LIM_add {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a + LIM b = LIM (a + b) := by
-  simp_rw [LIM_def ha, LIM_def hb, LIM_def (Sequence.IsCauchy.add ha hb)]
-  convert Quotient.liftOn₂_mk _ _ _ _ using 1
-  simp [LIM]; grind
+  rw [LIM_def ha, LIM_def hb]
+  change LIM ((CauchySequence.mk' ha : ℕ → ℚ) + (CauchySequence.mk' hb : ℕ → ℚ)) = _
+  simp only [CauchySequence.coe_coe]
 
 
 /-- Proposition 5.3.10 (Product of Cauchy sequences is Cauchy) -/
@@ -211,9 +211,9 @@ noncomputable instance Real.mul_inst : Mul Real where
 
 theorem Real.LIM_mul {a b:ℕ → ℚ} (ha: (a:Sequence).IsCauchy) (hb: (b:Sequence).IsCauchy) :
   LIM a * LIM b = LIM (a * b) := by
-  simp_rw [LIM_def ha, LIM_def hb, LIM_def (Sequence.IsCauchy.mul ha hb)]
-  convert Quotient.liftOn₂_mk _ _ _ _ using 1
-  simp [LIM]; grind
+  rw [LIM_def ha, LIM_def hb]
+  change LIM ((CauchySequence.mk' ha : ℕ → ℚ) * (CauchySequence.mk' hb : ℕ → ℚ)) = _
+  simp only [CauchySequence.coe_coe]
 
 instance Real.instRatCast : RatCast Real where
   ratCast := fun q ↦

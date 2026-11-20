@@ -309,11 +309,11 @@ theorem SetTheory.Set.preimage_of_union {X Y:Set} (f:X → Y) (A B: Set) :
 theorem SetTheory.Set.preimage_of_diff {X Y:Set} (f:X → Y) (A B: Set) :
     preimage f (A \ B) = (preimage f A) \ (preimage f B)  := by sorry
 
-/-- Exercise 3.4.5 -/
+/-- Exercise 3.4.5 (image of a preimage) -/
 theorem SetTheory.Set.image_preimage_of_surj {X Y:Set} (f:X → Y) :
     (∀ S, S ⊆ Y → image f (preimage f S) = S) ↔ Function.Surjective f := by sorry
 
-/-- Exercise 3.4.5 -/
+/-- Exercise 3.4.5 (preimage of an image) -/
 theorem SetTheory.Set.preimage_image_of_inj {X Y:Set} (f:X → Y) :
     (∀ S, S ⊆ X → preimage f (image f S) = S) ↔ Function.Injective f := by sorry
 
@@ -344,26 +344,26 @@ theorem SetTheory.Set.union_pair_exists (X Y:Set) : ∃ Z:Set, ∀ x, x ∈ Z �
 theorem SetTheory.Set.iInter'_insensitive {I:Set} (β β':I) (A: I → Set) :
     iInter' I β A = iInter' I β' A := by sorry
 
-/-- Exercise 3.4.10 -/
+/-- Exercise 3.4.10 (union over a union of index sets) -/
 theorem SetTheory.Set.union_iUnion {I J:Set} (A: (I ∪ J:Set) → Set) :
     iUnion I (fun α ↦ A ⟨ α.val, by simp [α.property]⟩)
     ∪ iUnion J (fun α ↦ A ⟨ α.val, by simp [α.property]⟩)
     = iUnion (I ∪ J) A := by sorry
 
-/-- Exercise 3.4.10 -/
+/-- Exercise 3.4.10 (a union of nonempty index sets is nonempty) -/
 theorem SetTheory.Set.union_of_nonempty {I J:Set} (hI: I ≠ ∅) (hJ: J ≠ ∅) : I ∪ J ≠ ∅ := by sorry
 
-/-- Exercise 3.4.10 -/
+/-- Exercise 3.4.10 (intersection over a union of index sets) -/
 theorem SetTheory.Set.inter_iInter {I J:Set} (hI: I ≠ ∅) (hJ: J ≠ ∅) (A: (I ∪ J:Set) → Set) :
     iInter I hI (fun α ↦ A ⟨ α.val, by simp [α.property]⟩)
     ∩ iInter J hJ (fun α ↦ A ⟨ α.val, by simp [α.property]⟩)
     = iInter (I ∪ J) (union_of_nonempty hI hJ) A := by sorry
 
-/-- Exercise 3.4.11 -/
+/-- Exercise 3.4.11 (complement of a union) -/
 theorem SetTheory.Set.compl_iUnion {X I: Set} (hI: I ≠ ∅) (A: I → Set) :
     X \ iUnion I A = iInter I hI (fun α ↦ X \ A α) := by sorry
 
-/-- Exercise 3.4.11 -/
+/-- Exercise 3.4.11 (complement of an intersection) -/
 theorem SetTheory.Set.compl_iInter {X I: Set} (hI: I ≠ ∅) (A: I → Set) :
     X \ iInter I hI A = iUnion I (fun α ↦ X \ A α) := by sorry
 
