@@ -201,7 +201,18 @@ theorem IsPartition.discrete (X:Type*) : IsPartition (fun x:X ↦ {x}) := by
   · ext x
     simp [Set.mem_iUnion]
 
-theorem ConcreteBooleanAlgebra.top_atomic (X:Type*) : (IsPartition.discrete X).to_ConcreteBooleanAlgebra = ⊤ := by sorry
+theorem ConcreteBooleanAlgebra.top_atomic (X:Type*) : (IsPartition.discrete X).to_ConcreteBooleanAlgebra = ⊤ := by
+  apply le_antisymm
+  · exact le_top
+  · intro E _
+    refine ⟨E, ?_⟩
+    ext x
+    simp only [Set.mem_iUnion, Set.mem_singleton_iff, exists_prop]
+    constructor
+    · intro hx
+      exact ⟨x, hx, rfl⟩
+    · rintro ⟨i, hi, rfl⟩
+      exact hi
 
 theorem IsPartition.trivial (X:Type*) : IsPartition (fun (x:Unit) ↦ (Set.univ: Set X)) := by
   refine ⟨?_, ?_⟩
